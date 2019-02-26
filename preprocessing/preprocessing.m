@@ -172,7 +172,7 @@ cd(fileparts(img_input{1}));
 
 % realignment (coregister only)
 matlabbatch{1}.spm.spatial.realignunwarp.eoptions.quality = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.sep = 0;
+matlabbatch{1}.spm.spatial.realignunwarp.eoptions.sep = 1;
 matlabbatch{1}.spm.spatial.realignunwarp.eoptions.fwhm = 1;
 matlabbatch{1}.spm.spatial.realignunwarp.eoptions.rtm = 0;
 matlabbatch{1}.spm.spatial.realignunwarp.eoptions.einterp = 7;
