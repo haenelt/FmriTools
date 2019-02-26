@@ -1,0 +1,377 @@
+"""
+Full cortex reconstruction
+
+The purpose of the following script is to compute the segmentation for hires MP2RAGE data and bring 
+the resulting surface data of the cortical boundaries into a regular grid representation. The script 
+is divided into five parts. Single steps of each part are stated below:
+    
+Before running the script, login to queen via ssh and set the freesurfer environment by calling
+FREESURFER in the terminal.
+
+Part 1 (Run recon-all pipeline)
+    *flat image background denoising
+    *bias field correction of the flat image
+    *volume thresholding
+    *recon1 without skullstripping
+    *compute skullstrip mask
+    *recon23
+Part 2 (Manual correction of white surface)
+    *how to manually correct the white surface is explained below
+Part 3 (Finalise white surface)
+    * inward shift of white surface to counteract the bias in mp2rage data
+Part 4 (Manual correction of pial surface)
+    *how to manually correct the pial surface is explained below
+Part 5
+    *compute upsampled surface mesh
+    *compute morphological data onto upsampled surface mesh
+    *compute volumetric layers
+Part 6
+    *surface flattening of occipital patch
+    *orthographic projection of flattened patch
+    *visualise morphological data
+    *visualise distortion 
+
+HOWTO: manual white surface correction
+    *copy old wm.mgz in freesurfer trash folder and name like wm_backup_201812061015.mgz
+    *copy old white surfaces the same way
+    *edit wm.mgz (brush value: 255, eraser value: 1)
+    *best to overlay with orig and surfaces
+
+HOWTO: manual pial surface correction
+    *move old brain.finalsurfs.mgz to trash folder as in part 2 (remove from mri folder!)
+    *copy old pial surface the same way
+    *create brain.finalsurfs.manedit.mgz as copy of brain.finalsurfs.mgz in freesurfer mri folder
+    *edit brain.finalsurfs.manedit (brush: 255, eraser value: 1)
+    *best to overlay with orig and surfaces
+
+HOWTO: defining a patch for surface flattening
+    *open tksurfer and define manually the patch of the occipital pole
+    *if you define the patch onto the upsampled surface mesh, you have to open 
+    first the original surface in tksurfer and then load the upsampled surface 
+    in the opened GUI
+    *load the inflated surface
+    *rotate to the medial surface
+    *select points along the calcarine fissure and press the button "Cut line"
+    *select 3 points to define the cutting plane: 2 on medial side and 1 on 
+    lateral side
+    *choose a 4th points to specify which portion of surface to keep and press 
+    button "Cut plane"
+    *save file: File > Patch > Save as file <hemi>.<namePATCH>.patch.3d
+    *save the file in the dense subfolder
+    *after flattening you can visualise the patch by loading first the inflated
+    surface in tksurfer, then File > Patch > Load patch ...
+    
+created by Daniel Haenelt
+Date created: 01-11-2018             
+Last modified: 20-02-2019
+"""
+import os
+import datetime
+from nipype.interfaces.freesurfer import ApplyVolTransform
+from lib.segmentation.robust_combination import robust_combination
+from lib.segmentation.bias_field_correction import bias_field_correction
+from lib.segmentation.shift_white import shift_white
+from lib.segmentation.get_thickness import get_thickness
+from lib.segmentation.get_ribbon import get_ribbon
+from lib.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
+from lib.segmentation.upsample_surf_mesh import upsample_surf_mesh
+from lib.segmentation.surface_flattening import surface_flattening
+from lib.segmentation.calculate_distortion import calculate_distortion
+from lib.segmentation.orthographic_projection import orthographic_projection
+from lib.skullstrip.skullstrip_spm12 import skullstrip_spm12
+from lib.utils.volume_threshold import volume_threshold
+from lib.utils.multiply_images import multiply_images
+from lib.mapping.map2grid import map2grid
+
+# input data
+fileUNI = "/data/pt_01880/V2STRIPES/p4/anatomy/UNI_0p7.nii"
+fileINV1 = "/data/pt_01880/V2STRIPES/p4/anatomy/INV1_0p7.nii"
+fileINV2 = "/data/pt_01880/V2STRIPES/p4/anatomy/INV2_0p7.nii"
+pathSPM12 = "/data/pt_01880/source/spm12"
+pathEXPERT = "/home/raid2/haenelt/scripts/segmentation"
+namePATCH = "occip1"
+sub = "freesurfer"
+part = 1
+
+# parameters
+reg_background = 8 # parameter for background noise removal (part 1)
+w_shift = -0.5 # white surface shift (part 3)
+niter_upsample = 1 # number of upsampling iterations (part 5)
+method_upsample = "linear" # upsampling method (part 5)
+nsurf_layer = 10 # number of equivolumetric layers (part 5)
+factor_layer = 0 # smoothing of area surfaces (part 5)
+niter_layer = 0 # number of smoothing iterations (part 5)
+imres_ortho = 0.25 # isotropic image resolution of the regular grid in mm (part 6)
+theta_ortho = [0,55] # rotation of the regular grid in deg for each hemisphere (part 6)
+alpha_ortho = 2 # alpha shape value for concave hull computation (part 6)
+buffer_ortho = 0 # smooth out of concave hull (part 6)
+sigma_map = 0.5 # isotropic smoothing of distortion data onto regular grid (part 6)
+
+""" do not edit below """
+
+# parameters
+hemi = ["lh","rh"]
+
+# get path and file name
+path_split = os.path.split(fileUNI)
+path = path_split[0]
+file = path_split[1]
+
+# set folder structure
+path_bias = os.path.join(path, "bias")
+path_dense = os.path.join(path, "dense")
+path_layer = os.path.join(path, "layer")
+path_ortho = os.path.join(path,"ortho")
+
+# write log
+fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+fileID.write("Part "+str(part)+": "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
+fileID.close()
+
+if part == 1:
+     
+    # background noise removal
+    print("Background noise removal")
+    robust_combination(fileUNI,fileINV1,fileINV2,reg_background,path_bias)
+     
+    # bias field correction
+    print("Bias field correction")
+    bias_field_correction(os.path.join(path_bias,"n"+file), pathSPM12)
+    
+    # volume threshold
+    print("Volume threshold")
+    volume_threshold(os.path.join(path_bias,"mn"+file), "", 4095)
+    
+    # autorecon1 without skullstrip removal
+    print("Autorecon1")
+    os.system("recon-all" + \
+              " -i " + os.path.join(path_bias,"mn"+file) + \
+              " -hires" + \
+              " -autorecon1" + \
+              " -noskullstrip" + \
+              " -sd " + path + \
+              " -s " + sub + \
+              " -parallel")
+    
+    # skull stripping
+    print("Skullstrip")
+    skullstrip_spm12(fileINV2, pathSPM12, path)
+    
+    # bring skullstrip_mask in conformed space (mri_vol2vol, NN)
+    transmask = ApplyVolTransform()
+    transmask.inputs.source_file = os.path.join(path, "skull", "skullstrip_mask.nii")
+    transmask.inputs.target_file = os.path.join(path,sub,"mri","orig.mgz")
+    transmask.inputs.reg_header = True
+    transmask.inputs.interp = "nearest"
+    transmask.inputs.transformed_file = os.path.join(path,sub,"mri","skullstrip_mask.nii")
+    transmask.inputs.args = "--no-save-reg"
+    transmask.run()
+    
+    # apply skullstrip mask to T1 and save as brainmask
+    multiply_images(os.path.join(path,sub,"mri","T1.mgz"),
+                    os.path.join(path,sub,"mri","skullstrip_mask.nii"),
+                    os.path.join(path,sub,"mri","brainmask.mgz"))
+    
+    multiply_images(os.path.join(path,sub,"mri","T1.mgz"),
+                    os.path.join(path,sub,"mri","skullstrip_mask.nii"),
+                    os.path.join(path,sub,"mri","brainmask.auto.mgz"))
+   
+    # autorecon2 and autorecon3
+    print("Autorecon2 and Autorecon3")
+    os.system("recon-all" + \
+              " -hires" + \
+              " -autorecon2" + " -autorecon3" + \
+              " -sd " + path + \
+              " -s " + sub + \
+              " -expert " + os.path.join(pathEXPERT,"expert.opts") + \
+              " -xopts-overwrite" + \
+              " -parallel")
+    
+    # write log
+    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+    fileID.write("Regularisation for background removal: "+str(reg_background)+"\n")
+    fileID.close()
+
+elif part == 2:
+    
+    # GM/WM surface correction using modified wm.mgz
+    print("Autorecon2-wm")
+    os.system("recon-all" + \
+              " -hires" + \
+              " -autorecon2-wm" + " -autorecon3" + \
+              " -sd " + path + \
+              " -s " + sub + \
+              " -expert " + os.path.join(pathEXPERT,"expert.opts") + \
+              " -xopts-overwrite" + \
+              " -parallel")
+
+elif part == 3:
+    
+    # inward shift of final white surface and recomputation of some morphological files
+    print("Finalise white surface")
+    shift_white(path,sub,w_shift)
+    get_thickness(path,sub)
+    get_ribbon(path,sub)
+    
+    # write log
+    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+    fileID.write("Inward shift of white surface: "+str(w_shift)+"\n")
+    fileID.close()
+    
+elif part == 4:
+        
+    # GM/CSF surface correction using modified brain.finalsurfs.manedit.mgz
+    print("Autorecon-pial")
+    os.system("recon-all" + \
+              " -hires" + \
+              " -autorecon-pial" + \
+              " -sd " + path + \
+              " -s " + sub + \
+              " -expert " + os.path.join(pathEXPERT,"expert.opts") + \
+              " -xopts-overwrite" + \
+              " -parallel")
+
+elif part == 5:
+    
+    # upsample surface mesh
+    print("Upsample surface mesh")
+    orig_params = []
+    dense_params = []
+    for i in range(len(hemi)):
+        orig, dense = upsample_surf_mesh(path,
+                                         sub,
+                                         hemi[i],
+                                         niter_upsample,
+                                         method_upsample,
+                                         path_dense)
+        orig_params.extend(orig)
+        dense_params.extend(dense)
+    
+    # calculate volumetric surfaces
+    print("Compute volumetric layers")
+    for i in range(len(hemi)):
+        file_white = os.path.join(path_dense,hemi[i]+".white") 
+        file_pial = os.path.join(path_dense,hemi[i]+".pial")
+        calculate_equivolumetric_surfaces(file_white, 
+                                         file_pial, 
+                                         nsurf_layer, 
+                                         factor_layer, 
+                                         niter_layer, 
+                                         hemi[i],
+                                         path_layer)
+        
+    # write log
+    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+    fileID.write("Number of upsampling iterations: "+str(niter_upsample)+"\n")
+    fileID.write("Upsampling method: "+method_upsample+"\n")
+    fileID.write("Number of nodes in original surface (left): "+str(orig_params[0][0])+"\n")
+    fileID.write("Average edge length in original surface (left): "+str(orig_params[0][1])+"\n")
+    fileID.write("Number of nodes in original surface (right): "+str(orig_params[1][0])+"\n")
+    fileID.write("Average edge length in original surface (right): "+str(orig_params[1][1])+"\n")
+    fileID.write("Number of nodes in dense surface (left): "+str(dense_params[0][0])+"\n")
+    fileID.write("Average edge length in dense surface (left): "+str(dense_params[0][1])+"\n")    
+    fileID.write("Number of nodes in dense surface (right): "+str(dense_params[1][0])+"\n")
+    fileID.write("Average edge length in dense surface (right): "+str(dense_params[1][1])+"\n")    
+    fileID.write("Number of volumetric surfaces: "+str(nsurf_layer)+"\n")
+    fileID.write("Smoothing factor for layering: "+str(factor_layer)+"\n")
+    fileID.write("Number of smoothing iterations for layering: "+str(niter_layer)+"\n")
+    fileID.close()
+
+elif part == 6:
+   
+    # surface flattening
+    print("Surface flattening")
+    for i in range(len(hemi)):
+        surface_flattening(path,path_dense,sub,hemi[i],namePATCH)
+
+    # distortion estimation
+    print("Estimate the amount of distortion after flattening")
+    VAD_params = []
+    VLD_params = []
+    for i in range(len(hemi)):      
+        vad, vld = calculate_distortion(os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.flat"), 
+                                        os.path.join(path_dense,hemi[i]+".white"), 
+                                        hemi[i])
+        VAD_params.extend(vad)
+        VLD_params.extend(vld)
+
+    # regular grid interpolation
+    print("Orthographic projection")
+    nvoxel_params = []
+    ind_ratio_params = []
+    for i in range(len(hemi)):
+        nvoxel, ind_ratio = orthographic_projection(os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.flat"), 
+                                                    hemi[i], 
+                                                    imres_ortho, 
+                                                    theta_ortho[i], 
+                                                    alpha_ortho, 
+                                                    buffer_ortho, 
+                                                    path_ortho)
+        nvoxel_params.append(nvoxel)
+        ind_ratio_params.append(ind_ratio)
+    
+    # map distortion data onto grid
+    print("Map distortion data onto grid")
+    for i in range(len(hemi)):
+        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
+                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.flat.areal_distortion"),
+                 sigma_map,
+                 path_ortho)
+        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
+                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.flat.line_distortion"),
+                 sigma_map,
+                 path_ortho)
+        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
+                 os.path.join(path_dense,hemi[i]+".curv"),
+                 sigma_map,
+                 path_ortho)
+        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
+                 os.path.join(path_dense,hemi[i]+".thickness"),
+                 sigma_map,
+                 path_ortho)
+        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
+                 os.path.join(path_dense,hemi[i]+".sulc"),
+                 sigma_map,
+                 path_ortho)
+        
+    # write log
+    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+    fileID.write(namePATCH+": VAD (left, mean) -> "+str(VAD_params[0])+"\n")
+    fileID.write(namePATCH+": VAD (left, std) -> "+str(VAD_params[1])+"\n")
+    fileID.write(namePATCH+": VAD (left, sem) -> "+str(VAD_params[2])+"\n")
+    fileID.write(namePATCH+": VAD (left, min) -> "+str(VAD_params[3])+"\n")
+    fileID.write(namePATCH+": VAD (left, max) -> "+str(VAD_params[4])+"\n")
+    fileID.write(namePATCH+": VAD (left, miss) -> "+str(VAD_params[5])+"\n")
+    fileID.write(namePATCH+": VAD (right, mean) -> "+str(VAD_params[6])+"\n")
+    fileID.write(namePATCH+": VAD (right, std) -> "+str(VAD_params[7])+"\n")
+    fileID.write(namePATCH+": VAD (right, sem) -> "+str(VAD_params[8])+"\n")
+    fileID.write(namePATCH+": VAD (right, min) -> "+str(VAD_params[9])+"\n")
+    fileID.write(namePATCH+": VAD (right, max) -> "+str(VAD_params[10])+"\n")
+    fileID.write(namePATCH+": VAD (right, miss) -> "+str(VAD_params[11])+"\n")
+    fileID.write(namePATCH+": VLD (left, mean) -> "+str(VLD_params[0])+"\n")
+    fileID.write(namePATCH+": VLD (left, std) -> "+str(VLD_params[1])+"\n")
+    fileID.write(namePATCH+": VLD (left, sem) -> "+str(VLD_params[2])+"\n")
+    fileID.write(namePATCH+": VLD (left, min) -> "+str(VLD_params[3])+"\n")
+    fileID.write(namePATCH+": VLD (left, max) -> "+str(VLD_params[4])+"\n")
+    fileID.write(namePATCH+": VLD (left, miss) -> "+str(VLD_params[5])+"\n")
+    fileID.write(namePATCH+": VLD (right, mean) -> "+str(VLD_params[6])+"\n")
+    fileID.write(namePATCH+": VLD (right, std) -> "+str(VLD_params[7])+"\n")
+    fileID.write(namePATCH+": VLD (right, sem) -> "+str(VLD_params[8])+"\n")
+    fileID.write(namePATCH+": VLD (right, min) -> "+str(VLD_params[9])+"\n")
+    fileID.write(namePATCH+": VLD (right, max) -> "+str(VLD_params[10])+"\n")
+    fileID.write(namePATCH+": VLD (right, miss) -> "+str(VLD_params[11])+"\n")
+    fileID.write(namePATCH+": Image resolution of grid -> "+str(imres_ortho)+"\n")
+    fileID.write(namePATCH+": Grid rotation (left) -> "+str(theta_ortho[0])+"\n")
+    fileID.write(namePATCH+": Grid rotation (right) -> "+str(theta_ortho[1])+"\n")
+    fileID.write(namePATCH+": Alpha shape for concave hull -> "+str(alpha_ortho)+"\n")
+    fileID.write(namePATCH+": Concave hull buffer -> "+str(buffer_ortho)+"\n")
+    fileID.write(namePATCH+": Number of grid voxels within patch (left) -> "+str(nvoxel_params[0])+"\n")
+    fileID.write(namePATCH+": Ratio of unique grid indices (left) -> "+str(ind_ratio_params[0])+"\n")
+    fileID.write(namePATCH+": Number of grid voxels within patch (right) -> "+str(nvoxel_params[1])+"\n")
+    fileID.write(namePATCH+": Ratio of unique grid indices (right) -> "+str(ind_ratio_params[1])+"\n")
+    fileID.write(namePATCH+": Grid mapping (sigma) -> "+str(sigma_map)+"\n")
+    fileID.close()
+
+else:
+    
+    print("Which part do you want to run?")
