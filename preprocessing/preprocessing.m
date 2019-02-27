@@ -170,7 +170,7 @@ for i = 1:length(img_input)
     % get input data
     for j = 1:nt
         matlabbatch{1}.spm.spatial.realignunwarp.data(i).scans{j,1} = fullfile(path,[file ext ',' num2str(j)]);
-        if fieldmap_unddistortion
+        if fieldmap_undistortion
             matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
         else
             matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = '';
