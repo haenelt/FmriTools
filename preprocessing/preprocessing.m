@@ -17,13 +17,13 @@
 % voxels's time series. If the average z-score across all voxels within one
 % volume exceeds a defined threshold, this volume is marked as outlier. 
 % In the outlier summary, the number of outliers within one run is compared
-% to its length and if the ratio exceeds a defined threshold, the whole run
-% is discarded. Additionally, regressors for neglecting outlier volumes are
-% created.
+% to its length is computed and if the ratio exceeds a defined threshold, 
+% the whole run is discarded. Additionally, regressors for neglecting 
+% outlier volumes are created.
 %
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 26-02-2019
+% Last modified: 27-02-2019
 
 % input time series
 img_input = {
@@ -75,6 +75,15 @@ addpath(pathSPM);
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35);% maxmen indicates how much memory can be used
 spm_get_defaults('cmdline',true);% no gui
+
+% preprocessing summary
+path_diagnosis = fullfile(fileparts(fileparts(img_input{1})),'diagnosis');
+if ~exist(path_diagnosis,'dir') 
+    mkdir(path_diagnosis); 
+end
+
+% path and filename of fieldmap phase
+[path_fmap2, file_fmap2, ~] = fileparts(fmap_phase);
 
 if slice_timing
     for i = 1:length(img_input)
@@ -146,7 +155,6 @@ if fieldmap_undistortion
 end
 
 % realignment
-[path_fmap2, file_fmap2, ~] = fileparts(fmap_phase);
 for i = 1:length(img_input)
     
     % get time series length
@@ -162,7 +170,11 @@ for i = 1:length(img_input)
     % get input data
     for j = 1:nt
         matlabbatch{1}.spm.spatial.realignunwarp.data(i).scans{j,1} = fullfile(path,[file ext ',' num2str(j)]);
-        matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
+        if fieldmap_unddistortion
+            matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
+        else
+            matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = '';
+        end
     end
     
 end
@@ -204,6 +216,48 @@ spm_jobman('run',matlabbatch);
 % clear
 clear matlabbatch
 
+% plot motion regressors
+for i = 1:length(img_input)
+
+    % change to single run
+    cd(fileparts(img_input{i}));
+    
+    [path, file, ext] = fileparts(img_input{i});
+    if slice_timing
+        file = ['a' file];
+    end
+    
+    % read realignment parameters
+    M = dlmread(['rp_' file '.txt']);
+    
+    transFig = figure('visible','off');
+    plot(M(:,1));
+    hold on
+    plot(M(:,2));
+    plot(M(:,3));
+    title(['Translational movement in session ' num2str(i)]);
+    xlabel('number of volume');
+    ylabel('Translation in mm');
+    legend('x','y','z');
+    saveas(gcf,fullfile(path_diagnosis,['moco_mm_' num2str(i) '.png']));
+    close(transFig);
+    
+    radFig = figure('visible','off');
+    plot(M(:,4));
+    hold on
+    plot(M(:,5));
+    hold on
+    plot(M(:,6));
+    hold on
+    title(['Rotational movement in session ' num2str(i)]);
+    xlabel('number of volume');
+    ylabel('Rotation in rad');
+    legend('pitch','roll','yaw');
+    saveas(gcf,fullfile(path_diagnosis,['moco_rad_' num2str(i) '.png']));
+    close(radFig);
+
+end
+
 % get motion and intensity outliers
 for i = 1:length(img_input)
 
@@ -219,7 +273,7 @@ for i = 1:length(img_input)
     % change to single run
     cd(fileparts(img_input{i}));
     
-    [~, file, ~] = fileparts(img_input{i});
+    [path, file, ext] = fileparts(img_input{i});
     if slice_timing
         file = ['a' file];
     end
@@ -229,7 +283,7 @@ for i = 1:length(img_input)
         
     % compute absolute difference between volumes
     for j = 1:length(M(:,1))-1
-        for k = 1:6 % number of motion parameters
+        for k = 1:length(M(1,:)) % number of motion parameters
             diff_short = abs(M(j+1,k) - M(j,k));
             diff_long = abs(M(j+1,k) - M(1,k));
             
@@ -263,7 +317,7 @@ for i = 1:length(img_input)
     intensity_outlier.t = [];
     
     % read time series
-    data_img = spm_vol(img_input{i});
+    data_img = spm_vol(fullfile(path,['u' file ext]));
     data_array = spm_read_vols(data_img);
     nt = length(data_img);
     
@@ -284,14 +338,8 @@ for i = 1:length(img_input)
     save('outlier.mat','motion_outlier','intensity_outlier');
 end
 
-% preprocessing summary
-path_diagnosis = fileparts(fileparts(img_input{1}));
-if ~exist(path_diagnosis,'dir') 
-    mkdir(path_diagnosis); 
-end
-
 % open textfile
-fileID = fopen(fullfile(path_diagnosis,'preprocessing_summary.txt'));
+fileID = fopen(fullfile(path_diagnosis,'preprocessing_summary.txt'),'w');
 
 for i  = 1:length(img_input)
 
@@ -320,7 +368,7 @@ for i  = 1:length(img_input)
     end
     
     M = dlmread(['rp_' file '.txt']);
-    M = [M zeros(length(nt),1)];
+    M = [M zeros(nt,1)];
     M(outlier_all,end) = 1;
     dlmwrite(['frp_' file '.txt'],M)
     
@@ -339,15 +387,17 @@ for i = 1:length(img_input)
     end
     
     data_img = spm_vol(fullfile(path,['u' file ext]));
-    data_array = spm_get_vols(data_img);
+    data_array = spm_read_vols(data_img);
     
     data_img_out(i).fname = fullfile(path_diagnosis, 'vol1.nii');
-    spm_write_vol(data_img_out(i), data_array(:,:,:,1))
+    spm_write_vol(data_img_out(i), data_array(:,:,:,1));
 
 end
 
 % get mean data
 data_img_out = spm_vol(img_input{1});
+data_img_out = data_img_out(1);
+data_img_out.private.dat.dim(4) = [];
 data_mean_array = zeros(data_img_out(1).dim);
 counter = 0;
 for i = 1:length(img_input)
@@ -365,8 +415,8 @@ for i = 1:length(img_input)
     
 end
 data_mean_array = data_mean_array ./ counter;
-data_img_out(1).fname = fullfile(path_diagnosis, 'vol1.nii');
-spm_write_vol(data_img_out(1), data_mean);
+data_img_out.fname = fullfile(path_diagnosis, 'mean.nii');
+spm_write_vol(data_img_out, data_mean_array);
 
 
 
