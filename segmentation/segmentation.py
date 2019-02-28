@@ -40,9 +40,15 @@ HOWTO: manual white surface correction
 HOWTO: manual pial surface correction
     *move old brain.finalsurfs.mgz to trash folder as in part 2 (remove from mri folder!)
     *copy old pial surface the same way
-    *create brain.finalsurfs.manedit.mgz as copy of brain.finalsurfs.mgz in freesurfer mri folder
-    *edit brain.finalsurfs.manedit (brush: 255, eraser value: 1)
-    *best to overlay with orig and surfaces
+    *copy orig.mgz with name pial_edit.mgz in the same folder
+    *mri_convert pial_edit.mgz pial_edit.mgz -odt float
+    *apply changes (brush value: 256, eraser value: -1)
+    *best to overlay with surfaces
+    *N.B. in freesurfer, manual changes of the pial surfaces are applied by creating the file
+    *brain.finalsurfs.manedit.mgz (copy of brainmask.mgz) and include there all changes 
+    *(brush value: 255, eraser: -1). We apply the changes to a copy of orig because there, the
+    *pial surface can be better delineated. However, from those changes brain.finalsurfs.manedit.mgz
+    *will be created.
 
 HOWTO: defining a patch for surface flattening
     *open tksurfer and define manually the patch of the occipital pole
@@ -73,6 +79,7 @@ from lib.segmentation.bias_field_correction import bias_field_correction
 from lib.segmentation.shift_white import shift_white
 from lib.segmentation.get_thickness import get_thickness
 from lib.segmentation.get_ribbon import get_ribbon
+from lib.segmentation.include_pial_correction import include_pial_correction
 from lib.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from lib.segmentation.upsample_surf_mesh import upsample_surf_mesh
 from lib.segmentation.surface_flattening import surface_flattening
@@ -84,14 +91,14 @@ from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/V2STRIPES/p4/anatomy/UNI_0p7.nii"
-fileINV1 = "/data/pt_01880/V2STRIPES/p4/anatomy/INV1_0p7.nii"
-fileINV2 = "/data/pt_01880/V2STRIPES/p4/anatomy/INV2_0p7.nii"
+fileUNI = "/data/pt_01880/V2STRIPES/p7/anatomy/UNI_0p7.nii"
+fileINV1 = "/data/pt_01880/V2STRIPES/p7/anatomy/INV1_0p7.nii"
+fileINV2 = "/data/pt_01880/V2STRIPES/p7/anatomy/INV2_0p7.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
-pathEXPERT = "/home/raid2/haenelt/scripts/segmentation"
+pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 1
+part = 3
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
@@ -219,7 +226,11 @@ elif part == 3:
     fileID.close()
     
 elif part == 4:
-        
+    
+    # Convert manual corrections in pial_edit.mgz to brain.finalsurfs.manedit.mgz
+    print("Create brain.finalsurfs.manedit.mgz")
+    include_pial_correction(path,sub)
+    
     # GM/CSF surface correction using modified brain.finalsurfs.manedit.mgz
     print("Autorecon-pial")
     os.system("recon-all" + \

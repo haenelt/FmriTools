@@ -11,3 +11,4 @@ from .robust_combination import robust_combination
 from .shift_white import shift_white
 from .surface_flattening import surface_flattening
 from .upsample_surf_mesh import upsample_surf_mesh
+from .include_pial_correction import include_pial_correction
