@@ -13,9 +13,12 @@ following steps:
     7. merge deformations
     8. apply deformations
 
+Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
+calling FREESURFER and ANTSENV in the terminal.
+
 created by Daniel Haenelt
 Date created: 10-01-2019
-Last modified: 18-02-2019
+Last modified: 28-02-2019
 """
 import os
 import shutil as sh
@@ -27,17 +30,12 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi = "/data/pt_01880/V2STRIPES/p6/resting_state/meanudata.nii"
-file_t1 = "/data/pt_01880/V2STRIPES/p6/anatomy/T1_0p7.nii"
-file_mask = "/data/pt_01880/V2STRIPES/p6/anatomy/skull/skullstrip_mask.nii"
-file_orig = "/data/pt_01880/V2STRIPES/p6/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/registration_rest"
+file_mean_epi = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI1/diagnosis/mean.nii"
+file_t1 = "/data/pt_01880/V2STRIPES/p7/anatomy/T1_0p7.nii"
+file_mask = "/data/pt_01880/V2STRIPES/p7/anatomy/skull/skullstrip_mask.nii"
+file_orig = "/data/pt_01880/V2STRIPES/p7/anatomy/freesurfer/mri/orig.mgz"
+path_output = "/data/pt_01880/V2STRIPES/p7"
 cleanup = False
-
-# environments
-pathANTS = ""
-pathFREESURFER = ""
-pathFSL = ""
 
 # parameters for epi skullstrip
 niter_mask = 3
@@ -56,9 +54,6 @@ cost_function = 'CrossCorrelation'
 interpolation = 'Linear' 
 
 """ do not edit below """
-
-# set ANTS environments
-os.environ['PATH'] = pathANTS
 
 """
 set folder structure
@@ -105,7 +100,6 @@ mc.inputs.in_file = os.path.join(path_orig,"orig.mgz")
 mc.inputs.out_file = os.path.join(path_orig,"orig.nii")
 mc.inputs.in_type = "mgz"
 mc.inputs.out_type = "nii"
-mc.inputs.environ['PATH'] = pathFREESURFER
 mc.run()
 
 """
@@ -119,7 +113,6 @@ bias field correction to epi
 """
 n4 = N4BiasFieldCorrection()
 n4.inputs.dimension = 3
-n4.inputs.environ['PATH'] = pathANTS
 n4.inputs.input_image = os.path.join(path_epi,"epi.nii")
 n4.inputs.bias_image = os.path.join(path_epi,'n4bias.nii')
 n4.inputs.output_image = os.path.join(path_epi,"bepi.nii")
@@ -128,11 +121,11 @@ n4.run()
 """
 mask t1 and epi
 """
-mask_ana(os.path.join(path_t1),"T1.nii",os.path.join(path_t1,"mask.nii"))
+mask_ana(os.path.join(path_t1,"T1.nii"),os.path.join(path_t1,"mask.nii"))
 mask_epi(os.path.join(path_epi,"bepi.nii"), 
          os.path.join(path_t1,"pT1.nii"), 
          os.path.join(path_t1,"mask.nii"), 
-         niter_mask, sigma_mask, pathFSL)
+         niter_mask, sigma_mask)
 
 """
 syn
