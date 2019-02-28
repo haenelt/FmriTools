@@ -1,4 +1,4 @@
-def mask_epi(epi, t1, mask, niter, sigma, pathFSL):
+def mask_epi(epi, t1, mask, niter, sigma):
     """
     This function masks a mean epi image based on a skullstrip mask of the corresponding anatomy.
     The mask is transformed to native epi space via scanner transformation and rigid registration
@@ -10,11 +10,10 @@ def mask_epi(epi, t1, mask, niter, sigma, pathFSL):
         *mask: input of skullstrip mask of the corresponding anatomy.
         *niter: number of dilation iterations.
         *sigma: gaussian smoothing kernel.
-        *pathFSL: path to FSL environent.
         
     created by Daniel Haenelt
     Date created: 13-02-2019
-    Last modified: 13-02-2019
+    Last modified: 28-02-2019
     """
     import os
     import numpy as np
@@ -74,7 +73,6 @@ def mask_epi(epi, t1, mask, niter, sigma, pathFSL):
     # flirt t1 to epi
     os.chdir(path_t1)
     flirt = FLIRT()
-    flirt.inputs.environ['PATH'] = pathFSL
     flirt.inputs.cost_func = "mutualinfo"
     flirt.inputs.dof = 6
     flirt.inputs.interp = "trilinear" # trilinear, nearestneighbour, sinc or spline
@@ -87,7 +85,6 @@ def mask_epi(epi, t1, mask, niter, sigma, pathFSL):
 
     # flirt mask to epi
     applyxfm = ApplyXFM()
-    applyxfm.inputs.environ['PATH'] = pathFSL
     applyxfm.inputs.in_file = os.path.join(path_t1,name_mask+"_def-img.nii.gz")
     applyxfm.inputs.reference = epi
     applyxfm.inputs.in_matrix_file = os.path.join(path_t1,"flirt_matrix.txt")
