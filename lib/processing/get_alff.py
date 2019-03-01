@@ -1,4 +1,4 @@
-def get_alff(input, pathAFNI, TR, path_output, hp_freq=0.01, lp_freq=0.08, cleanup=True):
+def get_alff(input, TR, path_output, hp_freq=0.01, lp_freq=0.08, cleanup=True):
     """
     This function calculates ALFF and fALFF from a preprocessed (motion correction, nuisance 
     regression, etc.) resting-state time series. ALFF is computed by bandpass filtering the time 
@@ -8,7 +8,6 @@ def get_alff(input, pathAFNI, TR, path_output, hp_freq=0.01, lp_freq=0.08, clean
     https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/alff/alff.py
     Inputs:
         *input: input time series.
-        *pathAFNI: path to afni binaries.
         *TR: repetition time in s.
         *hp_freq: highpass cutoff frequency in Hz.
         *lp_freq: lowpass cutoff frequency in Hz.
@@ -40,7 +39,6 @@ def get_alff(input, pathAFNI, TR, path_output, hp_freq=0.01, lp_freq=0.08, clean
     bandpass.inputs.in_file = input
     bandpass.inputs.highpass = hp_freq
     bandpass.inputs.lowpass = lp_freq
-    bandpass.inputs.environ['PATH'] = pathAFNI
     bandpass.inputs.tr = TR
     bandpass.inputs.outputtype = 'NIFTI'
     bandpass.inputs.out_file = os.path.join(path_output,file + "_filtered.nii")
@@ -50,7 +48,6 @@ def get_alff(input, pathAFNI, TR, path_output, hp_freq=0.01, lp_freq=0.08, clean
     stddev_filtered = TStat()
     stddev_filtered.inputs.in_file = os.path.join(path_output,file + "_filtered.nii")
     stddev_filtered.inputs.args = "-stdev"
-    stddev_filtered.inputs.environ['PATH'] = pathAFNI
     stddev_filtered.inputs.outputtype = 'NIFTI'
     stddev_filtered.inputs.out_file = os.path.join(path_output,'alff.nii')
     stddev_filtered.run()
@@ -59,7 +56,6 @@ def get_alff(input, pathAFNI, TR, path_output, hp_freq=0.01, lp_freq=0.08, clean
     stddev_unfiltered = TStat()
     stddev_unfiltered.inputs.in_file = input
     stddev_unfiltered.inputs.args = "-stdev"
-    stddev_unfiltered.inputs.environ['PATH'] = pathAFNI
     stddev_unfiltered.inputs.outputtype = 'NIFTI'
     stddev_unfiltered.inputs.out_file = os.path.join(path_output,'temp.nii')
     stddev_unfiltered.run()
@@ -70,7 +66,6 @@ def get_alff(input, pathAFNI, TR, path_output, hp_freq=0.01, lp_freq=0.08, clean
     falff.inputs.in_file_b = os.path.join(path_output,'temp.nii')
     falff.inputs.args = '-float'
     falff.inputs.expr = '(1.0*a)/(1.0*b)'
-    falff.inputs.environ['PATH'] = pathAFNI
     falff.inputs.outputtype = 'NIFTI'
     falff.inputs.out_file = os.path.join(path_output,'falff.nii')
     falff.run()
