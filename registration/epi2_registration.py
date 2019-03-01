@@ -12,9 +12,12 @@ following steps:
     5. merge deformations
     6. apply deformations
 
+Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
+calling FREESURFER and ANTSENV in the terminal.
+
 created by Daniel Haenelt
 Date created: 13-02-2019
-Last modified: 18-02-2019
+Last modified: 01-03-2019
 """
 import os
 import shutil as sh
@@ -24,20 +27,15 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi_source = "/home/daniel/Schreibtisch/data/coreg_data/avg_udata.nii"
-file_mean_epi_target = "/home/daniel/Schreibtisch/data/coreg_data/avg_udata.nii"
-file_orig = "/home/daniel/Schreibtisch/data/coreg_data/orig.mgz"
-file_t1 = "/home/daniel/Schreibtisch/data/coreg_data/T1_0p7.nii"
-file_mask = "/home/daniel/Schreibtisch/data/coreg_data/skullstrip_mask.nii"
-file_orig2epi = "/home/daniel/Schreibtisch/registration_test/orig2epi.nii.gz"
-file_epi2orig = "/home/daniel/Schreibtisch/registration_test/epi2orig.nii.gz"
-path_output = "/home/daniel/Schreibtisch/registration_test2"
+file_mean_epi_source = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI2/diagnosis/mean.nii"
+file_mean_epi_target = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI1/diagnosis/mean.nii"
+file_orig = "/data/pt_01880/V2STRIPES/p7/anatomy/freesurfer/mri/orig.mgz"
+file_t1 = "/data/pt_01880/V2STRIPES/p7/anatomy/T1_0p7.nii"
+file_mask = "/data/pt_01880/V2STRIPES/p7/anatomy/skull/skullstrip_mask.nii"
+file_orig2epi = "/data/pt_01880/V2STRIPES/p7/deformation/colour/ge_epi1/orig2epi.nii.gz"
+file_epi2orig = "/data/pt_01880/V2STRIPES/p7/deformation/colour/ge_epi1/epi2orig.nii.gz"
+path_output = "/data/pt_01880/V2STRIPES/p7/deformation/colour/ge_epi2"
 cleanup = False
-
-# environments
-pathANTS = "/home/daniel/source/antsbin/bin"
-pathFREESURFER = "/usr/local/freesurfer/bin"
-pathFSL = "/usr/share/fsl/5.0/bin"
 
 # parameters for epi skullstrip
 niter_mask = 3
@@ -56,9 +54,6 @@ cost_function = 'CrossCorrelation'
 interpolation = 'Linear' 
 
 """ do not edit below """
-
-# set ANTS environments
-os.environ['PATH'] = pathANTS
 
 """
 set folder structure
@@ -100,7 +95,6 @@ path = [path_epi_source, path_epi_target]
 for i in range(len(path)):
     n4 = N4BiasFieldCorrection()
     n4.inputs.dimension = 3
-    n4.inputs.environ['PATH'] = pathANTS
     n4.inputs.input_image = os.path.join(path[i],"epi.nii")
     n4.inputs.bias_image = os.path.join(path[i],'n4bias.nii')
     n4.inputs.output_image = os.path.join(path[i],"bepi.nii")
@@ -114,7 +108,7 @@ for i in range(len(path)):
     mask_epi(os.path.join(path[i],"bepi.nii"), 
              os.path.join(path_t1,"pT1.nii"), 
              os.path.join(path_t1,"mask.nii"), 
-             niter_mask, sigma_mask, pathFSL)
+             niter_mask, sigma_mask)
 
 """
 syn
