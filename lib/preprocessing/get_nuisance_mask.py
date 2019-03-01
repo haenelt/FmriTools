@@ -1,4 +1,4 @@
-def get_nuisanc_mask(input, pathSPM, deformation, path_output, nerode_white=1, nerode_csf=1, 
+def get_nuisance_mask(input, pathSPM, deformation, path_output, nerode_white=1, nerode_csf=1, 
                      segmentation=True, cleanup=True):
     """
     This function calculates WM and CSF masks in space of the functional time series. It uses SPM
