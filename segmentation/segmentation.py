@@ -17,15 +17,14 @@ Part 1 (Run recon-all pipeline)
     *recon23
 Part 2 (Manual correction of white surface)
     *how to manually correct the white surface is explained below
-Part 3 (Finalise white surface)
-    * inward shift of white surface to counteract the bias in mp2rage data
-Part 4 (Manual correction of pial surface)
+Part 3 (Manual correction of pial surface)
     *how to manually correct the pial surface is explained below
-Part 5
+    *inward shift of white surface to counteract the bias in mp2rage data
+Part 4
     *compute upsampled surface mesh
     *compute morphological data onto upsampled surface mesh
     *compute volumetric layers
-Part 6
+Part 5
     *surface flattening of occipital patch
     *orthographic projection of flattened patch
     *visualise morphological data
@@ -69,7 +68,7 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 20-02-2019
+Last modified: 01-03-2019
 """
 import os
 import datetime
@@ -103,16 +102,16 @@ part = 3
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
 w_shift = -0.5 # white surface shift (part 3)
-niter_upsample = 1 # number of upsampling iterations (part 5)
-method_upsample = "linear" # upsampling method (part 5)
-nsurf_layer = 10 # number of equivolumetric layers (part 5)
-factor_layer = 0 # smoothing of area surfaces (part 5)
-niter_layer = 0 # number of smoothing iterations (part 5)
-imres_ortho = 0.25 # isotropic image resolution of the regular grid in mm (part 6)
-theta_ortho = [0,55] # rotation of the regular grid in deg for each hemisphere (part 6)
-alpha_ortho = 2 # alpha shape value for concave hull computation (part 6)
-buffer_ortho = 0 # smooth out of concave hull (part 6)
-sigma_map = 0.5 # isotropic smoothing of distortion data onto regular grid (part 6)
+niter_upsample = 1 # number of upsampling iterations (part 4)
+method_upsample = "linear" # upsampling method (part 4)
+nsurf_layer = 10 # number of equivolumetric layers (part 4)
+factor_layer = 0 # smoothing of area surfaces (part 4)
+niter_layer = 0 # number of smoothing iterations (part 4)
+imres_ortho = 0.25 # isotropic image resolution of the regular grid in mm (part 5)
+theta_ortho = [0,55] # rotation of the regular grid in deg for each hemisphere (part 5)
+alpha_ortho = 2 # alpha shape value for concave hull computation (part 5)
+buffer_ortho = 0 # smooth out of concave hull (part 5)
+sigma_map = 0.5 # isotropic smoothing of distortion data onto regular grid (part 5)
 
 """ do not edit below """
 
@@ -211,21 +210,8 @@ elif part == 2:
               " -expert " + os.path.join(pathEXPERT,"expert.opts") + \
               " -xopts-overwrite" + \
               " -parallel")
-
+    
 elif part == 3:
-    
-    # inward shift of final white surface and recomputation of some morphological files
-    print("Finalise white surface")
-    shift_white(path,sub,w_shift)
-    get_thickness(path,sub)
-    get_ribbon(path,sub)
-    
-    # write log
-    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
-    fileID.write("Inward shift of white surface: "+str(w_shift)+"\n")
-    fileID.close()
-    
-elif part == 4:
     
     # Convert manual corrections in pial_edit.mgz to brain.finalsurfs.manedit.mgz
     print("Create brain.finalsurfs.manedit.mgz")
@@ -241,8 +227,19 @@ elif part == 4:
               " -expert " + os.path.join(pathEXPERT,"expert.opts") + \
               " -xopts-overwrite" + \
               " -parallel")
+    
+    # inward shift of final white surface and recomputation of some morphological files
+    print("Finalise white surface")
+    shift_white(path,sub,w_shift)
+    get_thickness(path,sub)
+    get_ribbon(path,sub)
+    
+    # write log
+    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+    fileID.write("Inward shift of white surface: "+str(w_shift)+"\n")
+    fileID.close()
 
-elif part == 5:
+elif part == 4:
     
     # upsample surface mesh
     print("Upsample surface mesh")
@@ -288,7 +285,7 @@ elif part == 5:
     fileID.write("Number of smoothing iterations for layering: "+str(niter_layer)+"\n")
     fileID.close()
 
-elif part == 6:
+elif part == 5:
    
     # surface flattening
     print("Surface flattening")
