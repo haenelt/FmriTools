@@ -17,7 +17,6 @@ Part 1 (Run recon-all pipeline)
     *recon23
 Part 2 (Manual correction of white surface)
     *how to manually correct the white surface is explained below
-    *inward shift of white surface to counteract the bias in mp2rage data
 Part 3 (Manual correction of pial surface)
     *how to manually correct the pial surface is explained below
     *inward shift of white surface to counteract the bias in mp2rage data
@@ -102,7 +101,7 @@ part = 3
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
-w_shift = -0.5 # white surface shift (part 2 and 3)
+w_shift = -0.5 # white surface shift (part 3)
 niter_upsample = 1 # number of upsampling iterations (part 4)
 method_upsample = "linear" # upsampling method (part 4)
 nsurf_layer = 10 # number of equivolumetric layers (part 4)
@@ -211,17 +210,6 @@ elif part == 2:
               " -expert " + os.path.join(pathEXPERT,"expert.opts") + \
               " -xopts-overwrite" + \
               " -parallel")
-    
-    # inward shift of final white surface and recomputation of some morphological files
-    print("Finalise white surface")
-    shift_white(path,sub,w_shift)
-    get_thickness(path,sub)
-    get_ribbon(path,sub)
-    
-    # write log
-    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
-    fileID.write("Inward shift of white surface: "+str(w_shift)+"\n")
-    fileID.close()
     
 elif part == 3:
     
