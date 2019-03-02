@@ -3,7 +3,7 @@ function get_biopac_regressor(input, biopac_input, pathSPM, path_output, TR)
 % respiratory data (biopac).
 % Inputs:
     % input: input time series
-    % biopac_inpout: biopac *.mat file.
+    % biopac_input: biopac *.mat file.
     % pathSPM: path to spm toolbox.
     % path_output: path where output is saved.
     % TR: repetition time in s.
