@@ -88,5 +88,5 @@ def get_alff(input, TR, path_output, hp_freq=0.01, lp_freq=0.08, cleanup=True):
     
     # cleanup
     if cleanup:
-        os.remove(os.path.join(path,"temp.nii"))
+        os.remove(os.path.join(path_output,"temp.nii"))
         os.remove(os.path.join(path_output,file + "_filtered.nii"))
