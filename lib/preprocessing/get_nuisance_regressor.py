@@ -8,8 +8,8 @@ def get_nuisance_regressor(input, wm_mask, csf_mask, path_output):
         *path_output: path where output is saved.
 
     created by Daniel Haenelt
-    Date created:           
-    Last modified: 
+    Date created: 02-03-2019    
+    Last modified: 02-03-2019
     """
     import os
     import numpy as np
@@ -35,7 +35,7 @@ def get_nuisance_regressor(input, wm_mask, csf_mask, path_output):
         nuisance_regressor[i,1] = np.mean(func_array[:,:,:,i][csf_array == 1])
 
     # save regressor
-    np.savetxt(os.path.join(path_output,"nuisance_regressor.txt"),nuisance_regressor, '%.7e','\t')
+    np.savetxt(os.path.join(path_output,"nuisance_regressor.txt"),nuisance_regressor,'%.7e','\t')
 
     # plot regressor
     plt.figure(1, figsize=(12, 6))
