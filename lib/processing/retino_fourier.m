@@ -25,7 +25,8 @@ addpath(pathSPM);
 
 % number of dropped volumes
 drop_start = round(fix/TR) + round(mod(freq,1)*period/TR);
-drop_end = round(fix/TR);
+%drop_end = round(fix/TR);
+drop_end = 0;
 drop = sum([drop_start drop_end]);
 
 % get time series header

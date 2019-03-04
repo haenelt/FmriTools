@@ -19,7 +19,7 @@ input.pol.data.pos = '/nobackup/actinium1/haenelt/V2STRIPES/p6/retinotopy/pol_an
 input.pol.data.neg = '/nobackup/actinium1/haenelt/V2STRIPES/p6/retinotopy/pol_clock/udata.nii'; % clock
 input.pol.tr = 3; % repetition time in s
 input.pol.period = 60; % cycle period in s
-input.pol.fix = 12; % pre and post run baseline block in s
+input.pol.fix = 12; % pre run baseline block in s (post run baseline did not work)
 input.pol.freq = 8.25; % number of cycles
 input.pol.cutoff = 120; % cutoff frequency 1/cutoff in Hz
 
