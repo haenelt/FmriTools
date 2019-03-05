@@ -61,7 +61,7 @@ avg_imag = mean(all_imag,5);
 
 % mean power over all (considered) frequencies
 avg_pw = sqrt(avg_real.^2+avg_imag.^2); 
-mfs = 1:nt;
+mfs = 1:round(nt/2);
 mfs = mfs(~ismember(mfs, freq_ignored+1));
 mpw = nanmean(avg_pw(:,:,:,mfs),4); 
 mstd = nanstd(avg_pw(:,:,:,mfs),0,4);

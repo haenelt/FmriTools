@@ -27,7 +27,11 @@ freq = floor(freq);
 freq_ignored = [0:1 freq-1 freq freq+1];
 
 % define output path
-path_output = fileparts(input_real);
+[path_output, name_sess, ~] = fileparts(fileparts(input_real));
+path_output = fullfile(path_output,'results','native');
+if ~exist(path_output,'dir') 
+    mkdir(path_output); 
+end
 
 % load input
 data_img = spm_vol(input_imag); % imaginary
@@ -40,7 +44,7 @@ nt = length(data_img);
 
 % mean power over all (considered) frequencies
 pw = sqrt(data_real_array.^2+data_imag_array.^2); 
-mfs = 1:nt;
+mfs = 1:round(nt/2);
 mfs = mfs(~ismember(mfs, freq_ignored+1));
 mpw = nanmean(pw(:,:,:,mfs),4); 
 mstd = nanstd(pw(:,:,:,mfs),0,4);
@@ -62,27 +66,27 @@ pha_array = pha_array - 180;  % phases between -180 and +180
 % change NaN in background to 0
 data_real_freq_array(isnan(data_real_freq_array)) = 0;
 data_imag_freq_array(isnan(data_imag_freq_array)) = 0;
-pha_array(isnan(avg_pha)) = 0;
+pha_array(isnan(pha_array)) = 0;
 A_array(isnan(A_array)) = 0;
 F_array(isnan(F_array)) = 0;
 snr_array(isnan(snr_array)) = 0;
 
 % save niftis
 nhdr = data_img(1);
-nhdr.fname = fullfile(path_output,'real.nii');
+nhdr.fname = fullfile(path_output,['real_' name_sess '.nii']);
 spm_write_vol(nhdr,data_real_freq_array);
 
-nhdr.fname = fullfile(path_output,'imag.nii');
+nhdr.fname = fullfile(path_output,['imag_' name_sess '.nii']);
 spm_write_vol(nhdr,data_imag_freq_array);
 
-nhdr.fname = fullfile(path_output,'phase.nii');
+nhdr.fname = fullfile(path_output,['phase_' name_sess '.nii']);
 spm_write_vol(nhdr,pha_array);
 
-nhdr.fname = fullfile(path_output,'a.nii');
+nhdr.fname = fullfile(path_output,['a_' name_sess '.nii']);
 spm_write_vol(nhdr,A_array);
 
-nhdr.fname = fullfile(path_output,'f.nii');
+nhdr.fname = fullfile(path_output,['f_' name_sess '.nii']);
 spm_write_vol(nhdr,F_array);
 
-nhdr.fname = fullfile(path_output,'snr.nii');
+nhdr.fname = fullfile(path_output,['snr_' name_sess '.nii']);
 spm_write_vol(nhdr,snr_array);
