@@ -13,18 +13,18 @@
 % Last modified: 04-03-2019
 
 % input data
-input.data = '/nobackup/actinium1/haenelt/V2STRIPES/p6/retinotopy/pol_anticlock/udata.nii'; % anticlock
+input.data = '/data/pt_01880/V2STRIPES/p6/psf/multipol_14/udata.nii'; % anticlock
 input.tr = 3; % repetition time in s
-input.period = 60; % cycle period in s
+input.period = 48; % cycle period in s
 input.fix = 12; % pre run baseline block in s (post run baseline did not work)
-input.freq = 8.25; % number of cycles
-input.cutoff = 120; % cutoff frequency 1/cutoff in Hz
+input.freq = 10.5; % number of cycles
+input.cutoff = 96; % cutoff frequency 1/cutoff in Hz
 
 % add spm to path
-pathSPM = '/nobackup/actinium1/haenelt/source/spm12'; 
+pathSPM = '/data/pt_01880/source/spm12'; 
 
 % add library to path
-pathLIB = '/home/raid2/haenelt/scripts/lib';
+pathLIB = '/home/raid2/haenelt/projects/scripts/lib';
 
 %%% do not edit below %%%
 

@@ -19,19 +19,19 @@ from lib.preprocessing.get_nuisance_regressor import get_nuisance_regressor
 from lib.processing.get_alff import get_alff
 
 # input
-anatomy = "/home/daniel/Schreibtisch/data/orig.mgz" # T1w full brain anatomy
-function = "/home/daniel/Schreibtisch/data/udata.nii" # baseline uncorrected
-deformation = "/home/daniel/Schreibtisch/data/orig2epi.nii.gz" # deformation ana -> epi
-biopac_input = ""
-path_output = "/home/daniel/Schreibtisch/test_alff"
+anatomy = "/data/pt_01880/V2STRIPES/p6/anatomy/freesurfer/mri/orig.mgz" # T1w full brain anatomy
+function = "/data/pt_01880/V2STRIPES/p6/resting_state/udata.nii" # baseline uncorrected
+deformation = "/data/pt_01880/V2STRIPES/p6/deformation/resting_state/orig2epi.nii.gz" # deformation ana -> epi
+biopac_input = "/data/pt_01880/V2STRIPES/p6/resting_state/logfiles/OA7T190121.mat"
+path_output = "/data/pt_01880/V2STRIPES/p6/resting_state/alff_biopac"
 
 # add path
-pathSPM = "/home/daniel/source/spm12"
-pathLIB = "/home/daniel/projects/scripts/lib/preprocessing"
+pathSPM = "/data/pt_01880/source/spm12"
+pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
 TR = 2 # repetition time in s
-cutoff_highpass = 96 # cutoff frequency for baseline correction in 1/Hz
+cutoff_highpass = 120 # cutoff frequency for baseline correction in 1/Hz
 nerode_wm = 1 # number of wm mask eroding iterations
 nerode_csf = 1 # number of csf mask eroding iterations
 hp_freq = 0.01 # highpass cutoff frequency (bandpass filter) in Hz
@@ -39,8 +39,8 @@ lp_freq = 0.08 # lowpass cutoff frequency (bandpass filter) in Hz
 
 # analysis type
 nuisance_regression = True
-segmentation = True
-biopac = False
+segmentation = False
+biopac = True
 cleanup = True
 
 """ do not edit below """
