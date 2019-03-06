@@ -97,7 +97,7 @@ pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 3
+part = 5
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
@@ -108,7 +108,7 @@ nsurf_layer = 10 # number of equivolumetric layers (part 4)
 factor_layer = 0 # smoothing of area surfaces (part 4)
 niter_layer = 0 # number of smoothing iterations (part 4)
 imres_ortho = 0.25 # isotropic image resolution of the regular grid in mm (part 5)
-theta_ortho = [0,55] # rotation of the regular grid in deg for each hemisphere (part 5)
+theta_ortho = [0,0] # rotation of the regular grid in deg for each hemisphere (part 5)
 alpha_ortho = 2 # alpha shape value for concave hull computation (part 5)
 buffer_ortho = 0 # smooth out of concave hull (part 5)
 sigma_map = 0.5 # isotropic smoothing of distortion data onto regular grid (part 5)
@@ -341,7 +341,7 @@ elif part == 5:
                  os.path.join(path_dense,hemi[i]+".sulc"),
                  sigma_map,
                  path_ortho)
-        
+      
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
     fileID.write(namePATCH+": VAD (left, mean) -> "+str(VAD_params[0])+"\n")
