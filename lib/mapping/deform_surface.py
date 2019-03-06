@@ -36,7 +36,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
 
     # make output folder
     if not os.path.exists(path_output):
-        os.mkdir(path_output)
+        os.makedirs(path_output)
 
     # mimic freesurfer folder structure (with some additional folder for intermediate files)
     path_sub = os.path.join(path_output,sub)
@@ -117,7 +117,6 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     for i in range(len(ind_keep)):
         temp = np.where(ind_keep[i] == fac_temp)
         fac_new[temp] = i
-
 
     # write new surface
     write_geometry(os.path.join(path_surf,hemi+".transformed"), vtx_new, fac_new)
