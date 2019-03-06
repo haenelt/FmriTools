@@ -24,15 +24,17 @@ import numpy as np
 import nibabel as nb
 import matplotlib.pyplot as plt
 from nibabel.freesurfer.io import read_geometry
+from scipy.interpolate import griddata
 from lib.mapping.map2grid import map2grid
 
 # input
-input_white = "/data/pt_01880/V2STRIPES/p6/anatomy/dense/lh.white"
-input_cmap = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho/lh.occip4.patch.flat.cmap.nii"
-input_mask = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho/lh.occip4.patch.flat.mask.nii"
-input_phase = "/data/pt_01880/V2STRIPES/p6/retinotopy/avg/surf/lh.ecc_phase_avg_def_layer5.mgh"
-hemi = "lh"
-path_output = "/data/pt_01880"
+input_white = "/data/pt_01880/V2STRIPES/p6/anatomy/dense/rh.white"
+input_cmap = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho/rh.occip4.patch.flat.cmap.nii"
+input_mask = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho/rh.occip4.patch.flat.mask.nii"
+input_phase = "/data/pt_01880/V2STRIPES/p6/retinotopy/avg/surf/rh.ecc_phase_avg_def_layer5.mgh"
+hemi = "rh"
+name_patch = "occip4"
+path_output = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho"
 
 # parameters
 sigma = 20 # size of Gaussian filter
@@ -108,7 +110,7 @@ for i in range(np.shape(phase)[0]):
             temp = np.zeros(len(ind))
             temp[:] = np.NaN
             temp[ind_ind] = ind_val
-            ind = temp[~np.isnan(temp)]
+            ind = temp[~np.isnan(temp)].astype(int)
             
             # get white surface vertex coordinates of contour line
             x_white = coords[ind,0]
@@ -120,52 +122,44 @@ for i in range(np.shape(phase)[0]):
             delta_y = np.diff(y_white)
             delta_z = np.diff(z_white)
             
-            # wrong cmap at the edges indices can lead to unrealistic lengths between neighbors 
-            # which are discarded
-            temp = np.array([delta_x, delta_y, delta_z])
-            temp[0,:][np.abs(temp[0,:]) > max_distance] = 0
-            temp[1,:][np.abs(temp[0,:]) > max_distance] = 0
-            temp[2,:][np.abs(temp[0,:]) > max_distance] = 0
-            
-            temp[1,:][np.abs(temp[0,:]) > max_distance] = 0
-            temp[1,:][np.abs(temp[1,:]) > max_distance] = 0
-            temp[1,:][np.abs(temp[2,:]) > max_distance] = 0
-            
-            temp[2,:][np.abs(temp[0,:]) > max_distance] = 0
-            temp[2,:][np.abs(temp[1,:]) > max_distance] = 0
-            temp[2,:][np.abs(temp[2,:]) > max_distance] = 0
-            
-            delta_x = temp[0,:]
-            delta_y = temp[1,:]
-            delta_z = temp[2,:]
+            # wrong cmap at the edges indices may lead to unrealistic lengths between neighbors 
+            # which are discardeds
+            if np.any( np.abs(np.concatenate((delta_x, delta_y, delta_z))) > max_distance ):
+                continue
             
             # iso-eccentricity length from contour line
             D[i,j] = np.sum( np.sqrt(delta_x**2 + delta_y**2 + delta_z**2) )
         
         plt.close("all")
 
+# get undefined pixel by linear interpolation
+x, y = np.indices(D.shape)
+D_interp = np.array(D)
+
+D_interp[np.isnan(D_interp)] = griddata(
+        (x[~np.isnan(D)], y[~np.isnan(D)]), # points we know
+        D[~np.isnan(D)],                    # value we know
+        (x[np.isnan(D)], y[np.isnan(D)]),
+        "linear"
+        )
+
+# mask final distance map
+D_interp = D_interp * mask
+
 # initialize header
 empty_header = nb.Nifti1Header()
 empty_affine = np.eye(4)
 
 # write distance map
-output = nb.Nifti1Image(D, empty_affine, empty_header)
-nb.save(output, os.path.join(path_output,hemi+".iso_distance.nii"))
+output = nb.Nifti1Image(D_interp, empty_affine, empty_header)
+nb.save(output, os.path.join(path_output,hemi+"."+name_patch+".iso_distance.nii"))
 
-# get cycles per mm
-D[D == 0] = np.NaN
-cort_freq = 1 / D
-
-# write cortical frequency map
-output = nb.Nifti1Image(cort_freq, empty_affine, empty_header)
-nb.save(output, os.path.join(path_output,hemi+".cort_freq.nii"))
-            
 """
 Plot: Contours overlaid on grid
 """
 
 # load phase
-phase = map2grid(input_cmap, input_phase, 0, path_output, overwrite=False)
+phase_old = map2grid(input_cmap, input_phase, 0, path_output, overwrite=False)
 
 # get contour lines
 x1 = np.ceil(np.nanmin(phase))
@@ -184,8 +178,8 @@ fig.set_size_inches(1,1)
 ax = plt.Axes(fig,[0., 0., 1., 1.])
 ax.set_axis_off()
 fig.add_axes(ax)
-ax.imshow(phase, cmap="binary", aspect="auto")
+ax.imshow(phase_old, cmap="binary", aspect="auto")
 for i in range(len(label)):
     ax.plot(label[i][:,0],label[i][:,1], linewidth=0.25, color="r")
-fig.savefig(os.path.join(path_output,hemi+".isolines.png"), dpi=400)        
+fig.savefig(os.path.join(path_output,hemi+"."+name_patch+".isolines.png"), dpi=400)        
 plt.close('all')

@@ -4,6 +4,9 @@ Nonlinear deformation of surface to target space
 The purpose of the following script is to deform a list or surface meshs to a target space using
 a coordinate mapping.
 
+Before running the script, login to queen via ssh and set the freesurfer environment by calling 
+FREESURFER in the terminal.
+
 created by Daniel Haenelt
 Date created: 07-02-2019
 Last modified: 18-02-2019
@@ -12,32 +15,32 @@ import os
 from lib.mapping.deform_surface import deform_surface
 
 # input files
-input_surf = ["/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer0",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer1",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer2",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer3",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer4",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer5",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer6",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer7",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer8",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/lh.layer9",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer0",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer1",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer2",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer3",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer4",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer5",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer6",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer7",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer8",
-              "/home/daniel/Schreibtisch/data/sampling_data/layer/rh.layer9",
+input_surf = ["/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer0",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer1",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer2",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer3",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer4",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer5",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer6",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer7",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer8",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/lh.layer9",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer0",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer1",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer2",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer3",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer4",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer5",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer6",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer7",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer8",
+              "/data/pt_01880/V2STRIPES/p7/anatomy/layer/rh.layer9",
               ]
 
-input_orig = "/home/daniel/Schreibtisch/data/sampling_data/orig.mgz"
-input_deform = "/home/daniel/Schreibtisch/data/sampling_data/ge_epi2/epi2ana.nii.gz"
-input_target = "/home/daniel/Schreibtisch/data/sampling_data/meanudata.nii"
-path_output = "/home/daniel/Schreibtisch/surf_def"
+input_orig = "/data/pt_01880/V2STRIPES/p7/anatomy/freesurfer/mri/orig.mgz"
+input_deform = "/data/pt_01880/V2STRIPES/p7/deformation/colour/ge_epi1/epi2orig.nii.gz"
+input_target = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI1/Run_1/meanudata.nii"
+path_output = "/data/pt_01880/V2STRIPES/p7/anatomy/layer_def/colour/ge_epi1"
 
 """ do not edit below """
 
