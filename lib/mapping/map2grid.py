@@ -51,10 +51,10 @@ def map2grid(file_grid, file_input, sigma, path_output, overwrite=True):
     
     # write output data
     if overwrite:
-        if sigma != 0:
-            filenameOUT = os.path.join(path_output,os.path.splitext(os.path.basename(file_input))[0]+"_grid.nii")
+        if sigma == 0:
+            filenameOUT = os.path.join(path_output,os.path.basename(file_input)+"_grid.nii")
         else:
-            filenameOUT = os.path.join(path_output,os.path.splitext(os.path.basename(file_input)+"_sigma"+str(sigma))[0]+"_grid.nii")
+            filenameOUT = os.path.join(path_output,os.path.basename(file_input)+"_sigma"+str(sigma)+"_grid.nii")
         
         output = nb.Nifti1Image(grid_array, grid_img.affine, grid_img.header)
         nb.save(output,filenameOUT)

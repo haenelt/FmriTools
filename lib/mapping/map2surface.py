@@ -13,7 +13,7 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, inpu
             
     created by Daniel Haenelt
     Date created: 06-02-2019      
-    Last modified: 18-02-2019
+    Last modified: 06-03-2019
     """
     import os
     import numpy as np
@@ -97,11 +97,11 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, inpu
         vals_img.header["dims"][0] = len(vals_orig[:,0])
         vals_img.header["Mdc"] = np.eye(3)
         res_img = nb.Nifti1Image(vals_orig,vals_img.affine,vals_img.header)
-        nb.save(res_img,os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_def_ana.mgh"))
+        nb.save(res_img,os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_def_trans.mgh"))
     else:
         # write sampled data in epi space
         sh.copyfile(os.path.join(path_surf,hemi+"."+"sampled.mgh"),
-                    os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_def_epi.mgh"))
+                    os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_def.mgh"))
     
     # delete intermediate files
     if cleanup:

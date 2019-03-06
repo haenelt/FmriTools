@@ -85,7 +85,7 @@ matlabbatch{1}.spm.tools.physio.model.hrv.no = struct([]);
 matlabbatch{1}.spm.tools.physio.model.noise_rois.no = struct([]);
 matlabbatch{1}.spm.tools.physio.model.movement.no = struct([]);
 matlabbatch{1}.spm.tools.physio.model.other.no = struct([]);
-matlabbatch{1}.spm.tools.physio.verbose.level = 2;
+matlabbatch{1}.spm.tools.physio.verbose.level = 0; % no plots are produced to be executable with python
 matlabbatch{1}.spm.tools.physio.verbose.fig_output_file = '';
 matlabbatch{1}.spm.tools.physio.verbose.use_tabs = false;
 
