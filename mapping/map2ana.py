@@ -14,13 +14,13 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/data/pt_01880/V2STRIPES/p6/psf/results/native/f_multipol_2.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/f_multipol_4.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/f_multipol_6.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/f_multipol_8.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/f_multipol_10.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/f_multipol_12.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/f_multipol_14.nii",
+input_file = ["/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_2.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_4.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_6.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_8.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_10.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_12.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_14.nii",
               ]
 
 input_surf = ["/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer0",

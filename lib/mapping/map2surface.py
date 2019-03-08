@@ -58,7 +58,10 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, inpu
     sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
 
     # input volume file name
-    name_vol = os.path.splitext(os.path.basename(input_vol))[0]
+    if os.path.splitext(os.path.basename(input_vol))[1] == ".gz":
+        name_vol = os.path.splitext(os.path.splitext(os.path.basename(input_vol))[0])[0]
+    else:
+        name_vol = os.path.splitext(os.path.basename(input_vol))[0]
     name_surf = os.path.basename(input_surf).split('.')[1]
 
     # mri_vol2surf

@@ -1,10 +1,11 @@
 function multipol_phase(input_real, input_imag, freq, pathSPM)
 
 % This function takes the real and imaginary parts from the time series
-% fft. Similar to Dumoulin et al., 2017, we compute an approximate
-% F-statistics by taking the amplitude of the stimulation frequency and
+% fft. Similar to Dumoulin et al., 2017, we compute an coherence estimate
+% of the voxel respose at stimulus frequency by taking the amplitude and 
+% dividing it by the root mean square of the one-sided power spectrum.
+% Other measures as F-statistics are computed by taking the amplitude and 
 % dividing it by the mean amplitude of the rest of the frequency spectrum
-% excluding the offset (zero frequency) and the stimulation frequency.
 % Based on this, the voxel population can be thresholded to investigate
 % different subpopulations.
 % Inputs:
@@ -15,7 +16,7 @@ function multipol_phase(input_real, input_imag, freq, pathSPM)
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019
-% Last modified: 04-03-2019
+% Last modified: 08-03-2019
 
 % add spm to path
 addpath(pathSPM);
@@ -24,7 +25,8 @@ addpath(pathSPM);
 % freq_ignored is a vector containing the frequencies that should be
 % ignored when calculating the coherence values.
 freq = floor(freq);
-freq_ignored = [0:1 freq-1 freq freq+1];
+freq_ignored = [];
+%freq_ignored = [0:1 freq-1 freq freq+1];
 
 % define output path
 [path_output, name_sess, ~] = fileparts(fileparts(input_real));
@@ -46,6 +48,7 @@ nt = length(data_img);
 pw = sqrt(data_real_array.^2+data_imag_array.^2); 
 mfs = 1:round(nt/2);
 mfs = mfs(~ismember(mfs, freq_ignored+1));
+sumpw = sqrt(nansum(pw(:,:,:,mfs).^2,4));
 mpw = nanmean(pw(:,:,:,mfs),4); 
 mstd = nanstd(pw(:,:,:,mfs),0,4);
 
@@ -57,6 +60,7 @@ data_real_freq_array = squeeze(data_real_array(:,:,:,freq+1));
 A_array = sqrt(data_real_freq_array.^2+data_imag_freq_array.^2); % amplitude
 F_array = A_array ./ mpw * 100; % F-statistic 
 snr_array = A_array ./ mstd; % SNR
+coherence_array = A_array ./ sumpw;
 
 % transform to phases
 pha_array = atan2(data_imag_freq_array,data_real_freq_array)/pi*180; % phase in degrees
@@ -70,6 +74,7 @@ pha_array(isnan(pha_array)) = 0;
 A_array(isnan(A_array)) = 0;
 F_array(isnan(F_array)) = 0;
 snr_array(isnan(snr_array)) = 0;
+coherence_array(isnan(coherence_array)) = 0;
 
 % save niftis
 nhdr = data_img(1);
@@ -90,3 +95,6 @@ spm_write_vol(nhdr,F_array);
 
 nhdr.fname = fullfile(path_output,['snr_' name_sess '.nii']);
 spm_write_vol(nhdr,snr_array);
+
+nhdr.fname = fullfile(path_output,['c_' name_sess '.nii']);
+spm_write_vol(nhdr,coherence_array);
