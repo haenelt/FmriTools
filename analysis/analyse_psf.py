@@ -1,23 +1,9 @@
 """
 PSF estimation of multipolar phase-encoded paradigm.
 
-To DO
-
-pial data:
-    *only take highest voxels for the 2 wedge condition (take various percentiles)
-    *here, only the 2 wedge condition is used since this condition will activate all voxels, 
-    including those containing large veins, which may show no modulation for the stimuli with higher
-    spatial frequencies
-
-error estimation (for FWHM):
-    *generate pseudo random data sets
-    *according to the statistical descriptors of the real data sets
-    *mean and std of the real data set to randomly generate pseudo data sets
-    *std of the fwhm estimate from pseudo data sets was found as a measure of the error on the FWHM 
-    estimate
-
-fit:
-    *considering doing an exponential fit (Lorentzian) instead of a Gaussian
+TO DO:
+    *fit error: covariance matrix
+    *fit alternative: considering doing an exponential fit (Lorentzian) instead of a Gaussian
 
 created by Daniel Haenelt
 Date created: 08-03-2019
