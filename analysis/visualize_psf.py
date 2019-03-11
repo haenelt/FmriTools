@@ -3,7 +3,7 @@ Visualization of PSF data across cortical depth.
 
 created by Daniel Haenelt
 Date created: 08-03-2019
-Last modified: 08-03-2019
+Last modified: 11-03-2019
 """
 import os
 import numpy as np
@@ -11,31 +11,29 @@ import matplotlib.pyplot as plt
 from scipy.ndimage.filters import gaussian_filter
 
 # input
-path = "/data/pt_01880/test" # path to saved input values
+path = "/data/pt_01880/test/gaussian" # path to saved input values
 nlayer = 10 # number of layers
 apply_gaussian = True
+gaussian = True
+nsigma = 1
 
 """ do not edit below """
 
-# initialize array
-x = np.load(os.path.join(path,"x_0.npy"))
-y = np.load(os.path.join(path,"y_0.npy"))
-
 # get array
-X = x
+X = np.load(os.path.join(path,"F_out.npy"))
 Y = np.arange(nlayer-1,-1,-1)
 X, Y = np.meshgrid(X,Y)
 
 # get data
-Z = np.zeros((nlayer,len(y)))
-for i in range(nlayer):
-    Z[i,:] = 100 * np.load(os.path.join(path,"y_"+str(i)+".npy"))
+Z = 100 * np.load(os.path.join(path,"M_out.npy"))
 
+# apply gaussian filter
 if apply_gaussian:
     Z = gaussian_filter(Z, 1.0) # with sigma 1.0
 
 # figure 1 (2D plot of MTf data)
 fig = plt.figure()
+plt.rcParams["font.size"]= 10
 im = plt.pcolor(X, Y, Z,cmap='hot')
 cbar = plt.colorbar(im) # adding the colobar on the right
 cbar.set_label("Coherence value in percent")
@@ -46,14 +44,23 @@ plt.savefig(os.path.join(path,"normal_mtf.png"),dpi=100)
 plt.show()
 
 # figure 2 (1D plot of estimated PSF)
-sigma = np.zeros(nlayer)
-for i in range(nlayer):
-    sigma[i] = np.load(os.path.join(path,"sigma_"+str(i)+".npy"))
+sigma = np.load(os.path.join(path,"sigma_out.npy"))
+sigma = sigma[::-1] # reverse to get have array in WM -> CSF direction
 
-fwhm = 1/np.abs(2*np.sqrt(2*np.log(2))*sigma)
+if gaussian:
+    fwhm = 1/np.abs(2*np.sqrt(2*np.log(2))*sigma[:,0])
+    fwhm_dw = 1/np.abs(2*np.sqrt(2*np.log(2))*sigma[:,1])
+    fwhm_up = 1/np.abs(2*np.sqrt(2*np.log(2))*sigma[:,2])
+else:
+    fwhm = 2*sigma[:,0]
+    fwhm_dw = 2*sigma[:,1]
+    fwhm_up = 2*sigma[:,2]
 
-fig2 = plt.figure()
-plt.plot(fwhm[-1:0:-1])
+fig, ax = plt.subplots(1)
+plt.rcParams["font.size"]= 10
+plt.plot(fwhm, "r", lw=1)
+ax.fill_between(np.arange(0,10), fwhm_up, fwhm_dw, alpha=.25, label=str(nsigma)+"-sigma interval")
 plt.xlabel("Cortical depth (WM -> CSF)")
 plt.ylabel("FWHM in mm")
 plt.savefig(os.path.join(path,"normal_psf.png"))
+plt.legend(loc="upper left",fontsize=12, frameon=False)

@@ -1,25 +1,23 @@
 """
 PSF estimation of multipolar phase-encoded paradigm.
 
-TO DO:
-    *fit error: covariance matrix
-    *fit alternative: considering doing an exponential fit (Lorentzian) instead of a Gaussian
+The data is fitted by either a Gaussian function or an exponential decay function using the ODR
+method. Uncertainties of fit parameters are the standard method using diagonal elements of the 
+covariance matrix.
 
 created by Daniel Haenelt
 Date created: 08-03-2019
-Last modified: 08-03-2019
+Last modified: 11-03-2019
 """
 import os
 import numpy as np
 import nibabel as nb
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
-from scipy import odr
 
 # input
 path_ortho = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho"
 path_data = "/data/pt_01880/V2STRIPES/p6/psf/results/surf"
-path_output = "/data/pt_01880/test"
+path_output = "/data/pt_01880/test/gaussian"
 file_patch = "occip4"
 
 # parameters
@@ -32,6 +30,9 @@ max_percentile = 100 # maximum percentile
 layer_percentile = 0 # layer from which percentile is computed
 bin_size = 20 # number of bins
 hemi = ["lh", "rh"] # hemisphere
+gaussian = True # fit with Gaussian or with exponential decay curve
+data_length = 1000 # array length of output array
+nsigma = 1 # draw <nsigma>-sigma intervals in the output plot
 
 """ do not edit below """
 
@@ -120,10 +121,22 @@ for i in range(len(hemi)):
     
     distance.append(distance_temp2)
 
+# define model function
+def gauss(p, x):
+    beta, sigma, c = p
+    return beta * np.exp(-x**2 / (2*sigma**2)) + c
+    
+def exp_decay(p, x):
+    beta, sigma, c = p
+    return beta * np.exp(-sigma*x) + c
+
 # get MTF data for each layer
-layer = [0]
+M_out = np.zeros((len(layer),data_length))
+sigma_out = np.zeros((len(layer),3))
 for l in layer:
 
+    from scipy import odr
+    
     # get multi data and corresponding frequency
     M = np.zeros((len(cmap[0])+len(cmap[1]),len(multipol)))
     F = np.zeros((len(cmap[0])+len(cmap[1]),len(multipol)))
@@ -165,37 +178,16 @@ for l in layer:
     F_bin_mean = F_bin_mean[~np.isnan(F_bin_mean)]
     F_bin_std = F_bin_std[~np.isnan(F_bin_std)]
     
-    # gaussian fit
-    #mean = sum(F_bin_mean * M_bin_mean) / len(F_bin_mean)
-    #sigma = np.sqrt(sum(M_bin_mean * (F_bin_mean - mean)**2) / len(F_bin_mean))
-    #c = 0 
-    
-    # Define a gaussian function with offset
-    #def gauss(x, beta, sigma, c):
-    #    return beta * np.exp(-x**2 / (2*sigma**2)) + c
-    
-    def gauss(p, x):
-        beta, sigma, c = p
-        return beta * np.exp(-x**2 / (2*sigma**2)) + c
-    
-    def exp_decay(p, x):
-        beta, sigma, c = p
-        return beta * np.exp(-sigma*x) + c
-
     # create real data object
     data = odr.RealData(F_bin_mean, M_bin_mean, sx=F_bin_std, sy=M_bin_std)
-    
-        
-    gaussian = True
-    nsigma = 3 # to draw 5-sigma intervals
     
     # model object
     if gaussian:
         gauss_model = odr.Model(gauss)
-        odr = odr.ODR(data, gauss_model, beta0=[0, 1, 1]) # set up ODR with the model and data
+        odr = odr.ODR(data, gauss_model, beta0=[0, 0.1, 0.5]) # set up ODR with the model and data
     else:
         exp_model = odr.Model(exp_decay)
-        odr = odr.ODR(data, exp_model, beta0=[0, 1, 1]) 
+        odr = odr.ODR(data, exp_model, beta0=[0, 0.1, 0.5]) 
     
     # run the regression
     out = odr.run()
@@ -233,21 +225,18 @@ for l in layer:
     plt.legend(loc="upper right",fontsize=12, frameon=False)
     plt.show()
     
-    """
-    popt,pcov = curve_fit(gauss,F_bin_mean,M_bin_mean,p0=[1,sigma,c])
+    # output data
+    F_out = np.linspace(0, np.max(F_bin_mean), 1000)
+    if gaussian:
+        M_out[l,:] = gauss(popt, F_out)
+    else:
+        M_out[l,:] = exp_decay(popt, F_out)
     
-    # plot gaussian fit
-    plt.errorbar(F_bin_mean,M_bin_mean,M_bin_std,F_bin_std,'b+:',label='data')
-    plt.plot(F_bin_mean,gauss(F_bin_mean,*popt),'ro:',label='fit')
-    plt.legend()
-    plt.xlabel('Cortical frequency in cycles/mm')
-    plt.ylabel('BOLD in a.u.')
-    plt.show()
+    sigma_out[l,0] = popt[1]
+    sigma_out[l,1] = popt[1] - perr[1]
+    sigma_out[l,2] = popt[1] + perr[1]    
 
-    # save data
-    F_out = np.linspace(0,np.max(F_bin_mean),1000)
-    multi_out = gauss(F_out,*popt)
-    np.save(os.path.join(path_output,"x_"+str(l)),F_out)
-    np.save(os.path.join(path_output,"y_"+str(l)),multi_out)
-    np.save(os.path.join(path_output,"sigma_"+str(l)),popt[1])
-    """
+# save output
+np.save(os.path.join(path_output,"F_out"),F_out)
+np.save(os.path.join(path_output,"M_out"),M_out)
+np.save(os.path.join(path_output,"sigma_out"),sigma_out)
