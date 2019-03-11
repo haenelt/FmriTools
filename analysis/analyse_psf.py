@@ -28,6 +28,7 @@ import numpy as np
 import nibabel as nb
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from scipy import odr
 
 # input
 path_ortho = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho"
@@ -134,6 +135,7 @@ for i in range(len(hemi)):
     distance.append(distance_temp2)
 
 # get MTF data for each layer
+layer = [0]
 for l in layer:
 
     # get multi data and corresponding frequency
@@ -178,14 +180,74 @@ for l in layer:
     F_bin_std = F_bin_std[~np.isnan(F_bin_std)]
     
     # gaussian fit
-    mean = sum(F_bin_mean * M_bin_mean) / len(F_bin_mean)
-    sigma = np.sqrt(sum(M_bin_mean * (F_bin_mean - mean)**2) / len(F_bin_mean))
-    c = 0 
+    #mean = sum(F_bin_mean * M_bin_mean) / len(F_bin_mean)
+    #sigma = np.sqrt(sum(M_bin_mean * (F_bin_mean - mean)**2) / len(F_bin_mean))
+    #c = 0 
     
     # Define a gaussian function with offset
-    def gauss(x, beta, sigma, c):
+    #def gauss(x, beta, sigma, c):
+    #    return beta * np.exp(-x**2 / (2*sigma**2)) + c
+    
+    def gauss(p, x):
+        beta, sigma, c = p
         return beta * np.exp(-x**2 / (2*sigma**2)) + c
     
+    def exp_decay(p, x):
+        beta, sigma, c = p
+        return beta * np.exp(-sigma*x) + c
+
+    # create real data object
+    data = odr.RealData(F_bin_mean, M_bin_mean, sx=F_bin_std, sy=M_bin_std)
+    
+        
+    gaussian = True
+    nsigma = 3 # to draw 5-sigma intervals
+    
+    # model object
+    if gaussian:
+        gauss_model = odr.Model(gauss)
+        odr = odr.ODR(data, gauss_model, beta0=[0, 1, 1]) # set up ODR with the model and data
+    else:
+        exp_model = odr.Model(exp_decay)
+        odr = odr.ODR(data, exp_model, beta0=[0, 1, 1]) 
+    
+    # run the regression
+    out = odr.run()
+    
+    # print fit parameters and 1-sigma estimates
+    popt = out.beta
+    perr = out.sd_beta
+    print("fit parameter 1-sigma error")
+    print("----------")
+    for i in range(len(popt)):
+        print(str(popt[i])+" +- "+str(perr[i]))
+
+    # prepare confidence level curves
+    popt_up = popt + nsigma * perr
+    popt_dw = popt - nsigma * perr
+
+    F_bin_fit = np.linspace(min(F_bin_mean), max(F_bin_mean), 100)
+    if gaussian:
+        M_bin_fit = gauss(popt, F_bin_fit)
+        M_bin_fit_up = gauss(popt_up, F_bin_fit)
+        M_bin_fit_dw= gauss(popt_dw, F_bin_fit)
+    else:
+        M_bin_fit = exp_decay(popt, F_bin_fit)
+        M_bin_fit_up = exp_decay(popt_up, F_bin_fit)
+        M_bin_fit_dw= exp_decay(popt_dw, F_bin_fit)
+
+    # plot
+    fig, ax = plt.subplots(1)
+    plt.rcParams["font.size"]= 10
+    plt.errorbar(F_bin_mean, M_bin_mean, yerr=M_bin_std, xerr=F_bin_std, hold=True, ecolor="k", fmt="none", label="data", elinewidth=1)
+    plt.xlabel("Cortical frequency in cycles/mm", fontsize=12)
+    plt.ylabel("Coherence value", fontsize=12)
+    plt.plot(F_bin_fit, M_bin_fit, "r", lw=1, label="best fit curve")
+    ax.fill_between(F_bin_fit, M_bin_fit_up, M_bin_fit_dw, alpha=.25, label=str(nsigma)+"-sigma interval")
+    plt.legend(loc="upper right",fontsize=12, frameon=False)
+    plt.show()
+    
+    """
     popt,pcov = curve_fit(gauss,F_bin_mean,M_bin_mean,p0=[1,sigma,c])
     
     # plot gaussian fit
@@ -202,3 +264,4 @@ for l in layer:
     np.save(os.path.join(path_output,"x_"+str(l)),F_out)
     np.save(os.path.join(path_output,"y_"+str(l)),multi_out)
     np.save(os.path.join(path_output,"sigma_"+str(l)),popt[1])
+    """
