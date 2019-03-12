@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from scipy.ndimage.filters import gaussian_filter
 
 # input
-path = "/data/pt_01880/test/gaussian" # path to saved input values
+path = "/data/pt_01880/test" # path to saved input values
 nlayer = 10 # number of layers
 apply_gaussian = True
 gaussian = True

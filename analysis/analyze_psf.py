@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 # input
 path_ortho = "/data/pt_01880/V2STRIPES/p6/anatomy/ortho"
 path_data = "/data/pt_01880/V2STRIPES/p6/psf/results/surf"
-path_output = "/data/pt_01880/test/gaussian"
+path_output = "/data/pt_01880/test"
 file_patch = "occip4"
 
 # parameters
