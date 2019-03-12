@@ -1,3 +1,4 @@
+from .analysis import *
 from .cmap import *
 from .img import *
 from .io import *
