@@ -14,39 +14,33 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_2.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_4.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_6.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_8.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_10.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_12.nii",
-              "/data/pt_01880/V2STRIPES/p6/psf/results/native/c_multipol_14.nii",
+input_file = ["/data/pt_01880/V2STRIPES/p2/colour/results/spmT/native/spmT_colour_bw_GE_EPI2.nii",
               ]
 
-input_surf = ["/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer0",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer1",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer2",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer3",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer4",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer5",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer6",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer7",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer8",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer9",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer0",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer1",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer2",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer3",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer4",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer5",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer6",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer7",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer8",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer9",
+input_surf = ["/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer0",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer1",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer2",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer3",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer4",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer5",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer6",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer7",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer8",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer9",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer0",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer1",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer2",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer3",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer4",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer5",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer6",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer7",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer8",
+	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer9",
         ]
 
-deformation = "/data/pt_01880/V2STRIPES/p6/deformation/multipol/epi2orig.nii.gz"
-path_output = "/data/pt_01880/V2STRIPES/p6/psf/results/"
+deformation = "/data/pt_01880/V2STRIPES/p2/deformation/GE_EPI2/epi2ana.nii.gz"
+path_output = "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/color/ge_epi2"
 
 """ do not edit below """
 

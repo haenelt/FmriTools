@@ -15,16 +15,16 @@
 % Last modified: 18-02-2019
 
 % input data
-input.pol.data.pos = '/nobackup/actinium1/haenelt/V2STRIPES/p6/retinotopy/pol_anticlock/udata.nii'; % anticlock
-input.pol.data.neg = '/nobackup/actinium1/haenelt/V2STRIPES/p6/retinotopy/pol_clock/udata.nii'; % clock
+input.pol.data.pos = '/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/pollet_anticlock/udata.nii'; % anticlock
+input.pol.data.neg = '/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/pollet_clock/udata.nii'; % clock
 input.pol.tr = 3; % repetition time in s
 input.pol.period = 60; % cycle period in s
 input.pol.fix = 12; % pre run baseline block in s (post run baseline did not work)
 input.pol.freq = 8.25; % number of cycles
 input.pol.cutoff = 120; % cutoff frequency 1/cutoff in Hz
 
-input.ecc.data.pos = '/nobackup/actinium1/haenelt/V2STRIPES/p6/retinotopy/ecc_expanding/udata.nii'; % expanding
-input.ecc.data.neg = '/nobackup/actinium1/haenelt/V2STRIPES/p6/retinotopy/ecc_contracting/udata.nii'; % contracting
+input.ecc.data.pos = '/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/ecclet_expanding/udata.nii'; % expanding
+input.ecc.data.neg = '/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/ecclet_contracting/udata.nii'; % contracting
 input.ecc.tr = 3;
 input.ecc.period = 36;
 input.ecc.fix = 12;
@@ -32,10 +32,10 @@ input.ecc.freq = 8.25;
 input.ecc.cutoff = 72;
 
 % add spm to path
-pathSPM = '/nobackup/actinium1/haenelt/source/spm12'; 
+pathSPM = '/data/pt_01880/source/spm12'; 
 
 % add library to path
-pathLIB = '/home/raid2/haenelt/scripts/lib';
+pathLIB = '/home/raid2/haenelt/projects/scripts/lib/';
 
 %%% do not edit below %%%
 
