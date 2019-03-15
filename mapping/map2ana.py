@@ -14,33 +14,20 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/data/pt_01880/V2STRIPES/p2/colour/results/spmT/native/spmT_colour_bw_GE_EPI2.nii",
+input_file = ["/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/ecc_imag_avg.nii",
+              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/ecc_phase_avg.nii",
+              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/ecc_real_avg.nii",
+              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/pol_imag_avg.nii",
+              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/pol_phase_avg.nii",
+              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/pol_real_avg.nii",
               ]
 
-input_surf = ["/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer0",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer1",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer2",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer3",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer4",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer5",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer6",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer7",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer8",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/lh.layer9",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer0",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer1",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer2",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer3",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer4",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer5",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer6",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer7",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer8",
-	      "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/layer/rh.layer9",
+input_surf = ["/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/smri/mp2rage/2.0-analysis/5.0-surface/freesurfer/surf/lh.mid",
+	      "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/smri/mp2rage/2.0-analysis/5.0-surface/freesurfer/surf/rh.mid",
         ]
 
-deformation = "/data/pt_01880/V2STRIPES/p2/deformation/GE_EPI2/epi2ana.nii.gz"
-path_output = "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p2/color/ge_epi2"
+deformation = "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/deformation/epi2orig.nii.gz"
+path_output = "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg"
 
 """ do not edit below """
 
