@@ -38,7 +38,7 @@ def filter_bold_2d(nx, ny, fovx, fovy, fwhm, beta):
     sigma = fwhm / ( 2*np.sqrt(2*np.log(2)) )
     
     F = beta * np.exp( -2 * np.pi**2 * sigma**2 * k_r**2 )
-
+    
     # shift zero k-space line to the left border to match the numpy fft convention
     F = fftshift(F)
     
