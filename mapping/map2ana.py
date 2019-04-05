@@ -1,8 +1,8 @@
 """
 Map2ana
 
-The purpose of the following script is to sample a registered volume to its corresponding surface
-mesh.
+The purpose of the following script is to apply the epi2ana registration and map the registered 
+volume to its corresponding surface mesh.
 
 created by Daniel Haenelt
 Date created: 06-03-2019            
@@ -14,20 +14,21 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/ecc_imag_avg.nii",
-              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/ecc_phase_avg.nii",
-              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/ecc_real_avg.nii",
-              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/pol_imag_avg.nii",
-              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/pol_phase_avg.nii",
-              "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg/native/pol_real_avg.nii",
+input_file = ["/data/pt_01880/V2STRIPES/p6/psf/results/native/phase_multipol_2.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/phase_multipol_4.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/phase_multipol_6.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/phase_multipol_8.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/phase_multipol_10.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/phase_multipol_12.nii",
+              "/data/pt_01880/V2STRIPES/p6/psf/results/native/phase_multipol_14.nii",
               ]
 
-input_surf = ["/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/smri/mp2rage/2.0-analysis/5.0-surface/freesurfer/surf/lh.mid",
-	      "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/smri/mp2rage/2.0-analysis/5.0-surface/freesurfer/surf/rh.mid",
+input_surf = ["/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer5",
+              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer5",
         ]
 
-deformation = "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/deformation/epi2orig.nii.gz"
-path_output = "/nobackup/eminem2/attar/3T_Connectom/pilot/subj-03/fmri/retinotopy/avg"
+deformation = "/data/pt_01880/V2STRIPES/p6/deformation/multipol/epi2orig.nii.gz"
+path_output = "/data/pt_01880/V2STRIPES/p6/psf/results"
 
 """ do not edit below """
 
