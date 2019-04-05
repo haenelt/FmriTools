@@ -22,7 +22,10 @@ def get_tsnr(input, path_output, name_output, TR, cutoff_highpass, pathSPM):
         os.makedirs(path_output)
 
     # change to lib folder
-    os.chdir("./lib")
+    path_baseline_func = os.path.realpath(__file__)
+    path_baseline_func = os.path.dirname(os.path.dirname(path_baseline_func))
+    path_baseline_func = os.path.join(path_baseline_func,"preprocessing")
+    os.chdir(path_baseline_func)
     
     # prepare path and filename
     path = os.path.split(input)[0]
@@ -53,5 +56,5 @@ def get_tsnr(input, path_output, name_output, TR, cutoff_highpass, pathSPM):
     data_img.header["dim"][4] = 1
     data_img.header["pixdim"][3] = 1
     
-    data_img = nb.Nifti1Image(data_tsnr_array, data_img.ffine, data_img.header)
+    data_img = nb.Nifti1Image(data_tsnr_array, data_img.affine, data_img.header)
     nb.save(data_img, os.path.join(path_output,"tsnr"+name_output+".nii"))
