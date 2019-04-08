@@ -20,10 +20,10 @@ from lib.processing.get_alff import get_alff
 
 # input
 anatomy = "" # T1w full brain anatomy (e.g. orig)
-function = "/nobackup/actinium2/haenelt/ForOthers/AlffLuke/eyes_closed/uS9_ep2d_bold_sine_676b_eyes_closed.nii" # baseline uncorrected
+function = "/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess4/uep2d_bold_sine_676b_11_100.nii" # baseline uncorrected
 deformation = "" # deformation ana -> epi
 biopac_input = "" # *.mat file
-path_output = "/nobackup/actinium2/haenelt/ForOthers/AlffLuke/eyes_closed/alff"
+path_output = "/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess4/alff"
 
 # add path
 pathSPM = "/data/pt_01880/source/spm12"

@@ -27,8 +27,10 @@
 
 % input time series
 img_input = {
-    '/nobackup/actinium2/haenelt/ForOthers/AlffLuke/eyes_open/S7_ep2d_bold_sine_676b.nii',...
-    '/nobackup/actinium2/haenelt/ForOthers/AlffLuke/eyes_closed/S9_ep2d_bold_sine_676b_eyes_closed.nii',...
+    '/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess1/ep2d_bold_sine_676b_8_110.nii',...
+    '/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess2/ep2d_bold_sine_676b_9_47.nii',...
+    '/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess3/ep2d_bold_sine_676b_10_105.nii',...
+    '/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess4/ep2d_bold_sine_676b_11_100.nii',...
     };
 
 % input fieldmap
@@ -40,7 +42,7 @@ pathSPM = '/data/pt_01880/source/spm12';
 
 % slice timing parameters
 slice_timing = false; % run slice timing correction
-TR = 2; % repetition time in s
+TR = 3; % repetition time in s
 slice_order = 'descending'; % slice ordering (ascending or descending)
 
 % fieldmap parameters
@@ -51,8 +53,8 @@ fmap_blipdir = 1; % phase-encoding direction
 fmap_BandwidthPerPixelPhaseEncode = 20.27; % phase-encoding bandwidth Hz/px
 
 % outlier parameters
-moco_out_mm_short = 0.8; % in mm
-moco_out_mm_long = 1.6; % in mm
+moco_out_mm_short = 1.0; % in mm
+moco_out_mm_long = 2.0; % in mm
 moco_out_rad_short = 0.1; % in rad
 moco_out_rad_long = 0.2; % in rad
 int_out_z = 2; % in z-score
