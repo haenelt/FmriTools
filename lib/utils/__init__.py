@@ -1,6 +1,7 @@
 from .get_mean import get_mean
 from .get_std import get_std
 from .get_tsnr import get_tsnr
+from .get_laminar_profile import get_laminar_profile
 from .multiply_images import multiply_images
 from .volume_threshold import volume_threshold
 from .get_gaussian import get_gaussian
