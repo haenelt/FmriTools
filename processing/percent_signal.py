@@ -53,6 +53,7 @@ cond_input = ["/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_1/logfil
 
 # path to SPM12 folder
 pathSPM = "/nobackup/actinium1/haenelt/source/spm12"
+pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
 TR = 2 # repetition time in s
@@ -65,7 +66,7 @@ use_z_score = False
 """ do not edit below """
 
 # change to lib folder
-os.chdir("./preprocessing")
+os.chdir(pathLIB)
 
 # prepare path and filename
 path = []
