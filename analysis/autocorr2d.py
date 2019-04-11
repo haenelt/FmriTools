@@ -22,28 +22,6 @@ path_output = "/home/raid2/haenelt/Desktop/ismrm_workshop_analysis/p6/grid"
 data_img = nb.load(input)
 data_array = data_img.get_fdata()
 
-# get autocorrelation and FFT for each slice
-data_corr = np.zeros_like(data_array)
-data_fft = np.zeros_like(data_array)
-for i in range(np.size(data_array,2)):
-    data1 = ( data_array[:,:,i] - np.mean(data_array[:,:,i]) ) / ( np.std(data_array[:,:,i]) *np.shape(data_array)[0]*np.shape(data_array)[1] ) 
-    data2 = ( data_array[:,:,i] - np.mean(data_array[:,:,i]) ) / ( np.std(data_array[:,:,i]) ) 
-    data_corr[:,:,i] = correlate2d(data1,data2,mode='same',boundary='fill',fillvalue=0)
-    data_fft[:,:,i] = np.abs(fftshift(fft2(data_array[:,:,i])))
-    
-# write output
-filenameOUT = os.path.join(path_output,os.path.splitext(os.path.basename(input))[0]+'_corr.nii')
-data_img.header["dim"][0] = 2
-data_img.header["dim"][3] = 1
-output = nb.Nifti1Image(data_corr, data_img.affine, data_img.header)
-nb.save(output,filenameOUT)
-
-filenameOUT = os.path.join(path_output,os.path.splitext(os.path.basename(input))[0]+'_fft.nii')
-data_img.header["dim"][0] = 2
-data_img.header["dim"][3] = 1
-output = nb.Nifti1Image(data_fft, data_img.affine, data_img.header)
-nb.save(output,filenameOUT)
-
 #%%
 
 # get contour of central peak
