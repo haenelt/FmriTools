@@ -13,15 +13,15 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/data/pt_01880/V2STRIPES/p6/tsnr.nii",
+input_file = ["/home/raid2/haenelt/Desktop/tsnrresting_state_tsnr.nii",
               ]
 
 input_surf = ["/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer5",
               "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer5",
         ]
 
-deformation = "/data/pt_01880/V2STRIPES/p6/deformation/colour/ge_epi1/epi2ana.nii.gz"
-path_output = "/data/pt_01880/V2STRIPES/p6"
+deformation = "/data/pt_01880/V2STRIPES/p6/deformation/resting_state/epi2orig.nii.gz"
+path_output = "/home/raid2/haenelt/Desktop"
 
 """ do not edit below """
 
