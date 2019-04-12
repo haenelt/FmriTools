@@ -1,8 +1,10 @@
 def get_pca(input, n_iter=10, fft_threshold=0.25):
     """
-    This function computes the principal axis from the thresholded fourier spectrum of an input 
-    array. The axes are computed by computing the eigenvectors from the momemts of inertia matrix
-    of the thresholded spectrum.
+    This function computes the principal axes from the thresholded fourier spectrum of an input 
+    array. They are found by estimating the eigenvectors of the moments of inertia matrix I wich is
+    defined by I = sum_i=0^N ( y_i^2 & -x_iy_i \\ -x_iy_i & x_i^2 ). x_i and y_i are the coordinates
+    of the remaining points of the thresholded Fourier spectrum. This procedure mainly follows Borri 
+    et al. (2016).
     Inputs:
         *input: input array.
         *n_iter: numer of iterations for fft normalization.
