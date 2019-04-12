@@ -25,20 +25,23 @@ def get_fft(input, write_output=False, path_output="", name_output="", normaliza
     from numpy.fft import fft2, fftshift
     from numpy.random import shuffle
     
+    # copy input data
+    data = input.copy()
+    
     # compute autocorrelation
-    array_fft = np.abs(fftshift(fft2(input)))
+    array_fft = np.abs(fftshift(fft2(data)))
 
     shuffle_mean = []
     if normalization is True:
         for i in range(N):
             # shuffle input array
-            shuffle(input) # shuffle along first axis
-            input = input.T # transpose array
-            shuffle(input) # shuffle along second axis
-            input = input.T            
+            shuffle(data) # shuffle along first axis
+            data = data.T # transpose array
+            shuffle(data) # shuffle along second axis
+            data = data.T            
         
             # get fft
-            array_shuffle_fft = np.abs(fftshift(fft2(input)))
+            array_shuffle_fft = np.abs(fftshift(fft2(data)))
             
             # get 50th percentile
             shuffle_mean.append(np.percentile(array_shuffle_fft,50))
