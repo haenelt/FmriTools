@@ -1,6 +1,6 @@
 def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100, rho=0.5, delta=0.3, 
-           epsilon=0.4, theta=0, alpha=4, beta=0.05, fwhm_bold=1.02, fwhm_noise=0.001, 
-           path_white=False):
+           epsilon=0.4, theta=0, alpha=4, beta=0.05, fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000,
+           b_mask=1000, alpha_mask=0, path_white=False):
     """
     This function generates realistic ocular dominance patterns according to the model proposed by
     Rojer and Schwartz (1990) in 2D. Implementation follows (Chaimow et al., 2011) and most of the 
@@ -25,6 +25,9 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100, r
         *beta: maximal BOLD response corresponding to neural response of 1.
         *fwhm_bold: BOLD point-spread width in mm.
         *fwhm_noise: measurement noise of BOLD response.
+        *a_mask: major axis of elliptical mask.
+        *b_mask: minor axis of elliptical mask.
+        *alpha_mask: rotational angle of elliptical mask.
         *path_white: path to existing white noise image.
     Outputs:
         *white_img: initial white noise pattern.
@@ -45,6 +48,7 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100, r
     from lib.simulation.filter_odc import filter_odc_2d
     from lib.simulation.filter_sigmoid import filter_sigmoid
     from lib.simulation.filter_bold import filter_bold_2d
+    from lib.simulation.mask_pattern import mask_pattern_2d
 
     # get white noise
     if path_white:
@@ -82,10 +86,17 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100, r
 
     ymri_img = np.real(ifft2(ymri_fft))
     
+    # mask voxel sampling
+    ymri_img = ymri_img * mask_pattern_2d(np.shape(ymri_img)[0], 
+                                          np.shape(ymri_img)[1], 
+                                          a_mask,
+                                          b_mask,
+                                          alpha_mask)
+    
     return white_img, odc_img, y_img, ymri_img, F_odc_fft, F_bold_fft
 
 def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4, beta=0.05, fwhm_bold=1.02, 
-           fwhm_noise=0.001, path_white=False):
+           fwhm_noise=0.001, a_mask=1000, b_mask=1000, path_white=False):
     """
     This function generates realistic ocular dominance patterns according to the model proposed by
     Rojer and Schwartz (1990) in 1D. The rest follows similar to the ODC generation in 2D.
@@ -99,6 +110,8 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4, beta=0.05
         *beta: maximal BOLD response corresponding to neural response of 1.
         *fwhm_bold: BOLD point-spread width in mm.
         *fwhm_noise: measurement noise of BOLD response.
+        *a_mask: left side length of mask.
+        *b_mask: right side length of mask.
         *path_white: path to existing white noise image.
     Outputs:
         *white_img: initial white noise pattern.
@@ -123,6 +136,7 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4, beta=0.05
     from lib.simulation.filter_odc import filter_odc_1d
     from lib.simulation.filter_sigmoid import filter_sigmoid
     from lib.simulation.filter_bold import filter_bold_1d
+    from lib.simulation.mask_pattern import mask_pattern_1d
     
     # get white noise
     if path_white:
@@ -156,5 +170,8 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4, beta=0.05
     ymri_fft[-1:-k_sample-1:-1] = y_fft[-1:-k_sample-1:-1] 
 
     ymri_img = np.real(ifft(ymri_fft))
+    
+    # mask voxel sampling
+    ymri_img = ymri_img * mask_pattern_1d(len(ymri_img), a_mask, b_mask)
     
     return white_img, odc_img, y_img, ymri_img, F_odc_fft, F_bold_fft

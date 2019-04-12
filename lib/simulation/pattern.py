@@ -1,6 +1,6 @@
 def pattern_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100, omega_x=0.5,
                omega_y=0.5, phi_x=0, phi_y=0, theta=0, rect_shape=True, beta=0.05, fwhm_bold=1.02, 
-               fwhm_noise=0.001):
+               fwhm_noise=0.001, a_mask=1000, b_mask=1000, alpha_mask=0):
     """
     This function geometrical stripe pattern in 2D. The rest is similar to the ODC pattern 
     generation.
@@ -20,6 +20,9 @@ def pattern_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=10
         *beta: maximal BOLD response corresponding to neural response of 1.
         *fwhm_bold: BOLD point-spread width in mm.
         *fwhm_noise: measurement noise of BOLD response.
+        *a_mask: major axis of elliptical mask.
+        *b_mask: minor axis of elliptical mask.
+        *alpha_mask: rotational angle of elliptical mask.
     Outputs:
         *pattern_img: neural map.
         *y_img: BOLD response with measurement noise.
@@ -34,6 +37,7 @@ def pattern_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=10
     from numpy.fft import fft2, ifft2
     from lib.simulation.get_white import get_white_2d
     from lib.simulation.filter_bold import filter_bold_2d
+    from lib.simulation.mask_pattern import mask_pattern_2d
 
     # generate geometrical pattern
     x = np.linspace(0,FOVx,Nx_sim)
@@ -84,10 +88,17 @@ def pattern_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=10
 
     ymri_img = np.real(ifft2(ymri_fft))
     
+    # mask voxel sampling
+    ymri_img = ymri_img * mask_pattern_2d(np.shape(ymri_img)[0], 
+                                          np.shape(ymri_img)[1], 
+                                          a_mask,
+                                          b_mask,
+                                          alpha_mask)
+    
     return pattern_img, y_img, ymri_img, F_bold_fft
 
 def pattern_1d(N_sim=1024, FOV=20, N_mri=100, omega=0.5, phi=0, rect_shape=True, beta=0.05, 
-               fwhm_bold=1.02, fwhm_noise=0.001):
+               fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, b_mask=1000):
     """
     This function geometrical stripe pattern in 1D. The rest is similar to the stripe pattern 
     generation in 2D.
@@ -102,6 +113,8 @@ def pattern_1d(N_sim=1024, FOV=20, N_mri=100, omega=0.5, phi=0, rect_shape=True,
         *beta: maximal BOLD response corresponding to neural response of 1.
         *fwhm_bold: BOLD point-spread width in mm.
         *fwhm_noise: measurement noise of BOLD response.
+        *a_mask: left side length of mask.
+        *b_mask: right side length of mask.
     Outputs:
         *pattern_img: neural map.
         *y_img: BOLD response with measurement noise.
@@ -120,6 +133,7 @@ def pattern_1d(N_sim=1024, FOV=20, N_mri=100, omega=0.5, phi=0, rect_shape=True,
     from numpy.fft import fft, ifft
     from lib.simulation.get_white import get_white_1d
     from lib.simulation.filter_bold import filter_bold_1d
+    from lib.simulation.mask_pattern import mask_pattern_1d
 
     # generate geometrical pattern
     x = np.linspace(0,FOV,N_sim)
@@ -153,5 +167,8 @@ def pattern_1d(N_sim=1024, FOV=20, N_mri=100, omega=0.5, phi=0, rect_shape=True,
     ymri_fft[-1:-k_sample-1:-1] = y_fft[-1:-k_sample-1:-1] 
 
     ymri_img = np.real(ifft(ymri_fft))
+    
+    # mask voxel sampling
+    ymri_img = ymri_img * mask_pattern_1d(len(ymri_img), a_mask, b_mask)
     
     return pattern_img, y_img, ymri_img, F_bold_fft

@@ -1,3 +1,5 @@
+from .mask_pattern import mask_pattern_2d
+from .mask_pattern import mask_pattern_1d
 from .filter_bold import filter_bold_2d
 from .filter_bold import filter_bold_1d
 from .filter_odc import filter_odc_2d

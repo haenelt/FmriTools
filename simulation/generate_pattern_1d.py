@@ -29,11 +29,15 @@ beta = 1
 fwhm_bold = 0
 fwhm_noise = 0
 
+a = 1000
+b = 1000
+
 """
 Generate pattern
 """
 
-neural, bold, mri, _ = pattern_1d(N_sim, FOV, N_mri, omega, phi, rect_shape, beta, fwhm_bold, fwhm_noise)
+neural, bold, mri, _ = pattern_1d(N_sim, FOV, N_mri, omega, phi, rect_shape, beta, fwhm_bold, 
+                                  fwhm_noise, a, b)
 
 """
 Plot
