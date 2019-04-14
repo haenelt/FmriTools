@@ -1,7 +1,7 @@
 def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=1000):
     """
-    This function blas computes the normalized autocorrelation (NAC) from a 2D input array and
-    estimates the width of the central peak and the distance to its first neighbor peak along two
+    This function computes the normalized autocorrelation (NAC) from a 2D input array and estimates 
+    the width of the central peak and the distance to its first neighbor peak along a defined 
     projection lines sampled with nearest neighbor interpolation.
     Inputs:
         *input: input array (2D).
@@ -11,13 +11,13 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
         *yv: y-coordinate of pca eigenvector.
         *p_min: minimum prominence for peak detection.
         *p_max: maximum prominence for peak detection.
-        *nsample: number of sampling point along projection line.
+        *nsample: number of sampling points along projection line.
     Outputs:
         *fwhm_central: fwhm of nac central peak in mm along projection axis.
         *P_neighbor: power of first neighbor peak along projection axis.
         *d_neighbor: distance to first neighbor peak in mm along projection axis.
         *d: lag in mm along projection axis.
-        *acorr_line: nac long projection axis.
+        *acorr_line: nac along projection axis.
         
     created by Daniel Haenelt
     Date created: 14-04-2019
@@ -40,8 +40,8 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     y = (fovy/2)*np.linspace(-1,1,y_size)
     x_mesh, y_mesh = np.meshgrid(x,y)
 
-    # plot projection line from pca eigenvector. Because of nearest neighbor interpolation, the axis 
-    # vector end point is <size>-1. The number of samples is hard coded.
+    # get projection line coordinates from pca eigenvector. Because we interpolate using nearest
+    # neighbors the axis enc point is <size>-1. 
     if np.abs(xv) < np.abs(yv):
         y_line = np.linspace(0,y_size-1,nsample)
         x_line = xv / yv * y_line + y_size/2
@@ -54,16 +54,18 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     xx_line = x_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
     yy_line = y_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
     
+    # get final distances
     d = np.sqrt(xx_line**2 + yy_line**2)
     
-    # get minimum
+    # get minimum to shift mid point to origin
     d_min = np.argwhere(np.min(d) == d)
     
     if np.size(d_min) > 1:
-        d_min = np.asscalar(d_min[1])
+        d_min = int(d_min[-1])
     else:
-        d_min = np.asscalar(d_min)
+        d_min = int(d_min)
     
+    # all coordinates left from origin get negative signs
     d[:d_min] = -d[:d_min]
         
     # get autocorrelation
@@ -73,18 +75,17 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     # fwhm
     acorr_line_max = np.argwhere(np.max(acorr_line) == acorr_line)
     if np.size(acorr_line_max) > 1:
-        acorr_line_max = np.asscalar(acorr_line_max[0])
+        acorr_line_max = int(acorr_line_max[0])
     else:
-        acorr_line_max = np.asscalar(acorr_line_max)
+        acorr_line_max = int(acorr_line_max)
     
     acorr_line_middle = acorr_line.copy()
     acorr_line_middle[acorr_line_middle > 0.5] = 0
     acorr_line_middle = np.argwhere(np.max(acorr_line_middle) == acorr_line_middle)
-    
     if np.size(acorr_line_middle) > 1:
-        acorr_line_middle = np.asscalar(acorr_line_middle[0])
+        acorr_line_middle = int(acorr_line_middle[0])
     else:
-        acorr_line_middle = np.asscalar(acorr_line_middle)
+        acorr_line_middle = int(acorr_line_middle)
 
     fwhm_central = 2*np.abs(d[acorr_line_max] - d[acorr_line_middle])
     
@@ -99,10 +100,9 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
         peak_temp = np.abs(peak_temp)
         peak_temp = peak_temp.astype(float)
         peak_temp[peak_temp == 0] = np.NaN
-        peak_temp = np.asscalar(np.argwhere(np.nanmin(peak_temp) == peak_temp)[0])
+        peak_temp = int(np.argwhere(np.nanmin(peak_temp) == peak_temp)[0])
     
-        d_neighbor_temp = peak[peak_temp]
-        P_neighbor = acorr_line[d_neighbor_temp]
-        d_neighbor = np.abs(d[acorr_line_max] - d[d_neighbor_temp])
+        P_neighbor = acorr_line[peak[peak_temp]]
+        d_neighbor = np.abs(d[acorr_line_max] - d[peak[peak_temp]])
     
     return fwhm_central, d_neighbor, P_neighbor, d, acorr_line

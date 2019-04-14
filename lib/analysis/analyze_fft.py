@@ -1,8 +1,7 @@
 def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
     """
     This function computes the peak frequency and its corresponding power from a one-sided power 
-    spectrum sampled on two projection lines (major and minor axes) with nearest neighbor 
-    interpolation from a 2D array.
+    spectrum sampled on a projection lines of a 2d array using nearest neighbor interpolation.
     Inputs:
         *input: input array (2D).
         *fovx: field of view in x-direction (mm).
@@ -39,10 +38,8 @@ def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
     ky = np.linspace(-1,1,y_size)*(y_size/(2*fovy))
     kx_mesh, ky_mesh = np.meshgrid(kx,ky)
 
-    # plot projection line from pca eigenvector. Because of nearest neighbor interpolation, the axis 
-    # vector end point is <size>-1. The number of samples is hard coded.
-    # get spatial frequency projection lines of major and minor axes from pca eigenvectors. The 
-    # number of samples is hard coded.
+    # get projection line coordinates from pca eigenvector. Because we interpolate using nearest
+    # neighbors the axis enc point is <size>-1. 
     if np.abs(xv) < np.abs(yv):
         y_line = np.linspace(0,y_size-1,nsample)
         x_line = xv / yv * y_line + y_size/2
@@ -55,16 +52,15 @@ def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
     kxx_line = kx_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
     kyy_line = ky_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
    
-
-    # get final k axes
+    # get final k-axis
     k_line = np.sqrt(kxx_line**2 + kyy_line**2)
-    
+
+    # get fourier spectrum    
     array_fft = get_fft(input)
     fft_line = array_fft[np.round(y_line).astype(int),np.round(x_line).astype(int)]
     
     # get one-sided spectrum
-    arg_null = np.asscalar(np.argwhere(k_line==np.min(k_line))[-1])
-
+    arg_null = int(np.argwhere(k_line==np.min(k_line))[-1])
     fft_line = fft_line[arg_null:]
     k_line = k_line[arg_null:]
        
@@ -77,8 +73,8 @@ def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
     if len(peak) < 1:
         P_max = np.nan
         k_max = np.nan
-    else:    
-        P_max = np.asscalar(fft_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))]])
-        k_max = np.asscalar(k_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))]])
+    else:        
+        P_max = fft_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))[0]]]
+        k_max = k_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))[0]]]
     
     return k_max, P_max, k_line, fft_line
