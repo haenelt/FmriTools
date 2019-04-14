@@ -1,48 +1,55 @@
-def analyze_acorr(input, fovx, fovy, xv, yv, prominence_min=0.01, prominence_max=None):
+def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=1000):
     """
     This function blas computes the normalized autocorrelation (NAC) from a 2D input array and
     estimates the width of the central peak and the distance to its first neighbor peak along two
-    projection lines.
+    projection lines sampled with nearest neighbor interpolation.
     Inputs:
         *input: input array (2D).
         *fovx: field of view in x-direction (mm).
         *fovy: field of view in y-firection (mm).
         *xv: x-coordinate of pca eigenvector.
         *yv: y-coordinate of pca eigenvector.
-        *prominence_min: minimum prominence for peak detection.
-        *prominence_max: maximum prominence for peak detection.
+        *p_min: minimum prominence for peak detection.
+        *p_max: maximum prominence for peak detection.
+        *nsample: number of sampling point along projection line.
     Outputs:
-        *fwhm_central: fwhm of nac central peak in mm along major axis.
-        *P_neighbor: power of first neighbor peak along major axis.
-        *d_neighbor: distance to first neighbor peak in mm along major axis.
+        *fwhm_central: fwhm of nac central peak in mm along projection axis.
+        *P_neighbor: power of first neighbor peak along projection axis.
+        *d_neighbor: distance to first neighbor peak in mm along projection axis.
+        *d: lag in mm along projection axis.
+        *acorr_line: nac long projection axis.
         
     created by Daniel Haenelt
-    Date created: 14.04.2019
-    Last modified: 14.04.2019
+    Date created: 14-04-2019
+    Last modified: 14-04-2019
     """
     import numpy as np
     from scipy.signal import find_peaks
     from lib.utils import get_acorr
+
+    # add one if nsample is an odd integer
+    if np.mod(nsample,2) > 0:
+        nsample += 1
 
     # get size of array
     x_size = np.shape(input)[0]
     y_size = np.shape(input)[1]  
     
     # get coordinates of array
-    x = (fovx/x_size)*np.linspace(-x_size/2,x_size/2,x_size)
-    y = (fovy/y_size)*np.linspace(-y_size/2,y_size/2,y_size)
+    x = (fovx/2)*np.linspace(-1,1,x_size)
+    y = (fovy/2)*np.linspace(-1,1,y_size)
     x_mesh, y_mesh = np.meshgrid(x,y)
 
     # plot projection line from pca eigenvector. Because of nearest neighbor interpolation, the axis 
     # vector end point is <size>-1. The number of samples is hard coded.
     if np.abs(xv) < np.abs(yv):
-        y_line = np.linspace(0,y_size-1,1000)
+        y_line = np.linspace(0,y_size-1,nsample)
         x_line = xv / yv * y_line + y_size/2
-        x_line = x_line + x_size/2 - x_line[500]
+        x_line = x_line + x_size/2 - x_line[int(nsample/2)]
     else:
-        x_line = np.linspace(0,x_size-1,1000)
+        x_line = np.linspace(0,x_size-1,nsample)
         y_line = yv / xv * x_line + x_size/2
-        y_line = y_line + y_size/2 - y_line[500]
+        y_line = y_line + y_size/2 - y_line[int(nsample/2)]
     
     xx_line = x_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
     yy_line = y_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
@@ -82,7 +89,7 @@ def analyze_acorr(input, fovx, fovy, xv, yv, prominence_min=0.01, prominence_max
     fwhm_central = 2*np.abs(d[acorr_line_max] - d[acorr_line_middle])
     
     # spacing to neighbor
-    peak = find_peaks(acorr_line, prominence=(prominence_min, prominence_max))[0]
+    peak = find_peaks(acorr_line, prominence=(p_min, p_max))[0]
     
     if len(peak) <= 1:
         d_neighbor = np.nan
@@ -98,4 +105,4 @@ def analyze_acorr(input, fovx, fovy, xv, yv, prominence_min=0.01, prominence_max
         P_neighbor = acorr_line[d_neighbor_temp]
         d_neighbor = np.abs(d[acorr_line_max] - d[d_neighbor_temp])
     
-    return fwhm_central, d_neighbor, P_neighbor
+    return fwhm_central, d_neighbor, P_neighbor, d, acorr_line
