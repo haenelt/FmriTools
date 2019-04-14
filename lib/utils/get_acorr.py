@@ -1,4 +1,4 @@
-def get_autocorr(input, write_output=False, path_output="", name_output=""):
+def get_acorr(input, write_output=False, path_output="", name_output=""):
     """
     This function computes a normalized autocorrelation of a 2D numpy array. The result is saved as 
     nifti image. The use of the scipy fftconvolve function is inspired by https://stackoverflow.com/
@@ -26,6 +26,9 @@ def get_autocorr(input, write_output=False, path_output="", name_output=""):
 
     # compute autocorrelation   
     array_corr = fftconvolve(array1, array2[::-1, ::-1], mode="same")
+    
+    # normalize output
+    array_corr = array_corr / np.max(array_corr)
     
     # write nifti
     if write_output is True:

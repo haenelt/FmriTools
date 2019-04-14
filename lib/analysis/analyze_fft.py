@@ -1,23 +1,27 @@
-def analyze_fft(input, fovx, fovy, x_v1, y_v1, x_v2, y_v2):
+def analyze_fft(input, fovx, fovy, xv, yv, prominence_min=10, prominence_max=None):
     """
-    This function computes the peak frequency from a one-sided power spectrum taken from a 
-    projection line of a 2D FFT array.
+    This function computes the peak frequency and its corresponding power from a one-sided power 
+    spectrum sampled on two projection lines (major and minor axes) with nearest neighbor 
+    interpolation from a 2D array.
     Inputs:
         *input: input array (2D).
+        *fovx: field of view in x-direction (mm).
+        *fovy: field of view in y-firection (mm).
+        *xv: x-coordinate of pca eigenvector.
+        *yv: y-coordinate of pca eigenvector.
+        *prominence_min: minimum prominence for peak detection.
+        *prominence_max: maximum prominence for peak detection.
     Outputs:
-        * bla: bla
+        *P_max: maximum peak power relative to central frequency along projection axis.
+        *k_max: corresponding spatial frequency.
         
     created by Daniel Haenelt
-    Date created:           
-    Last modified: 
+    Date created: 14.04.2019
+    Last modified: 14.04.2019
     """
     import numpy as np
     from scipy.signal import find_peaks
     from lib.utils import get_fft
-
-    prominence_min = 10
-    prominence_max = None
-
 
     # get size of array
     x_size = np.shape(input)[0]
@@ -28,55 +32,48 @@ def analyze_fft(input, fovx, fovy, x_v1, y_v1, x_v2, y_v2):
     ky = np.linspace(-y_size/2,y_size/2,y_size)/fovy
     kx_mesh, ky_mesh = np.meshgrid(kx,ky)    
     
-    # plot projection lines of major and minor axes from pca eigenvectors
-    x_major = np.linspace(0,x_size-1,1000)
-    y_major = y_v1 / x_v1 * x_major + x_size/2
-    y_minor = np.linspace(0,y_size-1,1000)
-    x_minor = x_v2 / y_v2 * y_minor + y_size/2
-    
-    # get minor and major axes from pca eigenvectors
-    kx_major = kx_mesh[np.round(x_major).astype(int),np.round(y_minor).astype(int)]
-    ky_major = ky_mesh[np.round(x_major).astype(int),np.round(y_major).astype(int)]
-    kx_minor = kx_mesh[np.round(x_minor).astype(int),np.round(y_minor).astype(int)]
-    ky_minor = ky_mesh[np.round(x_minor).astype(int),np.round(y_minor).astype(int)]
-    
+    # plot projection line from pca eigenvector. Because of nearest neighbor interpolation, the axis 
+    # vector end point is <size>-1. The number of samples is hard coded.
+    # get spatial frequency projection lines of major and minor axes from pca eigenvectors. The 
+    # number of samples is hard coded.
+    if np.abs(xv) < np.abs(yv):
+        y_line = np.linspace(0,y_size-1,1000)
+        x_line = xv / yv * y_line + y_size/2
+        x_line = x_line + x_size/2 - x_line[500]
+        
+        ky_line = np.linspace(-1,1,1000)*(y_size/fovy)
+        kx_line = xv / yv * ky_line
+    else:
+        x_line = np.linspace(0,x_size-1,1000)
+        y_line = yv / xv * x_line + x_size/2
+        y_line = y_line + y_size/2 - y_line[500]
+
+        kx_line = np.linspace(-1,1,1000)*(x_size/fovx)
+        ky_line = yv / xv * kx_line
+  
     # get final k axes
-    k_major = np.sqrt(kx_major**2 + ky_major**2)
-    k_minor = np.sqrt(kx_minor**2 + ky_minor**2)
+    k_line = np.sqrt(kx_line**2 + ky_line**2)
     
     array_fft = get_fft(input)
-    fft_major = array_fft[np.round(y_major).astype(int),np.round(x_major).astype(int)]
-    fft_minor = array_fft[np.round(y_minor).astype(int),np.round(x_minor).astype(int)]
+    fft_line = array_fft[np.round(y_line).astype(int),np.round(x_line).astype(int)]
     
     # get one-sided spectrum
-    major_arg_null = np.asscalar(np.argwhere(k_major==np.min(k_major))[-1])
-    minor_arg_null = np.asscalar(np.argwhere(k_minor==np.min(k_minor))[-1])
+    arg_null = np.asscalar(np.argwhere(k_line==np.min(k_line))[-1])
 
-    fft_major = fft_major[major_arg_null:]
-    fft_minor = fft_minor[minor_arg_null:]
-    k_major = k_major[major_arg_null:]
-    k_minor = k_minor[minor_arg_null:]
-    
+    fft_line = fft_line[arg_null:]
+    k_line = k_line[arg_null:]
+       
     # normalize by central frequency
-    fft_major = fft_major / fft_major[0] * 100
-    fft_minor = fft_minor / fft_minor[0] * 100
+    fft_line = fft_line / fft_line[0] * 100
     
     # find peaks
-    major_peak = find_peaks(fft_major, prominence=(prominence_min,prominence_max))[0]
-    minor_peak = find_peaks(fft_minor, prominence=(prominence_min,prominence_max))[0]
+    peak = find_peaks(fft_line, prominence=(prominence_min,prominence_max))[0]
     
-    if len(major_peak) < 1:
-        P_max_major = np.nan
-        k_max_major = np.nan
+    if len(peak) < 1:
+        P_max = np.nan
+        k_max = np.nan
     else:    
-        P_max_major = np.asscalar(fft_major[major_peak[np.argwhere(fft_major[major_peak] == np.max(fft_major[major_peak]))]])
-        k_max_major = np.asscalar(k_major[major_peak[np.argwhere(fft_major[major_peak] == np.max(fft_major[major_peak]))]])
+        P_max = np.asscalar(fft_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))]])
+        k_max = np.asscalar(k_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))]])
     
-    if len(minor_peak) < 1:
-        P_max_minor = np.nan
-        k_max_minor = np.nan
-    else:    
-        P_max_minor = np.asscalar(fft_minor[minor_peak[np.argwhere(fft_minor[minor_peak] == np.max(fft_minor[minor_peak]))]])
-        k_max_minor = np.asscalar(k_minor[minor_peak[np.argwhere(fft_minor[minor_peak] == np.max(fft_minor[minor_peak]))]])
-    
-    return P_max_major, k_max_major, P_max_minor, k_max_minor
+    return P_max, k_max
