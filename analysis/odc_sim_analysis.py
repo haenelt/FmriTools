@@ -59,7 +59,7 @@ theta = 0
 
 # parameters for ODC analysis
 phi = 10*np.arange(36) # considered angles for generation of projection lines
-niter = 10 # number of iterations
+niter = 1000 # number of iterations
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 
 """ do not edit below """
