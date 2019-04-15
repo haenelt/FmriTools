@@ -91,8 +91,12 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
             acorr_line_middle -= 1
             break
     
-    fwhm_central = 2*np.abs(d[acorr_line_max] - d[acorr_line_middle])
-    
+    # compute fwhm if middle point is found
+    if ~np.isnan(acorr_line_middle):   
+        fwhm_central = 2*np.abs(d[acorr_line_max] - d[acorr_line_middle])
+    else:
+        fwhm_central = np.nan
+        
     # spacing to neighbor
     peak = find_peaks(acorr_line, prominence=(p_min, p_max))[0]
     
