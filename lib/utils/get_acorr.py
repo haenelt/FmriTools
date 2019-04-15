@@ -28,8 +28,7 @@ def get_acorr(input, write_output=False, path_output="", name_output=""):
     # compute autocorrelation   
     array_corr = fftconvolve(array1, array2[::-1, ::-1], mode="same")
     
-    # normalize output to [0;1]
-    array_corr = array_corr + np.abs(np.min(array_corr))
+    # normalize output
     array_corr = array_corr / np.max(array_corr)
     
     # write nifti

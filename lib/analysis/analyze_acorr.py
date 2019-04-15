@@ -2,7 +2,8 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     """
     This function computes the normalized autocorrelation (NAC) from a 2D input array and estimates 
     the width of the central peak and the distance to its first neighbor peak along a defined 
-    projection lines sampled with nearest neighbor interpolation.
+    projection lines sampled with nearest neighbor interpolation. The width of the central peak is 
+    defined as the width at zero point.
     Inputs:
         *input: input array (2D).
         *fovx: field of view in x-direction (mm).
@@ -21,9 +22,10 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
         
     created by Daniel Haenelt
     Date created: 14-04-2019
-    Last modified: 14-04-2019
+    Last modified: 15-04-2019
     """
     import numpy as np
+    import copy
     from scipy.signal import find_peaks
     from lib.utils import get_acorr
 
@@ -79,14 +81,16 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     else:
         acorr_line_max = int(acorr_line_max)
     
-    acorr_line_middle = acorr_line.copy()
-    acorr_line_middle[acorr_line_middle > 0.5] = 0
-    acorr_line_middle = np.argwhere(np.max(acorr_line_middle) == acorr_line_middle)
-    if np.size(acorr_line_middle) > 1:
-        acorr_line_middle = int(acorr_line_middle[0])
-    else:
-        acorr_line_middle = int(acorr_line_middle)
-
+    acorr_line_middle = copy.deepcopy(acorr_line_max)
+    while True:
+        acorr_line_middle += 1
+        if acorr_line_middle > nsample-1:
+            acorr_line_middle = np.nan
+            break
+        elif acorr_line[acorr_line_middle] < 0:
+            acorr_line_middle -= 1
+            break
+    
     fwhm_central = 2*np.abs(d[acorr_line_max] - d[acorr_line_middle])
     
     # spacing to neighbor
