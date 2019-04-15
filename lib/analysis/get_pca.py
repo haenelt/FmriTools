@@ -33,18 +33,15 @@ def get_pca(input, n_iter=10, fft_threshold=0.25):
     # define mesh grid
     x = np.linspace(-np.shape(input)[0]/2,np.shape(input)[0]/2,np.shape(input)[0])
     y = np.linspace(-np.shape(input)[1]/2,np.shape(input)[1]/2,np.shape(input)[1])
-    x_mesh, y_mesh = np.meshgrid(x,y)
+    y_mesh, x_mesh = np.meshgrid(y,x)
 
-    # get coordinates of thresholded spectrum
-    x_mesh = x_mesh * data_fft
-    y_mesh = y_mesh * data_fft
-
-    x_mesh = x_mesh[x_mesh != 0]
-    y_mesh = y_mesh[y_mesh != 0]
+    # get coordinates of thresholded spectrum    
+    x_mesh = x_mesh[data_fft != 0]
+    y_mesh = y_mesh[data_fft != 0]
 
     # compute moments of inertia
     a = np.sum(x_mesh**2)
-    b = np.sum(y_mesh**2)
+    b = np.sum(y_mesh**2)    
     c = np.sum(x_mesh*y_mesh)
 
     I = np.array([[b, -c],[-c, a]])

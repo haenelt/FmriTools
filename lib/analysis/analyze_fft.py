@@ -36,7 +36,7 @@ def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
     # get coordinate of array
     kx = np.linspace(-1,1,x_size)*(x_size/(2*fovx))
     ky = np.linspace(-1,1,y_size)*(y_size/(2*fovy))
-    kx_mesh, ky_mesh = np.meshgrid(kx,ky)
+    ky_mesh, kx_mesh = np.meshgrid(ky,kx)
 
     # get projection line coordinates from pca eigenvector. Because we interpolate using nearest
     # neighbors the axis enc point is <size>-1. 
@@ -48,16 +48,41 @@ def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
         x_line = np.linspace(0,x_size-1,nsample)
         y_line = yv / xv * x_line + x_size/2
         y_line = y_line + y_size/2 - y_line[int(nsample/2)]
-
-    kxx_line = kx_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
-    kyy_line = ky_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
+       
+    # check that no line steps over array border
+    if np.any(y_line > y_size-1):
+        x_line[y_line > y_size-1] = np.nan
+        y_line[y_line > y_size-1] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    if np.any(y_line < 0):
+        x_line[y_line < 0] = np.nan
+        y_line[y_line < 0] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    if np.any(x_line > x_size-1):
+        y_line[x_line > x_size-1] = np.nan
+        x_line[x_line > x_size-1] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    if np.any(y_line < 0):
+        y_line[x_line < 0] = np.nan
+        x_line[x_line < 0] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    kxx_line = kx_mesh[np.round(x_line).astype(int),np.round(y_line).astype(int)]
+    kyy_line = ky_mesh[np.round(x_line).astype(int),np.round(y_line).astype(int)]
    
     # get final k-axis
     k_line = np.sqrt(kxx_line**2 + kyy_line**2)
 
-    # get fourier spectrum    
+    # get fourier spectrum        
     array_fft = get_fft(input)
-    fft_line = array_fft[np.round(y_line).astype(int),np.round(x_line).astype(int)]
+    fft_line = array_fft[np.round(x_line).astype(int),np.round(y_line).astype(int)]
     
     # get one-sided spectrum
     arg_null = int(np.argwhere(k_line==np.min(k_line))[-1])

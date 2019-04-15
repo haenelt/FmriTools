@@ -40,7 +40,7 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     # get coordinates of array
     x = (fovx/2)*np.linspace(-1,1,x_size)
     y = (fovy/2)*np.linspace(-1,1,y_size)
-    x_mesh, y_mesh = np.meshgrid(x,y)
+    y_mesh, x_mesh = np.meshgrid(y,x)
 
     # get projection line coordinates from pca eigenvector. Because we interpolate using nearest
     # neighbors the axis enc point is <size>-1. 
@@ -53,8 +53,33 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
         y_line = yv / xv * x_line + x_size/2
         y_line = y_line + y_size/2 - y_line[int(nsample/2)]
     
-    xx_line = x_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
-    yy_line = y_mesh[np.round(y_line).astype(int),np.round(x_line).astype(int)]
+    # check that no line steps over array border
+    if np.any(y_line > y_size-1):
+        x_line[y_line > y_size-1] = np.nan
+        y_line[y_line > y_size-1] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    if np.any(y_line < 0):
+        x_line[y_line < 0] = np.nan
+        y_line[y_line < 0] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    if np.any(x_line > x_size-1):
+        y_line[x_line > x_size-1] = np.nan
+        x_line[x_line > x_size-1] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    if np.any(y_line < 0):
+        y_line[x_line < 0] = np.nan
+        x_line[x_line < 0] = np.nan
+        x_line = x_line[~np.isnan(x_line)]
+        y_line = y_line[~np.isnan(y_line)]
+    
+    xx_line = x_mesh[np.round(x_line).astype(int),np.round(y_line).astype(int)]
+    yy_line = y_mesh[np.round(x_line).astype(int),np.round(y_line).astype(int)]
     
     # get final distances
     d = np.sqrt(xx_line**2 + yy_line**2)
@@ -72,7 +97,10 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
         
     # get autocorrelation
     array_acorr = get_acorr(input)
-    acorr_line = array_acorr[np.round(y_line).astype(int),np.round(x_line).astype(int)]
+    acorr_line = array_acorr[np.round(x_line).astype(int),np.round(y_line).astype(int)]
+    
+    # normlize nac to interval [0,1]
+    acorr_line = ( acorr_line - np.min(acorr_line) ) / ( np.max(acorr_line) - np.min(acorr_line) )
     
     # fwhm
     acorr_line_max = np.argwhere(np.max(acorr_line) == acorr_line)
@@ -84,10 +112,10 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     acorr_line_middle = copy.deepcopy(acorr_line_max)
     while True:
         acorr_line_middle += 1
-        if acorr_line_middle > nsample-1:
+        if acorr_line_middle > len(acorr_line)-1:
             acorr_line_middle = np.nan
             break
-        elif acorr_line[acorr_line_middle] < 0:
+        elif acorr_line[acorr_line_middle] < 0.5:
             acorr_line_middle -= 1
             break
     
@@ -112,5 +140,5 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=100
     
         P_neighbor = acorr_line[peak[peak_temp]]
         d_neighbor = np.abs(d[acorr_line_max] - d[peak[peak_temp]])
-    
+        
     return fwhm_central, d_neighbor, P_neighbor, d, acorr_line
