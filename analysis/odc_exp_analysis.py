@@ -32,7 +32,7 @@ from lib.analysis import analyze_fft
 from lib.analysis import analyze_acorr
 
 # parameters for ODC analysis
-input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/lh.spmT_left_right_GE_EPI3_def_layer9_sigma0_grid.nii"
+input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/rh.spmT_left_right_GE_EPI4_def_layer9_sigma0_grid.nii"
 phi = [0,90] # considered angles for generation of projection lines
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 
@@ -75,8 +75,7 @@ for j in range(len(phi)):
     k_fft, P_fft, _, _ = analyze_fft(data, FOVx, FOVy, x_temp, y_temp, f_cut=0.05)
     
     # analyze autocorrelation
-    fwhm_acorr, d_acorr, P_acorr, _, _ = analyze_acorr(data, FOVx, FOVy, x_temp, y_temp, 
-                                                       0, None)
+    fwhm_acorr, d_acorr, P_acorr, _, _ = analyze_acorr(data, FOVx, FOVy, x_temp, y_temp, 0.01, 0.5)
         
     # list result
     k_fft_res[j] = k_fft
@@ -93,8 +92,8 @@ Example plots
 x_major, y_major, x_minor, y_minor = get_pca(data)
 
 # analyze fft
-_, _, x1, y1 = analyze_fft(data, FOVx, FOVy, x_major, y_major, 10, None)
-_, _, x2, y2 = analyze_fft(data, FOVx, FOVy, x_minor, y_minor, 10, None)
+_, _, x1, y1 = analyze_fft(data, FOVx, FOVy, x_major, y_major, f_cut=0.05)
+_, _, x2, y2 = analyze_fft(data, FOVx, FOVy, x_minor, y_minor, f_cut=0.05)
 
 # fft
 y1 = y1[x1 < 2]
@@ -113,8 +112,8 @@ fig.savefig(os.path.join(path_output,"fft_example.png"), bbox_inches="tight")
 plt.show()
 
 # analyze autocorrelation
-_, _, _, x1, y1 = analyze_acorr(data, FOVx, FOVy, x_major, y_major, 0.01, None)
-_, _, _, x2, y2 = analyze_acorr(data, FOVx, FOVy, x_minor, y_minor, 0.01, None)
+_, _, _, x1, y1 = analyze_acorr(data, FOVx, FOVy, x_major, y_major, None, None)
+_, _, _, x2, y2 = analyze_acorr(data, FOVx, FOVy, x_minor, y_minor, None, None)
 
 # nac
 fig, ax = plt.subplots()
@@ -126,4 +125,4 @@ ax.legend(["major axis","minor axis"])
 fig.savefig(os.path.join(path_output,"acorr_example.png"), bbox_inches="tight")
 plt.show()
 
-print(k_fft_res)
+print(fwhm_acorr_res)
