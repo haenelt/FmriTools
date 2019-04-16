@@ -1,4 +1,4 @@
-def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
+def analyze_fft(input, fovx, fovy, xv, yv, f_cut=0.1, p_min=None, p_max=None, nsample=1000):
     """
     This function computes the peak frequency and its corresponding power from a one-sided power 
     spectrum sampled on a projection lines of a 2d array using nearest neighbor interpolation.
@@ -8,6 +8,7 @@ def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
         *fovy: field of view in y-firection (mm).
         *xv: x-coordinate of pca eigenvector.
         *yv: y-coordinate of pca eigenvector.
+        *f_cut: cut off central spatial frequencies for peak detection.
         *p_min: minimum prominence for peak detection.
         *p_max: maximum prominence for peak detection.
         *nsample: number of sampling point along projection line.
@@ -92,14 +93,21 @@ def analyze_fft(input, fovx, fovy, xv, yv, p_min=10, p_max=None, nsample=1000):
     # normalize by central frequency
     fft_line = fft_line / fft_line[0] * 100
     
+    # first central k-space line for peak detection
+    fft_cut = fft_line.copy()
+    k_cut = k_line.copy()
+    
+    fft_cut = fft_cut[k_cut > f_cut]
+    k_cut = k_cut[k_cut > f_cut]
+    
     # find peaks
-    peak = find_peaks(fft_line, prominence=(p_min,p_max))[0]
+    peak = find_peaks(fft_cut, prominence=(p_min,p_max))[0]
     
     if len(peak) < 1:
         P_max = np.nan
         k_max = np.nan
     else:        
-        P_max = fft_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))[0]]]
-        k_max = k_line[peak[np.argwhere(fft_line[peak] == np.max(fft_line[peak]))[0]]]
+        P_max = fft_cut[peak[np.argwhere(fft_cut[peak] == np.max(fft_cut[peak]))[0]]]
+        k_max = k_cut[peak[np.argwhere(fft_cut[peak] == np.max(fft_cut[peak]))[0]]]
     
     return k_max, P_max, k_line, fft_line

@@ -36,14 +36,22 @@ input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/lh.spm
 phi = [0,90] # considered angles for generation of projection lines
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 
+FOVx_mri = 148
+FOVy_mri = 148
+Nx_mri = 184
+Ny_mri = 184
+
 """ do not edit below """
 
 # make output folder
 if not os.path.exists(path_output):
     os.mkdir(path_output)
 
+# nyquist frequency
+f_ny = np.sqrt(Nx_mri**2+Ny_mri**2) / np.sqrt(FOVx_mri**2+FOVy_mri**2)
+
 # load nifti
-data = nb.load(input).get_fdata()[:,:,9]
+data = nb.load(input).get_fdata()[:,:,0]
 
 FOVx = np.shape(data)[0]*0.25
 FOVy = np.shape(data)[1]*0.25
@@ -57,13 +65,14 @@ fwhm_acorr_res = np.zeros(len(phi))
 # get pca
 _, _, x_minor, y_minor = get_pca(data)
     
-# rotate grid
 for j in range(len(phi)):
+    
+    # rotate grid
     x_temp = x_minor*np.cos(phi[j] / 180 * np.pi) - y_minor*np.sin(phi[j] / 180 * np.pi)
     y_temp = x_minor*np.sin(phi[j] / 180 * np.pi) + y_minor*np.cos(phi[j] / 180 * np.pi)
     
     # analyze fourier spectrum
-    k_fft, P_fft, _, _ = analyze_fft(data, FOVx, FOVy, x_temp, y_temp, 0, 10)
+    k_fft, P_fft, _, _ = analyze_fft(data, FOVx, FOVy, x_temp, y_temp, f_cut=0.05)
     
     # analyze autocorrelation
     fwhm_acorr, d_acorr, P_acorr, _, _ = analyze_acorr(data, FOVx, FOVy, x_temp, y_temp, 
@@ -88,9 +97,15 @@ _, _, x1, y1 = analyze_fft(data, FOVx, FOVy, x_major, y_major, 10, None)
 _, _, x2, y2 = analyze_fft(data, FOVx, FOVy, x_minor, y_minor, 10, None)
 
 # fft
+y1 = y1[x1 < 2]
+x1 = x1[x1 < 2]
+y2 = y2[x2 < 2]
+x2 = x2[x2 < 2]
+
 fig, ax = plt.subplots()
 ax.plot(x1, y1)
 ax.plot(x2, y2)
+ax.axvline(x=1/f_ny, ymin=0, ymax=1)
 ax.set_xlabel("Spatial frequency in cycles/mm")
 ax.set_ylabel("Power spectrum in a.u.")
 ax.legend(["major axis","minor axis"])
@@ -111,4 +126,4 @@ ax.legend(["major axis","minor axis"])
 fig.savefig(os.path.join(path_output,"acorr_example.png"), bbox_inches="tight")
 plt.show()
 
-print(fwhm_acorr_res)
+print(k_fft_res)

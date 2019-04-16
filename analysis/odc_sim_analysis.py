@@ -26,7 +26,6 @@ Last modified: 14-04-2019
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.ndimage.interpolation import rotate
 from lib.simulation.odc import odc_2d
 from lib.analysis import get_pca
 from lib.analysis import analyze_fft
@@ -68,6 +67,9 @@ path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 if not os.path.exists(path_output):
     os.mkdir(path_output)
 
+# nyquist frequency
+f_ny = np.sqrt(Nx_sim**2+Ny_sim**2) / np.sqrt(FOVx**2+FOVy**2)
+
 k_fft_res = np.zeros((niter,len(phi)))
 P_fft_res = np.zeros((niter,len(phi)))
 d_acorr_res= np.zeros((niter,len(phi)))
@@ -82,20 +84,18 @@ for i in range(niter):
     # get pca
     _, _, x_minor, y_minor = get_pca(neural)
 
-    # rotate grid
     for j in range(len(phi)):
-        neural_temp = rotate(neural,phi[j])
-        if np.mod(phi[j],90) != 0:
-            x_cut = int(np.shape(neural_temp)[0]/2-np.shape(neural)[0]/2)
-            y_cut = int(np.shape(neural_temp)[1]/2-np.shape(neural)[1]/2)
-            neural_temp = neural_temp[x_cut:-x_cut,y_cut:-y_cut]
-    
+
+        # rotate grid
+        x_temp = x_minor*np.cos(phi[j] / 180 * np.pi) - y_minor*np.sin(phi[j] / 180 * np.pi)
+        y_temp = x_minor*np.sin(phi[j] / 180 * np.pi) + y_minor*np.cos(phi[j] / 180 * np.pi)
+   
         # analyze fourier spectrum
-        k_fft, P_fft, _, _ = analyze_fft(neural_temp, FOVx, FOVy, x_minor, y_minor, 10, None)
+        k_fft, P_fft, _, _ = analyze_fft(neural, FOVx, FOVy, x_temp, y_temp)
     
         # analyze autocorrelation
-        fwhm_acorr, d_acorr, P_acorr, _, _ = analyze_acorr(neural_temp, FOVx, FOVy, x_minor, 
-                                                           y_minor, 0.01, None)
+        fwhm_acorr, d_acorr, P_acorr, _, _ = analyze_acorr(neural, FOVx, FOVy, x_temp, y_temp, 0.01, 
+                                                           None)
         
         # list result
         k_fft_res[i,j] = k_fft
@@ -133,9 +133,14 @@ _, _, x1, y1 = analyze_fft(neural, FOVx, FOVy, x_major, y_major, 10, None)
 _, _, x2, y2 = analyze_fft(neural, FOVx, FOVy, x_minor, y_minor, 10, None)
 
 # fft
+y1 = y1[x1 < 2]
+x1 = x1[x1 < 2]
+y2 = y2[x2 < 2]
+x2 = x2[x2 < 2]
+
 fig, ax = plt.subplots()
-ax.plot(x1[:50], y1[:50])
-ax.plot(x2[:50], y2[:50])
+ax.plot(x1, y1)
+ax.plot(x2, y2)
 ax.set_xlabel("Spatial frequency in cycles/mm")
 ax.set_ylabel("Power spectrum in a.u.")
 ax.legend(["major axis","minor axis"])
