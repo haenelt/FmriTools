@@ -57,4 +57,4 @@ def get_tsnr(input, path_output, name_output, TR, cutoff_highpass, pathSPM):
     data_img.header["pixdim"][3] = 1
     
     data_img = nb.Nifti1Image(data_tsnr_array, data_img.affine, data_img.header)
-    nb.save(data_img, os.path.join(path_output,"tsnr"+name_output+".nii"))
+    nb.save(data_img, os.path.join(path_output,"tsnr_"+name_output+".nii"))
