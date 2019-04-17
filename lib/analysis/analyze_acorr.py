@@ -1,4 +1,4 @@
-def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=None, nsample=1000):
+def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000):
     """
     This function computes the normalized autocorrelation (NAC) from a 2D input array and estimates 
     the width of the central peak and the distance to its first neighbor peak along a defined 

@@ -1,11 +1,14 @@
 """
-Analysis of simulated ocular dominance columns
+Analysis of experimental ocular dominance columns
 
-The purpose of the following script is to simultae ocular dominance columns and estimate their 
-column and column spacing. To do so, the power spectrum and the normalized autocorrelation (NAC) map 
-are computed and evaluated along different projection lines. Especially, principal axes are first 
-estimated from the thresholded Fourier spectogram and width and spacing results are saved for these
-directions. In total, the following quantities are computed:
+The purpose of the following script is to analysis ocular dominance columns and estimate their 
+column width and column spacing.
+
+To do so, the power spectrum and the normalized autocorrelation (NAC) map are computed and evaluated 
+along different projection lines. Especially, principal axes are first estimated from thresholded 
+Fourier spectograms and width and spacing. 
+
+In total, the following quantities are computed:
 
 (1) column width is estimated by computing the FWHM of the NAC central peak.
 (2) column spacing is estimated by computing the distance from the NAC central peak to its first 
@@ -15,31 +18,23 @@ neighbor.
 component.
 (4) take the maximum power (relative to central peak) as repetition marker?
 
-Line and polar plots are saved from all measures. Further below, not all parameters are needed for
-this simulation since we only use the neural map, i.e., no MRI parameters (Nx_mri, Ny_mri),
-bold parameters (beta, fwhm_bold, fwhm_noise) or occlusion parameters (a, b, theta) are needed.
-
 created by Daniel Haenelt
 Date created: 15-04-2019
-Last modified: 15-04-2019
+Last modified: 17-04-2019
 """
 import os
 import numpy as np
 import nibabel as nb
-import matplotlib.pyplot as plt
 from lib.analysis import get_pca
 from lib.analysis import analyze_fft
 from lib.analysis import analyze_acorr
 
-# parameters for ODC analysis
-input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/rh.spmT_left_right_GE_EPI4_def_layer9_sigma0_grid.nii"
-phi = [0,90] # considered angles for generation of projection lines
+# parameters
+input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/lh.spmT_left_right_GE_EPI3_def_layer9_sigma0_grid.nii"
+x_grid = 0.25 # grid resolution in mm (x-direction)
+y_grid = 0.25 # grid resolution in mm (y-direction)
+name_output = "GE_EPI3" # basename of output
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
-
-FOVx_mri = 148
-FOVy_mri = 148
-Nx_mri = 184
-Ny_mri = 184
 
 """ do not edit below """
 
@@ -47,82 +42,85 @@ Ny_mri = 184
 if not os.path.exists(path_output):
     os.mkdir(path_output)
 
-# nyquist frequency
-f_ny = np.sqrt(Nx_mri**2+Ny_mri**2) / np.sqrt(FOVx_mri**2+FOVy_mri**2)
+# get number of layers
+data = nb.load(input).get_fdata()
+nlayer = np.shape(data)[2]
 
-# load nifti
-data = nb.load(input).get_fdata()[:,:,0]
+# hemisphere
+hemi = os.path.splitext(os.path.splitext(os.path.basename(input))[0])[0]
 
-FOVx = np.shape(data)[0]*0.25
-FOVy = np.shape(data)[1]*0.25
+# considered rotation angles for generation of projection lines
+phi = 10 * np.arange(36)
 
-k_fft_res = np.zeros(len(phi))
-P_fft_res = np.zeros(len(phi))
-d_acorr_res= np.zeros(len(phi))
-P_acorr_res = np.zeros(len(phi))
-fwhm_acorr_res = np.zeros(len(phi))
+k_fft_phi = []
+P_fft_phi = []
+d_acorr_phi = []
+P_acorr_phi = []
+fwhm_acorr_phi = []
+x_0 = []
+y_0 = []
+x_90 = []
+y_90 = []
+x_fft_0 = []
+y_fft_0 = []
+x_fft_90 = []
+y_fft_90 = []
+x_acorr_0 = []
+y_acorr_0 = []
+x_acorr_90 = []
+y_acorr_90 = []
+for i in range(nlayer):
+    
+    # load nifti
+    data = nb.load(input).get_fdata()[:,:,i]
 
-# get pca
-_, _, x_minor, y_minor = get_pca(data)
+    # field of view of input data in mm
+    FOVx = np.shape(data)[0] * x_grid
+    FOVy = np.shape(data)[1] * y_grid
+
+    # get pca
+    _, _, x_minor, y_minor = get_pca(data)
     
-for j in range(len(phi)):
+    # compute for each rotation angle
+    for j in range(len(phi)):
     
-    # rotate grid
-    x_temp = x_minor*np.cos(phi[j] / 180 * np.pi) - y_minor*np.sin(phi[j] / 180 * np.pi)
-    y_temp = x_minor*np.sin(phi[j] / 180 * np.pi) + y_minor*np.cos(phi[j] / 180 * np.pi)
+        # rotate grid
+        x_temp = x_minor*np.cos(phi[j] / 180 * np.pi) - y_minor*np.sin(phi[j] / 180 * np.pi)
+        y_temp = x_minor*np.sin(phi[j] / 180 * np.pi) + y_minor*np.cos(phi[j] / 180 * np.pi)
     
-    # analyze fourier spectrum
-    k_fft, P_fft, _, _ = analyze_fft(data, FOVx, FOVy, x_temp, y_temp, f_cut=0.05)
+        # analyze fourier spectrum
+        k_fft, P_fft, x_fft, y_fft = analyze_fft(data, FOVx, FOVy, x_temp, y_temp)
     
-    # analyze autocorrelation
-    fwhm_acorr, d_acorr, P_acorr, _, _ = analyze_acorr(data, FOVx, FOVy, x_temp, y_temp, 0.01, 0.5)
+        # analyze autocorrelation
+        fwhm_acorr, d_acorr, P_acorr, x_acorr, y_acorr = analyze_acorr(data, FOVx, FOVy, x_temp, y_temp)
         
-    # list result
-    k_fft_res[j] = k_fft
-    P_fft_res[j] = P_fft
-    d_acorr_res[j] = d_acorr
-    P_acorr_res[j] = P_acorr
-    fwhm_acorr_res[j] = fwhm_acorr
+        # list result
+        k_fft_phi.append(float(k_fft))
+        P_fft_phi.append(float(P_fft))
+        d_acorr_phi.append(float(d_acorr))
+        P_acorr_phi.append(float(P_acorr))
+        fwhm_acorr_phi.append(float(fwhm_acorr))
+        
+        # get example data for minor and major axes
+        if phi[j] == 0:
+            x_0.append(x_temp)
+            y_0.append(x_temp)
+            x_fft_0.append(x_fft)
+            y_fft_0.append(y_fft)
+            x_acorr_0.append(x_acorr)
+            y_acorr_0.append(y_acorr)
+        
+        if phi[j] == 90:
+            x_90.append(x_temp)
+            y_90.append(y_temp)
+            x_fft_90.append(x_fft)
+            y_fft_90.append(y_fft)
+            x_acorr_90.append(x_acorr)
+            y_acorr_90.append(y_acorr)
 
-"""
-Example plots
-"""
-
-# get pca
-x_major, y_major, x_minor, y_minor = get_pca(data)
-
-# analyze fft
-_, _, x1, y1 = analyze_fft(data, FOVx, FOVy, x_major, y_major, f_cut=0.05)
-_, _, x2, y2 = analyze_fft(data, FOVx, FOVy, x_minor, y_minor, f_cut=0.05)
-
-# fft
-y1 = y1[x1 < 2]
-x1 = x1[x1 < 2]
-y2 = y2[x2 < 2]
-x2 = x2[x2 < 2]
-
-fig, ax = plt.subplots()
-ax.plot(x1, y1)
-ax.plot(x2, y2)
-ax.axvline(x=1/f_ny, ymin=0, ymax=1)
-ax.set_xlabel("Spatial frequency in cycles/mm")
-ax.set_ylabel("Power spectrum in a.u.")
-ax.legend(["major axis","minor axis"])
-fig.savefig(os.path.join(path_output,"fft_example.png"), bbox_inches="tight")
-plt.show()
-
-# analyze autocorrelation
-_, _, _, x1, y1 = analyze_acorr(data, FOVx, FOVy, x_major, y_major, None, None)
-_, _, _, x2, y2 = analyze_acorr(data, FOVx, FOVy, x_minor, y_minor, None, None)
-
-# nac
-fig, ax = plt.subplots()
-ax.plot(x1, y1)
-ax.plot(x2, y2)
-ax.set_xlabel("Lag in mm")
-ax.set_ylabel("NAC")
-ax.legend(["major axis","minor axis"])
-fig.savefig(os.path.join(path_output,"acorr_example.png"), bbox_inches="tight")
-plt.show()
-
-print(fwhm_acorr_res)
+# save variables
+np.savez(os.path.join(path_output,hemi+"."+name_output),
+         x_0=x_0, x_90=x_90, x_fft_0=x_fft_0, x_fft_90=x_fft_90, x_acorr_0=x_acorr_0, x_acorr_90=x_acorr_90,
+         y_0=y_0, y_90=y_90, y_fft_0=y_fft_0, y_fft_90=y_fft_90, y_acorr_0=y_acorr_0, y_acorr_90=y_acorr_90,
+         k_fft_phi=k_fft_phi, P_fft_phi=P_fft_phi, 
+         d_acorr_phi=d_acorr_phi, P_acorr_phi=P_acorr_phi, fwhm_acorr_phi=fwhm_acorr_phi)

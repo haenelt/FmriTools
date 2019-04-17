@@ -1,4 +1,4 @@
-def analyze_fft(input, fovx, fovy, xv, yv, f_cut=0.1, p_min=None, p_max=None, nsample=1000):
+def analyze_fft(input, fovx, fovy, xv, yv, f_cut=0.05, p_min=None, p_max=None, nsample=1000):
     """
     This function computes the peak frequency and its corresponding power from a one-sided power 
     spectrum sampled on a projection lines of a 2d array using nearest neighbor interpolation.

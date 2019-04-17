@@ -1,11 +1,14 @@
 """
 Analysis of simulated ocular dominance columns
 
-The purpose of the following script is to simultae ocular dominance columns and estimate their 
-column and column spacing. To do so, the power spectrum and the normalized autocorrelation (NAC) map 
-are computed and evaluated along different projection lines. Especially, principal axes are first 
-estimated from the thresholded Fourier spectogram and width and spacing results are saved for these
-directions. In total, the following quantities are computed:
+The purpose of the following script is to simulate ocular dominance columns and estimate their 
+column width and column spacing. 
+
+To do so, the power spectrum and the normalized autocorrelation (NAC) map are computed and evaluated 
+along different projection lines. Especially, principal axes are first estimated from thresholded 
+Fourier spectograms and width and spacing. 
+
+In total, the following quantities are computed:
 
 (1) column width is estimated by computing the FWHM of the NAC central peak.
 (2) column spacing is estimated by computing the distance from the NAC central peak to its first 
@@ -15,17 +18,16 @@ neighbor.
 component.
 (4) take the maximum power (relative to central peak) as repetition marker?
 
-Line and polar plots are saved from all measures. Further below, not all parameters are needed for
-this simulation since we only use the neural map, i.e., no MRI parameters (Nx_mri, Ny_mri),
-bold parameters (beta, fwhm_bold, fwhm_noise) or occlusion parameters (a, b, theta) are needed.
+Further below, not all parameters are needed for this simulation since we only use the neural map, 
+i.e., no MRI parameters (Nx_mri, Ny_mri), bold parameters (beta, fwhm_bold, fwhm_noise) or occlusion 
+parameters (a, b, theta) are needed.
 
 created by Daniel Haenelt
 Date created: 14-04-2019
-Last modified: 14-04-2019
+Last modified: 17-04-2019
 """
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 from lib.simulation.odc import odc_2d
 from lib.analysis import get_pca
 from lib.analysis import analyze_fft
@@ -57,8 +59,8 @@ b = 1000
 theta = 0
 
 # parameters for ODC analysis
-phi = 10*np.arange(36) # considered angles for generation of projection lines
 niter = 1 # number of iterations
+name_output = "sim" # basename of output
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 
 """ do not edit below """
@@ -67,14 +69,26 @@ path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 if not os.path.exists(path_output):
     os.mkdir(path_output)
 
-# nyquist frequency
-f_ny = np.sqrt(Nx_sim**2+Ny_sim**2) / np.sqrt(FOVx**2+FOVy**2)
+# considered rotation angles for generation of projection lines
+phi = 10 * np.arange(36)
 
-k_fft_res = np.zeros((niter,len(phi)))
-P_fft_res = np.zeros((niter,len(phi)))
-d_acorr_res= np.zeros((niter,len(phi)))
-P_acorr_res = np.zeros((niter,len(phi)))
-fwhm_acorr_res = np.zeros((niter,len(phi)))
+k_fft_phi = np.zeros((niter, len(phi)))
+P_fft_phi = np.zeros((niter, len(phi)))
+d_acorr_phi= np.zeros((niter, len(phi)))
+P_acorr_phi = np.zeros((niter, len(phi)))
+fwhm_acorr_phi = np.zeros((niter, len(phi)))
+x_0 = []
+y_0 = []
+x_90 = []
+y_90 = []
+x_fft_0 = []
+y_fft_0 = []
+x_fft_90 = []
+y_fft_90 = []
+x_acorr_0 = []
+y_acorr_0 = []
+x_acorr_90 = []
+y_acorr_90 = []
 for i in range(niter):
     
     # get odc pattern
@@ -91,244 +105,54 @@ for i in range(niter):
         y_temp = x_minor*np.sin(phi[j] / 180 * np.pi) + y_minor*np.cos(phi[j] / 180 * np.pi)
    
         # analyze fourier spectrum
-        k_fft, P_fft, _, _ = analyze_fft(neural, FOVx, FOVy, x_temp, y_temp)
+        k_fft, P_fft, x_fft, y_fft = analyze_fft(neural, FOVx, FOVy, x_temp, y_temp)
     
         # analyze autocorrelation
-        fwhm_acorr, d_acorr, P_acorr, _, _ = analyze_acorr(neural, FOVx, FOVy, x_temp, y_temp, 0.01, 
-                                                           None)
+        fwhm_acorr, d_acorr, P_acorr, x_acorr, y_acorr = analyze_acorr(neural, FOVx, FOVy, x_temp, y_temp)
         
         # list result
-        k_fft_res[i,j] = k_fft
-        P_fft_res[i,j] = P_fft
-        d_acorr_res[i,j] = d_acorr
-        P_acorr_res[i,j] = P_acorr
-        fwhm_acorr_res[i,j] = fwhm_acorr
+        k_fft_phi[i,j] = k_fft
+        P_fft_phi[i,j] = P_fft
+        d_acorr_phi[i,j] = d_acorr
+        P_acorr_phi[i,j] = P_acorr
+        fwhm_acorr_phi[i,j] = fwhm_acorr
+        
+        # get example data for minor and major axes
+        if i == 0 and phi[j] == 0:
+            x_0.append(x_temp)
+            y_0.append(x_temp)
+            x_fft_0.append(x_fft)
+            y_fft_0.append(y_fft)
+            x_acorr_0.append(x_acorr)
+            y_acorr_0.append(y_acorr)
+        
+        if i == 0 and phi[j] == 90:
+            x_90.append(x_temp)
+            y_90.append(y_temp)
+            x_fft_90.append(x_fft)
+            y_fft_90.append(y_fft)
+            x_acorr_90.append(x_acorr)
+            y_acorr_90.append(y_acorr)
     
 # mean across iterations
-k_fft_mean = np.nanmean(k_fft_res,0)
-P_fft_mean = np.nanmean(P_fft_res,0)
-d_acorr_mean = np.nanmean(d_acorr_res,0)
-P_acorr_mean = np.nanmean(P_acorr_res,0)
-fwhm_acorr_mean = np.nanmean(fwhm_acorr_res,0)
+k_fft_phi_mean = np.nanmean(k_fft_phi,0)
+P_fft_phi_mean = np.nanmean(P_fft_phi,0)
+d_acorr_phi_mean = np.nanmean(d_acorr_phi,0)
+P_acorr_phi_mean = np.nanmean(P_acorr_phi,0)
+fwhm_acorr_phi_mean = np.nanmean(fwhm_acorr_phi,0)
     
 # std across iterations
-k_fft_std = np.nanstd(k_fft_res,0)
-P_fft_std = np.nanstd(P_fft_res,0)
-d_acorr_std = np.nanstd(d_acorr_res,0)
-P_acorr_std = np.nanstd(P_acorr_res,0)
-fwhm_acorr_std = np.nanstd(fwhm_acorr_res,0)
+k_fft_phi_std = np.nanstd(k_fft_phi,0)
+P_fft_phi_std = np.nanstd(P_fft_phi,0)
+d_acorr_phi_std = np.nanstd(d_acorr_phi,0)
+P_acorr_phi_std = np.nanstd(P_acorr_phi,0)
+fwhm_acorr_phi_std = np.nanstd(fwhm_acorr_phi,0)
 
-"""
-Example plots
-"""
-# get odc pattern
-_, neural, _, _, _, _ = odc_2d(Nx_sim, Ny_sim, FOVx, FOVy, Nx_mri, Ny_mri, rho, delta, epsilon, 
-                               theta, alpha, beta, fwhm_bold, fwhm_noise, a, b, theta, False)
-
-# get pca
-x_major, y_major, x_minor, y_minor = get_pca(neural)
-
-# analyze fft
-_, _, x1, y1 = analyze_fft(neural, FOVx, FOVy, x_major, y_major, 10, None)
-_, _, x2, y2 = analyze_fft(neural, FOVx, FOVy, x_minor, y_minor, 10, None)
-
-# fft
-y1 = y1[x1 < 2]
-x1 = x1[x1 < 2]
-y2 = y2[x2 < 2]
-x2 = x2[x2 < 2]
-
-fig, ax = plt.subplots()
-ax.plot(x1, y1)
-ax.plot(x2, y2)
-ax.set_xlabel("Spatial frequency in cycles/mm")
-ax.set_ylabel("Power spectrum in a.u.")
-ax.legend(["major axis","minor axis"])
-fig.savefig(os.path.join(path_output,"fft_example.png"), bbox_inches="tight")
-plt.show()
-
-# analyze autocorrelation
-_, _, _, x1, y1 = analyze_acorr(neural, FOVx, FOVy, x_major, y_major, 0.01, None)
-_, _, _, x2, y2 = analyze_acorr(neural, FOVx, FOVy, x_minor, y_minor, 0.01, None)
-
-# nac
-fig, ax = plt.subplots()
-ax.plot(x1, y1)
-ax.plot(x2, y2)
-ax.set_xlabel("Lag in mm")
-ax.set_ylabel("NAC")
-ax.legend(["major axis","minor axis"])
-fig.savefig(os.path.join(path_output,"acorr_example.png"), bbox_inches="tight")
-plt.show()
-
-"""
-Line plots
-"""
-# k_fft plot
-fig, ax = plt.subplots()
-ax.plot(phi, k_fft_mean, "r")
-ax.fill_between(phi, k_fft_mean-k_fft_std, k_fft_mean+k_fft_std, alpha=0.2, facecolor='b')
-ax.set_xlabel("Rotation angle in deg")
-ax.set_ylabel("Peak spatial frequency in cycles/mm")
-fig.savefig(os.path.join(path_output,"frequency_line.png"), bbox_inches="tight")
-plt.show()
-
-# P_fft plot
-fig, ax = plt.subplots()
-ax.plot(phi, P_fft_mean, "r")
-ax.fill_between(phi, P_fft_mean-P_fft_std, P_fft_mean+P_fft_std, alpha=0.2, facecolor='b')
-ax.set_xlabel("Rotation angle in deg")
-ax.set_ylabel("Peak spatial frequency power in a.u.")
-fig.savefig(os.path.join(path_output,"frequency_power_line.png"), bbox_inches="tight")
-plt.show()
-
-# d_acorr plot
-fig, ax = plt.subplots()
-ax.plot(phi, d_acorr_mean, "r")
-ax.fill_between(phi, d_acorr_mean-d_acorr_std, d_acorr_mean+d_acorr_std, alpha=0.2, facecolor='b')
-ax.set_xlabel("Rotation angle in deg")
-ax.set_ylabel("Nearest neighbor distance in mm")
-fig.savefig(os.path.join(path_output,"neighbor_distance_line.png"), bbox_inches="tight")
-plt.show()
-
-# P_acorr plot
-fig, ax = plt.subplots()
-ax.plot(phi, P_acorr_mean, "r")
-ax.fill_between(phi, P_acorr_mean-P_acorr_std, P_acorr_mean+P_acorr_std, alpha=0.2, facecolor='b')
-ax.set_xlabel("Rotation angle in deg")
-ax.set_ylabel("Nearest neighbor power in a.u.")
-fig.savefig(os.path.join(path_output,"neighbor_power_line.png"), bbox_inches="tight")
-plt.show()
-
-# fwhm plot
-fig, ax = plt.subplots()
-ax.plot(phi, fwhm_acorr_mean, "r")
-ax.fill_between(phi, fwhm_acorr_mean-fwhm_acorr_std, fwhm_acorr_mean+fwhm_acorr_std, alpha=0.2, 
-                facecolor='b')
-ax.set_xlabel("Rotation angle in deg")
-ax.set_ylabel("Column width in mm")
-fig.savefig(os.path.join(path_output,"fwhm_line.png"), bbox_inches="tight")
-plt.show()
-  
-"""
-Polar plots
-"""
-phi_rad = phi.copy()
-phi_rad = phi / 180 * np.pi
-phi_rad = np.append(phi_rad,0) 
-
-# fwhm
-r = fwhm_acorr_mean.copy()
-r = np.append(r, r[0])
-r_err = fwhm_acorr_std.copy()
-r_err = np.append(r_err, r_err[0])
-
-fig = plt.figure()
-ax = plt.axes(polar=True)
-ax.plot(phi_rad, r, 'ro')
-ax.errorbar(phi_rad, r, yerr=r_err, xerr=0, capsize=0, ecolor="g")
-ax.set_xlabel("Major axis")
-ax.set_ylabel("Minor axis", labelpad=30)
-ax.set_rticks([1.0, 1.5, 2.0, 2.5])
-ax.set_rlabel_position(-22.5)
-ax.grid(True)
-fig.savefig(os.path.join(path_output,"fwhm_polar.png"), bbox_inches="tight")
-plt.show()
-
-# neighbor distance
-r = d_acorr_mean.copy()
-r = np.append(r, r[0])
-r_err = d_acorr_std.copy()
-r_err = np.append(r_err, r_err[0])
-
-fig = plt.figure()
-ax = plt.axes(polar=True)
-ax.plot(phi_rad, r, 'ro')
-ax.errorbar(phi_rad, r, yerr=r_err, xerr=0, capsize=0, ecolor="g")
-ax.set_xlabel("Major axis")
-ax.set_ylabel("Minor axis", labelpad=30)
-ax.set_rticks([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0])
-ax.set_rlabel_position(-22.5)  
-ax.grid(True)
-fig.savefig(os.path.join(path_output,"neighbor_distance_polar.png"), bbox_inches="tight")
-plt.show()
-
-# neighbor power
-r = P_acorr_mean.copy()
-r = np.append(r, r[0])
-r_err = P_acorr_std.copy()
-r_err = np.append(r_err, r_err[0])
-
-fig = plt.figure()
-ax = plt.axes(polar=True)
-ax.plot(phi_rad, r, 'ro')
-ax.errorbar(phi_rad, r, yerr=r_err, xerr=0, capsize=0, ecolor="g")
-ax.set_xlabel("Major axis")
-ax.set_ylabel("Minor axis", labelpad=30)
-ax.set_rticks([0.1, 0.2, 0.3, 0.4])
-ax.set_rlabel_position(-22.5) 
-ax.grid(True)
-fig.savefig(os.path.join(path_output,"neighbor_power_polar.png"), bbox_inches="tight")
-plt.show()
-
-# spatial frequency
-r = k_fft_mean.copy()
-r = np.append(r, r[0])
-r_err = k_fft_std.copy()
-r_err = np.append(r_err, r_err[0])
-
-fig = plt.figure()
-ax = plt.axes(polar=True)
-ax.plot(phi_rad, r, 'ro')
-ax.errorbar(phi_rad, r, yerr=r_err, xerr=0, capsize=0, ecolor="g")
-ax.set_xlabel("Major axis")
-ax.set_ylabel("Minor axis", labelpad=30)
-ax.set_rticks([0.1, 0.2, 0.3, 0.4, 0.5, 0.6])
-ax.set_rlabel_position(-22.5)
-ax.grid(True)
-fig.savefig(os.path.join(path_output,"frequency_polar.png"), bbox_inches="tight")
-plt.show()
-
-# spatial frequency power
-r = P_fft_mean.copy()
-r = np.append(r, r[0])
-r_err = P_fft_std.copy()
-r_err = np.append(r_err, r_err[0])
-
-fig = plt.figure()
-ax = plt.axes(polar=True)
-ax.plot(phi_rad, r, 'ro')
-ax.errorbar(phi_rad, r, yerr=r_err, xerr=0, capsize=0, ecolor="g")
-ax.set_xlabel("Major axis")
-ax.set_ylabel("Minor axis", labelpad=30)
-ax.set_rticks([1000, 2000, 3000, 4000])
-ax.set_rlabel_position(-22.5)
-ax.grid(True)
-fig.savefig(os.path.join(path_output,"frequency_power_polar.png"), bbox_inches="tight")
-plt.show()
-
-"""
-Logfile
-"""
-fileID = open(os.path.join(path_output,"result.txt"),"w")
-fileID.write("fwhm_acorr_mean (minor): "+str(fwhm_acorr_mean[0])+"\n")
-fileID.write("fwhm_acorr_std (minor): "+str(fwhm_acorr_std[0])+"\n")
-fileID.write("fwhm_acorr_mean (major): "+str(fwhm_acorr_mean[int(np.argwhere(phi==90))])+"\n")
-fileID.write("fwhm_acorr_std (major): "+str(fwhm_acorr_std[int(np.argwhere(phi==90))])+"\n")
-fileID.write("d_acorr_mean (minor): "+str(d_acorr_mean[0])+"\n")
-fileID.write("d_acorr_std (minor): "+str(d_acorr_std[0])+"\n")
-fileID.write("d_acorr_mean (major): "+str(d_acorr_mean[int(np.argwhere(phi==90))])+"\n")
-fileID.write("d_acorr_std (major): "+str(d_acorr_std[int(np.argwhere(phi==90))])+"\n")
-fileID.write("P_acorr_mean (minor): "+str(P_acorr_mean[0])+"\n")
-fileID.write("P_acorr_std (minor): "+str(P_acorr_std[0])+"\n")
-fileID.write("P_acorr_mean (major): "+str(P_acorr_mean[int(np.argwhere(phi==90))])+"\n")
-fileID.write("P_acorr_std (major): "+str(P_acorr_std[int(np.argwhere(phi==90))])+"\n")
-fileID.write("k_fft_mean (minor): "+str(k_fft_mean[0])+"\n")
-fileID.write("k_fft_std (minor): "+str(k_fft_std[0])+"\n")
-fileID.write("k_fft_mean (major): "+str(k_fft_mean[int(np.argwhere(phi==90))])+"\n")
-fileID.write("k_fft_std (major): "+str(k_fft_std[int(np.argwhere(phi==90))])+"\n")
-fileID.write("P_fft_mean (minor): "+str(P_fft_mean[0])+"\n")
-fileID.write("P_fft_std (minor): "+str(P_fft_std[0])+"\n")
-fileID.write("P_fft_mean (major): "+str(P_fft_mean[int(np.argwhere(phi==90))])+"\n")
-fileID.write("P_fft_std (major): "+str(P_fft_std[int(np.argwhere(phi==90))])+"\n")
-fileID.close()
+# save variables
+np.savez(os.path.join(path_output,name_output),
+         x_0=x_0, x_90=x_90, x_fft_0=x_fft_0, x_fft_90=x_fft_90, x_acorr_0=x_acorr_0, x_acorr_90=x_acorr_90,
+         y_0=y_0, y_90=y_90, y_fft_0=y_fft_0, y_fft_90=y_fft_90, y_acorr_0=y_acorr_0, y_acorr_90=y_acorr_90,
+         k_fft_phi_mean=k_fft_phi_mean, P_fft_phi_mean=P_fft_phi_mean,
+         d_acorr_phi_mean=d_acorr_phi_mean, P_acorr_phi_mean=P_acorr_phi_mean, fwhm_acorr_phi_mean=fwhm_acorr_phi_mean,
+         k_fft_phi_std=k_fft_phi_std, P_fft_phi_std=P_fft_phi_std,
+         d_acorr_phi_std=d_acorr_phi_std, P_acorr_phi_std=P_acorr_phi_std, fwhm_acorr_phi_std=fwhm_acorr_phi_std)
