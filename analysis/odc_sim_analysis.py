@@ -59,7 +59,7 @@ b = 1000
 theta = 0
 
 # parameters for ODC analysis
-niter = 1 # number of iterations
+niter = 1000 # number of iterations
 name_output = "sim" # basename of output
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 
@@ -77,10 +77,6 @@ P_fft_phi = np.zeros((niter, len(phi)))
 d_acorr_phi= np.zeros((niter, len(phi)))
 P_acorr_phi = np.zeros((niter, len(phi)))
 fwhm_acorr_phi = np.zeros((niter, len(phi)))
-x_0 = []
-y_0 = []
-x_90 = []
-y_90 = []
 x_fft_0 = []
 y_fft_0 = []
 x_fft_90 = []
@@ -119,16 +115,12 @@ for i in range(niter):
         
         # get example data for minor and major axes
         if i == 0 and phi[j] == 0:
-            x_0.append(x_temp)
-            y_0.append(x_temp)
             x_fft_0.append(x_fft)
             y_fft_0.append(y_fft)
             x_acorr_0.append(x_acorr)
             y_acorr_0.append(y_acorr)
         
         if i == 0 and phi[j] == 90:
-            x_90.append(x_temp)
-            y_90.append(y_temp)
             x_fft_90.append(x_fft)
             y_fft_90.append(y_fft)
             x_acorr_90.append(x_acorr)
@@ -150,8 +142,8 @@ fwhm_acorr_phi_std = np.nanstd(fwhm_acorr_phi,0)
 
 # save variables
 np.savez(os.path.join(path_output,name_output),
-         x_0=x_0, x_90=x_90, x_fft_0=x_fft_0, x_fft_90=x_fft_90, x_acorr_0=x_acorr_0, x_acorr_90=x_acorr_90,
-         y_0=y_0, y_90=y_90, y_fft_0=y_fft_0, y_fft_90=y_fft_90, y_acorr_0=y_acorr_0, y_acorr_90=y_acorr_90,
+         x_fft_0=x_fft_0, x_fft_90=x_fft_90, x_acorr_0=x_acorr_0, x_acorr_90=x_acorr_90,
+         y_fft_0=y_fft_0, y_fft_90=y_fft_90, y_acorr_0=y_acorr_0, y_acorr_90=y_acorr_90,
          k_fft_phi_mean=k_fft_phi_mean, P_fft_phi_mean=P_fft_phi_mean,
          d_acorr_phi_mean=d_acorr_phi_mean, P_acorr_phi_mean=P_acorr_phi_mean, fwhm_acorr_phi_mean=fwhm_acorr_phi_mean,
          k_fft_phi_std=k_fft_phi_std, P_fft_phi_std=P_fft_phi_std,

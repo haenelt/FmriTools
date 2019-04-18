@@ -30,10 +30,10 @@ from lib.analysis import analyze_fft
 from lib.analysis import analyze_acorr
 
 # parameters
-input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/lh.spmT_left_right_GE_EPI3_def_layer9_sigma0_grid.nii"
+input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/rh.spmT_left_right_GE_EPI5_def_layer9_sigma0_grid.nii"
 x_grid = 0.25 # grid resolution in mm (x-direction)
 y_grid = 0.25 # grid resolution in mm (y-direction)
-name_output = "GE_EPI3" # basename of output
+name_output = "GE_EPI5" # basename of output
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 
 """ do not edit below """
@@ -52,15 +52,11 @@ hemi = os.path.splitext(os.path.splitext(os.path.basename(input))[0])[0]
 # considered rotation angles for generation of projection lines
 phi = 10 * np.arange(36)
 
-k_fft_phi = []
-P_fft_phi = []
-d_acorr_phi = []
-P_acorr_phi = []
-fwhm_acorr_phi = []
-x_0 = []
-y_0 = []
-x_90 = []
-y_90 = []
+k_fft_phi = np.zeros((nlayer, len(phi)))
+P_fft_phi = np.zeros((nlayer, len(phi)))
+d_acorr_phi = np.zeros((nlayer, len(phi)))
+P_acorr_phi = np.zeros((nlayer, len(phi)))
+fwhm_acorr_phi = np.zeros((nlayer, len(phi)))
 x_fft_0 = []
 y_fft_0 = []
 x_fft_90 = []
@@ -95,24 +91,20 @@ for i in range(nlayer):
         fwhm_acorr, d_acorr, P_acorr, x_acorr, y_acorr = analyze_acorr(data, FOVx, FOVy, x_temp, y_temp)
         
         # list result
-        k_fft_phi.append(float(k_fft))
-        P_fft_phi.append(float(P_fft))
-        d_acorr_phi.append(float(d_acorr))
-        P_acorr_phi.append(float(P_acorr))
-        fwhm_acorr_phi.append(float(fwhm_acorr))
+        k_fft_phi[i,j] = float(k_fft)
+        P_fft_phi[i,j] = float(P_fft)
+        d_acorr_phi[i,j] = float(d_acorr)
+        P_acorr_phi[i,j] = float(P_acorr)
+        fwhm_acorr_phi[i,j] = float(fwhm_acorr)
         
         # get example data for minor and major axes
         if phi[j] == 0:
-            x_0.append(x_temp)
-            y_0.append(x_temp)
             x_fft_0.append(x_fft)
             y_fft_0.append(y_fft)
             x_acorr_0.append(x_acorr)
             y_acorr_0.append(y_acorr)
         
         if phi[j] == 90:
-            x_90.append(x_temp)
-            y_90.append(y_temp)
             x_fft_90.append(x_fft)
             y_fft_90.append(y_fft)
             x_acorr_90.append(x_acorr)
@@ -120,7 +112,7 @@ for i in range(nlayer):
 
 # save variables
 np.savez(os.path.join(path_output,hemi+"."+name_output),
-         x_0=x_0, x_90=x_90, x_fft_0=x_fft_0, x_fft_90=x_fft_90, x_acorr_0=x_acorr_0, x_acorr_90=x_acorr_90,
-         y_0=y_0, y_90=y_90, y_fft_0=y_fft_0, y_fft_90=y_fft_90, y_acorr_0=y_acorr_0, y_acorr_90=y_acorr_90,
+         x_fft_0=x_fft_0, x_fft_90=x_fft_90, x_acorr_0=x_acorr_0, x_acorr_90=x_acorr_90,
+         y_fft_0=y_fft_0, y_fft_90=y_fft_90, y_acorr_0=y_acorr_0, y_acorr_90=y_acorr_90,
          k_fft_phi=k_fft_phi, P_fft_phi=P_fft_phi, 
          d_acorr_phi=d_acorr_phi, P_acorr_phi=P_acorr_phi, fwhm_acorr_phi=fwhm_acorr_phi)
