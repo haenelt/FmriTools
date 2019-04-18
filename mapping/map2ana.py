@@ -13,15 +13,40 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/home/raid2/haenelt/Desktop/tsnrresting_state_tsnr.nii",
+input_file = ["/data/pt_01880/V2STRIPES/p6/anatomy/flash/S5_3D_GRE_3ech_iso0p5_slab_9.76.nii",
+              "/data/pt_01880/V2STRIPES/p6/anatomy/flash/S5_3D_GRE_3ech_iso0p5_slab_17.37.nii",
+              "/data/pt_01880/V2STRIPES/p6/anatomy/flash/S5_3D_GRE_3ech_iso0p5_slab_25.9.nii",
+              "/data/pt_01880/V2STRIPES/p6/anatomy/flash/S6_3D_GRE_3ech_iso0p5_slab_9.76.nii",
+              "/data/pt_01880/V2STRIPES/p6/anatomy/flash/S6_3D_GRE_3ech_iso0p5_slab_17.37.nii",
+              "/data/pt_01880/V2STRIPES/p6/anatomy/flash/S6_3D_GRE_3ech_iso0p5_slab_25.9.nii",
               ]
 
-input_surf = ["/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer5",
-              "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer5",
+
+input_surf = [
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer0",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer1",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer2",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer3",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer4",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer5",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer6",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer7",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer8",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer9",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer0",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer1",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer2",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer3",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer4",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer5",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer6",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer7",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer8",
+        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer9",
         ]
 
-deformation = "/data/pt_01880/V2STRIPES/p6/deformation/resting_state/epi2orig.nii.gz"
-path_output = "/home/raid2/haenelt/Desktop"
+deformation = "/data/pt_01880/V2STRIPES/p6/deformation/flash/flash2orig.nii.gz"
+path_output = "/data/pt_01880/V2STRIPES/p6/anatomy/flash"
 
 """ do not edit below """
 

@@ -65,9 +65,17 @@ def get_scanner_transform(input_source, input_target, path_output):
     target_img.header["dim"][0] = 4
     target_img.header["dim"][4] = 3
     target_img.set_data_dtype(np.float)
+       
+    # get filenames
+    if os.path.splitext(os.path.basename(input_source))[1] == '.gz':
+        name_source = os.path.splitext(os.path.splitext(os.path.basename(input_source))[0])[0]
+    else:
+        name_source = os.path.splitext(os.path.basename(input_source))[0]
     
-    name_source = os.path.splitext(os.path.splitext(os.path.basename(input_source))[0])[0]
-    name_target = os.path.splitext(os.path.splitext(os.path.basename(input_target))[0])[0]
-    
+    if os.path.splitext(os.path.basename(input_target))[1] == '.gz':
+        name_target = os.path.splitext(os.path.splitext(os.path.basename(input_target))[0])[0]
+    else:
+        name_target = os.path.splitext(os.path.basename(input_target))[0]
+      
     output = nb.Nifti1Image(coordinate_mapping, target_img.affine, target_img.header)
     nb.save(output,os.path.join(path_output,name_source+"_2_"+name_target+"_scanner.nii"))
