@@ -176,7 +176,7 @@ Nx_mri = 148
 Ny_mri = 148
 
 # nyquist frequency
-f_ny = 2 * np.sqrt(Nx_mri**2+Ny_mri**2) / np.sqrt(FOVx_mri**2+FOVy_mri**2)
+f_ny = np.sqrt(Nx_mri**2+Ny_mri**2) / (2 * np.sqrt(FOVx_mri**2+FOVy_mri**2))
 
 # labels
 labels = ["GM/WM"," "," "," "," "," "," "," "," ","GM/CSF"] # labels
@@ -216,8 +216,8 @@ for i in range(4):
     handles = [copy.copy(ha) for ha in handles ]
     [ha.set_linewidth(7) for ha in handles ] # set the linewidths to the copies
     ax.legend(handles[::-1], labels[::-1], loc=1, frameon=False, labelspacing=-0.3)
-    ax.axvline(x=1/f_ny, ymin=0, ymax=1, linestyle='--', color='red')
-    ax.text(1/f_ny-0.1,108,r"$f_{\mathrm{Nyquist}}$")
+    ax.axvline(x=f_ny, ymin=0, ymax=1, linestyle='--', color='red')
+    ax.text(f_ny-0.1,108,r"$f_{\mathrm{Nyquist}}$")
     x1, x2, y1, y2 = 0.1, 0.42, 0, 30 # specify the limits
     axins.set_xlim(x1, x2) # apply the x-limits
     axins.set_ylim(y1, y2) # apply the y-limits
