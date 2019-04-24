@@ -20,7 +20,7 @@ component.
 
 Further below, not all parameters are needed for this simulation since we only use the neural map, 
 i.e., no MRI parameters (Nx_mri, Ny_mri), bold parameters (beta, fwhm_bold, fwhm_noise) or occlusion 
-parameters (a, b, theta) are needed.
+parameters (a_mask, b_mask, theta_mask) are needed.
 
 created by Daniel Haenelt
 Date created: 14-04-2019
@@ -54,9 +54,9 @@ fwhm_bold = 1.02
 fwhm_noise = 0
 
 # parameters for edge occlusion
-a = 1000
-b = 1000
-theta = 0
+a_mask = 1000
+b_mask = 1000
+theta_mask = 0
 
 # parameters for ODC analysis
 niter = 1000 # number of iterations
@@ -89,7 +89,8 @@ for i in range(niter):
     
     # get odc pattern
     _, neural, _, _, _, _ = odc_2d(Nx_sim, Ny_sim, FOVx, FOVy, Nx_mri, Ny_mri, rho, delta, epsilon, 
-                                   theta, alpha, beta, fwhm_bold, fwhm_noise, a, b, theta, False)
+                                   theta, alpha, beta, fwhm_bold, fwhm_noise, a_mask, b_mask, 
+                                   theta_mask, False)
 
     # get pca
     _, _, x_minor, y_minor = get_pca(neural)

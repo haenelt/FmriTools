@@ -35,9 +35,9 @@ beta = 1
 fwhm_bold = 0
 fwhm_noise = 0
 
-a = 1000
-b = 1000
-theta = 0
+a_mask = 1000
+b_mask = 1000
+theta_mask = 0
 
 """
 Generate pattern
@@ -45,7 +45,7 @@ Generate pattern
 
 neural, bold, mri, _ = pattern_2d(Nx_sim, Ny_sim, FOVx, FOVy, Nx_mri, Ny_mri, omega_x, omega_y, 
                                   phi_x, phi_y, theta, rect_shape, beta, fwhm_bold, fwhm_noise,
-                                  a, b, theta)
+                                  a_mask, b_mask, theta_mask)
 
 """
 Plot

@@ -34,16 +34,17 @@ beta = 1
 fwhm_bold = 1.02
 fwhm_noise = 0
 
-a = 1000
-b = 1000
-theta = 0
+a_mask = 1000
+b_mask = 1000
+theta_mask = 0
 
 """
 Generate pattern
 """
 
 _, neural, bold, mri, _, _ = odc_2d(Nx_sim, Ny_sim, FOVx, FOVy, Nx_mri, Ny_mri, rho, delta, epsilon, 
-                                    theta, alpha, beta, fwhm_bold, fwhm_noise, a, b, theta, False)
+                                    theta, alpha, beta, fwhm_bold, fwhm_noise, a_mask, b_mask, 
+                                    theta_mask, False)
 
 """
 Plot
