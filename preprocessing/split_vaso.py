@@ -2,8 +2,9 @@
 Split VASO and BOLD
 
 This scripts splits the vaso and bold time series into separate files. Additionally, volumes at the
-beginning (non steady-state volumes) and at the end can be discarded. Note that number of volumes is
-the individual volumes, i.e. not the mutual volume TR consisting of both vaso and bold volume.
+beginning (non steady-state volumes) are overwritten by following steady-state volumes. Furthermore,
+volumes at the end of the scan can be discarded. Note that the number of volumes refers here to the
+individual volumes in the bold+vaso time series.
 
 created by Daniel Haenelt
 Date created: 02-05-2018             
@@ -23,7 +24,7 @@ img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/data.nii",
              ]
 
 # paramteers
-start_vol = 10
+start_vol = 4
 end_vol = 3
 
 """ do not edit below """
@@ -34,8 +35,11 @@ for i in range(len(img_input)):
     data = nb.load(img_input[i])
     data_array = data.get_fdata()
     
-    # discard volumes
-    data_array = data_array[:,:,:,start_vol:-end_vol]
+    # overwrite non steady-state volumes
+    data_array[:,:,:,0:start_vol] = data_array[:,:,:,start_vol:start_vol+4]
+    
+    # discard volumes at the end
+    data_array = data_array[:,:,:,:-end_vol]
     
     # split into even and odd runs
     t_even = np.arange(0,np.shape(data_array)[3],2)
