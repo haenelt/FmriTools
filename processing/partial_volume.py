@@ -9,6 +9,9 @@ masks (positive outwards and negative inwards). The levelset images are upsample
 voluming in the original epi space is computed by counting the tissue compartments in each epi
 voxel using a moving-average like algorithm.
 
+Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
+the terminal.
+
 created by Daniel Haenelt
 Date created: 02-05-2019             
 Last modified: 02-05-2019  
