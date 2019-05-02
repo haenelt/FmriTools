@@ -23,11 +23,16 @@
 %
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 27-02-2019
+% Last modified: 02-05-2019
 
 % input time series
 img_input = {
-    '/data/pt_01880/V2STRIPES/p6/test_sequence2/SE_EPI/iso1p0_low_voltage/data.nii',...
+    '/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/bold_basis.nii',...
+    '/nobackup/actinium2/haenelt/VasoTest/flicker/Run_2/bold_basis.nii',...
+    '/nobackup/actinium2/haenelt/VasoTest/flicker/Run_3/bold_basis.nii',...
+    '/nobackup/actinium2/haenelt/VasoTest/flicker/Run_4/bold_basis.nii',...
+    '/nobackup/actinium2/haenelt/VasoTest/flicker/Run_5/bold_basis.nii',...
+    '/nobackup/actinium2/haenelt/VasoTest/flicker/Run_6/bold_basis.nii',...
     };
 
 % input fieldmap
@@ -228,7 +233,7 @@ for i = 1:length(img_input)
     xlabel('number of volume');
     ylabel('Translation in mm');
     legend('x','y','z');
-    saveas(gcf,fullfile(path_diagnosis,['moco_mm_' num2str(i) '.png']));
+    saveas(gcf,fullfile(path_diagnosis,['moco_mm_' file '_' num2str(i) '.png']));
     close(transFig);
     
     radFig = figure('visible','off');
@@ -242,7 +247,7 @@ for i = 1:length(img_input)
     xlabel('number of volume');
     ylabel('Rotation in rad');
     legend('pitch','roll','yaw');
-    saveas(gcf,fullfile(path_diagnosis,['moco_rad_' num2str(i) '.png']));
+    saveas(gcf,fullfile(path_diagnosis,['moco_rad_' file '_' num2str(i) '.png']));
     close(radFig);
 
 end
@@ -324,16 +329,16 @@ for i = 1:length(img_input)
     end
     
     % save summed outliers in mat file
-    save('outlier.mat','motion_outlier','intensity_outlier');
+    save(['outlier_' file '.mat'],'motion_outlier','intensity_outlier');
 end
 
 % open textfile
-fileID = fopen(fullfile(path_diagnosis,'preprocessing_summary.txt'),'w');
+fileID = fopen(fullfile(path_diagnosis,['preprocessing_summary_' file '.txt']),'w');
 
 for i  = 1:length(img_input)
 
     cd(fileparts(img_input{i}));
-    load('outlier.mat');
+    load(['outlier_' file '.mat']);
     
     data_img = spm_vol(img_input{i});
     nt = length(data_img);
@@ -378,7 +383,7 @@ for i = 1:length(img_input)
     data_img = spm_vol(fullfile(path,['u' file ext]));
     data_array = spm_read_vols(data_img);
     
-    data_img_out(i).fname = fullfile(path_diagnosis, 'vol1.nii');
+    data_img_out(i).fname = fullfile(path_diagnosis, ['vol1_' file '.nii']);
     spm_write_vol(data_img_out(i), data_array(:,:,:,1));
 
 end
@@ -404,7 +409,7 @@ for i = 1:length(img_input)
     
 end
 data_mean_array = data_mean_array ./ counter;
-data_img_out.fname = fullfile(path_diagnosis, 'mean.nii');
+data_img_out.fname = fullfile(path_diagnosis, ['mean_' file '.nii']);
 spm_write_vol(data_img_out, data_mean_array);
 
 
