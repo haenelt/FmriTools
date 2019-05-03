@@ -54,7 +54,7 @@ for i in range(len(img_vaso)):
     
     os.system("3dUpsample -overwrite -datum short " + \
               "-prefix " + os.path.join(path_bold,file_bold + "_upsampled.nii") + \
-              " -n 2 -input " + img_vaso[i])
+              " -n 2 -input " + img_bold[i])
 
     # load vaso data and shift in time
     vaso = nb.load(os.path.join(path_vaso,file_vaso + "_upsampled.nii"))

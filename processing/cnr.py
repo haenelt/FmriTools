@@ -23,10 +23,20 @@ from scipy.io import loadmat
 from scipy.stats import zscore
 
 # input data
-img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/avg/uvaso_basis_corrected_avg.nii",
+img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/uvaso_basis_corrected.nii",
+             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_2/uvaso_basis_corrected.nii",
+             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_3/uvaso_basis_corrected.nii",
+             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_4/uvaso_basis_corrected.nii",
+             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_5/uvaso_basis_corrected.nii",
+             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_6/uvaso_basis_corrected.nii",
              ]
 
 cond_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/logfiles/VasoTest_flicker_Run1_Cond.mat",
+              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_2/logfiles/VasoTest_flicker_Run2_Cond.mat",
+              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_3/logfiles/VasoTest_flicker_Run3_Cond.mat",
+              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_4/logfiles/VasoTest_flicker_Run4_Cond.mat",
+              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_5/logfiles/VasoTest_flicker_Run5_Cond.mat",
+              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_6/logfiles/VasoTest_flicker_Run6_Cond.mat",
               ]
 
 # path to SPM12 folder
@@ -39,7 +49,7 @@ cutoff_highpass = 100 # cutoff in s for baseline correction
 skipvol = 4 # skip number of volumes in each block
 condition1 = "on"
 condition2 = "off"
-name_output = "vaso_avg"
+name_output = "vaso"
 use_z_score = False
 
 """ do not edit below """
@@ -143,9 +153,7 @@ for i in range(len(path)):
     
     # percent signal change
     percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_baseline_mean * 100
-    percent_signal2 = ( data_condition2_mean - data_condition1_mean ) / data_baseline_mean * 100
     percent_signal1[np.isnan(percent_signal1)] = 0
-    percent_signal2[np.isnan(percent_signal2)] = 0
 
     # sum volumes for each run
     mean_percent_signal1 += percent_signal1

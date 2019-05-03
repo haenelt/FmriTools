@@ -36,7 +36,7 @@ for i in range(len(img_input)):
     data_array = data.get_fdata()
     
     # overwrite non steady-state volumes
-    data_array[:,:,:,0:start_vol] = data_array[:,:,:,start_vol:start_vol+4]
+    data_array[:,:,:,0:start_vol] = data_array[:,:,:,start_vol:2*start_vol]
     
     # discard volumes at the end
     data_array = data_array[:,:,:,:-end_vol]
