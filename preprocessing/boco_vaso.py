@@ -56,7 +56,7 @@ for i in range(len(img_vaso)):
               "-prefix " + os.path.join(path_bold,file_bold + "_upsampled.nii") + \
               " -n 2 -input " + img_vaso[i])
 
-    # shift vaso in time
+    # load vaso data and shift in time
     vaso = nb.load(os.path.join(path_vaso,file_vaso + "_upsampled.nii"))
     vaso_array = vaso.get_fdata()
     vaso_array = vaso_array[:,:,:,:-1]
@@ -74,7 +74,7 @@ for i in range(len(img_vaso)):
     vaso_array[vaso_array >= 2] = 2
 
     output = nb.Nifti1Image(vaso_array, vaso.affine, vaso.header)
-    nb.save(output, os.path.join(path_vaso,file_vaso + "_corrected.nii"))
+    nb.save(output, os.path.join(path_vaso,file_vaso + "_upsampled_corrected.nii"))
 
     # change TR in header
     os.system("3drefit " + \
@@ -87,4 +87,4 @@ for i in range(len(img_vaso)):
 
     os.system("3drefit " + \
               "-TR " + str(TR) + " " + \
-              os.path.join(path_vaso,file_vaso + "_corrected.nii"))
+              os.path.join(path_vaso,file_vaso + "_upsampled_corrected.nii"))
