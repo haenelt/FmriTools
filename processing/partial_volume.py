@@ -26,9 +26,9 @@ from nipype.interfaces import afni
 from lib.processing import estimate_pv
 
 # input
-file_ribbon = "/home/daniel/Schreibtisch/input/ribbon.mgz"
-file_deformation = "/home/daniel/Schreibtisch/input/orig2epi.nii.gz"
-path_output = "/home/daniel/Schreibtisch/test"
+file_ribbon = "/data/pt_01880/V2STRIPES/p6/anatomy/freesurfer/mri/ribbon.mgz"
+file_deformation = "/data/pt_01880/V2STRIPES/p6/deformation/resting_state/orig2epi.nii.gz"
+path_output = "/data/pt_01880/V2STRIPES/p6/pve"
 cleanup = False
 
 # upsampled voxel size in mm
