@@ -52,7 +52,7 @@ for i in range(len(img_input)):
     data.header["dim"][4] = np.shape(vaso_array)[3]
     
     output = nb.Nifti1Image(vaso_array,data.affine,data.header)
-    nb.save(output,os.path.join(os.path.dirname(img_input[i]),"vaso_basis.nii"))
+    nb.save(output,os.path.join(os.path.dirname(img_input[i]),"vaso.nii"))
     
     output = nb.Nifti1Image(bold_array,data.affine,data.header)
-    nb.save(output,os.path.join(os.path.dirname(img_input[i]),"bold_basis.nii"))
+    nb.save(output,os.path.join(os.path.dirname(img_input[i]),"bold.nii"))
