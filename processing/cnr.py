@@ -1,18 +1,18 @@
 """
-Percent signal change
+Contrast-to-noise ratio of functional time series (task-based activation)
 
-This scripts calculates the percent signal change between two conditions of a block design for a 
-session consisting of several runs. First, a baseline correction of each time series is applied if 
-not done before (i.e., if no file with prefix b is found). From the condition file which has to be 
-in the SPM compatible *.mat format, time points for both blocks are defined. Time series for the 
-whole time series (baseline) and all conditions can be converted to z-score. The percent signal 
-change is computed as the difference of the mean between both conditions divided by the time series 
-mean. The mean percent signal change of the whole session is taken as the average across single 
-runs. The percent signal change is computed for both contrasts.
+This scripts calculates the contrast-to-noise ratio (CNR) in percent from functional time series  
+containing task-based activation following a block design. The input can be a list of several runs. 
+First, a baseline correction of each time series is applied if not done before (i.e., if no file 
+with prefix b is found). From the condition file which has to be in the SPM compatible *.mat format, 
+time points for both conditions are defined. CNR is computed as absolute difference between both 
+conditions divided by the standard deviation of the second condition. The second condition should be 
+a baseline condition if the CNR should make any sense. The CNR of the whole session is taken as the 
+average across single runs. Similar computations of CNR can be found in Scheffler et al. (2016).
 
 created by Daniel Haenelt
-Date created: 06-12-2018             
-Last modified: 09-01-2019  
+Date created: 03-05-2019             
+Last modified: 03-05-2019  
 """
 import sys
 import os
@@ -20,7 +20,6 @@ import datetime
 import numpy as np
 import nibabel as nb
 from scipy.io import loadmat
-from scipy.stats import zscore
 
 # input data
 img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/uvaso_basis_corrected.nii",
@@ -50,7 +49,6 @@ skipvol = 4 # skip number of volumes in each block
 condition1 = "on"
 condition2 = "off"
 name_output = "vaso"
-use_z_score = False
 
 """ do not edit below """
 
@@ -65,7 +63,7 @@ for i in range(len(img_input)):
     file.append(os.path.split(img_input[i])[1])
 
 # output folder is taken from the first entry of the input list
-path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","percent","native")
+path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","cnr","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
@@ -82,8 +80,7 @@ affine = data_img.affine
 # get image dimension
 dim = data_img.header["dim"][1:4]
 
-mean_percent_signal1 = np.zeros(dim)
-mean_percent_signal2 = np.zeros(dim)
+mean_cnr = np.zeros(dim)
 for i in range(len(path)):
     
     # load condition file
@@ -138,42 +135,30 @@ for i in range(len(path)):
     # sort volumes to conditions
     data_condition1 = data_array[:,:,:,onsets1]
     data_condition2 = data_array[:,:,:,onsets2]
-    
-    # z-score
-    if use_z_score:
-        data_condition1 = zscore(data_condition1, axis=3)
-        data_condition2 = zscore(data_condition2, axis=3)
-        data_array = zscore(data_array, axis=3)
-    
+       
     # mean
     data_condition1_mean = np.mean(data_condition1, axis=3)
     data_condition2_mean = np.mean(data_condition2, axis=3)
-    data_baseline_mean = np.mean(data_array, axis=3)
-    data_baseline_mean[data_baseline_mean == 0] = np.nan
+    data_condition2_std = np.std(data_condition2, axis=3)
+    data_condition2_std[data_condition2_std == 0] = np.nan
     
     # percent signal change
-    percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_baseline_mean * 100
-    percent_signal1[np.isnan(percent_signal1)] = 0
+    cnr = ( np.abs(data_condition1_mean - data_condition2_mean) ) / data_condition2_std * 100
+    cnr[np.isnan(cnr)] = 0
 
     # sum volumes for each run
-    mean_percent_signal1 += percent_signal1
-    mean_percent_signal2 += percent_signal2
+    mean_cnr += cnr
     
 # divide by number of runs
-mean_percent_signal1 = mean_percent_signal1 / len(path)
-mean_percent_signal2 = mean_percent_signal2 / len(path)
+mean_cnr = mean_cnr / len(path)
     
 # write output
-output = nb.Nifti1Image(mean_percent_signal1, affine, header)
-fileOUT = os.path.join(path_output,"percent_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
-nb.save(output,fileOUT)
-
-output = nb.Nifti1Image(mean_percent_signal2, affine, header)
-fileOUT = os.path.join(path_output,"percent_"+name_output+"_"+condition2+"_"+condition1+"_"+name_sess+".nii")
+output = nb.Nifti1Image(mean_cnr, affine, header)
+fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
 nb.save(output,fileOUT)
 
 # write log
-fileID = open(os.path.join(path_output,"percent_info.txt"),"a")
+fileID = open(os.path.join(path_output,"cnr_info.txt"),"a")
 fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
 fileID.write("basename: "+name_output+"\n")
 fileID.write("data set: "+name_sess+"\n")
