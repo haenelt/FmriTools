@@ -71,7 +71,7 @@ for i in range(len(img_vaso)):
 
     # clean vaso data that are unrealistic
     vaso_array[vaso_array < 0] = 0
-    vaso_array[vaso_array >= 2] = 2
+    vaso_array[vaso_array >= 10] = 10
 
     output = nb.Nifti1Image(vaso_array, vaso.affine, vaso.header)
     nb.save(output, os.path.join(path_vaso,file_vaso + "_upsampled_corrected.nii"))

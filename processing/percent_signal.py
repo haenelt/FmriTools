@@ -23,7 +23,7 @@ from scipy.io import loadmat
 from scipy.stats import zscore
 
 # input data
-img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/avg/uvaso_basis_corrected_avg.nii",
+img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/avg/ubold_basis_upsampled_avg.nii",
              ]
 
 cond_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/logfiles/VasoTest_flicker_Run1_Cond.mat",
