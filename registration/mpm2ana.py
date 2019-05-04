@@ -14,7 +14,7 @@ between MPM and MP2RAGE T1-maps. The script consists of the following steps:
 
 created by Daniel Haenelt
 Date created: 31-01-2019
-Last modified: 18-02-2019
+Last modified: 04-05-2019
 """
 import os
 import numpy as np

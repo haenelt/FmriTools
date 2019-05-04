@@ -18,7 +18,7 @@ terminal.
 
 created by Daniel Haenelt
 Date created: 18-04-2019
-Last modified: 18-04-2019
+Last modified: 04-05-2019
 """
 import os
 import shutil as sh

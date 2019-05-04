@@ -1,40 +1,40 @@
 """
-EPI <-> ORIG registration
+EPI <-> EPI <-> ORIG registration
 
 The purpose of the following script is to compute the deformation field for the registration 
-between antomy in conformed freesurfer space and native EPI space. The script consists of the 
+between anatomy in conformed freesurfer space and native EPI space via a registration between two 
+EPIs and application of an already existing EPI <-> deformation. The script consists of the 
 following steps:
     1. set output folder structure
-    2. convert orig.mgz to orig.nii
-    3. scanner transform orig <-> t1 and t1 <-> epi
-    4. n4 correction epi
-    5. mask t1 and epi
-    6. antsreg
-    7. merge deformations
-    8. apply deformations
+    2. n4 correction epi
+    3. mask epi
+    4. antsreg
+    5. merge deformations
+    6. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
-Date created: 10-01-2019
-Last modified: 28-02-2019
+Date created: 13-02-2019
+Last modified: 04-05-2019
 """
 import os
 import shutil as sh
-from nipype.interfaces.freesurfer.preprocess import MRIConvert
 from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
-from lib.registration.get_scanner_transform import get_scanner_transform
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI1/diagnosis/mean.nii"
+file_mean_epi_source = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI2/diagnosis/mean.nii"
+file_mean_epi_target = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI1/diagnosis/mean.nii"
+file_orig = "/data/pt_01880/V2STRIPES/p7/anatomy/freesurfer/mri/orig.mgz"
 file_t1 = "/data/pt_01880/V2STRIPES/p7/anatomy/T1_0p7.nii"
 file_mask = "/data/pt_01880/V2STRIPES/p7/anatomy/skull/skullstrip_mask.nii"
-file_orig = "/data/pt_01880/V2STRIPES/p7/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/V2STRIPES/p7"
+file_orig2epi = "/data/pt_01880/V2STRIPES/p7/deformation/colour/ge_epi1/orig2epi.nii.gz"
+file_epi2orig = "/data/pt_01880/V2STRIPES/p7/deformation/colour/ge_epi1/epi2orig.nii.gz"
+path_output = "/data/pt_01880/V2STRIPES/p7/deformation/colour/ge_epi2"
 cleanup = False
 
 # parameters for epi skullstrip
@@ -59,9 +59,8 @@ interpolation = 'Linear'
 set folder structure
 """
 path_temp = os.path.join(path_output,"temp")
-path_orig = os.path.join(path_temp,"orig")
-path_scanner = os.path.join(path_temp,"scanner")
-path_epi = os.path.join(path_temp,"epi")
+path_epi_source = os.path.join(path_temp,"epi_source")
+path_epi_target = os.path.join(path_temp,"epi_target")
 path_t1 = os.path.join(path_temp,"t1")
 path_syn = os.path.join(path_temp,"syn")
 
@@ -71,14 +70,11 @@ if not os.path.exists(path_output):
 if not os.path.exists(path_temp):
     os.makedirs(path_temp)
 
-if not os.path.exists(path_orig):
-    os.makedirs(path_orig)
+if not os.path.exists(path_epi_source):
+    os.makedirs(path_epi_source)
 
-if not os.path.exists(path_scanner):
-    os.makedirs(path_scanner)
-
-if not os.path.exists(path_epi):
-    os.makedirs(path_epi)
+if not os.path.exists(path_epi_target):
+    os.makedirs(path_epi_target)
 
 if not os.path.exists(path_t1):
     os.makedirs(path_t1)
@@ -87,51 +83,38 @@ if not os.path.exists(path_syn):
     os.makedirs(path_syn)
 
 # copy input files
-sh.copyfile(file_orig, os.path.join(path_orig,"orig.mgz"))
-sh.copyfile(file_mean_epi, os.path.join(path_epi,"epi.nii"))
+sh.copyfile(file_mean_epi_source, os.path.join(path_epi_source,"epi.nii"))
+sh.copyfile(file_mean_epi_target, os.path.join(path_epi_target,"epi.nii"))
 sh.copyfile(file_t1, os.path.join(path_t1,"T1.nii"))
 sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii"))
 
 """
-convert orig to nifti
-"""
-mc = MRIConvert()
-mc.inputs.in_file = os.path.join(path_orig,"orig.mgz")
-mc.inputs.out_file = os.path.join(path_orig,"orig.nii")
-mc.inputs.in_type = "mgz"
-mc.inputs.out_type = "nii"
-mc.run()
-
-"""
-scanner transformation
-"""
-get_scanner_transform(os.path.join(path_orig,"orig.nii"),os.path.join(path_t1,"T1.nii"),path_scanner)
-get_scanner_transform(os.path.join(path_t1,"T1.nii"),os.path.join(path_orig,"orig.nii"),path_scanner)
-
-"""
 bias field correction to epi
 """
-n4 = N4BiasFieldCorrection()
-n4.inputs.dimension = 3
-n4.inputs.input_image = os.path.join(path_epi,"epi.nii")
-n4.inputs.bias_image = os.path.join(path_epi,'n4bias.nii')
-n4.inputs.output_image = os.path.join(path_epi,"bepi.nii")
-n4.run()
+path = [path_epi_source, path_epi_target]
+for i in range(len(path)):
+    n4 = N4BiasFieldCorrection()
+    n4.inputs.dimension = 3
+    n4.inputs.input_image = os.path.join(path[i],"epi.nii")
+    n4.inputs.bias_image = os.path.join(path[i],'n4bias.nii')
+    n4.inputs.output_image = os.path.join(path[i],"bepi.nii")
+    n4.run()
 
 """
 mask t1 and epi
 """
 mask_ana(os.path.join(path_t1,"T1.nii"),os.path.join(path_t1,"mask.nii"))
-mask_epi(os.path.join(path_epi,"bepi.nii"), 
-         os.path.join(path_t1,"pT1.nii"), 
-         os.path.join(path_t1,"mask.nii"), 
-         niter_mask, sigma_mask)
+for i in range(len(path)):
+    mask_epi(os.path.join(path[i],"bepi.nii"), 
+             os.path.join(path_t1,"pT1.nii"), 
+             os.path.join(path_t1,"mask.nii"), 
+             niter_mask, sigma_mask)
 
 """
 syn
 """
-embedded_antsreg(os.path.join(path_t1,"pT1.nii"), # source image
-                 os.path.join(path_epi,"pbepi.nii"), # target image 
+embedded_antsreg(os.path.join(path_epi_source,"pbepi.nii"), # source image
+                 os.path.join(path_epi_target,"pbepi.nii"), # target image 
                  run_rigid, # whether or not to run a rigid registration first 
                  rigid_iterations, # number of iterations in the rigid step
                  run_affine, # whether or not to run an affine registration first
@@ -155,9 +138,9 @@ embedded_antsreg(os.path.join(path_t1,"pT1.nii"), # source image
 merge deformations
 """
 # orig -> epi
-apply_coordinate_mappings(os.path.join(path_scanner,"orig_2_T1_scanner.nii"), # input 
-                          os.path.join(path_syn,"syn_ants-map.nii.gz"), # cmap
-                          interpolation = "nearest", # nearest or linear
+apply_coordinate_mappings(file_orig2epi, # input 
+                          os.path.join(path_syn,"syn_ants-invmap.nii.gz"), # cmap
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
@@ -166,9 +149,9 @@ apply_coordinate_mappings(os.path.join(path_scanner,"orig_2_T1_scanner.nii"), # 
                           )
 
 # epi -> orig
-apply_coordinate_mappings(os.path.join(path_syn,"syn_ants-invmap.nii.gz"), # input
-                          os.path.join(path_scanner,"T1_2_orig_scanner.nii"), # cmap
-                          interpolation = "nearest", # nearest or linear
+apply_coordinate_mappings(os.path.join(path_syn,"syn_ants-map.nii.gz"), # input
+                          file_epi2orig, # cmap
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
@@ -197,7 +180,7 @@ apply_coordinate_mappings(file_orig, # input
                           )
 
 # epi -> orig
-apply_coordinate_mappings(file_mean_epi, # input 
+apply_coordinate_mappings(file_mean_epi_source, # input 
                           os.path.join(path_output,"epi2orig.nii.gz"), # cmap
                           interpolation = "nearest", # nearest or linear
                           padding = "zero", # closest, zero or max
