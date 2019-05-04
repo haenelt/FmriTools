@@ -8,29 +8,28 @@ between antomy and EPI in native space. The script consists of the following ste
     3. n4 correction epi
     4. mask t1 and epi
     5. antsreg
-    6. merge deformations
-    7. apply deformations
+    6. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 02-05-2019
-Last modified: 02-05-2019
+Last modified: 04-05-2019
 """
 import os
 import shutil as sh
 from nipype.interfaces.ants import N4BiasFieldCorrection
-from nighres.registration import embedded_antsreg
+from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI1/diagnosis/mean.nii"
-file_t1 = "/data/pt_01880/V2STRIPES/p7/anatomy/T1_0p7.nii"
-file_mask = "/data/pt_01880/V2STRIPES/p7/anatomy/skull/skullstrip_mask.nii"
-path_output = "/data/pt_01880/V2STRIPES/p7"
-cleanup = False
+file_mean_epi = "/nobackup/actinium2/haenelt/VasoTest/flicker/diagnosis/mean_bold_basis.nii"
+file_t1 = "/nobackup/actinium2/haenelt/VasoTest/anatomy/T1_0p7.nii"
+file_mask = "/nobackup/actinium2/haenelt/VasoTest/anatomy/skull/skullstrip_mask.nii"
+path_output = "/nobackup/actinium2/haenelt/VasoTest/deformation/flicker"
+cleanup = True
 
 # parameters for epi skullstrip
 niter_mask = 3
@@ -56,7 +55,6 @@ set folder structure
 path_temp = os.path.join(path_output,"temp")
 path_epi = os.path.join(path_temp,"epi")
 path_t1 = os.path.join(path_temp,"t1")
-path_syn = os.path.join(path_temp,"syn")
 
 if not os.path.exists(path_output):
     os.makedirs(path_output)
@@ -69,9 +67,6 @@ if not os.path.exists(path_epi):
 
 if not os.path.exists(path_t1):
     os.makedirs(path_t1)
-
-if not os.path.exists(path_syn):
-    os.makedirs(path_syn)
 
 # copy input files
 sh.copyfile(file_mean_epi, os.path.join(path_epi,"epi.nii"))
@@ -117,10 +112,47 @@ embedded_antsreg(os.path.join(path_t1,"pT1.nii"), # source image
                  ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
                  save_data = True, # save output data to file
                  overwrite = True, # overwrite existing results 
-                 output_dir = path_syn, # output directory
+                 output_dir = path_output, # output directory
                  file_name = "syn", # output basename
                  )
 
-# apply coordinate mappings
-# rename deformation and examples
-# get rid of intermediate files
+# rename final deformations
+os.rename(os.path.join(path_output,"syn_ants-map.nii.gz"),
+          os.path.join(path_output,"ana2epi.nii.gz"))
+os.rename(os.path.join(path_output,"syn_ants-invmap.nii.gz"),
+          os.path.join(path_output,"epi2ana.nii.gz"))
+
+"""
+apply deformation
+"""
+# ana -> epi
+apply_coordinate_mappings(file_t1, # input 
+                          os.path.join(path_output,"ana2epi.nii.gz"), # cmap
+                          interpolation = "linear", # nearest or linear
+                          padding = "zero", # closest, zero or max
+                          save_data = True, # save output data to file (boolean)
+                          overwrite = True, # overwrite existing results (boolean)
+                          output_dir = path_output, # output directory
+                          file_name = "ana2epi_example" # base name with file extension for output
+                          )
+
+# epi -> ana
+apply_coordinate_mappings(file_mean_epi, # input 
+                          os.path.join(path_output,"epi2ana.nii.gz"), # cmap
+                          interpolation = "linear", # nearest or linear
+                          padding = "zero", # closest, zero or max
+                          save_data = True, # save output data to file (boolean)
+                          overwrite = True, # overwrite existing results (boolean)
+                          output_dir = path_output, # output directory
+                          file_name = "epi2ana_example" # base name with file extension for output
+                          )
+
+# rename final deformation examples
+os.rename(os.path.join(path_output,"ana2epi_example_def-img.nii.gz"),
+          os.path.join(path_output,"ana2epi_example.nii.gz"))
+os.rename(os.path.join(path_output,"epi2ana_example_def-img.nii.gz"),
+          os.path.join(path_output,"epi2ana_example.nii.gz"))
+
+# clean intermediate files
+if cleanup:
+    sh.rmtree(path_temp, ignore_errors=True)
