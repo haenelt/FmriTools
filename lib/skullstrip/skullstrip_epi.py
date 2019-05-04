@@ -88,7 +88,7 @@ def skullstrip_epi(input, pathFSL=None, roi_size=5, scale=0.75, nerode=2, ndilat
 
     # flood filling on brain mask
     mask_array = binary_fill_holes(mask_array, structure=np.ones((2,2,2)))
-    
+
     # write mask (intermediate)
     newimg = nb.Nifti1Image(mask_array, data_img.affine, data_img.header)
     newimg.header['dim'][0] = 3
