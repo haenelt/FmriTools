@@ -4,7 +4,7 @@ def get_tsnr(input, path_output, name_output, TR, cutoff_highpass, pathSPM):
     Inputs:
         *input: input time series.
         *path_output: path where to save mean image
-        *name_output: output file name without file extension.
+        *name_output: basename of output file.
         *TR: repetition time in s.
         *cutoff_highpass: cutoff in s for baseline correction.
         *pathSPM: path to SPM12.
