@@ -6,14 +6,14 @@ the resulting surface data of the cortical boundaries into a regular grid repres
 is divided into five parts. Single steps of each part are stated below:
     
 Before running the script, login to queen via ssh and set the freesurfer environment by calling
-FREESURFER in the terminal.
+FREESURFER in the terminal. Additionally, the FSL environment has to be set.
 
 Part 1 (Run recon-all pipeline)
     *flat image background denoising
     *bias field correction of the flat image
     *volume thresholding
     *recon1 without skullstripping
-    *compute skullstrip mask
+    *compute skullstrip mask (inv2 and flash)
     *recon23
 Part 2 (Manual correction of white surface)
     *how to manually correct the white surface is explained below
@@ -68,10 +68,12 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 01-03-2019
+Last modified: 05-05-2019
 """
 import os
 import datetime
+from sh import gunzip
+from nighres.registration import apply_coordinate_mappings
 from nipype.interfaces.freesurfer import ApplyVolTransform
 from lib.segmentation.robust_combination import robust_combination
 from lib.segmentation.bias_field_correction import bias_field_correction
@@ -84,7 +86,9 @@ from lib.segmentation.upsample_surf_mesh import upsample_surf_mesh
 from lib.segmentation.surface_flattening import surface_flattening
 from lib.segmentation.calculate_distortion import calculate_distortion
 from lib.segmentation.orthographic_projection import orthographic_projection
+from lib.registration import get_flash2orig
 from lib.skullstrip.skullstrip_spm12 import skullstrip_spm12
+from lib.skullstrip.skullstrip_flash import skullstrip_flash
 from lib.utils.volume_threshold import volume_threshold
 from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
@@ -93,6 +97,7 @@ from lib.mapping.map2grid import map2grid
 fileUNI = "/data/pt_01880/V2STRIPES/p7/anatomy/UNI_0p7.nii"
 fileINV1 = "/data/pt_01880/V2STRIPES/p7/anatomy/INV1_0p7.nii"
 fileINV2 = "/data/pt_01880/V2STRIPES/p7/anatomy/INV2_0p7.nii"
+fileFLASH = ""
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
@@ -101,6 +106,8 @@ part = 5
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
+min_flash = 100 # parameter for lower threshold in flash masking (part 1)
+max_flash = 1000 # parameter for upper threshold in flahs masking (part 1)
 w_shift = -0.5 # white surface shift (part 3)
 niter_upsample = 1 # number of upsampling iterations (part 4)
 method_upsample = "linear" # upsampling method (part 4)
@@ -125,9 +132,11 @@ file = path_split[1]
 
 # set folder structure
 path_bias = os.path.join(path, "bias")
+path_skull = os.path.join(path, "skull")
+path_flash = os.path.join(path, "flash")
 path_dense = os.path.join(path, "dense")
 path_layer = os.path.join(path, "layer")
-path_ortho = os.path.join(path,"ortho")
+path_ortho = os.path.join(path, "ortho")
 
 # write log
 fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
@@ -159,13 +168,13 @@ if part == 1:
               " -s " + sub + \
               " -parallel")
     
-    # skull stripping
-    print("Skullstrip")
+    # skullstrip anatomy
+    print("Skullstrip INV2")
     skullstrip_spm12(fileINV2, pathSPM12, path)
     
     # bring skullstrip_mask in conformed space (mri_vol2vol, NN)
     transmask = ApplyVolTransform()
-    transmask.inputs.source_file = os.path.join(path, "skull", "skullstrip_mask.nii")
+    transmask.inputs.source_file = os.path.join(path_skull, "skullstrip_mask.nii")
     transmask.inputs.target_file = os.path.join(path,sub,"mri","orig.mgz")
     transmask.inputs.reg_header = True
     transmask.inputs.interp = "nearest"
@@ -173,13 +182,47 @@ if part == 1:
     transmask.inputs.args = "--no-save-reg"
     transmask.run()
     
+    # skullstrip flash
+    print("Skullstrip FLASH")
+    skullstrip_flash(fileFLASH, 
+                     path_flash,
+                     "skullstrip2", 
+                     min_flash, max_flash, cleanup=True)
+    
+    # get registration to orig
+    get_flash2orig(fileFLASH, 
+                   fileUNI, 
+                   os.path.join(path,sub,"mri","orig.mgz"), 
+                   os.path.join(path_flash,"deformation"), 
+                   cleanup=True)
+        
+    # transform skullstrip mask
+    apply_coordinate_mappings(os.path.join(path_flash,"skullstrip2_mask.nii"),
+                              os.path.join(path_flash,"deformation","flash2orig.nii.gz"), # cmap 1
+                              interpolation = "nearest", # nearest or linear
+                              padding = "zero", # closest, zero or max
+                              save_data = True, # save output data to file (boolean)
+                              overwrite = True, # overwrite existing results (boolean)
+                              output_dir = os.path.join(path,sub,"mri"), # output directory
+                              file_name = "skullstrip2_mask" # base name with file extension for output
+                              )
+    
+    gunzip(os.path.join(path,sub,"mri","skullstrip2_mask_def-img.nii.gz"))
+    os.rename(os.path.join(path,sub,"mri","skullstrip2_mask_def-img.nii"),
+              os.path.join(path,sub,"mri","skullstrip2_mask.nii"))
+    
+    # combine masks
+    multiply_images(os.path.join(path,sub,"mri","skullstrip_mask.nii"),
+                    os.path.join(path,sub,"mri","skullstrip2_mask.nii"),
+                    os.path.join(path,sub,"mri","skullstrip3_mask.nii"))
+    
     # apply skullstrip mask to T1 and save as brainmask
     multiply_images(os.path.join(path,sub,"mri","T1.mgz"),
-                    os.path.join(path,sub,"mri","skullstrip_mask.nii"),
+                    os.path.join(path,sub,"mri","skullstrip3_mask.nii"),
                     os.path.join(path,sub,"mri","brainmask.mgz"))
     
     multiply_images(os.path.join(path,sub,"mri","T1.mgz"),
-                    os.path.join(path,sub,"mri","skullstrip_mask.nii"),
+                    os.path.join(path,sub,"mri","skullstrip3_mask.nii"),
                     os.path.join(path,sub,"mri","brainmask.auto.mgz"))
    
     # autorecon2 and autorecon3
@@ -196,6 +239,8 @@ if part == 1:
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
     fileID.write("Regularisation for background removal: "+str(reg_background)+"\n")
+    fileID.write("Lower threshold for FLASH mask: "+str(min_flash)+"\n")
+    fileID.write("Upper threshold for FLASH mask: "+str(max_flash)+"\n")
     fileID.close()
 
 elif part == 2:
