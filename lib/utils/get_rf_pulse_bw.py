@@ -1,0 +1,77 @@
+def get_rf_pulse_bw(input, ninterp=1000000):
+    """
+    This function computes the bandwidth in Hz of an RF pulse. The RF pulseshape has to be exported
+    from the POET simulation. This can be done by clicking on the wanted pulse in the pulse sequence 
+    diagram and saving the event block as textfile. The bandwidth is calculated as the FWHM of the
+    normalized frequency magnitude.
+    Inputs:
+        *input: textfile of one event block.
+        *ninterp: number of frequency steps for spline interpolation.
+        
+    created by Daniel Haenelt
+    Date created: 15-05-2019
+    Last modified: 15-05-2019
+    """
+    import re
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from numpy.fft import fft, fftshift
+
+    # read file
+    file=[]
+    with open(input) as fp:  
+        line = fp.readline()
+        while line:
+            line = fp.readline()
+            file.append(line)
+
+    # remove header from array
+    file = file[9:]
+
+    # get rf-pulse shape from array
+    rf = []
+    for i in range(len(file)):
+        temp = [float(s) for s in re.findall(r'-?\d+\.?\d*', file[i])]
+        if len(temp) > 0:
+            rf.append(temp[0])
+
+    # get magnitude fft
+    rf_fft = np.abs(fft(rf))
+
+    # get frequency axis 
+    freq = np.fft.fftfreq(len(rf),1e-6) # timesteps in seconds
+
+    # shift center frequency to center and normalize magnitude
+    freq = fftshift(freq)
+    rf_fft = fftshift(rf_fft)
+    rf_fft = rf_fft / np.max(rf_fft)
+
+    # get spline interpolation of fft
+    freq_spline = np.linspace(np.min(freq), np.max(freq), ninterp)
+    rf_fft_spline = np.interp(freq_spline, freq, rf_fft)
+
+    for i in range(len(rf_fft_spline)-1):
+        if rf_fft_spline[i] <= 0.5 and rf_fft_spline[i+1] > 0.5:
+            freq1 = freq_spline[i]
+    
+        if rf_fft_spline[i] > 0.5 and rf_fft_spline[i+1] <= 0.5:
+            freq2 = freq_spline[i]
+
+    # bandwidth in Hz
+    bw = freq2 - freq1
+    print("Pulse bandwidth in Hz: "+str(bw))
+
+    # plot pulse and corresponding fft
+    fig, ax = plt.subplots()
+    ax.plot(np.linspace(0,len(rf),len(rf)),rf)
+    ax.set_xlabel("Time in microseconds")
+    ax.set_ylabel("Amplitude in a.u.")
+    ax.set_title("Pulse shape in time domain")
+    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.plot(freq_spline,rf_fft_spline)
+    ax.set_xlabel("frequency in cycles/second")
+    ax.set_ylabel("Normalized amplitude in a.u.")
+    ax.set_title("Pulse shape in frequency domain")
+    plt.show()
