@@ -5,8 +5,8 @@ The purpose of the following script is to compute the segmentation for hires MP2
 the resulting surface data of the cortical boundaries into a regular grid representation. The script 
 is divided into five parts. Single steps of each part are stated below:
     
-Before running the script, login to queen via ssh and set the freesurfer environment by calling
-FREESURFER in the terminal. Additionally, the FSL environment has to be set.
+Before running the script, login to queen via ssh and set the freesurfer and ants environment by 
+calling FREESURFER and ANTSENV in the terminal. Additionally, the FSL environment has to be set.
 
 Part 1 (Run recon-all pipeline)
     *flat image background denoising
@@ -94,20 +94,20 @@ from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/V2STRIPES/p7/anatomy/UNI_0p7.nii"
-fileINV1 = "/data/pt_01880/V2STRIPES/p7/anatomy/INV1_0p7.nii"
-fileINV2 = "/data/pt_01880/V2STRIPES/p7/anatomy/INV2_0p7.nii"
-fileFLASH = ""
+fileUNI = "/data/pt_01880/V2STRIPES/p8/anatomy/UNI_0p7.nii"
+fileINV1 = "/data/pt_01880/V2STRIPES/p8/anatomy/INV1_0p7.nii"
+fileINV2 = "/data/pt_01880/V2STRIPES/p8/anatomy/INV2_0p7.nii"
+fileFLASH = "/data/pt_01880/V2STRIPES/p8/anatomy/flash/S7_3D_GRE_3ech_iso0p5_slab_25.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 5
+part = 1
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
 min_flash = 100 # parameter for lower threshold in flash masking (part 1)
-max_flash = 1000 # parameter for upper threshold in flahs masking (part 1)
+max_flash = 1000 # parameter for upper threshold in flash masking (part 1)
 w_shift = -0.5 # white surface shift (part 3)
 niter_upsample = 1 # number of upsampling iterations (part 4)
 method_upsample = "linear" # upsampling method (part 4)
