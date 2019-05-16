@@ -1,12 +1,18 @@
-def get_rf_pulse_bw(input, ninterp=1000000):
+def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
     """
     This function computes the bandwidth in Hz of an RF pulse. The RF pulseshape has to be exported
     from the POET simulation. This can be done by clicking on the wanted pulse in the pulse sequence 
-    diagram and saving the event block as textfile. The bandwidth is calculated as the FWHM of the
-    normalized frequency magnitude.
+    diagram and saving the event block as textfile. The bandwidth is calculated as the width at the
+    threshold value of the normalized frequency magnitude.
     Inputs:
         *input: textfile of one event block.
+        *npad: pad zeros before and after pulse.
         *ninterp: number of frequency steps for spline interpolation.
+        *threshold: value at which bw is estimated.
+    Outputs:
+        *rf: pulse shape in time domain (microseconds).
+        *rf_fft: pulse shape in frequency domain (cycles/second).
+        *bw: bandwidth (Hz).
         
     created by Daniel Haenelt
     Date created: 15-05-2019
@@ -34,6 +40,29 @@ def get_rf_pulse_bw(input, ninterp=1000000):
         temp = [float(s) for s in re.findall(r'-?\d+\.?\d*', file[i])]
         if len(temp) > 0:
             rf.append(temp[0])
+    
+    # remove zeros at the beginning
+    exit_loop = 0
+    cnt = 0
+    while exit_loop == 0:
+        if rf[cnt] == 0:
+            cnt += 1
+        else:
+            exit_loop = 1
+    rf = rf[cnt:]
+
+    # remove zeros at the end
+    exit_loop = 0
+    cnt = -1
+    while exit_loop == 0:
+        if rf[cnt] == 0:
+            cnt -= 1
+        else:
+            exit_loop = 1
+    rf = rf[:cnt+1]
+
+    # pad beginning and ending with zeros
+    rf = np.pad(rf,npad,'constant')
 
     # get magnitude fft
     rf_fft = np.abs(fft(rf))
@@ -50,11 +79,12 @@ def get_rf_pulse_bw(input, ninterp=1000000):
     freq_spline = np.linspace(np.min(freq), np.max(freq), ninterp)
     rf_fft_spline = np.interp(freq_spline, freq, rf_fft)
 
+    threshold = 0.1
     for i in range(len(rf_fft_spline)-1):
-        if rf_fft_spline[i] <= 0.5 and rf_fft_spline[i+1] > 0.5:
+        if rf_fft_spline[i] <= threshold and rf_fft_spline[i+1] > threshold:
             freq1 = freq_spline[i]
     
-        if rf_fft_spline[i] > 0.5 and rf_fft_spline[i+1] <= 0.5:
+        if rf_fft_spline[i] > threshold and rf_fft_spline[i+1] <= threshold:
             freq2 = freq_spline[i]
 
     # bandwidth in Hz
@@ -75,3 +105,5 @@ def get_rf_pulse_bw(input, ninterp=1000000):
     ax.set_ylabel("Normalized amplitude in a.u.")
     ax.set_title("Pulse shape in frequency domain")
     plt.show()
+    
+    return rf, rf_fft, bw
