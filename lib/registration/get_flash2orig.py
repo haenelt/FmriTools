@@ -1,21 +1,21 @@
-def get_flash2orig(file_flash, file_uni, file_orig, path_output, cleanup=False):
+def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False):
     """
     This function computes the deformation field for the registration between a partial coverage
     GRE image and the freesurfer orig file. The following steps are performed: (1) set output 
-    folder structure, (2) get scanner transform GRE <-> uni and uni -> orig, (3) generate flash
-    cmap, (4) apply scanner transform uni -> GRE, (5) get flirt registration GRE -> uni, (6) apply
+    folder structure, (2) get scanner transform GRE <-> inv2 and inv2 -> orig, (3) generate flash
+    cmap, (4) apply scanner transform inv2 -> GRE, (5) get flirt registration GRE -> inv2, (6) apply
     flirt to GRE cmap, (7) apply scanner transform to GRE cmap, (8) apply final deformation to GRE.
     The function needs the FSL environment set.
     Inputs:
         *file_flash: input path for GRE image.
-        *file_uni: input path for MP2RAGE UNI image.
+        *file_inv2: input path for MP2RAGE INV2 image.
         *file_orig: input path for freesurfer orig image.
         *path_output: path where output is saved.
         *cleanup: delete intermediate files (boolean).
     
     created by Daniel Haenelt
     Date created: 18-04-2019
-    Last modified: 05-05-2019
+    Last modified: 16-05-2019
     """
     import os
     import shutil as sh
@@ -38,7 +38,7 @@ def get_flash2orig(file_flash, file_uni, file_orig, path_output, cleanup=False):
         os.makedirs(path_temp)
     
     # copy input files
-    sh.copyfile(file_uni, os.path.join(path_temp,"uni.nii"))
+    sh.copyfile(file_inv2, os.path.join(path_temp,"inv2.nii"))
     sh.copyfile(file_flash, os.path.join(path_temp,"flash.nii"))
     
     """
@@ -54,9 +54,9 @@ def get_flash2orig(file_flash, file_uni, file_orig, path_output, cleanup=False):
     """
     scanner transformation
     """
-    get_scanner_transform(os.path.join(path_temp,"uni.nii"), os.path.join(path_temp,"flash.nii"), path_temp)
-    get_scanner_transform(os.path.join(path_temp,"flash.nii"), os.path.join(path_temp,"uni.nii"), path_temp)
-    get_scanner_transform(os.path.join(path_temp,"uni.nii"), os.path.join(path_temp,"orig.nii"), path_temp)
+    get_scanner_transform(os.path.join(path_temp,"inv2.nii"), os.path.join(path_temp,"flash.nii"), path_temp)
+    get_scanner_transform(os.path.join(path_temp,"flash.nii"), os.path.join(path_temp,"inv2.nii"), path_temp)
+    get_scanner_transform(os.path.join(path_temp,"inv2.nii"), os.path.join(path_temp,"orig.nii"), path_temp)
 
     """
     generate coordinate mapping
@@ -64,20 +64,20 @@ def get_flash2orig(file_flash, file_uni, file_orig, path_output, cleanup=False):
     generate_coordinate_mapping(os.path.join(path_temp,"flash.nii"), 0, path_temp, "flash", False)
     
     """
-    scanner transform uni to flash
+    scanner transform inv2 to flash
     """
-    apply_coordinate_mappings(os.path.join(path_temp,"uni.nii"), # input 
-                              os.path.join(path_temp,"uni_2_flash_scanner.nii"), # cmap
+    apply_coordinate_mappings(os.path.join(path_temp,"inv2.nii"), # input 
+                              os.path.join(path_temp,"inv2_2_flash_scanner.nii"), # cmap
                               interpolation = "linear", # nearest or linear
                               padding = "zero", # closest, zero or max
                               save_data = True, # save output data to file (boolean)
                               overwrite = True, # overwrite existing results (boolean)
                               output_dir = path_temp, # output directory
-                              file_name = "uni_apply_scanner" # base name with file extension for output
+                              file_name = "inv2_apply_scanner" # base name with file extension for output
                               )
     
     """
-    flirt flash to uni
+    flirt flash to inv2
     """
     os.chdir(path_temp)
     flirt = FLIRT()
@@ -85,7 +85,7 @@ def get_flash2orig(file_flash, file_uni, file_orig, path_output, cleanup=False):
     flirt.inputs.dof = 6
     flirt.inputs.interp = "trilinear" # trilinear, nearestneighbour, sinc or spline
     flirt.inputs.in_file = os.path.join(path_temp,"flash.nii")
-    flirt.inputs.reference = os.path.join(path_temp,"uni_apply_scanner_def-img.nii.gz")
+    flirt.inputs.reference = os.path.join(path_temp,"inv2_apply_scanner_def-img.nii.gz")
     flirt.inputs.output_type = "NIFTI_GZ"
     flirt.inputs.out_file = os.path.join(path_temp,"flash_apply_flirt_def-img.nii.gz")
     flirt.inputs.out_matrix_file = os.path.join(path_temp,"flirt_matrix.txt")
@@ -109,8 +109,8 @@ def get_flash2orig(file_flash, file_uni, file_orig, path_output, cleanup=False):
     apply scanner transform to flash cmap
     """
     apply_coordinate_mappings(os.path.join(path_temp,"cmap_apply_flirt_def-img.nii.gz"),
-                              os.path.join(path_temp,"flash_2_uni_scanner.nii"), # cmap 1
-                              os.path.join(path_temp,"uni_2_orig_scanner.nii"), # cmap 2
+                              os.path.join(path_temp,"flash_2_inv2_scanner.nii"), # cmap 1
+                              os.path.join(path_temp,"inv2_2_orig_scanner.nii"), # cmap 2
                               interpolation = "linear", # nearest or linear
                               padding = "zero", # closest, zero or max
                               save_data = True, # save output data to file (boolean)

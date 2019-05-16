@@ -68,10 +68,11 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 05-05-2019
+Last modified: 16-05-2019
 """
 import os
 import datetime
+import nibabel as nb
 from sh import gunzip
 from nighres.registration import apply_coordinate_mappings
 from nipype.interfaces.freesurfer import ApplyVolTransform
@@ -187,35 +188,47 @@ if part == 1:
     skullstrip_flash(fileFLASH, 
                      path_flash,
                      "skullstrip2", 
-                     min_flash, max_flash, cleanup=True)
+                     min_flash, max_flash, flood_fill=False, cleanup=True)
+
+    # add 1 to mask
+    data = nb.load(os.path.join(path_flash,"skullstrip2_mask.nii"))
+    data_array = data.get_fdata()
+    data_array = data_array + 1
+    data_array[0,0,0] = 0 # set origin to zero to get zeros in the background after applying cmap
+    output = nb.Nifti1Image(data_array, data.affine, data.header)
+    nb.save(output, os.path.join(path_flash,"skullstrip2_mask_add.nii"))
     
     # get registration to orig
     get_flash2orig(fileFLASH, 
-                   fileUNI, 
+                   fileINV2, 
                    os.path.join(path,sub,"mri","orig.mgz"), 
                    os.path.join(path_flash,"deformation"), 
                    cleanup=True)
-        
+           
     # transform skullstrip mask
-    apply_coordinate_mappings(os.path.join(path_flash,"skullstrip2_mask.nii"),
+    apply_coordinate_mappings(os.path.join(path_flash,"skullstrip2_mask_add.nii"),
                               os.path.join(path_flash,"deformation","flash2orig.nii.gz"), # cmap 1
                               interpolation = "nearest", # nearest or linear
                               padding = "zero", # closest, zero or max
                               save_data = True, # save output data to file (boolean)
                               overwrite = True, # overwrite existing results (boolean)
                               output_dir = os.path.join(path,sub,"mri"), # output directory
-                              file_name = "skullstrip2_mask" # base name with file extension for output
+                              file_name = "skullstrip2_mask_add" # base name with file extension for output
                               )
     
-    gunzip(os.path.join(path,sub,"mri","skullstrip2_mask_def-img.nii.gz"))
-    os.rename(os.path.join(path,sub,"mri","skullstrip2_mask_def-img.nii"),
-              os.path.join(path,sub,"mri","skullstrip2_mask.nii"))
+    gunzip(os.path.join(path,sub,"mri","skullstrip2_mask_add_def-img.nii.gz"))
+    os.rename(os.path.join(path,sub,"mri","skullstrip2_mask_add_def-img.nii"),
+              os.path.join(path,sub,"mri","skullstrip2_mask_add.nii"))
     
     # combine masks
-    multiply_images(os.path.join(path,sub,"mri","skullstrip_mask.nii"),
-                    os.path.join(path,sub,"mri","skullstrip2_mask.nii"),
-                    os.path.join(path,sub,"mri","skullstrip3_mask.nii"))
-    
+    skull1 = nb.load(os.path.join(path,sub,"mri","skullstrip_mask.nii"))
+    skull2 = nb.load(os.path.join(path,sub,"mri","skullstrip2_mask_add.nii"))
+    skull1_array = skull1.get_fdata()
+    skull2_array = skull2.get_fdata()
+    skull1_array[skull2_array == 1] = 0
+    output = nb.Nifti1Image(skull1_array, skull1.affine, skull1.header)
+    nb.save(output, os.path.join(path,sub,"mri","skullstrip3_mask.nii"))
+        
     # apply skullstrip mask to T1 and save as brainmask
     multiply_images(os.path.join(path,sub,"mri","T1.mgz"),
                     os.path.join(path,sub,"mri","skullstrip3_mask.nii"),

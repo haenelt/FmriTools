@@ -1,4 +1,5 @@
-def skullstrip_flash(input, path_output, name_output, min_val=100, max_val=1000, cleanup=False):
+def skullstrip_flash(input, path_output, name_output, min_val=100, max_val=1000, flood_fill=False,
+                     cleanup=False):
     """
     This function computes a brain mask for a partial coverage T2*-weighted anatomical image. The 
     mask is used to remove the sagittal sinus during segmentation. Thus, the latest echo should be 
@@ -13,6 +14,7 @@ def skullstrip_flash(input, path_output, name_output, min_val=100, max_val=1000,
         *name_output: basename of output file.
         *min_val: minimum threshold of intensity histogram.
         *max_val: maximum threshold of intenstiy histogram.
+        *flood_fill: apply flood filling of binary mask (boolean).
         *cleanup: delete intermediate files (boolean).
         
     created by Daniel Haenelt
@@ -66,7 +68,8 @@ def skullstrip_flash(input, path_output, name_output, min_val=100, max_val=1000,
         mask_array[:,:,i][mask_array[:,:,i] != 0] = 1
 
     # flood filling on brain mask
-    mask_array = binary_fill_holes(mask_array, structure=np.ones((2,2,2)))
+    if flood_fill:
+        mask_array = binary_fill_holes(mask_array, structure=np.ones((2,2,2)))
 
     # write output
     output = nb.Nifti1Image(mask_array,mask.affine,mask.header)
@@ -76,5 +79,3 @@ def skullstrip_flash(input, path_output, name_output, min_val=100, max_val=1000,
     if cleanup:
         os.remove(os.path.join(path,"n4bias.nii"))
         os.remove(os.path.join(path,"b"+file+".nii"))
-    
-    
