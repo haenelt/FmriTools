@@ -27,7 +27,7 @@
 
 % input time series
 img_input = {
-    '/data/pt_01880/V2STRIPES/p8/test_sequence/Run_3/data.nii',...
+    '/data/pt_01880/V2STRIPES/p9/test_sequence/Run_2/data.nii',...
     };
 
 % input fieldmap

@@ -12,19 +12,19 @@
 
 % input data
 img_input = {
-    '/nobackup/actinium2/haenelt/VasoTest/flicker/avg/ubold_basis_upsampled_avg.nii',...
+    '/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/avg/udata.nii',...
     };
 
 cond_input = {
-    '/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/logfiles/VasoTest_flicker_Run1_Cond.mat',...
+    '/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/logfiles/p8_SE_EPI1_Run1_odc_Cond.mat',...
     };
 
 % parameters
-TR = 2.5; % repetition time  in s
-cutoff_highpass = 100; % 1/cutoff_highpass frequency in Hz
-nconds = 2; % only 2 and 3 are supported
-name_output = 'bold_avg'; % basename of output contrasts
-output_folder = 'contrast_bold_avg'; % name of folder where spm.mat is saved
+TR = 3; % repetition time  in s
+cutoff_highpass = 120; % 1/cutoff_highpass frequency in Hz
+nconds = 3; % only 2 and 3 are supported
+name_output = 'avg'; % basename of output contrasts
+output_folder = 'contrast_avg'; % name of folder where spm.mat is saved
 
 % add spm to path
 pathSPM = '/data/pt_01880/source/spm12'; 

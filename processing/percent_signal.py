@@ -23,20 +23,32 @@ from scipy.io import loadmat
 from scipy.stats import zscore
 
 # input data
-img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/ubold_basis_upsampled.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_2/ubold_basis_upsampled.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_3/ubold_basis_upsampled.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_4/ubold_basis_upsampled.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_5/ubold_basis_upsampled.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_6/ubold_basis_upsampled.nii",
+img_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_2/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_3/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_4/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_5/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_6/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_7/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_8/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_9/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_10/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_11/udata.nii",
+             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_12/udata.nii",
              ]
 
-cond_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/logfiles/VasoTest_flicker_Run1_Cond.mat",
-              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_2/logfiles/VasoTest_flicker_Run2_Cond.mat",
-              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_3/logfiles/VasoTest_flicker_Run3_Cond.mat",
-              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_4/logfiles/VasoTest_flicker_Run4_Cond.mat",
-              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_5/logfiles/VasoTest_flicker_Run5_Cond.mat",
-              "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_6/logfiles/VasoTest_flicker_Run6_Cond.mat",
+cond_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/logfiles/p8_SE_EPI1_Run1_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_2/logfiles/p8_SE_EPI1_Run2_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_3/logfiles/p8_SE_EPI1_Run3_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_4/logfiles/p8_SE_EPI1_Run4_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_5/logfiles/p8_SE_EPI1_Run5_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_6/logfiles/p8_SE_EPI1_Run6_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_7/logfiles/p8_SE_EPI1_Run7_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_8/logfiles/p8_SE_EPI1_Run8_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_9/logfiles/p8_SE_EPI1_Run9_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_10/logfiles/p8_SE_EPI1_Run10_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_11/logfiles/p8_SE_EPI1_Run11_odc_Cond.mat",
+              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_12/logfiles/p8_SE_EPI1_Run12_odc_Cond.mat",
               ]
 
 # path to SPM12 folder
@@ -44,12 +56,12 @@ pathSPM = "/data/pt_01880/source/spm12"
 pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
-TR = 2.5 # repetition time in s
-cutoff_highpass = 100 # cutoff in s for baseline correction
+TR = 3 # repetition time in s
+cutoff_highpass = 120 # cutoff in s for baseline correction
 skipvol = 3 # skip number of volumes in each block
-condition1 = "on"
-condition2 = "off"
-name_output = "bold"
+condition1 = "left"
+condition2 = "right"
+name_output = "fem"
 use_z_score = False
 
 """ do not edit below """
