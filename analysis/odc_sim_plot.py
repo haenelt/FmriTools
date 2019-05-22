@@ -13,7 +13,7 @@ of ODC data (averaged over 1000 iterations). The following plots are produced:
 
 created by Daniel Haenelt
 Date created: 18-04-2019
-Last modified: 18-04-2019
+Last modified: 22-05-2019
 """
 import os
 import numpy as np
@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 
 # load data from simulation
-Y = np.load("/home/daniel/Schreibtisch/intermediate/img/odc_sim/results/sim.npz")
+Y = np.load("/home/daniel/Schreibtisch/test/sim.npz")
 
 path_output = "/home/daniel/Schreibtisch"
 

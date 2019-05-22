@@ -24,7 +24,7 @@ parameters (a_mask, b_mask, theta_mask) are needed.
 
 created by Daniel Haenelt
 Date created: 14-04-2019
-Last modified: 17-04-2019
+Last modified: 22-05-2019
 """
 import os
 import numpy as np
@@ -59,7 +59,7 @@ b_mask = 1000
 theta_mask = 0
 
 # parameters for ODC analysis
-niter = 1000 # number of iterations
+niter = 1 # number of iterations
 name_output = "sim" # basename of output
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 

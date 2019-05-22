@@ -22,7 +22,7 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000
         
     created by Daniel Haenelt
     Date created: 14-04-2019
-    Last modified: 15-04-2019
+    Last modified: 22-05-2019
     """
     import numpy as np
     import copy
@@ -98,10 +98,7 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000
     # get autocorrelation
     array_acorr = get_acorr(input)
     acorr_line = array_acorr[np.round(x_line).astype(int),np.round(y_line).astype(int)]
-    
-    # normlize nac to interval [0,1]
-    acorr_line = ( acorr_line - np.min(acorr_line) ) / ( np.max(acorr_line) - np.min(acorr_line) )
-    
+        
     # fwhm
     acorr_line_max = np.argwhere(np.max(acorr_line) == acorr_line)
     if np.size(acorr_line_max) > 1:
@@ -115,8 +112,7 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000
         if acorr_line_middle > len(acorr_line)-1:
             acorr_line_middle = np.nan
             break
-        elif acorr_line[acorr_line_middle] < 0.5:
-            acorr_line_middle -= 1
+        elif acorr_line[acorr_line_middle] < 0.0:
             break
     
     # compute fwhm if middle point is found
