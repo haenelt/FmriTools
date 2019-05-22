@@ -59,7 +59,7 @@ b_mask = 1000
 theta_mask = 0
 
 # parameters for ODC analysis
-niter = 1 # number of iterations
+niter = 1000 # number of iterations
 name_output = "sim" # basename of output
 path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
 
