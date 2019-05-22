@@ -30,11 +30,11 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi = "/data/pt_01880/V2STRIPES/p7/colour/GE_EPI1/diagnosis/mean.nii"
-file_t1 = "/data/pt_01880/V2STRIPES/p7/anatomy/T1_0p7.nii"
-file_mask = "/data/pt_01880/V2STRIPES/p7/anatomy/skull/skullstrip_mask.nii"
-file_orig = "/data/pt_01880/V2STRIPES/p7/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/V2STRIPES/p7"
+file_mean_epi = "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/diagnosis/mean_data.nii"
+file_t1 = "/data/pt_01880/V2STRIPES/p8/anatomy/T1_0p7.nii"
+file_mask = "/data/pt_01880/V2STRIPES/p8/anatomy/skull/skullstrip_mask.nii"
+file_orig = "/data/pt_01880/V2STRIPES/p8/anatomy/freesurfer/mri/orig.mgz"
+path_output = "/data/pt_01880/V2STRIPES/p8"
 cleanup = False
 
 # parameters for epi skullstrip

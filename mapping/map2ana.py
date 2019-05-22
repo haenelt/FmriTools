@@ -13,36 +13,23 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/data/pt_01880/V2STRIPES/p6/pve/native/csf_pve.nii",
-              "/data/pt_01880/V2STRIPES/p6/pve/native/gm_pve.nii",
-              "/data/pt_01880/V2STRIPES/p6/pve/native/wm_pve.nii",
+input_file = ["/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_left_rest_SE_EPI1.nii",
+              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_left_right_SE_EPI1.nii",
+              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_right_left_SE_EPI1.nii",
+              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_right_rest_SE_EPI1.nii",
+              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_left_rest_SE_EPI1.nii",
+              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_left_right_SE_EPI1.nii",
+              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_right_left_SE_EPI1.nii",
+              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_right_rest_SE_EPI1.nii",
               ]
 
 input_surf = [
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer0",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer1",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer2",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer3",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer4",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer5",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer6",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer7",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer8",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/lh.layer9",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer0",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer1",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer2",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer3",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer4",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer5",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer6",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer7",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer8",
-        "/data/pt_01880/V2STRIPES/p6/anatomy/layer/rh.layer9",
+        "/data/pt_01880/V2STRIPES/p8/anatomy/freesurfer/surf/lh.0p50",
+        "/data/pt_01880/V2STRIPES/p8/anatomy/freesurfer/surf/rh.0p50",
         ]
 
-deformation = "/data/pt_01880/V2STRIPES/p6/deformation/resting_state/epi2orig.nii.gz"
-path_output = "/data/pt_01880/V2STRIPES/p6/pve"
+deformation = "/data/pt_01880/V2STRIPES/p8/deformation/SE_EPI1/epi2orig.nii.gz"
+path_output = "/data/pt_01880/V2STRIPES/p8/odc/results/spmT"
 
 """ do not edit below """
 
