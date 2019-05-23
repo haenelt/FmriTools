@@ -26,14 +26,18 @@ from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 from matplotlib import rc
 
 # load data from single sessions
-lh1 = np.load("/home/daniel/Schreibtisch/intermediate/img/odc_exp/results/lh.GE_EPI4.npz")
-lh2 = np.load("/home/daniel/Schreibtisch/intermediate/img/odc_exp/results/lh.GE_EPI5.npz")
-rh1 = np.load("/home/daniel/Schreibtisch/intermediate/img/odc_exp/results/rh.GE_EPI4.npz")
-rh2 = np.load("/home/daniel/Schreibtisch/intermediate/img/odc_exp/results/rh.GE_EPI5.npz")
+lh1 = np.load("/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_exp/results/lh.GE_EPI2.npz")
+lh2 = np.load("/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_exp/results/lh.GE_EPI3.npz")
+rh1 = np.load("/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_exp/results/rh.GE_EPI2.npz")
+rh2 = np.load("/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_exp/results/rh.GE_EPI3.npz")
 
-path_output = "/home/daniel/Schreibtisch"
+path_output = "/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_exp/img_1p0"
 
 """ do not edit below """
+
+# make output folder
+if not os.path.exists(path_output):
+    os.mkdir(path_output)
 
 # font parameters for plots
 rc('font',**{'family':'serif','serif':['Palatino']})
@@ -49,8 +53,8 @@ y2 = lh2["fwhm_acorr_phi"]
 y3 = rh1["fwhm_acorr_phi"]
 y4 = rh2["fwhm_acorr_phi"]
 
-x_mean = np.mean([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
-x_std = np.std([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
+x_mean = np.nanmean([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
+x_std = np.nanstd([y3[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
 y = np.linspace(0,1,10)
 
 fig, ax = plt.subplots()
@@ -60,7 +64,7 @@ ax.set_xlabel("Column width in mm")
 ax.set_ylabel("Cortical depth")
 ax.set_title("ODCs along minor axis")
 plt.yticks(y, np.round(y[::-1],1))
-fig.savefig(os.path.join(path_output,"exp_fwhm_vs_depth.svg"), format='svg', bbox_inches='tight')
+#fig.savefig(os.path.join(path_output,"exp_fwhm_vs_depth.svg"), format='svg', bbox_inches='tight')
 plt.show()
 
 # k_fft
@@ -69,8 +73,8 @@ y2 = lh2["k_fft_phi"]
 y3 = rh1["k_fft_phi"]
 y4 = rh2["k_fft_phi"]
 
-x_mean = np.mean([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
-x_std = np.std([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
+x_mean = np.nanmean([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
+x_std = np.nanstd([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
 y = np.linspace(0,1,10)
 
 fig, ax = plt.subplots()
@@ -89,8 +93,8 @@ y2 = lh2["P_fft_phi"]
 y3 = rh1["P_fft_phi"]
 y4 = rh2["P_fft_phi"]
 
-x_mean = np.mean([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
-x_std = np.std([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
+x_mean = np.nanmean([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
+x_std = np.nanstd([y1[:,0], y2[:,0], y3[:,0], y4[:,0]],0)
 y = np.linspace(0,1,10)
 
 fig, ax = plt.subplots()
@@ -115,8 +119,8 @@ y4 = rh2["fwhm_acorr_phi"]
 
 phi = 10*np.arange(36)
 y = np.concatenate((y1,y2,y3,y4),0)
-y_mean = np.mean(y,0)
-y_std = np.std(y,0)
+y_mean = np.nanmean(y,0)
+y_std = np.nanstd(y,0)
 
 fig, ax = plt.subplots()
 ax.plot(phi, y_mean, "r")
@@ -135,8 +139,8 @@ y4 = rh2["k_fft_phi"]
 
 phi = 10*np.arange(36)
 y = np.concatenate((y1,y2,y3,y4),0)
-y_mean = np.mean(y,0)
-y_std = np.std(y,0)
+y_mean = np.nanmean(y,0)
+y_std = np.nanstd(y,0)
 
 fig, ax = plt.subplots()
 ax.plot(phi, y_mean, "r")
@@ -155,8 +159,8 @@ y4 = rh2["P_fft_phi"]
 
 phi = 10*np.arange(36)
 y = np.concatenate((y1,y2,y3,y4),0)
-y_mean = np.mean(y,0)
-y_std = np.std(y,0)
+y_mean = np.nanmean(y,0)
+y_std = np.nanstd(y,0)
 
 fig, ax = plt.subplots()
 ax.plot(phi, y_mean, "r")

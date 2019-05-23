@@ -106,13 +106,15 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000
     else:
         acorr_line_max = int(acorr_line_max)
     
+    # FWHM will be defined at half maximum. N.B., this underestimates the columnar width in case of 
+    # pure sinusoidal oscillation where the width would be determined by taking the FWHM at zero
     acorr_line_middle = copy.deepcopy(acorr_line_max)
     while True:
         acorr_line_middle += 1
         if acorr_line_middle > len(acorr_line)-1:
             acorr_line_middle = np.nan
             break
-        elif acorr_line[acorr_line_middle] < 0.0:
+        elif acorr_line[acorr_line_middle] < 0.5:
             break
     
     # compute fwhm if middle point is found

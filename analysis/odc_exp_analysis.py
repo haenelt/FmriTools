@@ -30,11 +30,11 @@ from lib.analysis import analyze_fft
 from lib.analysis import analyze_acorr
 
 # parameters
-input = "/home/daniel/Schreibtisch/intermediate/img/odc_exp_analysis/data/rh.spmT_left_right_GE_EPI5_def_layer9_sigma0_grid.nii"
+input = "/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_exp/data/rh.spmT_left_right_GE_EPI5_def_layer9_sigma0_grid.nii"
 x_grid = 0.25 # grid resolution in mm (x-direction)
 y_grid = 0.25 # grid resolution in mm (y-direction)
 name_output = "GE_EPI5" # basename of output
-path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
+path_output = "/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_exp/results" # path where output is saved
 
 """ do not edit below """
 

@@ -21,9 +21,9 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 
 # load data from simulation
-Y = np.load("/data/pt_01880/odc_sim/sim.npz")
+Y = np.load("/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_sim/sim.npz")
 
-path_output = "/data/pt_01880/odc_sim"
+path_output = "/home/daniel/mpi/conference/ohbm/ohbm_2019/poster/odc_sim"
 
 """ do not edit below """
 
