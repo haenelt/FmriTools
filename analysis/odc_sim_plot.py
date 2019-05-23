@@ -21,9 +21,9 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 
 # load data from simulation
-Y = np.load("/home/daniel/Schreibtisch/test/sim.npz")
+Y = np.load("/data/pt_01880/odc_sim/sim.npz")
 
-path_output = "/home/daniel/Schreibtisch"
+path_output = "/data/pt_01880/odc_sim"
 
 """ do not edit below """
 
@@ -72,12 +72,12 @@ y_std = Y["P_fft_phi_std"]
 fig, ax = plt.subplots()
 ax.plot(phi, y_mean, "r")
 ax.fill_between(phi, y_mean-y_std, y_mean+y_std, alpha=0.2, facecolor='b')
-#ax.set_ylim([0,8000])
+ax.set_ylim([0,20000])
 ax.set_xlabel("Rotation angle in deg")
 ax.set_ylabel("Peak spatial frequency magnitude in a.u.")
 ax.set_title("ODCs along different projections")
-fig.savefig(os.path.join(path_output,"sim_Pfft_vs_phi.svg"), format='svg', bbox_inches='tight')
-#fig.savefig(os.path.join(path_output,"sim_Pfft_vs_phi_threshold.svg"), format='svg', bbox_inches='tight')
+#fig.savefig(os.path.join(path_output,"sim_Pfft_vs_phi.svg"), format='svg', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"sim_Pfft_vs_phi_threshold.svg"), format='svg', bbox_inches='tight')
 plt.show()
 
 # d_acorr

@@ -61,7 +61,7 @@ theta_mask = 0
 # parameters for ODC analysis
 niter = 1000 # number of iterations
 name_output = "sim" # basename of output
-path_output = "/home/daniel/Schreibtisch/test" # path where output is saved
+path_output = "/data/pt_01880/odc_sim" # path where output is saved
 
 """ do not edit below """
 
