@@ -10,3 +10,4 @@ from .get_gaussian import get_gaussian
 from .get_mip import get_mip
 from .get_surface_voxel import get_surface_voxel
 from .get_rf_pulse_bw import get_rf_pulse_bw
+from .get_series import get_series
