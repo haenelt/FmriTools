@@ -90,14 +90,14 @@ from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/V2STRIPES/p8/anatomy/UNI_0p7.nii"
-fileINV1 = "/data/pt_01880/V2STRIPES/p8/anatomy/INV1_0p7.nii"
-fileINV2 = "/data/pt_01880/V2STRIPES/p8/anatomy/INV2_0p7.nii"
+fileUNI = "/data/pt_01880/tuebingen/p1/anatomy/scm_MP2RAGEcorr_masked.nii"
+fileINV1 = "/data/pt_01880/tuebingen/p1/anatomy/scm_INV1.nii"
+fileINV2 = "/data/pt_01880/tuebingen/p1/anatomy/scm_INV2.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 4
+part = 1
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)

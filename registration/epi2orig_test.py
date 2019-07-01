@@ -34,7 +34,7 @@ file_mean_epi = "/data/pt_01880/tuebingen/p1/odc/GE_EPI1/diagnosis/mean_data.nii
 file_t1 = "/data/pt_01880/tuebingen/p1/anatomy/scm_quantT1corr_masked.nii"
 file_mask = "/data/pt_01880/tuebingen/p1/anatomy/skull/skullstrip_mask.nii"
 file_orig = "/data/pt_01880/tuebingen/p1/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/tuebingen/p1/deformation/odc/ge_epi1"
+path_output = "/data/pt_01880/tuebingen/p1/deformation/odc/ge_epi1_test"
 cleanup = False
 
 # parameters for epi skullstrip
@@ -43,13 +43,13 @@ sigma_mask = 3
 
 # parameters for syn 
 run_rigid = True
-rigid_iterations = 1000 
+rigid_iterations = 10
 run_affine = False 
-affine_iterations = 1000 
+affine_iterations = 10 
 run_syn = True 
-coarse_iterations = 50 
-medium_iterations = 150 
-fine_iterations = 100 
+coarse_iterations = 1
+medium_iterations = 1 
+fine_iterations = 1
 cost_function = 'CrossCorrelation' 
 interpolation = 'Linear' 
 
