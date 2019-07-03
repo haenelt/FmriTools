@@ -73,7 +73,12 @@ spm_get_defaults('stats.maxmem',2^35);% maxmen indicates how much memory can be 
 spm_get_defaults('cmdline',true);% no gui
 
 % preprocessing summary
-path_diagnosis = fullfile(fileparts(fileparts(img_input{1})),'diagnosis');
+if length(img_input) > 1
+    path_diagnosis = fullfile(fileparts(fileparts(img_input{1})),'diagnosis');
+else
+    path_diagnosis = fullfile(fileparts(img_input{1}),'diagnosis');
+end
+
 if ~exist(path_diagnosis,'dir') 
     mkdir(path_diagnosis); 
 end
