@@ -12,18 +12,28 @@ import os
 import pydicom
 
 # input data
-input = "/home/daniel/Schreibtisch/epi-example-dicom/dicom"
+input = "/scr/mrincoming7t/store/INC_20190702_103221395"
 
 # output data
-path_output = "/home/daniel/Schreibtisch" 
-name_output = "bla"
+path_output = "/data/pt_01880/Experiment1_ODC/p1/bandwidth" 
+name_output = "session1"
 
 """ do not edit below """
 
+# make output folder
+if not os.path.exists(path_output):
+    os.makedirs(path_output)
+
+# read dicom
+count = 0
+file_length = len(os.listdir(input))
 with open(os.path.join(path_output,name_output+".txt"), 'w') as f:
     for file in os.listdir(input):
-        if file.endswith(".dcm"):
-            f.write(str(pydicom.dcmread(file).SeriesNumber)+"\t" \
-                    +str(pydicom.dcmread(file).SeriesDescription)+"\t" \
-                    +str(pydicom.dcmread(file)["0019","1028"]) \
+        data = pydicom.dcmread(os.path.join(input,file))
+        print(file+": file "+str(count)+" of "+str(file_length)+" files.")
+        count += 1
+        if file.endswith(".ima") and ["0019","1028"] in data:
+            f.write(str(data.SeriesNumber)+"\t" \
+                    +str(data.SeriesDescription)+"\t" \
+                    +str(data["0019","1028"]) \
                     +"\n")
