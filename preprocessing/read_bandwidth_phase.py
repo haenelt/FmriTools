@@ -12,11 +12,11 @@ import os
 import pydicom
 
 # input data
-input = "/scr/mrincoming7t/store/INC_20190702_103221395"
+input = "/scr/mrincoming7t/2019/31208.b5/190702_115121/S17_cmrr_mbep2d_bold_0p8_fov148_iPAT3_6_8_50sli_TR3000/"
 
 # output data
-path_output = "/data/pt_01880/Experiment1_ODC/p1/bandwidth" 
-name_output = "session1"
+path_output = "/data/pt_01880" 
+name_output = "test"
 
 """ do not edit below """
 

@@ -20,10 +20,15 @@
 % to its length is computed and if the ratio exceeds a defined threshold, 
 % the whole run is discarded. Additionally, regressors for neglecting 
 % outlier volumes are created.
+% 
+% BandwidthPerPixelPhaseEncode: 
+% retinotopy_1p0 -> 20.27
+% resting_state_0p8 and task_0p8 -> 16.304
+% localiser_2p0 -> 20.027
 %
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 02-05-2019
+% Last modified: 04-07-2019
 
 % input time series
 img_input = {
@@ -142,7 +147,11 @@ if fieldmap_undistortion
         matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.session(i).epi = {[img_input{i} ',1']};
     end
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.matchvdm = 1;
-    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.sessname = 'session';
+    if length(img_input) > 1
+        matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.sessname = 'session';
+    else
+        matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.sessname = '';
+    end
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.writeunwarped = 0;
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.anat = '';
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.matchanat = 0;
@@ -172,7 +181,11 @@ for i = 1:length(img_input)
     for j = 1:nt
         matlabbatch{1}.spm.spatial.realignunwarp.data(i).scans{j,1} = fullfile(path,[file ext ',' num2str(j)]);
         if fieldmap_undistortion
-            matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
+            if length(img_input) > 1
+                matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
+            else
+                matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '.nii,1'])};
+            end
         else
             matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = '';
         end
