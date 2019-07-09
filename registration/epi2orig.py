@@ -2,26 +2,33 @@
 EPI <-> ORIG registration
 
 The purpose of the following script is to compute the deformation field for the registration 
-between antomy in conformed freesurfer space and native EPI space. The script consists of the 
-following steps:
+between antomy in conformed freesurfer space and native EPI space. Inputs are a mean epi in native 
+space, a T1 map of an mp2rage acquisition, a freesurfer orig file generated from the mp2rage flat
+image and a skullstrip mask. The only requirements for the mask are positive values within the brain 
+and 0s outside. The mask is transformed to mp2rage space if already in freesurfer space via scanner
+coordinates. The script consists of the following steps:
     1. set output folder structure
-    2. convert orig.mgz to orig.nii
-    3. scanner transform orig <-> t1 and t1 <-> epi
-    4. n4 correction epi
-    5. mask t1 and epi
-    6. antsreg
-    7. merge deformations
-    8. apply deformations
+    2. prepare mask
+    3. convert orig.mgz to orig.nii
+    4. scanner transform orig <-> t1 and t1 <-> epi
+    5. n4 correction epi
+    6. mask t1 and epi
+    7. antsreg
+    8. merge deformations
+    9. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2019
-Last modified: 04-05-2019
+Last modified: 09-07-2019
 """
 import os
 import shutil as sh
+import nibabel as nb
+from sh import gunzip
+from nipype.interfaces.freesurfer import ApplyVolTransform
 from nipype.interfaces.freesurfer.preprocess import MRIConvert
 from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
@@ -90,7 +97,52 @@ if not os.path.exists(path_syn):
 sh.copyfile(file_orig, os.path.join(path_orig,"orig.mgz"))
 sh.copyfile(file_mean_epi, os.path.join(path_epi,"epi.nii"))
 sh.copyfile(file_t1, os.path.join(path_t1,"T1.nii"))
-sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii"))
+
+"""
+mask preparation
+"""
+
+# convert to nifti
+if os.path.splitext(file_mask)[1] == ".mgh":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.mgh"))
+    mc = MRIConvert()
+    mc.inputs.in_file = os.path.join(path_t1,"mask.mgh")
+    mc.inputs.out_file = os.path.join(path_t1,"mask.nii")
+    mc.inputs.in_type = "mgh"
+    mc.inputs.out_type = "nii"
+    mc.run()    
+elif os.path.splitext(file_mask)[1] == ".mgz":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.mgz"))
+    mc = MRIConvert()
+    mc.inputs.in_file = os.path.join(path_t1,"mask.mgz")
+    mc.inputs.out_file = os.path.join(path_t1,"mask.nii")
+    mc.inputs.in_type = "mgz"
+    mc.inputs.out_type = "nii"
+    mc.run()  
+elif os.path.splitext(file_mask)[1] == ".gz":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii.gz"))
+    gunzip(os.path.join(path_t1,"mask.nii.gz"))
+elif os.path.splitext(file_mask)[1] == ".nii":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii"))
+else:
+    print("File extension of mask could not be identified!")
+
+# binarise and overwrite mask
+mask = nb.load(os.path.join(path_t1,"mask.nii"))
+mask_array = mask.get_fdata()
+mask_array[mask_array < 0] = 0
+mask_array[mask_array != 0] = 1
+output = nb.Nifti1Image(mask_array, mask.affine, mask.header)
+nb.save(output,os.path.join(path_t1,"mask.nii"))
+
+# transform to mp2rage space via scanner coordinates
+applyreg = ApplyVolTransform()
+applyreg.inputs.source_file = os.path.join(path_t1,"mask.nii")
+applyreg.inputs.target_file = os.path.join(path_t1,"T1.nii")
+applyreg.inputs.transformed_file = os.path.join(path_t1,"mask.nii")
+applyreg.reg_header = True
+applyreg.inputs.interp = "nearest"
+applyreg.run()
 
 """
 convert orig to nifti

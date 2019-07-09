@@ -13,23 +13,19 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_left_rest_SE_EPI1.nii",
-              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_left_right_SE_EPI1.nii",
-              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_right_left_SE_EPI1.nii",
-              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_avg_right_rest_SE_EPI1.nii",
-              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_left_rest_SE_EPI1.nii",
-              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_left_right_SE_EPI1.nii",
-              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_right_left_SE_EPI1.nii",
-              "/data/pt_01880/V2STRIPES/p8/odc/results/spmT/native/spmT_fem_right_rest_SE_EPI1.nii",
+input_file = ["/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_left_rest_GE_EPI1.nii",
+              "/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_left_right_GE_EPI1.nii",
+              "/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_right_left_GE_EPI1.nii",
+              "/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_right_rest_GE_EPI1.nii",
               ]
 
 input_surf = [
-        "/data/pt_01880/V2STRIPES/p8/anatomy/freesurfer/surf/lh.0p50",
-        "/data/pt_01880/V2STRIPES/p8/anatomy/freesurfer/surf/rh.0p50",
+        "/data/pt_01880/Tuebingen/p3/anatomy/equi/lh.layer1",
+        "/data/pt_01880/Tuebingen/p3/anatomy/equi/rh.layer1",
         ]
 
-deformation = "/data/pt_01880/V2STRIPES/p8/deformation/SE_EPI1/epi2orig.nii.gz"
-path_output = "/data/pt_01880/V2STRIPES/p8/odc/results/spmT"
+deformation = "/data/pt_01880/Tuebingen/p3/deformation/odc/ge_epi1/epi2orig.nii.gz"
+path_output = "/data/pt_01880/Tuebingen/p3/odc/results/spmT/"
 
 """ do not edit below """
 
