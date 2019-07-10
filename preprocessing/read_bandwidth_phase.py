@@ -6,13 +6,13 @@ needed for fieldmap undistortion.
 
 created by Daniel Haenelt
 Date created: 03-07-2019             
-Last modified: 03-07-2019  
+Last modified: 09-07-2019  
 """
 import os
 import pydicom
 
 # input data
-input = "/scr/mrincoming7t/2019/31208.b5/190702_115121/S17_cmrr_mbep2d_bold_0p8_fov148_iPAT3_6_8_50sli_TR3000/"
+input = "/home/raid2/haenelt/Downloads/"
 
 # output data
 path_output = "/data/pt_01880" 
@@ -32,7 +32,7 @@ with open(os.path.join(path_output,name_output+".txt"), 'w') as f:
         data = pydicom.dcmread(os.path.join(input,file))
         print(file+": file "+str(count)+" of "+str(file_length)+" files.")
         count += 1
-        if file.endswith(".ima") and ["0019","1028"] in data:
+        if file.endswith(".ima") or file.endswith(".dcm") and ["0019","1028"] in data:
             f.write(str(data.SeriesNumber)+"\t" \
                     +str(data.SeriesDescription)+"\t" \
                     +str(data["0019","1028"]) \
