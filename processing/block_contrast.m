@@ -197,17 +197,17 @@ for i = 1:length(name_contrast)
     file_in_con = fullfile(path_output,['con_' sprintf('%04d',i) '.nii']);
     
     if isempty(name_output) && isempty(name_sess)
-        file_out_spmT = fullfile(path_out,['spmT_' name_contrast{i} '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_contrast{i} '.nii']);
+        file_out_spmT = fullfile(path_spmT,['spmT_' name_contrast{i} '.nii']);
+        file_out_con = fullfile(path_con,['con_' name_contrast{i} '.nii']);
     elseif isempty(name_output) && ~isempty(name_sess)
-        file_out_spmT = fullfile(path_out,['spmT_' name_contrast{i} '_' name_sess '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_contrast{i} '_' name_sess '.nii']);
+        file_out_spmT = fullfile(path_spmT,['spmT_' name_contrast{i} '_' name_sess '.nii']);
+        file_out_con = fullfile(path_con,['con_' name_contrast{i} '_' name_sess '.nii']);
     elseif ~isempty(name_output) && isempty(name_sess)
-        file_out_spmT = fullfile(path_out,['spmT_' name_output '_' name_contrast{i} '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_output '_' name_contrast{i} '.nii']);  
+        file_out_spmT = fullfile(path_spmT,['spmT_' name_output '_' name_contrast{i} '.nii']);
+        file_out_con = fullfile(path_con,['con_' name_output '_' name_contrast{i} '.nii']);  
     else
-        file_out_spmT = fullfile(path_out,['spmT_' name_output '_' name_contrast{i} '_' name_sess '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_output '_' name_contrast{i} '_' name_sess '.nii']);        
+        file_out_spmT = fullfile(path_spmT,['spmT_' name_output '_' name_contrast{i} '_' name_sess '.nii']);
+        file_out_con = fullfile(path_con,['con_' name_output '_' name_contrast{i} '_' name_sess '.nii']);        
     end
     copyfile(file_in_spmT, file_out_spmT);
     copyfile(file_in_con, file_out_con);
