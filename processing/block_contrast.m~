@@ -1,10 +1,10 @@
 % GLM analysis
 
 % This script computes a fixed-effects GLM for one or multiple runs within 
-% one session. The script is designed for paradigms with 2-4 experimental 
-% conditions. However, for more than 2 conditions, not all contrasts are 
-% computed:) Stimulus parameters are read from a spm12 compatible *.mat 
-% file. No regressors of no interest are specified.
+% one session. The script is designed for runs with 2-4 conditions.
+% However, for more than 2 conditions, not all contrasts are computed.
+% Stimulus parameters are read from a spm12 compatible *.mat file. No
+% regressors of no interest are specified.
 
 % created by Daniel Haenelt
 % Date created: 10-12-2018
@@ -12,19 +12,18 @@
 
 % input data
 img_input = {
-    '/data/pt_01880/Experiment2_Rivalry/p1/localiser/udata.nii',...
+    '/data/pt_01880/Experiment2_Rivalry/p3/localiser/udata.nii',...
     };
 
 cond_input = {
-    '/data/pt_01880/Experiment2_Rivalry/p1/localiser/logfiles/p1_localiser_Cond.mat',...
+    '/data/pt_01880/Experiment2_Rivalry/p3/localiser/logfiles/p3_localiser_Cond.mat',...
     };
 
 % parameters
 TR = 1; % repetition time  in s
 cutoff_highpass = 64; % 1/cutoff_highpass frequency in Hz
 nconds = 4; % only 2-4 are supported
-name_sess = ''; % name of session (if multiple sessions exist)
-name_output = ''; % basename of output contrasts
+name_output = 'glm'; % basename of output contrasts
 output_folder = 'contrast'; % name of folder where spm.mat is saved
 
 % add spm to path
@@ -48,6 +47,11 @@ if ~exist(path_output,'dir')
     mkdir(path_output);
 end
 cd(path_output);
+
+% session name is taken from the first entry of the input list
+if length(img_input) ~= 1
+    [~, name_sess,~] = fileparts(fileparts(fileparts(img_input{1})));
+end
 
 % number of volumes is taken from the first entry of the input list
 data_img = spm_vol(img_input{1});
@@ -174,51 +178,59 @@ spm_jobman('run',matlabbatch);
 % clear after completion
 clear matlabbatch
 
-% make folders for spmT and con images
+% spmT images
+path_in = path_output;
 if length(img_input) == 1
-    path_spmT = fullfile(fileparts(img_input{1}),'results','spmT','native'); 
-    path_con = fullfile(fileparts(img_input{1}),'results','con','native'); 
+    path_out = fullfile(fileparts(img_input{1}),'results','spmT','native'); 
 else
-    path_spmT = fullfile(fileparts(fileparts(fileparts(img_input{1}))),'results','spmT','native'); 
-    path_con = fullfile(fileparts(fileparts(fileparts(img_input{1}))),'results','con','native'); 
+    path_out = fullfile(fileparts(fileparts(fileparts(img_input{1}))),'results','spmT','native'); 
 end
-
-if ~exist(path_spmT,'dir')
-    mkdir(path_spmT);
-end
-if ~exist(path_con,'dir')
-    mkdir(path_con);
+if ~exist(path_out,'dir')
+    mkdir(path_out);
 end
 
 % sort results
 for i = 1:length(name_contrast)
     % copy file
-    file_in_spmT = fullfile(path_output,['spmT_' sprintf('%04d',i) '.nii']);
-    file_in_con = fullfile(path_output,['con_' sprintf('%04d',i) '.nii']);
-    
-    if isempty(name_output) && isempty(name_sess)
-        file_out_spmT = fullfile(path_out,['spmT_' name_contrast{i} '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_contrast{i} '.nii']);
-    elseif isempty(name_output) && ~isempty(name_sess)
-        file_out_spmT = fullfile(path_out,['spmT_' name_contrast{i} '_' name_sess '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_contrast{i} '_' name_sess '.nii']);
-    elseif ~isempty(name_output) && isempty(name_sess)
-        file_out_spmT = fullfile(path_out,['spmT_' name_output '_' name_contrast{i} '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_output '_' name_contrast{i} '.nii']);  
+    file_in = fullfile(path_in,['spmT_' sprintf('%04d',i) '.nii']);
+    if length(img_input) == 1
+        file_out = fullfile(path_out,['spmT_' name_output '_' name_contrast{i} '.nii']);
     else
-        file_out_spmT = fullfile(path_out,['spmT_' name_output '_' name_contrast{i} '_' name_sess '.nii']);
-        file_out_con = fullfile(path_out,['con_' name_output '_' name_contrast{i} '_' name_sess '.nii']);        
+        file_out = fullfile(path_out,['spmT_' name_output '_' name_contrast{i} '_' name_sess '.nii']);
     end
-    copyfile(file_in_spmT, file_out_spmT);
-    copyfile(file_in_con, file_out_con);
+    copyfile(file_in, file_out);
     
     % set nan to zero
-    data_img = spm_vol(file_out_spmT);
+    data_img = spm_vol(file_out);
     data_array = spm_read_vols(data_img);
     data_array(isnan(data_array)) = 0;
     spm_write_vol(data_img,data_array);
+end    
+
+% con images
+path_in = path_output;
+if length(img_input) == 1
+    path_out = fullfile(fileparts(img_input{1}),'results','con','native'); 
+else
+    path_out = fullfile(fileparts(fileparts(fileparts(img_input{1}))),'results','con','native'); 
+end
+if ~exist(path_out,'dir')
+    mkdir(path_out);
+end
+
+% sort results
+for i = 1:length(name_contrast)
+    % copy file
+    file_in = fullfile(path_in,['con_' sprintf('%04d',i) '.nii']);
+    if length(img_input) == 1
+        file_out = fullfile(path_out,['con_' name_output '_' name_contrast{i} '.nii']);
+    else
+        file_out = fullfile(path_out,['con_' name_output '_' name_contrast{i} '_' name_sess '.nii']);
+    end
+    copyfile(file_in, file_out);
     
-    data_img = spm_vol(file_out_con);
+    % set nan to zero
+    data_img = spm_vol(file_out);
     data_array = spm_read_vols(data_img);
     data_array(isnan(data_array)) = 0;
     spm_write_vol(data_img,data_array);
