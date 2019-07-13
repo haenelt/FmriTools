@@ -39,7 +39,3 @@ def get_thickness(path, sub):
                   " " + sub + \
                   " " + hemi[i] + \
                   " " + hemi[i] + ".thickness")
-
- 
-    
-

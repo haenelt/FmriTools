@@ -1,4 +1,4 @@
-function multipol_phase(input_real, input_imag, freq, pathSPM)
+function multipol_phase(input_real, input_imag, freq, pathSPM, name_sess, path_output)
 
 % This function takes the real and imaginary parts from the time series
 % fft. Similar to Dumoulin et al., 2017, we compute an coherence estimate
@@ -7,16 +7,19 @@ function multipol_phase(input_real, input_imag, freq, pathSPM)
 % Other measures as F-statistics are computed by taking the amplitude and 
 % dividing it by the mean amplitude of the rest of the frequency spectrum
 % Based on this, the voxel population can be thresholded to investigate
-% different subpopulations.
+% different subpopulations. To run this function, the number of runs has to
+% be specified to choose an appropriate results folder location.
 % Inputs:
     % input_real: real part of fft.
     % input_imag: imaginary part of.
     % freq: number of cycles.
     % pathSPM: path to spm toolbox.
+    % name_sess: name of sessiincluded in the basename.
+    % path_output: path where output is saved.
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019
-% Last modified: 08-03-2019
+% Last modified: 12-07-2019
 
 % add spm to path
 addpath(pathSPM);
@@ -29,7 +32,7 @@ freq_ignored = [];
 %freq_ignored = [0:1 freq-1 freq freq+1];
 
 % define output path
-[path_output, name_sess, ~] = fileparts(fileparts(input_real));
+[~, name_run, ~] = fileparts(fileparts(input_real));
 path_output = fullfile(path_output,'results','native');
 if ~exist(path_output,'dir') 
     mkdir(path_output); 
@@ -78,23 +81,47 @@ coherence_array(isnan(coherence_array)) = 0;
 
 % save niftis
 nhdr = data_img(1);
-nhdr.fname = fullfile(path_output,['real_' name_sess '.nii']);
-spm_write_vol(nhdr,data_real_freq_array);
 
-nhdr.fname = fullfile(path_output,['imag_' name_sess '.nii']);
-spm_write_vol(nhdr,data_imag_freq_array);
+if isempty(name_sess)
+    nhdr.fname = fullfile(path_output,['real_' name_run '.nii']);
+    spm_write_vol(nhdr,data_real_freq_array);
 
-nhdr.fname = fullfile(path_output,['phase_' name_sess '.nii']);
-spm_write_vol(nhdr,pha_array);
+    nhdr.fname = fullfile(path_output,['imag_' name_run '.nii']);
+    spm_write_vol(nhdr,data_imag_freq_array);
 
-nhdr.fname = fullfile(path_output,['a_' name_sess '.nii']);
-spm_write_vol(nhdr,A_array);
+    nhdr.fname = fullfile(path_output,['phase_' name_run '.nii']);
+    spm_write_vol(nhdr,pha_array);
 
-nhdr.fname = fullfile(path_output,['f_' name_sess '.nii']);
-spm_write_vol(nhdr,F_array);
+    nhdr.fname = fullfile(path_output,['a_' name_run '.nii']);
+    spm_write_vol(nhdr,A_array);
 
-nhdr.fname = fullfile(path_output,['snr_' name_sess '.nii']);
-spm_write_vol(nhdr,snr_array);
+    nhdr.fname = fullfile(path_output,['f_' name_run '.nii']);
+    spm_write_vol(nhdr,F_array);
 
-nhdr.fname = fullfile(path_output,['c_' name_sess '.nii']);
-spm_write_vol(nhdr,coherence_array);
+    nhdr.fname = fullfile(path_output,['snr_' name_run '.nii']);
+    spm_write_vol(nhdr,snr_array);
+
+    nhdr.fname = fullfile(path_output,['c_' name_run '.nii']);
+    spm_write_vol(nhdr,coherence_array);
+else
+    nhdr.fname = fullfile(path_output,['real_' name_sess '_' name_run '.nii']);
+    spm_write_vol(nhdr,data_real_freq_array);
+
+    nhdr.fname = fullfile(path_output,['imag_' name_sess '_' name_run '.nii']);
+    spm_write_vol(nhdr,data_imag_freq_array);
+
+    nhdr.fname = fullfile(path_output,['phase_' name_sess '_' name_run '.nii']);
+    spm_write_vol(nhdr,pha_array);
+
+    nhdr.fname = fullfile(path_output,['a_' name_sess '_' name_run '.nii']);
+    spm_write_vol(nhdr,A_array);
+
+    nhdr.fname = fullfile(path_output,['f_' name_sess '_' name_run '.nii']);
+    spm_write_vol(nhdr,F_array);
+
+    nhdr.fname = fullfile(path_output,['snr_' name_sess '_' name_run '.nii']);
+    spm_write_vol(nhdr,snr_array);
+
+    nhdr.fname = fullfile(path_output,['c_' name_sess '_' name_run '.nii']);
+    spm_write_vol(nhdr,coherence_array);
+end

@@ -6,6 +6,8 @@ from .calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from .calculate_equivolumetric_layer import calculate_equivolumetric_layer
 from .get_ribbon import get_ribbon
 from .get_thickness import get_thickness
+from .get_curvature import get_curvature
+from .smooth_surface import smooth_surface
 from .orthographic_projection import orthographic_projection
 from .robust_combination import robust_combination
 from .shift_white import shift_white

@@ -21,6 +21,7 @@ Part 3 (Manual correction of pial surface)
     *how to manually correct the pial surface is explained below
     *inward shift of white surface to counteract the bias in mp2rage data
 Part 4
+    *smooth pial and white surface    
     *compute upsampled surface mesh
     *compute morphological data onto upsampled surface mesh
     *compute volumetric layers
@@ -68,7 +69,7 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 20-05-2019
+Last modified: 13-07-2019
 """
 import os
 import datetime
@@ -78,6 +79,9 @@ from lib.segmentation.bias_field_correction import bias_field_correction
 from lib.segmentation.shift_white import shift_white
 from lib.segmentation.get_thickness import get_thickness
 from lib.segmentation.get_ribbon import get_ribbon
+from lib.segmentation.get_curvature import get_curvature
+from lib.mapping.morph2dense import morph2dense
+from lib.segmentation.smooth_surface import smooth_surface
 from lib.segmentation.include_pial_correction import include_pial_correction
 from lib.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from lib.segmentation.upsample_surf_mesh import upsample_surf_mesh
@@ -90,9 +94,9 @@ from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/tuebingen/p1/anatomy/scm_MP2RAGEcorr_masked.nii"
-fileINV1 = "/data/pt_01880/tuebingen/p1/anatomy/scm_INV1.nii"
-fileINV2 = "/data/pt_01880/tuebingen/p1/anatomy/scm_INV2.nii"
+fileUNI = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh2/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
+fileINV1 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh2/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
+fileINV2 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh2/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
@@ -102,6 +106,7 @@ part = 1
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
 w_shift = -0.5 # white surface shift (part 3)
+niter_smooth = 2 # number of smoothing iterations for white and pial surface (part 4)
 niter_upsample = 1 # number of upsampling iterations (part 4)
 method_upsample = "linear" # upsampling method (part 4)
 nsurf_layer = 10 # number of equivolumetric layers (part 4)
@@ -242,6 +247,18 @@ elif part == 3:
 
 elif part == 4:
     
+    if niter_smooth != 0:
+        # smooth white and pial
+        print("Smooth white and pial surface")
+        smooth_surface(path,sub,"white",niter_smooth)
+        smooth_surface(path,sub,"pial",niter_smooth)
+    
+        # generate new curvature, thickness and ribbon files
+        print("Compute new morphological files")
+        get_curvature(path,sub)
+        get_thickness(path,sub)
+        get_ribbon(path,sub)
+    
     # upsample surface mesh
     print("Upsample surface mesh")
     orig_params = []
@@ -255,6 +272,19 @@ elif part == 4:
                                          path_dense)
         orig_params.extend(orig)
         dense_params.extend(dense)
+    
+    # transform curv to dense surface
+    print("Transform morphological files to dense")
+    for i in range(len(hemi)):
+        morph2dense(os.path.join(path,sub,"surf",hemi[i]+".sphere"),
+                    os.path.join(path_dense,hemi[i]+".sphere"),
+                    os.path.join(path,sub,"surf",hemi[i]+".curv"),
+                    path_dense)
+        
+        morph2dense(os.path.join(path,sub,"surf",hemi[i]+".sphere"),
+                    os.path.join(path_dense,hemi[i]+".sphere"),
+                    os.path.join(path,sub,"surf",hemi[i]+".thickness"),
+                    path_dense)
     
     # calculate volumetric surfaces
     print("Compute volumetric layers")
@@ -271,6 +301,7 @@ elif part == 4:
         
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+    fileID.write("Number of smoothing iterations: "+str(niter_smooth)+"\n")
     fileID.write("Number of upsampling iterations: "+str(niter_upsample)+"\n")
     fileID.write("Upsampling method: "+method_upsample+"\n")
     fileID.write("Number of nodes in original surface (left): "+str(orig_params[0][0])+"\n")

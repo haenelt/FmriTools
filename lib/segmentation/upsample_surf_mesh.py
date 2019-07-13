@@ -2,8 +2,7 @@ def upsample_surf_mesh(path, sub, hemi, niter, method, path_output):
     """
     The scripts takes generated FreeSurfer surfaces and upsamples them using Jon Polimeni's function 
     mris_mesh_subdivide. A textfile with additional information (number of vertices and average edge 
-    length) is also saved in the same folder. Finally, some morphological data are transformed to 
-    the dense grid and saved in the same folder.
+    length) is also saved in the same folder.
     Inputs:
         *path: path to the freesurfer segmentation folder.
         *sub: name of the freesurfer segmentation folder.
@@ -17,16 +16,15 @@ def upsample_surf_mesh(path, sub, hemi, niter, method, path_output):
 
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 17-12-2018
+    Last modified: 13-07-2019
     """
     import os
     import numpy as np
-    from nibabel.freesurfer.io import read_morph_data, write_morph_data, read_geometry
+    from nibabel.freesurfer.io import read_geometry
     from cortex.polyutils import Surface
-    from scipy.interpolate import griddata
   
     # parameters
-    surfs = ["sphere", "white", "pial", "inflated", "smoothwm"] # list of surfaces to subdivide
+    surfs = ["sphere", "white", "pial", "inflated"] # list of surfaces to subdivide
 
     # make output folder
     if not os.path.exists(path_output):
@@ -57,25 +55,5 @@ def upsample_surf_mesh(path, sub, hemi, niter, method, path_output):
 
     dense_params.append([np.size(pts_dense[:,0]),
                          Surface(pts_dense,polys_dense).avg_edge_length])
-
-    # transform morphological data to dense surfaces
-    pts_sphere_dense, _ = read_geometry(os.path.join(path_output,hemi+".sphere"))
-    pts_sphere, _ = read_geometry(os.path.join(path,sub,"surf",hemi+".sphere"))
-    
-    # get morphological data
-    curv = read_morph_data(os.path.join(path,sub,"surf",hemi+".curv"))    
-    thickness = read_morph_data(os.path.join(path,sub,"surf",hemi+".thickness"))   
-    sulc = read_morph_data(os.path.join(path,sub,"surf",hemi+".sulc"))   
-    
-    # do the transformation
-    method = "nearest"
-    curv_dense = griddata(pts_sphere, curv, pts_sphere_dense, method)
-    thickness_dense = griddata(pts_sphere, thickness, pts_sphere_dense, method)
-    sulc_dense = griddata(pts_sphere, sulc, pts_sphere_dense, method)          
-        
-    # write dense morphological data
-    write_morph_data(os.path.join(path_output,hemi+".curv"), curv_dense)
-    write_morph_data(os.path.join(path_output,hemi+".thickness"), thickness_dense)
-    write_morph_data(os.path.join(path_output,hemi+".sulc"), sulc_dense)
     
     return orig_params, dense_params
