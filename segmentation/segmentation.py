@@ -19,9 +19,9 @@ Part 2 (Manual correction of white surface)
     *how to manually correct the white surface is explained below
 Part 3 (Manual correction of pial surface)
     *how to manually correct the pial surface is explained below
-    *inward shift of white surface to counteract the bias in mp2rage data
 Part 4
-    *smooth pial and white surface    
+    *inward shift of white surface to counteract the bias in mp2rage data
+    *smooth pial and white surface (optional)    
     *compute upsampled surface mesh
     *compute morphological data onto upsampled surface mesh
     *compute volumetric layers
@@ -94,18 +94,18 @@ from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh2/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
-fileINV1 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh2/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
-fileINV2 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh2/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
+fileUNI = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
+fileINV1 = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
+fileINV2 = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 1
+part = 3
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
-w_shift = -0.5 # white surface shift (part 3)
+w_shift = -0.5 # white surface shift (part 4)
 niter_smooth = 2 # number of smoothing iterations for white and pial surface (part 4)
 niter_upsample = 1 # number of upsampling iterations (part 4)
 method_upsample = "linear" # upsampling method (part 4)
@@ -233,19 +233,12 @@ elif part == 3:
               " -expert " + os.path.join(pathEXPERT,"expert.opts") + \
               " -xopts-overwrite" + \
               " -parallel")
-    
-    # inward shift of final white surface and recomputation of some morphological files
-    print("Finalise white surface")
-    shift_white(path,sub,w_shift)
-    get_thickness(path,sub)
-    get_ribbon(path,sub)
-    
-    # write log
-    fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
-    fileID.write("Inward shift of white surface: "+str(w_shift)+"\n")
-    fileID.close()
 
 elif part == 4:
+
+    # inward shift of final white surface
+    print("Finalise white surface")
+    shift_white(path,sub,w_shift)
     
     if niter_smooth != 0:
         # smooth white and pial
@@ -253,11 +246,11 @@ elif part == 4:
         smooth_surface(path,sub,"white",niter_smooth)
         smooth_surface(path,sub,"pial",niter_smooth)
     
-        # generate new curvature, thickness and ribbon files
-        print("Compute new morphological files")
-        get_curvature(path,sub)
-        get_thickness(path,sub)
-        get_ribbon(path,sub)
+    # generate new curvature, thickness and ribbon files
+    print("Compute new morphological files")
+    get_curvature(path,sub)
+    get_thickness(path,sub)
+    get_ribbon(path,sub)
     
     # upsample surface mesh
     print("Upsample surface mesh")
@@ -301,6 +294,7 @@ elif part == 4:
         
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
+    fileID.write("Inward shift of white surface: "+str(w_shift)+"\n")
     fileID.write("Number of smoothing iterations: "+str(niter_smooth)+"\n")
     fileID.write("Number of upsampling iterations: "+str(niter_upsample)+"\n")
     fileID.write("Upsampling method: "+method_upsample+"\n")
