@@ -4,9 +4,9 @@ EPI <-> ORIG registration
 The purpose of the following script is to compute the deformation field for the registration 
 between antomy in conformed freesurfer space and native EPI space. Inputs are a mean epi in native 
 space, a T1 map of an mp2rage acquisition, a freesurfer orig file generated from the mp2rage flat
-image and a skullstrip mask. The only requirements for the mask are positive values within the brain 
-and 0s outside. The mask is transformed to mp2rage space if already in freesurfer space via scanner
-coordinates. The script consists of the following steps:
+image and a skullstrip mask. The mask does not have to be a binary image. A threshold value is 
+defined in the script which binarises the file. The mask is transformed to mp2rage space if already 
+in freesurfer space via scanner coordinates. The script consists of the following steps:
     1. set output folder structure
     2. prepare mask
     3. convert orig.mgz to orig.nii
@@ -22,7 +22,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2019
-Last modified: 09-07-2019
+Last modified: 15-07-2019
 """
 import os
 import shutil as sh
@@ -43,6 +43,9 @@ file_mask = "/data/pt_01880/tuebingen/p1/anatomy/skull/skullstrip_mask.nii"
 file_orig = "/data/pt_01880/tuebingen/p1/anatomy/freesurfer/mri/orig.mgz"
 path_output = "/data/pt_01880/tuebingen/p1/deformation/odc/ge_epi1"
 cleanup = False
+
+# parameters for mask preparation
+mask_threshold = 1 # lower threshold for binarisation
 
 # parameters for epi skullstrip
 niter_mask = 3
@@ -130,7 +133,7 @@ else:
 # binarise and overwrite mask
 mask = nb.load(os.path.join(path_t1,"mask.nii"))
 mask_array = mask.get_fdata()
-mask_array[mask_array < 0] = 0
+mask_array[mask_array <= mask_threshold] = 0
 mask_array[mask_array != 0] = 1
 output = nb.Nifti1Image(mask_array, mask.affine, mask.header)
 nb.save(output,os.path.join(path_t1,"mask.nii"))
@@ -140,7 +143,7 @@ applyreg = ApplyVolTransform()
 applyreg.inputs.source_file = os.path.join(path_t1,"mask.nii")
 applyreg.inputs.target_file = os.path.join(path_t1,"T1.nii")
 applyreg.inputs.transformed_file = os.path.join(path_t1,"mask.nii")
-applyreg.reg_header = True
+applyreg.inputs.reg_header = True
 applyreg.inputs.interp = "nearest"
 applyreg.run()
 
@@ -209,7 +212,7 @@ merge deformations
 # orig -> epi
 apply_coordinate_mappings(os.path.join(path_scanner,"orig_2_T1_scanner.nii"), # input 
                           os.path.join(path_syn,"syn_ants-map.nii.gz"), # cmap
-                          interpolation = "nearest", # nearest or linear
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
@@ -220,7 +223,7 @@ apply_coordinate_mappings(os.path.join(path_scanner,"orig_2_T1_scanner.nii"), # 
 # epi -> orig
 apply_coordinate_mappings(os.path.join(path_syn,"syn_ants-invmap.nii.gz"), # input
                           os.path.join(path_scanner,"T1_2_orig_scanner.nii"), # cmap
-                          interpolation = "nearest", # nearest or linear
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
@@ -240,7 +243,7 @@ apply deformation
 # orig -> epi
 apply_coordinate_mappings(file_orig, # input 
                           os.path.join(path_output,"orig2epi.nii.gz"), # cmap
-                          interpolation = "nearest", # nearest or linear
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
@@ -251,7 +254,7 @@ apply_coordinate_mappings(file_orig, # input
 # epi -> orig
 apply_coordinate_mappings(file_mean_epi, # input 
                           os.path.join(path_output,"epi2orig.nii.gz"), # cmap
-                          interpolation = "nearest", # nearest or linear
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)

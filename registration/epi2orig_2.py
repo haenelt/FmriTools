@@ -17,10 +17,14 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 13-02-2019
-Last modified: 04-05-2019
+Last modified: 15-07-2019
 """
 import os
 import shutil as sh
+import nibabel as nb
+from sh import gunzip
+from nipype.interfaces.freesurfer import ApplyVolTransform
+from nipype.interfaces.freesurfer.preprocess import MRIConvert
 from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 from lib.registration.mask_ana import mask_ana
@@ -40,6 +44,9 @@ cleanup = False
 # parameters for epi skullstrip
 niter_mask = 3
 sigma_mask = 3
+
+# parameters for mask preparation
+mask_threshold = 1 # lower threshold for binarisation
 
 # parameters for syn 
 run_rigid = True
@@ -86,7 +93,52 @@ if not os.path.exists(path_syn):
 sh.copyfile(file_mean_epi_source, os.path.join(path_epi_source,"epi.nii"))
 sh.copyfile(file_mean_epi_target, os.path.join(path_epi_target,"epi.nii"))
 sh.copyfile(file_t1, os.path.join(path_t1,"T1.nii"))
-sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii"))
+
+"""
+mask preparation
+"""
+
+# convert to nifti
+if os.path.splitext(file_mask)[1] == ".mgh":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.mgh"))
+    mc = MRIConvert()
+    mc.inputs.in_file = os.path.join(path_t1,"mask.mgh")
+    mc.inputs.out_file = os.path.join(path_t1,"mask.nii")
+    mc.inputs.in_type = "mgh"
+    mc.inputs.out_type = "nii"
+    mc.run()    
+elif os.path.splitext(file_mask)[1] == ".mgz":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.mgz"))
+    mc = MRIConvert()
+    mc.inputs.in_file = os.path.join(path_t1,"mask.mgz")
+    mc.inputs.out_file = os.path.join(path_t1,"mask.nii")
+    mc.inputs.in_type = "mgz"
+    mc.inputs.out_type = "nii"
+    mc.run()  
+elif os.path.splitext(file_mask)[1] == ".gz":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii.gz"))
+    gunzip(os.path.join(path_t1,"mask.nii.gz"))
+elif os.path.splitext(file_mask)[1] == ".nii":
+    sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii"))
+else:
+    print("File extension of mask could not be identified!")
+
+# binarise and overwrite mask
+mask = nb.load(os.path.join(path_t1,"mask.nii"))
+mask_array = mask.get_fdata()
+mask_array[mask_array <= mask_threshold] = 0
+mask_array[mask_array != 0] = 1
+output = nb.Nifti1Image(mask_array, mask.affine, mask.header)
+nb.save(output,os.path.join(path_t1,"mask.nii"))
+
+# transform to mp2rage space via scanner coordinates
+applyreg = ApplyVolTransform()
+applyreg.inputs.source_file = os.path.join(path_t1,"mask.nii")
+applyreg.inputs.target_file = os.path.join(path_t1,"T1.nii")
+applyreg.inputs.transformed_file = os.path.join(path_t1,"mask.nii")
+applyreg.inputs.reg_header = True
+applyreg.inputs.interp = "nearest"
+applyreg.run()
 
 """
 bias field correction to epi
@@ -171,7 +223,7 @@ apply deformation
 # orig -> epi
 apply_coordinate_mappings(file_orig, # input 
                           os.path.join(path_output,"orig2epi.nii.gz"), # cmap
-                          interpolation = "nearest", # nearest or linear
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
@@ -182,7 +234,7 @@ apply_coordinate_mappings(file_orig, # input
 # epi -> orig
 apply_coordinate_mappings(file_mean_epi_source, # input 
                           os.path.join(path_output,"epi2orig.nii.gz"), # cmap
-                          interpolation = "nearest", # nearest or linear
+                          interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)

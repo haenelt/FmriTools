@@ -13,6 +13,7 @@ def get_curvature(path,sub):
     import os
     import datetime
     import numpy as np
+    from shutil import copyfile
     from nipype.interfaces.freesurfer import Curvature
    
     # parameters 
@@ -39,19 +40,20 @@ def get_curvature(path,sub):
     # calculate curvature file
     for i in range(len(hemi)):
         
-        os.rename(os.path.join(path,"surf",hemi+"."+file),
-                  os.path.join(path,"surf",hemi+"."+tmp_string))
+        file_in = os.path.join(path,sub,"surf",hemi[i]+"."+file)
+        file_out = os.path.join(path,sub,"surf",hemi[i]+"."+tmp_string)
+        copyfile(file_in, file_out)
         
         curv = Curvature()
-        curv.inputs.in_file = os.path.join(path,"surf",hemi+"."+tmp_string)
+        curv.inputs.in_file = os.path.join(path,sub,"surf",hemi[i]+"."+tmp_string)
         curv.inputs.save = True
         curv.inputs.averages = averages # for curv file
         curv.run()
         
         # rename mean curvature to curv
-        os.rename(os.path.join(path,"surf",hemi+"."+tmp_string+".H"),
-                  os.path.join(path,"surf",hemi+".curv"))
+        os.rename(os.path.join(path,sub,"surf",hemi[i]+"."+tmp_string+".H"),
+                  os.path.join(path,sub,"surf",hemi[i]+".curv"))
         
         # delete gaussian curvature file and temporary input file
-        os.remove(os.path.join(path,"surf",hemi+"."+tmp_string))
-        os.remove(os.path.join(path,"surf",hemi+"."+tmp_string+".K"))
+        os.remove(os.path.join(path,sub,"surf",hemi[i]+"."+tmp_string))
+        os.remove(os.path.join(path,sub,"surf",hemi[i]+"."+tmp_string+".K"))

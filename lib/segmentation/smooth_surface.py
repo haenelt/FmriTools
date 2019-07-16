@@ -27,7 +27,7 @@ def smooth_surface(path,sub,surf,niter):
 
     # move old surfaces and morphological files to trash folder
     for i in range(len(hemi)):
-        file_in = os.path.join(path,sub,"surf",hemi[i]+surf)
+        file_in = os.path.join(path,sub,"surf",hemi[i]+"."+surf)
         file_out = os.path.join(path_trash,hemi[i]+"."+surf+"_backup_"+date)
         os.rename(file_in, file_out)
 
