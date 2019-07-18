@@ -1,32 +1,41 @@
-def surface_flattening(path,path_dense,sub,hemi,namePATCH):
+def surface_flattening(fileREF,filePATCH,path_output,cleanup=True):
     """
     Uses the FreeSurfer mris_flatten function to flatten a dense patch of manually defined cortex. 
-    The manually cutted patch should have the following file name <hemi>.<namePATCH>.patch.3d and 
-    should be saved in the dense folder. 
+    The manually cutted patch should have the following file name <hemi>.<namePATCH>.patch.3d. 
+    Instead of smoothwm, we use white for surface flattening.
     Inputs:
-        *path: path to SUBJECTS_DIR of the freesurfer segmentation.
-        *path_dense: path to the dense <hemi>.smoothwm and to <hemi>.<namePATCH>.patch.3d.
-        *sub: freesurfer subject name.
-        *hemi: hemisphere.
-        *namePATCH: name of the cutted patch.
+        *fileREF: reference surface file for flattening.
+        *filePATCH: path to be flattened saved as <hemi>.<namePATCH>.patch.3d.
+        *path_output: path where output is saved.
+        *cleanup: delete intermediate files.
 
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 17-12-2018
+    Last modified: 17-07-2019
     """
     import os
-    import shutil
+    import shutil as sh
+    import numpy as np
   
-    # change directory
-    os.chdir(path_dense)
-
-    # copy dense smoothwm into freesurfer surf folder and temporary rename original smoothwm
-    smoothwm_orig = os.path.join(path,sub,"surf",hemi+".smoothwm")
-    smoothwm_dense = os.path.join(path_dense,hemi+".smoothwm")
+    # create temporary folder
+    tmp = np.random.randint(0, 10, 5)
+    tmp_string = ''.join(str(i) for i in tmp)
+    path_temp = os.path.join(os.path.dirname(fileREF),"tmp_"+tmp_string)
     
-    shutil.copy2(smoothwm_orig,smoothwm_orig+"_temp")
-    os.remove(smoothwm_orig)
-    shutil.copy2(smoothwm_dense,smoothwm_orig)
+    # make temporary folder
+    if not os.path.exists(path_temp):
+        os.mkdir(path_temp)
+
+    # change to temporary folder
+    os.chdir(path_temp)
+    
+    # divide patch basename
+    hemi = os.path.splitext(os.path.splitext(os.path.splitext(os.path.basename(filePATCH))[0])[0])[0]
+    namePATCH = os.path.splitext(os.path.splitext(os.path.splitext(os.path.basename(filePATCH))[0])[0])[1]
+    
+    # copy reference file and path into temporary folder
+    sh.copy2(fileREF,os.path.join(path_temp,hemi+".smoothwm"))
+    sh.copy(filePATCH,os.path.basename(filePATCH))
     
     # surface flattening
     w = 0 # write out the surface every number of iterations.
@@ -35,9 +44,13 @@ def surface_flattening(path,path_dense,sub,hemi,namePATCH):
     os.system("mris_flatten" + \
               " -w " + str(w) + \
               " -distances " + str(s) + " " + str(n) + \
-              " " + hemi + "." + namePATCH + ".patch.3d" + \
-              " " + hemi + "." + namePATCH + ".patch.flat")
+              " " + hemi + namePATCH + ".patch.3d" + \
+              " " + hemi + namePATCH + ".patch.flat")
+       
+    # copy output
+    sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat"),os.path.join(path_output,hemi+namePATCH+".patch.flat"))
+    sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat.out"),os.path.join(path_output,hemi+namePATCH+".patch.flat.out"))
     
-    # remove dense smoothwm from freesurfer surf folder
-    os.remove(smoothwm_orig)
-    os.rename(smoothwm_orig+"_temp",smoothwm_orig)
+    # delete temporary files
+    if cleanup:
+        sh.rmtree(path_temp, ignore_errors=True)

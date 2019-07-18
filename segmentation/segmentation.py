@@ -69,7 +69,7 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 13-07-2019
+Last modified: 18-07-2019
 """
 import os
 import datetime
@@ -86,7 +86,6 @@ from lib.segmentation.include_pial_correction import include_pial_correction
 from lib.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from lib.segmentation.upsample_surf_mesh import upsample_surf_mesh
 from lib.segmentation.surface_flattening import surface_flattening
-from lib.segmentation.calculate_distortion import calculate_distortion
 from lib.segmentation.orthographic_projection import orthographic_projection
 from lib.skullstrip.skullstrip_spm12 import skullstrip_spm12
 from lib.utils.volume_threshold import volume_threshold
@@ -94,14 +93,14 @@ from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
-fileINV1 = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
-fileINV2 = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
+fileUNI = "/data/pt_01880/Experiment4_PSF/p1/anatomy/S5_MP2RAGE_0p7_UNI_Images_2.45.nii"
+fileINV1 = "/data/pt_01880/Experiment4_PSF/p1/anatomy/S3_MP2RAGE_0p7_INV1_2.45.nii"
+fileINV2 = "/data/pt_01880/Experiment4_PSF/p1/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 4
+part = 5
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
@@ -116,7 +115,7 @@ imres_ortho = 0.25 # isotropic image resolution of the regular grid in mm (part 
 theta_ortho = [0,0] # rotation of the regular grid in deg for each hemisphere (part 5)
 alpha_ortho = 2 # alpha shape value for concave hull computation (part 5)
 buffer_ortho = 0 # smooth out of concave hull (part 5)
-sigma_map = 0.5 # isotropic smoothing of distortion data onto regular grid (part 5)
+sigma_map = 0.5 # isotropic smoothing of data onto regular grid (part 5)
 
 """ do not edit below """
 
@@ -316,18 +315,10 @@ elif part == 5:
     # surface flattening
     print("Surface flattening")
     for i in range(len(hemi)):
-        surface_flattening(path,path_dense,sub,hemi[i],namePATCH)
-
-    # distortion estimation
-    print("Estimate the amount of distortion after flattening")
-    VAD_params = []
-    VLD_params = []
-    for i in range(len(hemi)):      
-        vad, vld = calculate_distortion(os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.flat"), 
-                                        os.path.join(path_dense,hemi[i]+".white"), 
-                                        hemi[i])
-        VAD_params.extend(vad)
-        VLD_params.extend(vld)
+        surface_flattening(os.path.join(path_dense,hemi[i]+".white"),
+                           os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.3d"),
+                           path_dense,
+                           cleanup=True)
 
     # regular grid interpolation
     print("Orthographic projection")
@@ -348,14 +339,6 @@ elif part == 5:
     print("Map distortion data onto grid")
     for i in range(len(hemi)):
         map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
-                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.flat.areal_distortion"),
-                 sigma_map,
-                 path_ortho)
-        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
-                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".patch.flat.line_distortion"),
-                 sigma_map,
-                 path_ortho)
-        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
                  os.path.join(path_dense,hemi[i]+".curv"),
                  sigma_map,
                  path_ortho)
@@ -363,37 +346,9 @@ elif part == 5:
                  os.path.join(path_dense,hemi[i]+".thickness"),
                  sigma_map,
                  path_ortho)
-        map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
-                 os.path.join(path_dense,hemi[i]+".sulc"),
-                 sigma_map,
-                 path_ortho)
       
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
-    fileID.write(namePATCH+": VAD (left, mean) -> "+str(VAD_params[0])+"\n")
-    fileID.write(namePATCH+": VAD (left, std) -> "+str(VAD_params[1])+"\n")
-    fileID.write(namePATCH+": VAD (left, sem) -> "+str(VAD_params[2])+"\n")
-    fileID.write(namePATCH+": VAD (left, min) -> "+str(VAD_params[3])+"\n")
-    fileID.write(namePATCH+": VAD (left, max) -> "+str(VAD_params[4])+"\n")
-    fileID.write(namePATCH+": VAD (left, miss) -> "+str(VAD_params[5])+"\n")
-    fileID.write(namePATCH+": VAD (right, mean) -> "+str(VAD_params[6])+"\n")
-    fileID.write(namePATCH+": VAD (right, std) -> "+str(VAD_params[7])+"\n")
-    fileID.write(namePATCH+": VAD (right, sem) -> "+str(VAD_params[8])+"\n")
-    fileID.write(namePATCH+": VAD (right, min) -> "+str(VAD_params[9])+"\n")
-    fileID.write(namePATCH+": VAD (right, max) -> "+str(VAD_params[10])+"\n")
-    fileID.write(namePATCH+": VAD (right, miss) -> "+str(VAD_params[11])+"\n")
-    fileID.write(namePATCH+": VLD (left, mean) -> "+str(VLD_params[0])+"\n")
-    fileID.write(namePATCH+": VLD (left, std) -> "+str(VLD_params[1])+"\n")
-    fileID.write(namePATCH+": VLD (left, sem) -> "+str(VLD_params[2])+"\n")
-    fileID.write(namePATCH+": VLD (left, min) -> "+str(VLD_params[3])+"\n")
-    fileID.write(namePATCH+": VLD (left, max) -> "+str(VLD_params[4])+"\n")
-    fileID.write(namePATCH+": VLD (left, miss) -> "+str(VLD_params[5])+"\n")
-    fileID.write(namePATCH+": VLD (right, mean) -> "+str(VLD_params[6])+"\n")
-    fileID.write(namePATCH+": VLD (right, std) -> "+str(VLD_params[7])+"\n")
-    fileID.write(namePATCH+": VLD (right, sem) -> "+str(VLD_params[8])+"\n")
-    fileID.write(namePATCH+": VLD (right, min) -> "+str(VLD_params[9])+"\n")
-    fileID.write(namePATCH+": VLD (right, max) -> "+str(VLD_params[10])+"\n")
-    fileID.write(namePATCH+": VLD (right, miss) -> "+str(VLD_params[11])+"\n")
     fileID.write(namePATCH+": Image resolution of grid -> "+str(imres_ortho)+"\n")
     fileID.write(namePATCH+": Grid rotation (left) -> "+str(theta_ortho[0])+"\n")
     fileID.write(namePATCH+": Grid rotation (right) -> "+str(theta_ortho[1])+"\n")

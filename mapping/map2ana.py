@@ -13,19 +13,40 @@ from nighres.registration import apply_coordinate_mappings
 from lib.mapping import map2surface
 
 # input
-input_file = ["/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_left_rest_GE_EPI1.nii",
-              "/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_left_right_GE_EPI1.nii",
-              "/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_right_left_GE_EPI1.nii",
-              "/data/pt_01880/Tuebingen/p3/odc/results/spmT/native/spmT_fix_right_rest_GE_EPI1.nii",
-              ]
-
-input_surf = [
-        "/data/pt_01880/Tuebingen/p3/anatomy/equi/lh.layer1",
-        "/data/pt_01880/Tuebingen/p3/anatomy/equi/rh.layer1",
+input_file = [
+        "/data/pt_01880/Experiment3_Stripes/p2/colour/results/spmT/native/spmT_bw_colour_GE_EPI2.nii",
+        "/data/pt_01880/Experiment3_Stripes/p2/colour/results/spmT/native/spmT_bw_rest_GE_EPI2.nii",
+        "/data/pt_01880/Experiment3_Stripes/p2/colour/results/spmT/native/spmT_colour_bw_GE_EPI2.nii",
+        "/data/pt_01880/Experiment3_Stripes/p2/colour/results/spmT/native/spmT_colour_rest_GE_EPI2.nii",
         ]
 
-deformation = "/data/pt_01880/Tuebingen/p3/deformation/odc/ge_epi1/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Tuebingen/p3/odc/results/spmT/"
+input_surf = [
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer0",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer1",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer2",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer3",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer4",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer5",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer6",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer7",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer8",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer9",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/lh.layer10",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer0",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer1",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer2",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer3",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer4",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer5",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer6",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer7",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer8",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer9",
+        "/data/pt_01880/Experiment3_Stripes/p2/anatomy/layer/rh.layer10",
+        ]
+
+deformation = "/data/pt_01880/Experiment3_Stripes/p2/deformation/colour/GE_EPI2/epi2orig.nii.gz"
+path_output = "/data/pt_01880/Experiment3_Stripes/p2/colour/results/spmT/"
 
 """ do not edit below """
 
