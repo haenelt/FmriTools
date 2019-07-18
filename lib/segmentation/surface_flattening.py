@@ -27,6 +27,7 @@ def surface_flattening(fileREF,filePATCH,path_output,cleanup=True):
         os.mkdir(path_temp)
 
     # change to temporary folder
+    cwd = os.getcwd()
     os.chdir(path_temp)
     
     # divide patch basename
@@ -50,6 +51,9 @@ def surface_flattening(fileREF,filePATCH,path_output,cleanup=True):
     # copy output
     sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat"),os.path.join(path_output,hemi+namePATCH+".patch.flat"))
     sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat.out"),os.path.join(path_output,hemi+namePATCH+".patch.flat.out"))
+    
+    # change to old folder
+    os.chdir(cwd)
     
     # delete temporary files
     if cleanup:
