@@ -26,7 +26,7 @@ input.tr = 3; % repetition time in s
 input.period = 48; % cycle period in s
 input.fix = 12; % pre run baseline block in s
 input.freq = 10.5; % number of cycles
-input.cutoff = 96; % cutoff frequency 1/cutoff in Hz
+input.cutoff = 144; % cutoff frequency 1/cutoff in Hz
 
 % output specification
 name_sess = 'GE_EPI2';
