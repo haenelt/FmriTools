@@ -53,7 +53,8 @@ cond_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/logfiles/p8_SE_EPI1
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
+pathLIB1 = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
+pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
 
 # parameters
 TR = 3 # repetition time in s
@@ -63,11 +64,11 @@ condition1 = "left"
 condition2 = "right"
 name_output = "fem"
 use_z_score = False
+use_lowpass = False
+cutoff_lowpass = 0
+order_lowpass = 0
 
 """ do not edit below """
-
-# change to lib folder
-os.chdir(pathLIB)
 
 # prepare path and filename
 path = []
@@ -136,8 +137,20 @@ for i in range(len(path)):
         onsets2 = np.append(onsets2, temp + j + 1)
     onsets2 = np.sort(onsets2)
 
+    # lopass filter time series
+    if use_lowpass:
+        os.chdir(pathLIB2)
+        os.system("matlab" + \
+                  " -nodisplay -nodesktop -r " + \
+                  "\"lowpass_filter(\'{0}\', {1}, {2}, {3}, \'{4}\'); exit;\"". \
+                  format(img_input[i], TR, cutoff_lowpass, order_lowpass, pathSPM))
+        
+        # change input to lowpass filtered time series
+        img_input[i] = os.path.join(path[i],"l"+file[i])
+
     # look for baseline corrected time series
     if not os.path.isfile(os.path.join(path[i],"b"+file[i])):
+        os.chdir(pathLIB1)
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \

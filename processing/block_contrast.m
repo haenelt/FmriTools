@@ -45,8 +45,16 @@ name_sess = 'GE_EPI3'; % name of session (if multiple sessions exist)
 name_output = ''; % basename of output contrasts
 output_folder = 'contrast'; % name of folder where spm.mat is saved
 
+% lowpass filter of time series
+lowpass = false;
+cutoff_lowpass = 0;
+order_lowpass = 3;
+
 % add spm to path
 pathSPM = '/data/pt_01880/source/spm12'; 
+
+% add library to path
+pathLIB = '/home/raid2/haenelt/projects/scripts/lib/';
 
 %%% do not edit below %%%
 
@@ -55,6 +63,18 @@ addpath(pathSPM);
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used
 spm_get_defaults('cmdline',true); % no gui
+addpath(fullfile(pathLIB,'processing'));
+
+% lowpass filtering
+if lowpass
+    for i = 1:length(img_input)
+        lowpass_filter(img_input{i}, TR, cutoff_lowpass, order_lowpass, pathSPM);
+    end
+    
+    % change input to lowpass filtered time series
+    [filepath, name, ext] = fileparts(img_input{i});
+    img_input{i} = fullfile(filepath,['l' name ext]);
+end
 
 % output folder is taken from the first entry of the input list
 if length(img_input) == 1
