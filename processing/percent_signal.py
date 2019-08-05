@@ -12,7 +12,7 @@ runs. The percent signal change is computed for both contrasts.
 
 created by Daniel Haenelt
 Date created: 06-12-2018             
-Last modified: 09-01-2019  
+Last modified: 05-08-2019  
 """
 import sys
 import os
