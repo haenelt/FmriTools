@@ -14,11 +14,11 @@ from nighres.registration import apply_coordinate_mappings
 
 # input
 input_epi = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/localiser/results/spmT/native/spmT_circle_in_on_circle_out_on.nii",
+        "/home/raid2/haenelt/Desktop/udata_test.nii",
         ]
 
 input_reg = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/localiser/results/spmT/mean_data_2_orig_scanner.nii",
+        "/home/raid2/haenelt/Desktop/epi2orig.nii.gz",
         ]
 
 # parameters
