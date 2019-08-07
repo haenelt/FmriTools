@@ -3,8 +3,9 @@
 % From the condition logfile of the binocular rivalry paradigm, onsets and
 % durations for the following GLM analysis are computed. Onsets are split
 % into rest, left eye, right eye or piecemeal periods. Onsets are excluded
-% if their durations are below a set time threshold. Optionally, an outlier
-% regressor is written out.
+% if their durations are below a set time threshold. Optionally, an mixed
+% (n_regressor = 4) and and outlier (n_regressors = 5) regressors are
+% written out.
 %
 % In the experiment, participant wear the red filter over their left eye
 % and the green filter over their right eye. In SwitchData, button 
@@ -15,11 +16,11 @@
 % Last modified: 05-08-2019  
 
 % input of condition files
-input = {'/home/daniel/Schreibtisch/p1_GE_EPI1_Run1_rivalry_Cond.mat'};
+input = {'/home/daniel/Schreibtisch/p2_GE_EPI1_Run3_rivalry_Cond.mat'};
 
 % parameters
-response_threshold = 4.5; % in s
-write_outlier = true; % add outlier regressor
+response_threshold = 2; % in s
+n_regressors = 3; % number of regressors (3-5)
 
 %%% do not edit below %%%
 
@@ -53,7 +54,36 @@ for i = 1:length(input)
     response(time_delta < response_threshold) = 4;
     
     % save output as mat file
-    if write_outlier
+    if n_regressors == 3
+        names = cell(1,3);
+        names{1} = 'rest';
+        names{2} = 'left';
+        names{3} = 'right';
+        onsets = cell(1,3);
+        onsets{1} = data.onsets{1}';
+        onsets{2} = time1(response==2);
+        onsets{3} = time1(response==1);
+        durations = cell(1,3);
+        durations{1} = [data.durations{1} ; data.durations{1}];
+        durations{2} = time_delta(response==2);
+        durations{3} = time_delta(response==1);
+    elseif n_regressor == 4
+        names = cell(1,4);
+        names{1} = 'rest';
+        names{2} = 'left';
+        names{3} = 'right';
+        names{4} = 'mixed';
+        onsets = cell(1,4);
+        onsets{1} = data.onsets{1}';
+        onsets{2} = time1(response==2);
+        onsets{3} = time1(response==1);
+        onsets{4} = time1(response==3);
+        durations = cell(1,4);
+        durations{1} = [data.durations{1} ; data.durations{1}];
+        durations{2} = time_delta(response==2);
+        durations{3} = time_delta(response==1);
+        durations{4} = time_delta(response==3);
+    elseif n_regressor == 5
         names = cell(1,5);
         names{1} = 'rest';
         names{2} = 'left';
@@ -72,22 +102,6 @@ for i = 1:length(input)
         durations{3} = time_delta(response==1);
         durations{4} = time_delta(response==3);
         durations{5} = time_delta(response==4);
-    else
-        names = cell(1,4);
-        names{1} = 'rest';
-        names{2} = 'left';
-        names{3} = 'right';
-        names{4} = 'mixed';
-        onsets = cell(1,4);
-        onsets{1} = data.onsets{1}';
-        onsets{2} = time1(response==2);
-        onsets{3} = time1(response==1);
-        onsets{4} = time1(response==3);
-        durations = cell(1,4);
-        durations{1} = [data.durations{1} ; data.durations{1}];
-        durations{2} = time_delta(response==2);
-        durations{3} = time_delta(response==1);
-        durations{4} = time_delta(response==3);
     end
 
     % save finale condition file
