@@ -50,7 +50,7 @@ if ~exist(path_diagnosis,'dir')
 end
 
 % path and filename of fieldmap phase
-[path_fmap2, file_fmap2, ~] = fileparts(fieldmap_params.fmap_phase);
+[path_fmap2, file_fmap2, ~] = fileparts(field_params.fmap_phase);
 
 if slice_params.slice_timing
     for i = 1:length(img_input)
@@ -86,17 +86,17 @@ if slice_params.slice_timing
     end
 end
 
-if fieldmap_params.fieldmap_undistortion
+if field_params.fieldmap_undistortion
        
     % total readout time
-    total_readout = 1000/fieldmap_params.fmap_BandwidthPerPixelPhaseEncode; % in ms
+    total_readout = 1000/field_params.fmap_BandwidthPerPixelPhaseEncode; % in ms
      
     % calculate fieldmap
-    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.phase = {fieldmap_params.fmap_phase};
-    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.magnitude = {fieldmap_params.fmap_magn};
-    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.et = [fieldmap_params.fmap_te1 fieldmap_params.fmap_te2];
+    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.phase = {field_params.fmap_phase};
+    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.data.presubphasemag.magnitude = {field_params.fmap_magn};
+    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.et = [field_params.fmap_te1 field_params.fmap_te2];
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.maskbrain = 0;
-    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.blipdir = fieldmap_params.fmap_blipdir;
+    matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.blipdir = field_params.fmap_blipdir;
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.tert = total_readout;
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.epifm = 0;
     matlabbatch{1}.spm.tools.fieldmap.calculatevdm.subj.defaults.defaultsval.ajm = 0;
@@ -141,7 +141,7 @@ for i = 1:length(img_input)
     % get input data
     for j = 1:nt
         matlabbatch{1}.spm.spatial.realignunwarp.data(i).scans{j,1} = fullfile(path,[file ext ',' num2str(j)]);
-        if fieldmap_params.fieldmap_undistortion
+        if field_params.fieldmap_undistortion
             if length(img_input) > 1
                 matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
             else
