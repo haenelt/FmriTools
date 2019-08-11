@@ -15,16 +15,11 @@ import numpy as np
 import nibabel as nb
 
 # input data
-img_input = ["/nobackup/actinium2/haenelt/VasoTest/flicker/Run_1/data.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_2/data.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_3/data.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_4/data.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_5/data.nii",
-             "/nobackup/actinium2/haenelt/VasoTest/flicker/Run_6/data.nii",
+img_input = ["/nobackup/actinium2/haenelt/phantom_20190809/Run_2/data.nii",
              ]
 
 # paramteers
-start_vol = 4
+start_vol = 10
 end_vol = 3
 
 """ do not edit below """
