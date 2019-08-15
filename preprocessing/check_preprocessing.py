@@ -36,7 +36,11 @@ for i in range(len(input)):
         data = np.append(data, data_temp, axis=3)
 
 # create output folder
-path_output = os.path.join(os.path.dirname(input[0]),"correlation")
+if len(input) < 2:
+    path_output = os.path.join(os.path.dirname(input[0]),"correlation")
+else:
+    path_output = os.path.join(os.path.dirname(os.path.dirname(input[0])),"correlation")
+
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
