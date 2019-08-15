@@ -1,13 +1,13 @@
 """
 Spatial cross-correlation of the signal intensities in functional time series
 
-This script computes the correlation between time steps in a functional time series. Only voxels 
-within the brain are included in the analysis. The correlation strength between volumes is thought 
-to be used as a qualitaty check for the realignment of time series.
+This script computes the correlation between time steps in one or more concatenated functional time 
+series. Only voxels within the brain are included in the analysis. The correlation strength between 
+volumes is thought to be used as a qualitaty check for the realignment of time series.
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 31-07-2019  
+Last modified: 15-08-2019  
 """
 import os
 import numpy as np
@@ -16,7 +16,9 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
-input = "/home/daniel/Schreibtisch/BOLD.nii"
+input = ["/home/daniel/Schreibtisch/processing/bsffp/run2/rdata.nii",
+         "/home/daniel/Schreibtisch/processing/bsffp/run2/rdata.nii",
+         ]
 r_threshold = 0.8
 
 """ do not edit below """
@@ -26,10 +28,15 @@ rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
 # load data
-data = nb.load(input).get_fdata()
+for i in range(len(input)):
+    if i == 0:
+        data = nb.load(input[i]).get_fdata()
+    else:
+        data_temp = nb.load(input[i]).get_fdata()
+        data = np.append(data, data_temp, axis=3)
 
 # create output folder
-path_output = os.path.join(os.path.dirname(input),"correlation")
+path_output = os.path.join(os.path.dirname(input[0]),"correlation")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
