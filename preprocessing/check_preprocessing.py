@@ -16,10 +16,16 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
-input = ["/home/daniel/Schreibtisch/processing/bsffp/run2/rdata.nii",
-         "/home/daniel/Schreibtisch/processing/bsffp/run2/rdata.nii",
+input = ["/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_1/udata.nii",
+         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_2/udata.nii",
+         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_3/udata.nii",
+         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_4/udata.nii",
+         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_5/udata.nii",
+         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_6/udata.nii",
+         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_7/udata.nii",
+         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_8/udata.nii",
          ]
-r_threshold = 0.8
+r_threshold = 0.90
 
 """ do not edit below """
 
