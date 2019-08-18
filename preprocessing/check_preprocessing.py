@@ -37,8 +37,7 @@ if not os.path.exists(path_output):
     os.makedirs(path_output)
 
 # pool data from first volume
-data = nb.load(input[0]).get_fdata()
-data_0 = data[:,:,:,0]
+data_0 = nb.load(input[0]).get_fdata()[:,:,:,0]
 
 r_pearson_0 = []
 r_pearson = []
