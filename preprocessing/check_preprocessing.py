@@ -17,8 +17,7 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/preprocessing_test/method2/Run_1/rudata_linear_linear.nii",
-        "/data/pt_01880/preprocessing_test/method2/Run_2/rudata_linear_linear.nii",
+        "/home/daniel/Schreibtisch/BOLD.nii",
         ]
 r_threshold = 0.95
 
@@ -60,7 +59,7 @@ for i in range(len(input)):
         
         # load first and current time step
         data_temp_0 = data_0.copy()
-        data_temp_j = data_temp[:,:,:,j]
+        data_temp_j = data_temp[:,:,:,j].copy()
         
         # get temporary mask
         mask_0 = data_temp_0.copy()
@@ -72,10 +71,8 @@ for i in range(len(input)):
         mask_0j = mask_0 * mask_j
         
         # mask time step
-        data_temp_0[mask_0j == 0] = np.nan
-        data_temp_j[mask_0j == 0] = np.nan
-        data_temp_0 = data_temp_0[~np.isnan(data_temp_0)].flatten()
-        data_temp_j = data_temp_j[~np.isnan(data_temp_j)].flatten()        
+        data_temp_0 = data_temp_0[mask_0j == 1].flatten()
+        data_temp_j = data_temp_j[mask_0j == 1].flatten()        
         
         # shapiro wilk
         r_tmp, p_tmp = shapiro(data_temp_j)
@@ -87,10 +84,10 @@ for i in range(len(input)):
         r_pearson_0 = np.append(r_pearson_0, r_tmp)
         p_pearson_0 = np.append(p_pearson_0, p_tmp)
         
-        if j < np.shape(data_temp)[3] and i < len(input):
+        if j < np.shape(data_temp)[3]-1 and i < len(input):
             data_temp_1 = data_temp[:,:,:,j]
             data_temp_2 = data_temp[:,:,:,j+1]
-        elif j == np.shape(data_temp)[3] and i < len(input):
+        elif j == np.shape(data_temp)[3]-1 and i < len(input)-1:
             data_temp_1 = data_temp[:,:,:,j]
             data_temp_2 = nb.load(input[i+1]).get_fdata()[:,:,:,0]
         else:
@@ -106,10 +103,8 @@ for i in range(len(input)):
             mask_2[mask_2 != 0] = 1
             mask_12 = mask_1 * mask_2
     
-            data_temp_1[mask_12 == 0] = np.nan
-            data_temp_2[mask_12 == 0] = np.nan
-            data_temp_1 = data_temp_1[~np.isnan(data_temp_1)].flatten()
-            data_temp_2 = data_temp_2[~np.isnan(data_temp_2)].flatten()
+            data_temp_1 = data_temp_1[mask_12 == 1].flatten()
+            data_temp_2 = data_temp_2[mask_12 == 1].flatten()
         
             r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
             r_pearson = np.append(r_pearson, r_tmp)
