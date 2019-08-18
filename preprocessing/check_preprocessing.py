@@ -28,19 +28,6 @@ r_threshold = 0.95
 rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
-# load first image in array
-data = nb.load(input[0]).get_fdata()
-
-# get brain mask from first volume
-mask = data[:,:,:,0].copy()
-mask[mask < np.mean(mask[mask > 0])] = 0
-mask[mask != 0] = 1
-
-# pool data from first volume
-data_0 = data[:,:,:,0]
-data_0[mask == 0] = np.nan
-data_0 = data_0[~np.isnan(data_0)].flatten()
-
 # create output folder
 if len(input) < 2:
     path_output = os.path.join(os.path.dirname(input[0]),"correlation")
@@ -50,54 +37,80 @@ else:
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# initialise vectors
+# pool data from first volume
+data = nb.load(input[0]).get_fdata()
+data_0 = data[:,:,:,0]
+
 r_pearson_0 = []
 r_pearson = []
 r_shapiro = []
 p_pearson_0 = []
 p_pearson = []
 p_shapiro = []
-
+neighbourFlag = 0 # omit correlation between neighbours for last time step
 for i in range(len(input)):
     
     # load time series
-    data_temp = nb.load(input[i]).get_fdata()
-    
-    # print iteration step
-    print("Current time series: "+str(i))
-    
-    for j in range(np.shape(data_temp)[3]-1):
-                
-        # load time step
-        data_temp_1 = data_temp[:,:,:,j]
-        data_temp_2 = data_temp[:,:,:,j+1]
-        data_temp_1[mask == 0] = np.nan
-        data_temp_2[mask == 0] = np.nan
-        data_temp_1 = data_temp_1[~np.isnan(data_temp_1)].flatten()
-        data_temp_2 = data_temp_2[~np.isnan(data_temp_2)].flatten()
+    data_temp = nb.load(input[i]).get_fdata()    
+
+    for j in range(np.shape(data_temp)[3]):
         
-        # first volume of time series            
-        if j == 0:
-                
-            r_tmp, p_tmp = shapiro(data_temp_1)
-            r_shapiro = np.append(r_shapiro, r_tmp)
-            p_shapiro = np.append(p_shapiro, p_tmp)
-            
-            r_tmp, p_tmp = pearsonr(data_0, data_temp_1)
-            r_pearson_0 = np.append(r_pearson_0, r_tmp)
-            p_pearson_0 = np.append(p_pearson_0, p_tmp)
-            
-        r_tmp, p_tmp = shapiro(data_temp_2)
+        # load first and current time step
+        data_temp_0 = data_0.copy()
+        data_temp_j = data_temp[:,:,:,j]
+        
+        # get temporary mask
+        mask_0 = data_temp_0.copy()
+        mask_0[mask_0 < np.mean(mask_0[mask_0 > 0])] = 0
+        mask_0[mask_0 != 0] = 1
+        mask_j = data_temp_j.copy()
+        mask_j[mask_j < np.mean(mask_j[mask_j > 0])] = 0
+        mask_j[mask_j != 0] = 1        
+        mask_0j = np.intersect1d(mask_0, mask_j)
+        
+        # mask time step
+        data_temp_0[mask_0j == 0] = np.nan
+        data_temp_j[mask_0j == 0] = np.nan
+        data_temp_0 = data_temp_0[~np.isnan(data_temp_0)].flatten()
+        data_temp_j = data_temp_j[~np.isnan(data_temp_j)].flatten()        
+        
+        # shapiro wilk
+        r_tmp, p_tmp = shapiro(data_temp_j)
         r_shapiro = np.append(r_shapiro, r_tmp)
         p_shapiro = np.append(p_shapiro, p_tmp)
         
-        r_tmp, p_tmp = pearsonr(data_0, data_temp_2)
+        # pearson correlation to first time step
+        r_tmp, p_tmp = pearsonr(data_temp_0, data_temp_j)
         r_pearson_0 = np.append(r_pearson_0, r_tmp)
         p_pearson_0 = np.append(p_pearson_0, p_tmp)
         
-        r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
-        r_pearson = np.append(r_pearson, r_tmp)
-        p_pearson = np.append(p_pearson, p_tmp)
+        if j < np.shape(data_temp)[3] and i < len(input):
+            data_temp_1 = data_temp[:,:,:,j]
+            data_temp_2 = data_temp[:,:,:,j+1]
+        elif j == np.shape(data_temp)[3] and i < len(input):
+            data_temp_1 = data_temp[:,:,:,j]
+            data_temp_2 = nb.load(input[i+1]).get_fdata()[:,:,:,0]
+        else:
+            neighbourFlag = 1
+
+        if neighbourFlag == 0:
+            
+            mask_1 = data_temp_1.copy()
+            mask_1[mask_1 < np.mean(mask_1[mask_1 > 0])] = 0
+            mask_1[mask_1 != 0] = 1
+            mask_2 = data_temp_2.copy()
+            mask_2[mask_2 < np.mean(mask_2[mask_2 > 0])] = 0
+            mask_2[mask_2 != 0] = 1
+            mask_12 = np.intersect1d(mask_1, mask_2)
+    
+            data_temp_1[mask_12 == 0] = np.nan
+            data_temp_2[mask_12 == 0] = np.nan
+            data_temp_1 = data_temp_1[~np.isnan(data_temp_1)].flatten()
+            data_temp_2 = data_temp_2[~np.isnan(data_temp_2)].flatten()
+        
+            r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
+            r_pearson = np.append(r_pearson, r_tmp)
+            p_pearson = np.append(p_pearson, p_tmp)    
 
 # percentage
 res_pearson_0 = len(r_pearson_0[r_pearson_0 < r_threshold]) / len(r_pearson_0) * 100
