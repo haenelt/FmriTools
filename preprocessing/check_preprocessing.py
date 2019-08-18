@@ -17,14 +17,8 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_1/udata.nii",
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_2/udata.nii",
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_3/udata.nii",
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_4/udata.nii",
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_5/udata.nii",
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_6/udata.nii",
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_7/udata.nii",
-        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_8/udata.nii",
+        "/data/pt_01880/preprocessing_test/method2/Run_1/rudata_linear_linear.nii",
+        "/data/pt_01880/preprocessing_test/method2/Run_2/rudata_linear_linear.nii",
         ]
 r_threshold = 0.95
 
@@ -39,7 +33,7 @@ data = nb.load(input[0]).get_fdata()
 
 # get brain mask from first volume
 mask = data[:,:,:,0].copy()
-mask[mask < np.mean(mask)] = 0
+mask[mask < np.mean(mask[mask > 0])] = 0
 mask[mask != 0] = 1
 
 # pool data from first volume
@@ -64,17 +58,18 @@ p_pearson_0 = []
 p_pearson = []
 p_shapiro = []
 
-cnt = 0
 for i in range(len(input)):
     
     # load time series
     data_temp = nb.load(input[i]).get_fdata()
     
     for j in range(np.shape(data_temp)[3]-1):
-                        
+        
+        print(str(j))
+                
         # load time step
-        data_temp_1 = data[:,:,:,j]
-        data_temp_2 = data[:,:,:,j+1]
+        data_temp_1 = data_temp[:,:,:,j]
+        data_temp_2 = data_temp[:,:,:,j+1]
         data_temp_1[mask == 0] = np.nan
         data_temp_2[mask == 0] = np.nan
         data_temp_1 = data_temp_1[~np.isnan(data_temp_1)].flatten()
@@ -103,12 +98,10 @@ for i in range(len(input)):
         r_pearson = np.append(r_pearson, r_tmp)
         p_pearson = np.append(p_pearson, p_tmp)
 
-        cnt += 1
-
 # percentage
-res_pearson_0 = len(r_pearson_0[r_pearson_0 < r_threshold]) / cnt * 100
-res_pearson = len(r_pearson[r_pearson < r_threshold]) / cnt * 100
-res_shapiro = len(r_shapiro[r_shapiro < r_threshold]) / cnt * 100
+res_pearson_0 = len(r_pearson_0[r_pearson_0 < r_threshold]) / len(r_pearson_0) * 100
+res_pearson = len(r_pearson[r_pearson < r_threshold]) / len(r_pearson) * 100
+res_shapiro = len(r_shapiro[r_shapiro < r_threshold]) / len(r_shapiro) * 100
 
 # logfile
 file = open(os.path.join(path_output,"correlation.txt"),"w")
@@ -122,27 +115,23 @@ file.close()
 
 # save variables
 np.savez(os.path.join(path_output,"correlation_data"),
-         r_shapiro, p_shapiro,
-         r_pearson, p_pearson,
-         r_pearson_0, p_pearson_0,
+         r_shapiro=r_shapiro, p_shapiro=p_shapiro,
+         r_pearson=r_pearson, p_pearson=p_pearson,
+         r_pearson_0=r_pearson_0, p_pearson_0=p_pearson_0,
          )
-
-# time axis
-t_shapiro = np.arange(0,len(r_shapiro))
-t_pearson = np.arange(2,len(r_pearson)+1)
 
 # plots
 fig, ax = plt.subplots()
-ax.plot(t_shapiro,r_shapiro, "r")
+ax.plot(r_shapiro, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Shapiro-Wilk test)")
 ax.set_title("Shapiro-Wilk test for each time step")
-ax.hlines(r_threshold,t_shapiro[0],t_shapiro[-1],linestyle="dashed")
+ax.hlines(r_threshold,0,len(r_shapiro),linestyle="dashed")
 fig.savefig(os.path.join(path_output,"r_shapiro"), format='svg', bbox_inches='tight')
 plt.show()
 
 fig, ax = plt.subplots()
-ax.plot(t_shapiro,p_shapiro, "r")
+ax.plot(p_shapiro, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Shapiro-Wilk test)")
 ax.set_title("Shapiro-Wilk test for each time step")
@@ -150,16 +139,16 @@ fig.savefig(os.path.join(path_output,"p_shapiro"), format='svg', bbox_inches='ti
 plt.show()
 
 fig, ax = plt.subplots()
-ax.plot(t_pearson,r_pearson_0, "r")
+ax.plot(r_pearson_0, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume 1")
-ax.hlines(r_threshold,t_pearson[0],t_pearson[-1],linestyle="dashed")
+ax.hlines(r_threshold,0,len(r_pearson_0),linestyle="dashed")
 fig.savefig(os.path.join(path_output,"r_pearson_0"), format='svg', bbox_inches='tight')
 plt.show()
 
 fig, ax = plt.subplots()
-ax.plot(t_pearson,p_pearson_0, "r")
+ax.plot(p_pearson_0, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume 1")
@@ -167,16 +156,16 @@ fig.savefig(os.path.join(path_output,"p_pearson_0"), format='svg', bbox_inches='
 plt.show()
 
 fig, ax = plt.subplots()
-ax.plot(t_pearson,r_pearson, "r")
+ax.plot(r_pearson, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume i-1")
-ax.hlines(r_threshold,t_pearson[0],t_pearson[-1],linestyle="dashed")
+ax.hlines(r_threshold,0,len(r_pearson),linestyle="dashed")
 fig.savefig(os.path.join(path_output,"r_pearson"), format='svg', bbox_inches='tight')
 plt.show()
 
 fig, ax = plt.subplots()
-ax.plot(t_pearson,p_pearson, "r")
+ax.plot(p_pearson, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume i-1")
