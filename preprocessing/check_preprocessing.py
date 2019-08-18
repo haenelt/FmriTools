@@ -69,7 +69,7 @@ for i in range(len(input)):
         mask_j = data_temp_j.copy()
         mask_j[mask_j < np.mean(mask_j[mask_j > 0])] = 0
         mask_j[mask_j != 0] = 1        
-        mask_0j = np.intersect1d(mask_0, mask_j)
+        mask_0j = mask_0 * mask_j
         
         # mask time step
         data_temp_0[mask_0j == 0] = np.nan
@@ -104,7 +104,7 @@ for i in range(len(input)):
             mask_2 = data_temp_2.copy()
             mask_2[mask_2 < np.mean(mask_2[mask_2 > 0])] = 0
             mask_2[mask_2 != 0] = 1
-            mask_12 = np.intersect1d(mask_1, mask_2)
+            mask_12 = mask_1 * mask_2
     
             data_temp_1[mask_12 == 0] = np.nan
             data_temp_2[mask_12 == 0] = np.nan
