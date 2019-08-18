@@ -120,6 +120,13 @@ file.write("----------\n")
 file.write("percentage of volumes below threshold")
 file.close()
 
+# save variables
+np.savez(os.path.join(path_output,"correlation_data"),
+         r_shapiro, p_shapiro,
+         r_pearson, p_pearson,
+         r_pearson_0, p_pearson_0,
+         )
+
 # time axis
 t_shapiro = np.arange(0,len(r_shapiro))
 t_pearson = np.arange(2,len(r_pearson)+1)
