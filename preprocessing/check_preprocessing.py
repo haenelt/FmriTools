@@ -63,9 +63,10 @@ for i in range(len(input)):
     # load time series
     data_temp = nb.load(input[i]).get_fdata()
     
+    # print iteration step
+    print("Current time series: "+str(i))
+    
     for j in range(np.shape(data_temp)[3]-1):
-        
-        print(str(j))
                 
         # load time step
         data_temp_1 = data_temp[:,:,:,j]
