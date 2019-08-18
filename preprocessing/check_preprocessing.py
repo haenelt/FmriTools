@@ -7,7 +7,7 @@ volumes is thought to be used as a qualitaty check for the realignment of time s
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 15-08-2019  
+Last modified: 18-08-2019  
 """
 import os
 import numpy as np
@@ -25,7 +25,7 @@ input = ["/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_1/udata.nii",
          "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_7/udata.nii",
          "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_8/udata.nii",
          ]
-r_threshold = 0.90
+r_threshold = 0.95
 
 """ do not edit below """
 
@@ -33,13 +33,18 @@ r_threshold = 0.90
 rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
-# load data
-for i in range(len(input)):
-    if i == 0:
-        data = nb.load(input[i]).get_fdata()
-    else:
-        data_temp = nb.load(input[i]).get_fdata()
-        data = np.append(data, data_temp, axis=3)
+# load first image in array
+data = nb.load(input[0]).get_fdata()
+
+# get brain mask from first volume
+mask = data[:,:,:,0].copy()
+mask[mask < np.mean(mask)] = 0
+mask[mask != 0] = 1
+
+# pool data from first volume
+data_0 = data[:,:,:,0]
+data_0[mask == 0] = np.nan
+data_0 = data_0[~np.isnan(data_0)].flatten()
 
 # create output folder
 if len(input) < 2:
@@ -50,51 +55,59 @@ else:
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# brain mask
-mask = data[:,:,:,0].copy()
-mask[mask < np.mean(mask)] = 0
-mask[mask != 0] = 1
+# initialise vectors
+r_pearson_0 = []
+r_pearson = []
+r_shapiro = []
+p_pearson_0 = []
+p_pearson = []
+p_shapiro = []
 
-# time axis
-t_shapiro = np.arange(0,np.shape(data)[3])
-t_pearson = np.arange(2,np.shape(data)[3]+1)
-
-# initialise arrays
-r_pearson_0 = np.zeros_like(t_pearson, dtype="float")
-r_pearson = np.zeros_like(t_pearson, dtype="float")
-r_shapiro = np.zeros_like(t_shapiro, dtype="float")
-p_pearson_0 = np.zeros_like(t_pearson, dtype="float")
-p_pearson = np.zeros_like(t_pearson, dtype="float")
-p_shapiro = np.zeros_like(t_shapiro, dtype="float")
-
-# pool data from first volume
-data_0 = data[:,:,:,0]
-data_0[mask == 0] = np.nan
-data_0 = data_0[~np.isnan(data_0)].flatten()
-
-# shapiro-wilk of first volume
-r_shapiro[0], p_shapiro[0] = shapiro(data_0)
-
-# loop through time steps
-for i in range(np.shape(data)[3]-1):
-
-    data_i = data[:,:,:,i]
-    data_j = data[:,:,:,i+1]
+cnt = 0
+for i in range(len(input)):
     
-    data_i[mask == 0] = np.nan
-    data_j[mask == 0] = np.nan
+    # load time series
+    data_temp = nb.load(input[i]).get_fdata()
     
-    data_i = data_i[~np.isnan(data_i)].flatten()
-    data_j = data_j[~np.isnan(data_j)].flatten()
+        for j in range(len(np.shape(data_temp))[3]-1):
+                        
+            # load time step
+            data_temp_1 = data[:,:,:,j]
+            data_temp_2 = data[:,:,:,j+1]
+            data_temp_1[mask == 0] = np.nan
+            data_temp_2[mask == 0] = np.nan
+            data_temp_1 = data_temp_1[~np.isnan(data_temp_1)].flatten()
+            data_temp_2 = data_temp_2[~np.isnan(data_temp_2)].flatten()
 
-    r_pearson_0[i], p_pearson_0[i] = pearsonr(data_0,data_j)
-    r_pearson[i], p_pearson[i] = pearsonr(data_i,data_j)
-    r_shapiro[i+1], p_shapiro[i+1] = shapiro(data_j)
+            # first volume of time series            
+            if j == 0:
+                
+                r_tmp, p_tmp = shapiro(data_temp_1)
+                r_shapiro = np.append(r_shapiro, r_tmp)
+                p_shapiro = np.append(p_shapiro, p_tmp)
+            
+                r_tmp, p_tmp = pearson(data_0, data_temp_1)
+                r_pearson_0 = np.append(r_pearson_0, t_tmp)
+                p_pearson_0 = np.append(p_pearson_0, p_tmp)
+
+            r_tmp, p_tmp = shapiro(data_temp_2)
+            r_shapiro = np.append(r_shapiro, r_tmp)
+            p_shapiro = np.append(p_shapiro, p_tmp)
+        
+            r_tmp, p_tmp = pearsonr(data_0, data_temp_2)
+            r_pearson_0 = np.append(r_pearson_0, r_tmp)
+            p_pearson_0 = np.append(p_pearson_0, p_tmp)
+
+            r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
+            r_pearson = np.append(r_pearson, r_tmp)
+            p_pearson = np.append(p_pearson, p_tmp)
+    
+            cnt += 1
 
 # percentage
-res_pearson_0 = len(r_pearson_0[r_pearson_0 < r_threshold]) / len(data[0,0,0,:]) * 100
-res_pearson = len(r_pearson[r_pearson < r_threshold]) / len(data[0,0,0,:]) * 100
-res_shapiro = len(r_shapiro[r_shapiro < r_threshold]) / len(data[0,0,0,:]) * 100
+res_pearson_0 = len(r_pearson_0[r_pearson_0 < r_threshold]) / cnt * 100
+res_pearson = len(r_pearson[r_pearson < r_threshold]) / cnt * 100
+res_shapiro = len(r_shapiro[r_shapiro < r_threshold]) / cnt * 100
 
 # logfile
 file = open(os.path.join(path_output,"correlation.txt"),"w")
