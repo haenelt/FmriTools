@@ -51,7 +51,10 @@ neighbourFlag = 0 # omit correlation between neighbours for last time step
 for i in range(len(input)):
     
     # load time series
-    data_temp = nb.load(input[i]).get_fdata()    
+    data_temp = nb.load(input[i]).get_fdata()   
+    
+    # print progress
+    print("Time series "+str(i)+"/"+str(len(input)))
 
     for j in range(np.shape(data_temp)[3]):
         
