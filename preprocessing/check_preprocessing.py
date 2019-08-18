@@ -16,15 +16,16 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
-input = ["/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_1/udata.nii",
-         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_2/udata.nii",
-         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_3/udata.nii",
-         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_4/udata.nii",
-         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_5/udata.nii",
-         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_6/udata.nii",
-         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_7/udata.nii",
-         "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_8/udata.nii",
-         ]
+input = [
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_1/udata.nii",
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_2/udata.nii",
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_3/udata.nii",
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_4/udata.nii",
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_5/udata.nii",
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_6/udata.nii",
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_7/udata.nii",
+        "/data/pt_01880/Tuebingen/p4/odc/GE_EPI1/Run_8/udata.nii",
+        ]
 r_threshold = 0.95
 
 """ do not edit below """
@@ -69,40 +70,40 @@ for i in range(len(input)):
     # load time series
     data_temp = nb.load(input[i]).get_fdata()
     
-        for j in range(len(np.shape(data_temp))[3]-1):
+    for j in range(len(np.shape(data_temp))[3]-1):
                         
-            # load time step
-            data_temp_1 = data[:,:,:,j]
-            data_temp_2 = data[:,:,:,j+1]
-            data_temp_1[mask == 0] = np.nan
-            data_temp_2[mask == 0] = np.nan
-            data_temp_1 = data_temp_1[~np.isnan(data_temp_1)].flatten()
-            data_temp_2 = data_temp_2[~np.isnan(data_temp_2)].flatten()
-
-            # first volume of time series            
-            if j == 0:
+        # load time step
+        data_temp_1 = data[:,:,:,j]
+        data_temp_2 = data[:,:,:,j+1]
+        data_temp_1[mask == 0] = np.nan
+        data_temp_2[mask == 0] = np.nan
+        data_temp_1 = data_temp_1[~np.isnan(data_temp_1)].flatten()
+        data_temp_2 = data_temp_2[~np.isnan(data_temp_2)].flatten()
+        
+        # first volume of time series            
+        if j == 0:
                 
-                r_tmp, p_tmp = shapiro(data_temp_1)
-                r_shapiro = np.append(r_shapiro, r_tmp)
-                p_shapiro = np.append(p_shapiro, p_tmp)
-            
-                r_tmp, p_tmp = pearson(data_0, data_temp_1)
-                r_pearson_0 = np.append(r_pearson_0, t_tmp)
-                p_pearson_0 = np.append(p_pearson_0, p_tmp)
-
-            r_tmp, p_tmp = shapiro(data_temp_2)
+            r_tmp, p_tmp = shapiro(data_temp_1)
             r_shapiro = np.append(r_shapiro, r_tmp)
             p_shapiro = np.append(p_shapiro, p_tmp)
-        
-            r_tmp, p_tmp = pearsonr(data_0, data_temp_2)
+            
+            r_tmp, p_tmp = pearsonr(data_0, data_temp_1)
             r_pearson_0 = np.append(r_pearson_0, r_tmp)
             p_pearson_0 = np.append(p_pearson_0, p_tmp)
+            
+        r_tmp, p_tmp = shapiro(data_temp_2)
+        r_shapiro = np.append(r_shapiro, r_tmp)
+        p_shapiro = np.append(p_shapiro, p_tmp)
+        
+        r_tmp, p_tmp = pearsonr(data_0, data_temp_2)
+        r_pearson_0 = np.append(r_pearson_0, r_tmp)
+        p_pearson_0 = np.append(p_pearson_0, p_tmp)
+        
+        r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
+        r_pearson = np.append(r_pearson, r_tmp)
+        p_pearson = np.append(p_pearson, p_tmp)
 
-            r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
-            r_pearson = np.append(r_pearson, r_tmp)
-            p_pearson = np.append(p_pearson, p_tmp)
-    
-            cnt += 1
+        cnt += 1
 
 # percentage
 res_pearson_0 = len(r_pearson_0[r_pearson_0 < r_threshold]) / cnt * 100
@@ -118,6 +119,10 @@ file.write("shapiro of volume i: "+str(res_shapiro)+"\n")
 file.write("----------\n")
 file.write("percentage of volumes below threshold")
 file.close()
+
+# time axis
+t_shapiro = np.arange(0,len(r_shapiro))
+t_pearson = np.arange(2,len(r_pearson)+1)
 
 # plots
 fig, ax = plt.subplots()
