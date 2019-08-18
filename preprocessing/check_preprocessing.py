@@ -70,7 +70,7 @@ for i in range(len(input)):
     # load time series
     data_temp = nb.load(input[i]).get_fdata()
     
-    for j in range(len(np.shape(data_temp))[3]-1):
+    for j in range(np.shape(data_temp)[3]-1):
                         
         # load time step
         data_temp_1 = data[:,:,:,j]
