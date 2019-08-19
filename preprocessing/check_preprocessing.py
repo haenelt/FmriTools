@@ -7,7 +7,7 @@ volumes is thought to be used as a qualitaty check for the realignment of time s
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 18-08-2019  
+Last modified: 19-08-2019  
 """
 import os
 import numpy as np
@@ -17,9 +17,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/home/daniel/Schreibtisch/BOLD.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_1/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_2/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_3/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_4/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_5/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_6/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_7/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_8/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_9/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_10/udata.nii",
         ]
-r_threshold = 0.95
+r_threshold = 0.9
 
 """ do not edit below """
 
