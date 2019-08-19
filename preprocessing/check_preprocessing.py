@@ -50,8 +50,8 @@ data_0 = nb.load(input[0]).get_fdata()[:,:,:,0]
 
 # open logfile
 file = open(os.path.join(path_output,"correlation.txt"),"w")
-file.write("Correlation threshold: "+str(r_threshold)+"\n")
 file.write("Percentage of volumes below threshold\n\n")
+file.write("Correlation threshold: "+str(r_threshold)+"\n")
 
 r_pearson_0 = []
 r_pearson = []
