@@ -39,6 +39,11 @@ if not os.path.exists(path_output):
 # pool data from first volume
 data_0 = nb.load(input[0]).get_fdata()[:,:,:,0]
 
+# open logfile
+file = open(os.path.join(path_output,"correlation.txt"),"w")
+file.write("Correlation threshold: "+str(r_threshold)+"\n")
+file.write("Percentage of volumes below threshold\n\n")
+
 r_pearson_0 = []
 r_pearson = []
 r_shapiro = []
@@ -53,7 +58,9 @@ for i in range(len(input)):
     
     # print progress
     print("Time series "+str(i)+"/"+str(len(input)))
-
+    
+    npearson_0 = 0
+    nshapiro = 0
     for j in range(np.shape(data_temp)[3]):
         
         # load first and current time step
@@ -77,11 +84,17 @@ for i in range(len(input)):
         r_tmp, p_tmp = shapiro(data_temp_j)
         r_shapiro = np.append(r_shapiro, r_tmp)
         p_shapiro = np.append(p_shapiro, p_tmp)
+
+        if r_tmp < r_threshold:
+            nshapiro += 1 
         
         # pearson correlation to first time step
         r_tmp, p_tmp = pearsonr(data_temp_0, data_temp_j)
         r_pearson_0 = np.append(r_pearson_0, r_tmp)
         p_pearson_0 = np.append(p_pearson_0, p_tmp)
+        
+        if r_tmp < r_threshold:
+            npearson_0 += 1
         
         if j < np.shape(data_temp)[3]-1 and i < len(input):
             data_temp_1 = data_temp[:,:,:,j]
@@ -107,21 +120,19 @@ for i in range(len(input)):
         
             r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
             r_pearson = np.append(r_pearson, r_tmp)
-            p_pearson = np.append(p_pearson, p_tmp)    
+            p_pearson = np.append(p_pearson, p_tmp)
+               
+    # percentage
+    res_pearson_0 = npearson_0 / np.shape(data_temp)[3] * 100
+    res_shapiro = nshapiro / np.shape(data_temp)[3] * 100
+    
+    # update logfile
+    file.write("Run: "+str(i)+"\n")
+    file.write("----------\n")
+    file.write("pearson to volume 1: "+str(res_pearson_0)+"\n")
+    file.write("shapiro of volume i: "+str(res_shapiro)+"\n\n\n")
 
-# percentage
-res_pearson_0 = len(r_pearson_0[r_pearson_0 < r_threshold]) / len(r_pearson_0) * 100
-res_pearson = len(r_pearson[r_pearson < r_threshold]) / len(r_pearson) * 100
-res_shapiro = len(r_shapiro[r_shapiro < r_threshold]) / len(r_shapiro) * 100
-
-# logfile
-file = open(os.path.join(path_output,"correlation.txt"),"w")
-file.write("Correlation threshold: "+str(r_threshold)+"\n")
-file.write("pearson to volume 1: "+str(res_pearson_0)+"\n")
-file.write("pearson to volume i-1: "+str(res_pearson)+"\n")
-file.write("shapiro of volume i: "+str(res_shapiro)+"\n")
-file.write("----------\n")
-file.write("percentage of volumes below threshold")
+# close logfile
 file.close()
 
 # save variables
