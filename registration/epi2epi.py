@@ -181,9 +181,9 @@ embedded_antsreg(os.path.join(path_epi_source,"pbepi.nii"), # source image
                  )
 
 # rename final deformations
-os.rename(os.path.join(path_output,"syn_ants-map.nii.gz"),
+os.rename(os.path.join(path_syn,"syn_ants-map.nii.gz"),
           os.path.join(path_output,"source2target.nii.gz"))
-os.rename(os.path.join(path_output,"syn_ants-invmap.nii.gz"),
+os.rename(os.path.join(path_syn,"syn_ants-invmap.nii.gz"),
           os.path.join(path_output,"target2source.nii.gz"))
 
 """
