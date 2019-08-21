@@ -1,13 +1,16 @@
 """
 Spatial cross-correlation of the signal intensities in functional time series
 
-This script computes the correlation between time steps in one or more concatenated functional time 
-series. Only voxels within the brain are included in the analysis. The correlation strength between 
-volumes is thought to be used as a qualitaty check for the realignment of time series.
+This scripts intends to identify corrupted volumes and runs in a set of functional time series to 
+get a quantifiable and reproducible exclusion criterion (cf. Marquardt et al. 2017; Bergmann et al.
+2019). Binary masks for each volume are created from the mean image intensity. For the spatial 
+correlation calculation, only voxels included in brain masks of both input images are considered.
+Reference volumes can be either the first volume of the input array if input_ref is given an empty
+string or another data set (e.g. the session mean volume). 
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 19-08-2019  
+Last modified: 21-08-2019  
 """
 import os
 import numpy as np
@@ -28,7 +31,8 @@ input = [
         "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_9/udata.nii",
         "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_10/udata.nii",
         ]
-r_threshold = 0.9
+input_ref = ""
+r_threshold = 0.90
 
 """ do not edit below """
 
@@ -46,7 +50,10 @@ if not os.path.exists(path_output):
     os.makedirs(path_output)
 
 # pool data from first volume
-data_0 = nb.load(input[0]).get_fdata()[:,:,:,0]
+if len(input_ref) > 0:
+    data_0 = nb.load(input_ref).get_fdata()
+else:
+    data_0 = nb.load(input[0]).get_fdata()[:,:,:,0]
 
 # open logfile
 file = open(os.path.join(path_output,"correlation.txt"),"w")
@@ -68,11 +75,12 @@ for i in range(len(input)):
     # print progress
     print("Time series "+str(i)+"/"+str(len(input)))
     
+    pearson_run = 0
     npearson_0 = 0
     nshapiro = 0
     for j in range(np.shape(data_temp)[3]):
         
-        # load first and current time step
+        # load reference and current time step
         data_temp_0 = data_0.copy()
         data_temp_j = data_temp[:,:,:,j].copy()
         
@@ -97,10 +105,13 @@ for i in range(len(input)):
         if r_tmp < r_threshold:
             nshapiro += 1 
         
-        # pearson correlation to first time step
+        # pearson correlation to reference
         r_tmp, p_tmp = pearsonr(data_temp_0, data_temp_j)
         r_pearson_0 = np.append(r_pearson_0, r_tmp)
         p_pearson_0 = np.append(p_pearson_0, p_tmp)
+        
+        # sum for within-run correlation
+        pearson_run += r_tmp
         
         if r_tmp < r_threshold:
             npearson_0 += 1
@@ -135,9 +146,13 @@ for i in range(len(input)):
     res_pearson_0 = npearson_0 / np.shape(data_temp)[3] * 100
     res_shapiro = nshapiro / np.shape(data_temp)[3] * 100
     
+    # average within-run correlation
+    pearson_run = pearson_run / np.shape(data_temp)[3]
+    
     # update logfile
     file.write("Run: "+str(i)+"\n")
     file.write("----------\n")
+    file.write("pearson (average): "+str(pearson_run)+"\n")
     file.write("pearson to volume 1: "+str(res_pearson_0)+"\n")
     file.write("shapiro of volume i: "+str(res_shapiro)+"\n\n\n")
 
