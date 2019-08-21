@@ -32,7 +32,7 @@ input = [
         "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_10/udata.nii",
         ]
 input_ref = ""
-r_threshold = 0.90
+r_threshold = 0.95
 
 """ do not edit below """
 
