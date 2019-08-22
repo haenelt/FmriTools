@@ -9,9 +9,10 @@ def get_mean(input, path_output, name_output, type="mean"):
         
     created by Daniel Haenelt
     Date created: 04-02-2019         
-    Last modified: 05-02-2019
+    Last modified: 22-08-2019
     """
     import os
+    import copy
     import numpy as np
     import nibabel as nb
     
@@ -35,15 +36,12 @@ def get_mean(input, path_output, name_output, type="mean"):
         
         data_all_array = np.zeros([x_size, y_size, z_size, t_size])
         t_start = 0
-        t_end = 0
         for i in range(len(input)):
-            
             data_img = nb.load(input[i])
             data_array = data_img.get_fdata()
             t_end = data_img.header["dim"][4] + t_start     
-            t_start = data_img.header["dim"][4]
-            
             data_all_array[:,:,:,t_start:t_end] = data_array
+            t_start = copy.deepcopy(t_end)
                 
     else:
                

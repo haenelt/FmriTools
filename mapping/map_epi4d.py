@@ -18,11 +18,11 @@ from nighres.registration import apply_coordinate_mappings
 
 # input
 input_epi = [
-        "/home/raid2/haenelt/Desktop/udata_test.nii.gz",
+        "/data/pt_01880/preprocessing_test/method2/Run_2/udata.nii",
         ]
 
 input_reg = [
-        "/home/raid2/haenelt/Desktop/epi2orig.nii.gz",
+        "/data/pt_01880/preprocessing_test/deformation/method2/Run_2/source2target.nii.gz",
         ]
 
 # parameters
@@ -80,7 +80,7 @@ if len(input_epi) == len(input_reg):
         file = os.path.splitext(os.path.basename(input_epi[i]))[0]
         
         output = nb.Nifti1Image(data_res, data.affine, data.header)
-        nb.save(output, os.path.join(path,"r"+file+".nii"))
+        nb.save(output, os.path.join(path,"r"+file+"_linear.nii"))
 
         # delete intermediate files
         sh.rmtree(path_tmp, ignore_errors=True)
