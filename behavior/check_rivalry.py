@@ -12,7 +12,7 @@ Last modified: 31-05-2019
 import numpy as np
 from scipy.io import loadmat
 
-input = "/home/daniel/Schreibtisch/p2_GE_EPI1_Run3_rivalry_Cond.mat"
+input = "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_8/logfiles/p3_GE_EPI1_Run8_rivalry_Cond.mat"
 
 """ do not edit below """
 
