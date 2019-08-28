@@ -37,11 +37,11 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi = "/data/pt_01880/Experiment2_Rivalry/p3/odc/GE_EPI1/diagnosis/mean_data.nii"
+file_mean_epi = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/diagnosis/mean_data.nii"
 file_t1 = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 file_mask = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/brain.finalsurfs.manedit.mgz"
 file_orig = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/odc/GE_EPI1"
+path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy"
 cleanup = True
 
 # parameters for mask preparation
