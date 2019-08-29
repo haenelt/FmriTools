@@ -1,8 +1,11 @@
 """
 Make visual fieldsign map
 
-The prupose of the following script is to make a movie to illustrate the travelling waves on a 
+The purpose of the following script is to make a movie to illustrate the travelling waves on a 
 flattened patch.
+
+Before running the script, login to queen via ssh and set the freesurfer environments by calling 
+FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 14-02-2019
@@ -11,16 +14,16 @@ Last modified: 18-02-2019
 from lib.mapping.get_vfs import get_vfs
 
 # input files
-input_sphere = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/dense/lh.sphere"
-input_white = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/dense/lh.white"
-input_patch = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/dense/lh.occip1.patch.flat"
-input_aparc = "/data/pt_01880/Experiment3_Stripes/p2/anatomy/freesurfer/label/lh.aparc.annot"
+input_sphere = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/dense/lh.sphere"
+input_white = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/dense/lh.white"
+input_patch = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/dense/lh.occip1.patch.flat"
+input_aparc = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/label/lh.aparc.annot"
 hemi = "lh"
-ecc_real = "/data/pt_01880/Experiment3_Stripes/p2/retinotopy/avg/surf/lh.ecc_real_avg_def-img_layer5_def.mgh"
-ecc_imag = "/data/pt_01880/Experiment3_Stripes/p2/retinotopy/avg/surf/lh.ecc_imag_avg_def-img_layer5_def.mgh"
-pol_real = "/data/pt_01880/Experiment3_Stripes/p2/retinotopy/avg/surf/lh.pol_real_avg_def-img_layer5_def.mgh"
-pol_imag = "/data/pt_01880/Experiment3_Stripes/p2/retinotopy/avg/surf/lh.pol_imag_avg_def-img_layer5_def.mgh"
-path_output = "/data/pt_01880/Experiment3_Stripes/p2/retinotopy/avg/surf/"
+ecc_real = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/lh.ecc_real_avg_def-img_layer5_def.mgh"
+ecc_imag = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/lh.ecc_imag_avg_def-img_layer5_def.mgh"
+pol_real = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/lh.pol_real_avg_def-img_layer5_def.mgh"
+pol_imag = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/lh.pol_imag_avg_def-img_layer5_def.mgh"
+path_output = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/"
 
 """ do not edit below """
 
