@@ -12,7 +12,6 @@ Date created: 14-02-2019
 Last modified: 29-08-2019
 """
 import os
-import numpy as np
 from lib.mapping.get_vfs import get_vfs
 
 # input files
@@ -33,4 +32,4 @@ get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real, ecc
             pol_imag, path_output, fwhm_ecc = 4.0, fwhm_pol = 2.0, fwhm_vfs = 8.0, cleanup=True)
 
 # remove generated tmp.dat file
-np.remove(os.path.join(os.getcwd(),"tmp.dat"))
+os.remove(os.path.join(os.getcwd(),"tmp.dat"))

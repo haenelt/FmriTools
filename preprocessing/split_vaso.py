@@ -8,19 +8,19 @@ individual volumes in the bold+vaso time series.
 
 created by Daniel Haenelt
 Date created: 02-05-2018             
-Last modified: 02-05-2019  
+Last modified: 30-08-2019  
 """
 import os
 import numpy as np
 import nibabel as nb
 
 # input data
-img_input = ["/nobackup/actinium2/haenelt/phantom_20190809/Run_2/data.nii",
+img_input = ["/nobackup/actinium2/haenelt/VasoTest2/renzo/S28_VASO_124_setup_E00_M_25.nii",
              ]
 
 # paramteers
-start_vol = 10
-end_vol = 3
+start_vol = 2
+end_vol = 0
 
 """ do not edit below """
 
@@ -34,7 +34,8 @@ for i in range(len(img_input)):
     data_array[:,:,:,0:start_vol] = data_array[:,:,:,start_vol:2*start_vol]
     
     # discard volumes at the end
-    data_array = data_array[:,:,:,:-end_vol]
+    if end_vol != 0:
+        data_array = data_array[:,:,:,:-end_vol]
     
     # split into even and odd runs
     t_even = np.arange(0,np.shape(data_array)[3],2)
