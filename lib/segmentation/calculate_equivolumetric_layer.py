@@ -9,7 +9,7 @@ def calculate_equivolumetric_layer(path, sub, n_layers, path_output):
     
     created by Daniel Haenelt
     Date created: 20-11-2018
-    Last modified: 20-11-2018
+    Last modified: 02-09-2018
     """
     import os
     import nibabel as nb
@@ -20,7 +20,11 @@ def calculate_equivolumetric_layer(path, sub, n_layers, path_output):
     # make output folder
     if not os.path.exists(path_output):
         os.mkdir(path_output)
+        
+    if not os.path.exists(os.path.join(path_output,"binary")):
         os.mkdir(os.path.join(path_output,"binary"))
+        
+    if not os.path.exists(os.path.join(path_output,"levelset")):
         os.mkdir(os.path.join(path_output,"levelset"))
 
     # convert ribbon to nifti

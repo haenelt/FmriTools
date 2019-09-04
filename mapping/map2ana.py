@@ -9,7 +9,7 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 06-03-2019            
-Last modified: 05-04-2019  
+Last modified: 02-09-2019  
 """
 import os
 from nighres.registration import apply_coordinate_mappings
@@ -17,18 +17,7 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_a_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_f_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_imag_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_phase_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_real_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_snr_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_a_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_f_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_imag_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_phase_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_real_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_snr_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/prf/roi_target_sigma_threshold_best_model_masked.nii",
         ]
 
 input_surf = [
@@ -37,7 +26,10 @@ input_surf = [
         ]
 
 deformation = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg"
+path_output = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/prf/vol/"
+
+# parameters
+interpolation = 'nearest' # can be linear or nearest
 
 """ do not edit below """
 
@@ -46,7 +38,7 @@ path_def = os.path.join(path_output,"def")
 for i in range(len(input_file)):
     apply_coordinate_mappings(input_file[i], 
                               deformation, 
-                              interpolation='linear', 
+                              interpolation=interpolation, 
                               padding='closest', 
                               save_data=True, 
                               overwrite=True, 

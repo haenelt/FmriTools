@@ -37,11 +37,11 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/diagnosis/mean_data.nii"
+file_mean_epi = "/data/pt_01880/Experiment2_Rivalry/p3/localiser/diagnosis/mean_data.nii"
 file_t1 = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 file_mask = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/brain.finalsurfs.manedit.mgz"
 file_orig = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy"
+path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/localiser"
 cleanup = True
 
 # parameters for mask preparation
@@ -53,10 +53,12 @@ sigma_mask = 3
 
 # parameters for syn 
 run_rigid = True
-rigid_iterations = 1000 
+#rigid_iterations = 1000 
+rigid_iterations = 10
 run_affine = False 
 affine_iterations = 1000 
-run_syn = True 
+#run_syn = True 
+run_syn = False
 coarse_iterations = 50 
 medium_iterations = 150 
 fine_iterations = 100 
