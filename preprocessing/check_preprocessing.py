@@ -6,11 +6,12 @@ get a quantifiable and reproducible exclusion criterion (cf. Marquardt et al. 20
 2019). Binary masks for each volume are created from the mean image intensity. For the spatial 
 correlation calculation, only voxels included in brain masks of both input images are considered.
 Reference volumes can be either the first volume of the input array if input_ref is given an empty
-string or another data set (e.g. the session mean volume). 
+string or another data set (e.g. the session mean volume). A regressor of no interest is written for
+each input time series to denote volumes below threshold.
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 21-08-2019  
+Last modified: 05-09-2019  
 """
 import os
 import numpy as np
@@ -20,18 +21,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_1/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_2/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_3/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_4/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_5/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_6/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_7/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_8/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_9/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/odc/GE_EPI1/Run_10/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_1/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_2/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_3/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_4/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_5/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_6/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_7/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_8/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_9/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_10/udata.nii",
         ]
-input_ref = ""
+input_ref = "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/diagnosis/mean_data.nii"
 r_threshold = 0.95
 
 """ do not edit below """
@@ -49,7 +50,7 @@ else:
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# pool data from first volume
+# pool data from first (reference) volume
 if len(input_ref) > 0:
     data_0 = nb.load(input_ref).get_fdata()
 else:
@@ -73,7 +74,16 @@ for i in range(len(input)):
     data_temp = nb.load(input[i]).get_fdata()   
     
     # print progress
-    print("Time series "+str(i)+"/"+str(len(input)))
+    print("Time series "+str(i+1)+"/"+str(len(input)))
+    
+    # create output folder for regressor of no interest
+    path_logfile = os.path.join(os.path.dirname(input[i]),"logfiles")
+    
+    if not os.path.exists(path_logfile):
+        os.makedirs(path_logfile)
+    
+    # open logfile for regressor of no interest
+    file2 = open(os.path.join(path_logfile,"correlation_regressor_Run"+str(i+1)+".txt"),"w")
     
     pearson_run = 0
     npearson_0 = 0
@@ -115,6 +125,9 @@ for i in range(len(input)):
         
         if r_tmp < r_threshold:
             npearson_0 += 1
+            file2.write("1\n")
+        else:
+            file2.write("0\n")
         
         if j < np.shape(data_temp)[3]-1 and i < len(input):
             data_temp_1 = data_temp[:,:,:,j]
@@ -142,7 +155,10 @@ for i in range(len(input)):
             r_pearson = np.append(r_pearson, r_tmp)
             p_pearson = np.append(p_pearson, p_tmp)
                
-    # percentage
+    # close logfile for regressor of no interest
+    file2.close()
+    
+    # percentage below threshold
     res_pearson_0 = npearson_0 / np.shape(data_temp)[3] * 100
     res_shapiro = nshapiro / np.shape(data_temp)[3] * 100
     
@@ -150,7 +166,7 @@ for i in range(len(input)):
     pearson_run = pearson_run / np.shape(data_temp)[3]
     
     # update logfile
-    file.write("Run: "+str(i)+"\n")
+    file.write("Run: "+str(i+1)+"\n")
     file.write("----------\n")
     file.write("pearson (average): "+str(pearson_run)+"\n")
     file.write("pearson to volume ref: "+str(res_pearson_0)+"\n")
