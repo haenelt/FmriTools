@@ -16,10 +16,9 @@ function fmri_preprocessing(img_input, slice_params, field_params, outlier_param
 % computing the z-score of the measured fMRI signal relative to the
 % voxels's time series. If the average z-score across all voxels within one
 % volume exceeds a defined threshold, this volume is marked as outlier. 
-% In the outlier summary, the number of outliers within one run is compared
-% to its length is computed and if the ratio exceeds a defined threshold, 
-% the whole run is discarded. Additionally, regressors for neglecting 
-% outlier volumes are created.
+% In the outlier summary, the percentage of within-run outliers are printed
+% out. Additionally, regressors of no interest for neglecting outlier
+% volumes are created.
 % 
 % Inputs:
     % input: cell array of filenames of input time series.
@@ -30,7 +29,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, outlier_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 06-08-2019
+% Last modified: 06-09-2019
 
 % add spm to path
 addpath(pathSPM);
@@ -315,6 +314,8 @@ end
 
 % open textfile
 fileID = fopen(fullfile(path_diagnosis,['preprocessing_summary_' file '.txt']),'w');
+fprintf(fileID,'Percentage of within-run motion and intensity outliers\n');
+fprintf(fileID,'----------\n\n');
 
 for i  = 1:length(img_input)
 
@@ -324,18 +325,13 @@ for i  = 1:length(img_input)
     data_img = spm_vol(img_input{i});
     nt = length(data_img);
     
-    % get all within-run outliers
+    % get within-run outlier percentage
     outlier_all = [motion_outlier.short.t motion_outlier.long.t intensity_outlier.t];
     outlier_all = unique(outlier_all);
+    outlier_percentage = length(outlier_all) / nt * 100;
     
     % get ratio of outliers within time series
-    outlier_percentage = length(outlier_all) / nt;
-    
-    if outlier_percentage >= outlier_params.run_out
-        fprintf(fileID,'%d %d\n',length(outlier_all),1);
-    else
-        fprintf(fileID,'%d %d\n',length(outlier_all),0);
-    end
+    fprintf(fileID,'%.2f\n',outlier_percentage);
     
     [~, file, ~] = fileparts(img_input{i});
     if slice_params.slice_timing
