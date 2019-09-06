@@ -11,7 +11,7 @@ each input time series to denote volumes below threshold.
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 05-09-2019  
+Last modified: 06-09-2019  
 """
 import os
 import numpy as np
@@ -168,9 +168,9 @@ for i in range(len(input)):
     # update logfile
     file.write("Run: "+str(i+1)+"\n")
     file.write("----------\n")
-    file.write("pearson (average): "+str(pearson_run)+"\n")
-    file.write("pearson to volume ref: "+str(res_pearson_0)+"\n")
-    file.write("shapiro of volume i: "+str(res_shapiro)+"\n\n\n")
+    file.write("Pearson (average within run): "+str(pearson_run)+"\n")
+    file.write("Outlier percentage (pearson to ref): "+str(res_pearson_0)+"\n")
+    file.write("Outlier percentage (shapiro): "+str(res_shapiro)+"\n\n\n")
 
 # close logfile
 file.close()
