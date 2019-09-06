@@ -83,7 +83,7 @@ for i in range(len(input)):
         os.makedirs(path_logfile)
     
     # open logfile for regressor of no interest
-    file2 = open(os.path.join(path_logfile,"correlation_regressor_Run"+str(i+1)+".txt"),"w")
+    file2 = open(os.path.join(path_logfile,"correlation_regressor.txt"),"w")
     
     pearson_run = 0
     npearson_0 = 0

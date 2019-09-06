@@ -341,7 +341,7 @@ for i  = 1:length(img_input)
 
     M = zeros(nt,1);
     M(outlier_all) = 1;
-    dlmwrite(fullfile(path_regressor,['outlier_regressor_Run' num2str(i) '.txt']),M);
+    dlmwrite(fullfile(path_regressor,'outlier_regressor.txt'),M);
     
 end
 
