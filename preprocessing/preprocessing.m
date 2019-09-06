@@ -18,7 +18,7 @@
 
 % array of of input time series
 img_input = {
-    '/data/pt_01880/Experiment2_Rivalry/p3/localiser/data_bla.nii',...
+    '/data/pt_01880/Experiment2_Rivalry/p3/localiser/data.nii',...
     };
 
 % slice timing parameters
@@ -45,10 +45,8 @@ outlier_params.moco_out_rad_short = 0.1; % in rad
 outlier_params.moco_out_rad_long = 0.2; % in rad
 outlier_params.int_out_z = 2; % in z-score
 
-% add spm to path
-pathSPM = '/data/pt_01880/source/spm12'; 
-
-% add library to path
+% add spm and lib to path
+pathSPM = '/data/pt_01880/source/spm12';
 pathLIB = '/home/raid2/haenelt/projects/scripts/lib/preprocessing';
 
 %%% do not edit below %%%
