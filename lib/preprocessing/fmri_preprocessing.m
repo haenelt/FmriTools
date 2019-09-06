@@ -332,16 +332,16 @@ for i  = 1:length(img_input)
     
     % get ratio of outliers within time series
     fprintf(fileID,'%.2f\n',outlier_percentage);
-    
-    [~, file, ~] = fileparts(img_input{i});
-    if slice_params.slice_timing
-        file = ['a' file];
+        
+    % write regressor of no interest
+    path_regressor = fullfile(pwd,'logfiles');
+    if ~exist(path_regressor,'dir') 
+        mkdir(path_regressor); 
     end
-    
-    M = dlmread(['rp_' file '.txt']);
-    M = [M zeros(nt,1)];
-    M(outlier_all,end) = 1;
-    dlmwrite(['frp_' file '.txt'],M)
+
+    M = zeros(nt,1);
+    M(outlier_all) = 1;
+    dlmwrite(fullfile(path_regressor,['outlier_regressor_Run' num2str(i) '.txt']),M);
     
 end
 
