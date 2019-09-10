@@ -29,7 +29,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, outlier_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 06-09-2019
+% Last modified: 09-09-2019
 
 % add spm to path
 addpath(pathSPM);
@@ -59,9 +59,11 @@ if slice_params.slice_timing
         nt = length(data_img); % number of volumes
         nslices = data_img(1).dim(3); % number of slices
         
+        scans = cell(nt,1);
         for j = 1:nt
-            matlabbatch2{1}.spm.temporal.st.scans{j,1} = [img_input{i} ',' num2str(j)];
+            scans{j,1} = [img_input{i} ',' num2str(j)];
         end
+        matlabbatch{1}.spm.temporal.st.scans = {scans};
         matlabbatch{1}.spm.temporal.st.nslices = nslices;
         matlabbatch{1}.spm.temporal.st.tr = slice_params.TR;
         matlabbatch{1}.spm.temporal.st.ta = slice_params.TR - slice_params.TR / nslices;
