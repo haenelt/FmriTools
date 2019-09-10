@@ -17,7 +17,12 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/prf/roi_target_sigma_threshold_best_model_masked.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_imag_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_real_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/ecc_snr_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_imag_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_real_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/native/pol_snr_avg.nii",
         ]
 
 input_surf = [
@@ -25,11 +30,10 @@ input_surf = [
         "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer5",
         ]
 
-deformation = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/prf/vol/"
-
 # parameters
-interpolation = 'nearest' # can be linear or nearest
+deformation = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/epi2orig.nii.gz"
+path_output = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg"
+interpolation = 'linear' # can be linear or nearest
 
 """ do not edit below """
 

@@ -31,14 +31,14 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 # input data
-file_mean_epi_source = "/data/pt_01880/Experiment2_Rivalry/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
+file_mean_epi_source = "/data/pt_01880/Experiment2_Rivalry/p3/localiser/diagnosis/mean_data.nii"
 file_mean_epi_target = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/diagnosis/mean_data.nii"
 file_orig = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/orig.mgz"
 file_t1 = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 file_mask = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/brain.finalsurfs.manedit.mgz"
 file_orig2epi = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/orig2epi.nii.gz"
 file_epi2orig = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/odc/GE_EPI2"
+path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/localiser"
 cleanup = True
 
 # parameters for epi skullstrip
