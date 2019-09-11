@@ -21,18 +21,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_1/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_2/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_3/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_4/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_5/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_6/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_7/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_8/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_9/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/Run_10/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_1/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_2/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_3/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_4/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_5/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_6/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_7/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_8/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_9/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/Run_10/uadata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI1/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI2/diagnosis/mean_adata.nii"
 r_threshold = 0.95
 
 """ do not edit below """
@@ -58,8 +58,8 @@ else:
 
 # open logfile
 file = open(os.path.join(path_output,"correlation.txt"),"w")
-file.write("Percentage of volumes below threshold\n\n")
-file.write("Correlation threshold: "+str(r_threshold)+"\n")
+file.write("Percentage of volumes below threshold\n")
+file.write("Correlation threshold: "+str(r_threshold)+"\n\n")
 
 r_pearson_0 = []
 r_pearson = []
