@@ -18,7 +18,7 @@
 
 % array of of input time series
 img_input = {
-    '/data/pt_01880/Experiment2_Rivalry/p3/localiser/data.nii',...
+    '/data/pt_01880/Experiment2_Rivalry/p3/resting_state/data.nii',...
     };
 
 % slice timing parameters
