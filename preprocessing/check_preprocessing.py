@@ -3,15 +3,16 @@ Spatial cross-correlation of the signal intensities in functional time series
 
 This scripts intends to identify corrupted volumes and runs in a set of functional time series to 
 get a quantifiable and reproducible exclusion criterion (cf. Marquardt et al. 2017; Bergmann et al.
-2019). Binary masks for each volume are created from the mean image intensity. For the spatial 
-correlation calculation, only voxels included in brain masks of both input images are considered.
-Reference volumes can be either the first volume of the input array if input_ref is given an empty
-string or another data set (e.g. the session mean volume). A regressor of no interest is written for
-each input time series to denote volumes below threshold.
+2019). Binary masks for each volume are created from the mean image intensity. Optionally, separate
+files for mask creation can be given as input. For the spatial correlation calculation, only voxels 
+included in brain masks of both input images are considered. Reference volumes can be either the 
+first volume of the input array if input_ref is given an empty string or another data set (e.g. the 
+session mean volume). A regressor of no interest is written for each input time series to denote 
+volumes below threshold.
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 06-09-2019  
+Last modified: 12-09-2019  
 """
 import os
 import numpy as np
@@ -21,18 +22,11 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_1/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_2/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_3/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_4/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_5/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_6/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_7/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_8/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_9/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/Run_10/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/resting_state/udata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment1_ODC/p1/odc/SE_EPI2/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment1_ODC/p1/resting_state/diagnosis/mean_data.nii"
+input_mask = []
+input_mask_ref = ""
 r_threshold = 0.95
 
 """ do not edit below """
@@ -56,6 +50,9 @@ if len(input_ref) > 0:
 else:
     data_0 = nb.load(input[0]).get_fdata()[:,:,:,0]
 
+if len(input_mask_ref) > 0:
+    mask_0 = nb.load(input_mask_ref).get_fdata()
+
 # open logfile
 file = open(os.path.join(path_output,"correlation.txt"),"w")
 file.write("Percentage of volumes below threshold\n")
@@ -72,6 +69,9 @@ for i in range(len(input)):
     
     # load time series
     data_temp = nb.load(input[i]).get_fdata()   
+    
+    if len(input_mask) > 0:
+        mask_temp = nb.load(input_mask[i]).get_fdata()   
     
     # print progress
     print("Time series "+str(i+1)+"/"+str(len(input)))
@@ -94,11 +94,25 @@ for i in range(len(input)):
         data_temp_0 = data_0.copy()
         data_temp_j = data_temp[:,:,:,j].copy()
         
+        if len(input_mask_ref) > 0:
+            mask_temp_0 = mask_0.copy()
+            
+        if len(input_mask) > 0:
+            mask_temp_j = mask_temp[:,:,:,j].copy()
+        
         # get temporary mask
-        mask_0 = data_temp_0.copy()
+        if len(input_mask_ref) > 0:
+            mask_0 = mask_temp_0.copy()
+        else:
+            mask_0 = data_temp_0.copy()            
+        
+        if len(input_mask) > 0:
+            mask_j = mask_temp_j.copy()
+        else:            
+            mask_j = data_temp_j.copy()
+
         mask_0[mask_0 < np.mean(mask_0[mask_0 > 0])] = 0
-        mask_0[mask_0 != 0] = 1
-        mask_j = data_temp_j.copy()
+        mask_0[mask_0 != 0] = 1            
         mask_j[mask_j < np.mean(mask_j[mask_j > 0])] = 0
         mask_j[mask_j != 0] = 1        
         mask_0j = mask_0 * mask_j
@@ -132,18 +146,33 @@ for i in range(len(input)):
         if j < np.shape(data_temp)[3]-1 and i < len(input):
             data_temp_1 = data_temp[:,:,:,j]
             data_temp_2 = data_temp[:,:,:,j+1]
+            
+            if len(input_mask) > 0:
+                mask_temp_1 = mask_temp[:,:,:,j]
+                mask_temp_2 = mask_temp[:,:,:,j+1]
+            
         elif j == np.shape(data_temp)[3]-1 and i < len(input)-1:
             data_temp_1 = data_temp[:,:,:,j]
             data_temp_2 = nb.load(input[i+1]).get_fdata()[:,:,:,0]
+            
+            if len(input_mask) > 0:
+                mask_temp_1 = mask_temp[:,:,:,j]
+                mask_temp_2 = nb.load(input_mask[i+1]).get_fdata()[:,:,:,0]
+            
         else:
             neighbourFlag = 1
 
         if neighbourFlag == 0:
             
-            mask_1 = data_temp_1.copy()
+            if len(input_mask) > 0:
+                mask_1 = mask_temp_1.copy()
+                mask_2 = mask_temp_2.copy()
+            else:
+                mask_1 = data_temp_1.copy()
+                mask_2 = data_temp_2.copy()
+            
             mask_1[mask_1 < np.mean(mask_1[mask_1 > 0])] = 0
             mask_1[mask_1 != 0] = 1
-            mask_2 = data_temp_2.copy()
             mask_2[mask_2 < np.mean(mask_2[mask_2 > 0])] = 0
             mask_2[mask_2 != 0] = 1
             mask_12 = mask_1 * mask_2

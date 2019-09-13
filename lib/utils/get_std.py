@@ -9,7 +9,7 @@ def get_std(input, path_output, name_output, set_outlier=None):
         
     created by Daniel Haenelt
     Date created: 04-02-2019         
-    Last modified: 22-08-2019
+    Last modified: 12-09-2019
     """
     import os
     import copy
@@ -65,4 +65,4 @@ def get_std(input, path_output, name_output, set_outlier=None):
     
     # write mean image
     mean_img = nb.Nifti1Image(data_std_array, data_img.affine, data_img.header)
-    nb.save(mean_img,os.path.join(path_output,"std"+name_output+".nii"))
+    nb.save(mean_img,os.path.join(path_output,"std_"+name_output+".nii"))
