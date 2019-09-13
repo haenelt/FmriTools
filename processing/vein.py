@@ -12,7 +12,7 @@ from Kashyap et al., 2017.
 
 created by Daniel Haenelt
 Date created: 06-12-2018             
-Last modified: 20-12-2018  
+Last modified: 13-09-2019
 """
 import os
 import datetime
@@ -20,33 +20,23 @@ import numpy as np
 import nibabel as nb
 
 # input data
-img_input = ["/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_1/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_2/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_3/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_4/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_5/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_6/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_7/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_8/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_9/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_10/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_11/udata.nii",
-             "/nobackup/actinium1/haenelt/V2STRIPES/p6/odc/GE_EPI5/Run_12/udata.nii",
+img_input = ["/data/pt_01880/Experiment1_ODC/p1/resting_state/udata.nii",
              ]
 
 # path to SPM12 folder
-pathSPM = "/nobackup/actinium1/haenelt/source/spm12"
+pathSPM = "/data/pt_01880/source/spm12"
+pathLIB = "/home/raid2/haenelt/projects/scripts/lib"
 
 # parameters
-TR = 2 # repetition time in s
-cutoff_highpass = 96 # cutoff in s for baseline correction
-epi_threshold = 500
+TR = 3 # repetition time in s
+cutoff_highpass = 180 # cutoff in s for baseline correction
+epi_threshold = 1000
 tsnr_threshold = 10
 
 """ do not edit below """
 
 # change to lib folder
-os.chdir("./preprocessing")
+os.chdir(os.path.join(pathLIB,"preprocessing"))
 
 # prepare path and filename
 path = []
@@ -56,14 +46,16 @@ for i in range(len(img_input)):
     file.append(os.path.split(img_input[i])[1])
 
 # output folder is taken from the first entry of the input list and set into 
-path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","vein","native")
+if len(img_input) > 1:
+    path_output = os.path.join(os.path.dirname(path[0]),"vein","native")
+else:
+    path_output = os.path.join(path[0],"vein","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
 # output filenames
-name_sess = os.path.basename(os.path.dirname(path[0]))
-name_epi = os.path.join(path_output,"mean_epi_"+name_sess+".nii")
-name_tsnr = os.path.join(path_output,"mean_tsnr_"+name_sess+".nii")
+name_epi = os.path.join(path_output,"mean_epi.nii")
+name_tsnr = os.path.join(path_output,"mean_tsnr.nii")
 
 # get image header information
 data_img = nb.load(img_input[0])
@@ -174,21 +166,20 @@ mask_array[mask_array != 0] = 1
 
 # write output
 output = nb.Nifti1Image(epi_mask_array, affine, header)
-fileOUT = os.path.join(path_output,"mask_epi_"+name_sess+".nii")
+fileOUT = os.path.join(path_output,"mask_epi.nii")
 nb.save(output,fileOUT)
 
 output = nb.Nifti1Image(tsnr_mask_array, affine, header)
-fileOUT = os.path.join(path_output,"mask_tsnr_"+name_sess+".nii")
+fileOUT = os.path.join(path_output,"mask_tsnr.nii")
 nb.save(output,fileOUT)
 
 output = nb.Nifti1Image(mask_array, affine, header)
-fileOUT = os.path.join(path_output,"vein_"+name_sess+".nii")
+fileOUT = os.path.join(path_output,"vein.nii")
 nb.save(output,fileOUT)
 
 # write log
 fileID = open(os.path.join(path_output,"vein_info.txt"),"a")
 fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
-fileID.write("data set: "+name_sess+"\n")
 fileID.write("cutoff_highpass: "+str(cutoff_highpass)+"\n")
 fileID.write("mean epi threshold: "+str(epi_threshold)+"\n")
 fileID.write("tsnr threshold: "+str(tsnr_threshold)+"\n")
