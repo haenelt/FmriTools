@@ -8,11 +8,12 @@ with prefix b is found). From the condition file which has to be in the SPM comp
 time points for both conditions are defined. CNR is computed as absolute difference between both 
 conditions divided by the standard deviation of the second condition. The second condition should be 
 a baseline condition if the CNR should make any sense. The CNR of the whole session is taken as the 
-average across single runs. Similar computations of CNR can be found in Scheffler et al. (2016).
+average across single runs. Similar computations of CNR can be found in Scheffler et al. (2016). If
+the outlier input array is not empty, outlier volumes are discarded from the analysis.
 
 created by Daniel Haenelt
 Date created: 03-05-2019             
-Last modified: 03-05-2019  
+Last modified: 15-09-2019  
 """
 import sys
 import os
@@ -49,6 +50,8 @@ cond_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/logfiles/p8_SE_EPI1
               "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_11/logfiles/p8_SE_EPI1_Run11_odc_Cond.mat",
               "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_12/logfiles/p8_SE_EPI1_Run12_odc_Cond.mat",
               ]
+
+outlier_input = []
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
@@ -132,6 +135,26 @@ for i in range(len(path)):
     for j in range(durations2 - 1):
         onsets2 = np.append(onsets2, temp + j + 1)
     onsets2 = np.sort(onsets2)
+    
+    # remove outlier volumes
+    if outlier_input:
+        
+        # load outlier regressor
+        outlier_regressor = np.loadtxt(outlier_input[i])
+        outlier_regressor = np.where(outlier_regressor == 1)[0]
+        
+        # look for outliers in onset arrays
+        for j in range(len(onsets1)):
+            if np.any(onsets1[i] == outlier_regressor):
+                onsets1[i] = -1
+        
+        for j in range(len(onsets2)):
+            if np.any(onsets2[i] == outlier_regressor):
+                onsets2[i] = -1
+        
+        # remove outliers
+        onsets1 = onsets1[onsets1 != -1]
+        onsets2 = onsets2[onsets2 != -1]
 
     # look for baseline corrected time series
     if not os.path.isfile(os.path.join(path[i],"b"+file[i])):

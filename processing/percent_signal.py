@@ -8,11 +8,12 @@ in the SPM compatible *.mat format, time points for both blocks are defined. Tim
 whole time series (baseline) and all conditions can be converted to z-score. The percent signal 
 change is computed as the difference of the mean between both conditions divided by the time series 
 mean. The mean percent signal change of the whole session is taken as the average across single 
-runs. The percent signal change is computed for both contrasts.
+runs. The percent signal change is computed for both contrasts. If the outlier input array is not
+empty, outlier volumes are discarded from the analysis.
 
 created by Daniel Haenelt
 Date created: 06-12-2018             
-Last modified: 05-08-2019  
+Last modified: 15-09-2019  
 """
 import sys
 import os
@@ -50,6 +51,8 @@ cond_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/logfiles/p8_SE_EPI1
               "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_11/logfiles/p8_SE_EPI1_Run11_odc_Cond.mat",
               "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_12/logfiles/p8_SE_EPI1_Run12_odc_Cond.mat",
               ]
+
+outlier_input = []
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
@@ -136,6 +139,26 @@ for i in range(len(path)):
     for j in range(durations2 - 1):
         onsets2 = np.append(onsets2, temp + j + 1)
     onsets2 = np.sort(onsets2)
+    
+    # remove outlier volumes
+    if outlier_input:
+        
+        # load outlier regressor
+        outlier_regressor = np.loadtxt(outlier_input[i])
+        outlier_regressor = np.where(outlier_regressor == 1)[0]
+        
+        # look for outliers in onset arrays
+        for j in range(len(onsets1)):
+            if np.any(onsets1[i] == outlier_regressor):
+                onsets1[i] = -1
+        
+        for j in range(len(onsets2)):
+            if np.any(onsets2[i] == outlier_regressor):
+                onsets2[i] = -1
+        
+        # remove outliers
+        onsets1 = onsets1[onsets1 != -1]
+        onsets2 = onsets2[onsets2 != -1]
 
     # lopass filter time series
     if use_lowpass:
