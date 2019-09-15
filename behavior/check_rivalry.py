@@ -3,7 +3,8 @@ Check rivalry switch data
 
 From the condition logfile of the binocular rivalry paradigm, the variable SwitchData is read and 
 analyzed. The mean and standard deviation of green and red periods are estimated. The relative
-amount of piecemeal events is calculated.
+amount of piecemeal events is calculated. This is just a quick overview of the condition file.
+Onsets are not classified by their neighbours and not double button presses are considered.
 
 created by Daniel Haenelt
 Date created: 31-05-2019             

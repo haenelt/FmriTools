@@ -2,11 +2,13 @@
 % 
 % From the condition logfile of the binocular rivalry paradigm, onsets and
 % durations for the following GLM analysis are computed. Onsets are split
-% into rest, left eye, right eye or piecemeal periods. Onsets are excluded
-% if their durations are below a set time threshold and if they are not
-% neighboured by correct switches (i.e., if they are neighboured by
-% the same button presses). Optionally, a mixed (save_mixed) regressor is
-% written out.
+% into rest, left eye, right eye or piecemeal periods. Double button
+% presses are defined as same button presses falling within a defined time
+% window. Onsets are further excluded if their durations are below a set
+% time threshold and if they are not neighboured by correct switches (i.e.,
+% if they are neighboured by the same button presses which are above the
+% double button press window). Optionally, a mixed (save_mixed) regressor
+% is written out.
 %
 % In the experiment, participants wear the red filter over their left eye
 % and the green filter over their right eye. In SwitchData, button 
@@ -14,7 +16,7 @@
 %
 % created by Daniel Haenelt
 % Date created: 05-08-2019         
-% Last modified: 10-09-2019  
+% Last modified: 15-09-2019  
 
 % input of condition files
 input = {
@@ -44,6 +46,18 @@ for i = 1:length(input)
     
     % load mat file
     data = load(input{i});
+    
+    % remove double button presses (define double button press if the same
+    % button is pressed within a defined time window)
+    double_press_threshold = 0.2;
+    for j = 1:length(data.SwitchData(:,1)) - 1
+        if data.SwitchData(j,1) == data.SwitchData(j+1,1)
+            time_delta = data.SwitchData(j+1,2) - data.SwitchData(j,2);
+            if time_delta < double_press_threshold
+                data.SwitchData(j+1,:) = [];
+            end
+        end
+    end
     
     % clean switches (only consider time points with correct neighbouring)
     data_consider = zeros(length(data.SwitchData(:,1)),1);
