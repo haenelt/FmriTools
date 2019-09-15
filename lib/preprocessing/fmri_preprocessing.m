@@ -29,7 +29,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, outlier_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 09-09-2019
+% Last modified: 15-09-2019
 
 % add spm to path
 addpath(pathSPM);
@@ -317,6 +317,11 @@ end
 % open textfile
 fileID = fopen(fullfile(path_diagnosis,['preprocessing_summary_' file '.txt']),'w');
 fprintf(fileID,'Percentage of within-run motion and intensity outliers\n');
+fprintf(fileID,['motion threshold (mm, short): ' num2str(outlier_params.moco_out_mm_short) '\n']);
+fprintf(fileID,['motion threshold (mm, long): ' num2str(outlier_params.moco_out_mm_long) '\n']);
+fprintf(fileID,['motion threshold (rad, short): ' num2str(outlier_params.moco_out_rad_short) '\n']);
+fprintf(fileID,['motion threshold (rad, long): ' num2str(outlier_params.moco_out_rad_long) '\n']);
+fprintf(fileID,['intensity threshold (z-score): ' num2str(outlier_params.int_out_z) '\n']);
 fprintf(fileID,'----------\n\n');
 
 for i  = 1:length(img_input)

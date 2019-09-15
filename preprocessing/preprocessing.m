@@ -14,7 +14,7 @@
 
 % created by Daniel Haenelt
 % Date created: 06-08-2019
-% Last modified: 06-09-2019
+% Last modified: 15-09-2019
 
 % array of of input time series
 img_input = {
@@ -39,10 +39,10 @@ field_params.fmap_BandwidthPerPixelPhaseEncode = 16.304; % phase-encoding bandwi
 realign_params.independent = false;
 
 % outlier parameters
-outlier_params.moco_out_mm_short = 0.8; % in mm
-outlier_params.moco_out_mm_long = 1.6; % in mm
-outlier_params.moco_out_rad_short = 0.1; % in rad
-outlier_params.moco_out_rad_long = 0.2; % in rad
+outlier_params.moco_out_mm_short = 0.4; % in mm
+outlier_params.moco_out_mm_long = 0.8; % in mm
+outlier_params.moco_out_rad_short = 0.02; % in rad
+outlier_params.moco_out_rad_long = 0.04; % in rad
 outlier_params.int_out_z = 2; % in z-score
 
 % add spm and lib to path
