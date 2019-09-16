@@ -17,38 +17,21 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/Experiment2_Rivalry/p3/resting_state/vein/native/vein.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/ecc_imag_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/ecc_real_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/pol_imag_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/pol_real_avg.nii",
         ]
 
 input_surf = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer0",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer1",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer2",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer3",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer4",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer5",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer6",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer7",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer8",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer9",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer10",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer0",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer1",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer2",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer3",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer4",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer5",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer6",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer7",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer8",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer9",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer10",
+        "/data/pt_01880/Experiment2_Rivalry/p2/anatomy/freesurfer/surf/lh.white",
+        "/data/pt_01880/Experiment2_Rivalry/p2/anatomy/freesurfer/surf/rh.white",
         ]
 
 # parameters
-deformation = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/resting_state/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/resting_state/vein"
-interpolation = 'linear' # can be linear or nearest
+deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh3/29997.cc/deformation/epi2orig.nii.gz"
+path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh3/29997.cc"
+interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
 

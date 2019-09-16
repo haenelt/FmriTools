@@ -64,6 +64,7 @@ cutoff_highpass = 180 # cutoff in s for baseline correction
 skipvol = 3 # skip number of volumes in each block
 condition1 = "left"
 condition2 = "right"
+name_sess = ""
 name_output = "GE_EPI1"
 use_z_score = False
 use_lowpass = False
@@ -155,15 +156,27 @@ for i in range(len(path)):
 # divide by number of runs
 mean_percent_signal1 = mean_percent_signal1 / len(path)
 mean_percent_signal2 = mean_percent_signal2 / len(path)
-    
+
+# name of output files
+if len(name_output) and len(name_sess):
+    fileOUT1 = os.path.join(path_output,"percent_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+    fileOUT2 = os.path.join(path_output,"percent_"+name_output+"_"+condition2+"_"+condition1+"_"+name_sess+".nii")
+elif len(name_output) and not len(name_sess):
+    fileOUT1 = os.path.join(path_output,"percent_"+name_output+"_"+condition1+"_"+condition2+".nii")
+    fileOUT2 = os.path.join(path_output,"percent_"+name_output+"_"+condition2+"_"+condition1+".nii")
+elif not len(name_output) and len(name_sess):
+    fileOUT1 = os.path.join(path_output,"percent_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+    fileOUT2 = os.path.join(path_output,"percent_"+condition2+"_"+condition1+"_"+name_sess+".nii")
+else:
+    fileOUT1 = os.path.join(path_output,"percent_"+condition1+"_"+condition2+".nii")
+    fileOUT2 = os.path.join(path_output,"percent_"+condition2+"_"+condition1+".nii")
+
 # write output
 output = nb.Nifti1Image(mean_percent_signal1, affine, header)
-fileOUT = os.path.join(path_output,"percent_"+name_output+"_"+condition1+"_"+condition2+".nii")
-nb.save(output,fileOUT)
+nb.save(output,fileOUT1)
 
 output = nb.Nifti1Image(mean_percent_signal2, affine, header)
-fileOUT = os.path.join(path_output,"percent_"+name_output+"_"+condition2+"_"+condition1+".nii")
-nb.save(output,fileOUT)
+nb.save(output,fileOUT2)
 
 # write log
 fileID = open(os.path.join(path_output,"percent_info.txt"),"a")

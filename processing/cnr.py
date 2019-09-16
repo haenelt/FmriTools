@@ -62,6 +62,7 @@ cutoff_highpass = 180 # cutoff in s for baseline correction
 skipvol = 3 # skip number of volumes in each block
 condition1 = "left"
 condition2 = "right"
+name_sess = ""
 name_output = "GE_EPI1"
 
 """ do not edit below """
@@ -129,10 +130,19 @@ for i in range(len(path)):
     
 # divide by number of runs
 mean_cnr = mean_cnr / len(path)
-    
+
+# name of output files
+if len(name_output) and len(name_sess):
+    fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+elif len(name_output) and not len(name_sess):
+    fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+".nii")
+elif not len(name_output) and len(name_sess):
+    fileOUT = os.path.join(path_output,"cnr_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+else:
+    fileOUT = os.path.join(path_output,"cnr_"+condition1+"_"+condition2+".nii")
+
 # write output
 output = nb.Nifti1Image(mean_cnr, affine, header)
-fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+".nii")
 nb.save(output,fileOUT)
 
 # write log
