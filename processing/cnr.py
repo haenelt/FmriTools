@@ -22,35 +22,44 @@ import nibabel as nb
 from lib.processing import get_onset_vols
 
 # input data
-img_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_2/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_3/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_4/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_5/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_6/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_7/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_8/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_9/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_10/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_11/udata.nii",
-             "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_12/udata.nii",
-             ]
+img_input = [
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/udata.nii",
+        ]
 
-cond_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/logfiles/p8_SE_EPI1_Run1_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_2/logfiles/p8_SE_EPI1_Run2_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_3/logfiles/p8_SE_EPI1_Run3_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_4/logfiles/p8_SE_EPI1_Run4_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_5/logfiles/p8_SE_EPI1_Run5_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_6/logfiles/p8_SE_EPI1_Run6_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_7/logfiles/p8_SE_EPI1_Run7_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_8/logfiles/p8_SE_EPI1_Run8_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_9/logfiles/p8_SE_EPI1_Run9_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_10/logfiles/p8_SE_EPI1_Run10_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_11/logfiles/p8_SE_EPI1_Run11_odc_Cond.mat",
-              "/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_12/logfiles/p8_SE_EPI1_Run12_odc_Cond.mat",
-              ]
+cond_input = [
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/p3_GE_EPI2_Run1_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/p3_GE_EPI2_Run2_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/p3_GE_EPI2_Run3_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/p3_GE_EPI2_Run4_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/p3_GE_EPI2_Run5_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/p3_GE_EPI2_Run6_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/p3_GE_EPI2_Run7_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/p3_GE_EPI2_Run8_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/p3_GE_EPI2_Run9_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/p3_GE_EPI2_Run10_nonrivalry_Cond.mat",
+        ]
 
-outlier_input = []
+outlier_input = [
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/outlier_regressor.txt",
+        ]
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
@@ -59,11 +68,11 @@ pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 # parameters
 TR = 3 # repetition time in s
 cutoff_highpass = 180 # cutoff in s for baseline correction
-skipvol = 3 # skip number of volumes in each block
-condition1 = "left"
-condition2 = "right"
-name_sess = ""
-name_output = "GE_EPI1"
+skipvol = 0 # skip number of volumes in each block
+condition1 = "right"
+condition2 = "rest"
+name_sess = "GE_EPI2"
+name_output = ""
 
 """ do not edit below """
 
@@ -148,6 +157,7 @@ nb.save(output,fileOUT)
 # write log
 fileID = open(os.path.join(path_output,"cnr_info.txt"),"a")
 fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
+fileID.write("session: "+name_sess+"\n")
 fileID.write("basename: "+name_output+"\n")
 fileID.write("condition1: "+condition1+"\n")
 fileID.write("condition2: "+condition2+"\n")

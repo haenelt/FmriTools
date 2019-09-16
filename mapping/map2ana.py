@@ -17,20 +17,17 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/ecc_imag_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/ecc_real_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/pol_imag_avg.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p2/retinotopy/avg/native/pol_real_avg.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/results/od/native/od_left_right_GE_EPI2.nii",
         ]
 
 input_surf = [
-        "/data/pt_01880/Experiment2_Rivalry/p2/anatomy/freesurfer/surf/lh.white",
-        "/data/pt_01880/Experiment2_Rivalry/p2/anatomy/freesurfer/surf/rh.white",
+        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer5",
+        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer5",
         ]
 
 # parameters
-deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh3/29997.cc/deformation/epi2orig.nii.gz"
-path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh3/29997.cc"
+deformation = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/nonrivalry/GE_EPI2/epi2orig.nii.gz"
+path_output = "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/results/od"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
