@@ -13,14 +13,13 @@ the outlier input array is not empty, outlier volumes are discarded from the ana
 
 created by Daniel Haenelt
 Date created: 03-05-2019             
-Last modified: 15-09-2019  
+Last modified: 16-09-2019  
 """
-import sys
 import os
 import datetime
 import numpy as np
 import nibabel as nb
-from scipy.io import loadmat
+from lib.processing import get_onset_vols
 
 # input data
 img_input = ["/data/pt_01880/V2STRIPES/p8/odc/SE_EPI1/Run_1/udata.nii",
@@ -59,11 +58,11 @@ pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
 TR = 3 # repetition time in s
-cutoff_highpass = 120 # cutoff in s for baseline correction
+cutoff_highpass = 180 # cutoff in s for baseline correction
 skipvol = 3 # skip number of volumes in each block
 condition1 = "left"
 condition2 = "right"
-name_output = "fem"
+name_output = "GE_EPI1"
 
 """ do not edit below """
 
@@ -82,9 +81,6 @@ path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# output filenames
-name_sess = os.path.basename(os.path.dirname(path[0]))
-
 # get image header information from first entry of the input list
 data_img = nb.load(img_input[0])
 data_img.header["dim"][0] = 3
@@ -98,63 +94,10 @@ dim = data_img.header["dim"][1:4]
 mean_cnr = np.zeros(dim)
 for i in range(len(path)):
     
-    # load condition file
-    cond = loadmat(cond_input[i])
-
-    # get condition information
-    names = np.concatenate(np.concatenate(cond["names"]))
-    onsets = np.concatenate(cond["onsets"])
-    durations = np.concatenate(np.concatenate(np.concatenate(cond["durations"])))
-
-    # check if condition names exist
-    if not condition1 in names:
-        sys.exit("condition1 not found in the condition_file")
-
-    if not condition2 in names:
-        sys.exit("condition2 not found in the condition_file")
-
-    # index of both conditions    
-    c1 = np.where(condition1 == names)[0][0]
-    c2 = np.where(condition2 == names)[0][0]
-
-    # onsets for both conditions
-    onsets1 = np.round(onsets[c1][0] / TR + skipvol).astype(int)
-    onsets2 = np.round(onsets[c2][0] / TR + skipvol).astype(int)
-
-    # durations for both conditions
-    durations1 = np.round(durations[c1] / TR - skipvol).astype(int)
-    durations2 = np.round(durations[c2] / TR - skipvol).astype(int)
-
-    # sort all volumes to be considered in both conditions
-    temp = onsets1.copy()
-    for j in range(durations1 - 1):
-        onsets1 = np.append(onsets1, temp + j + 1)
-    onsets1 = np.sort(onsets1)
-
-    temp = onsets2.copy()
-    for j in range(durations2 - 1):
-        onsets2 = np.append(onsets2, temp + j + 1)
-    onsets2 = np.sort(onsets2)
-    
-    # remove outlier volumes
-    if outlier_input:
-        
-        # load outlier regressor
-        outlier_regressor = np.loadtxt(outlier_input[i])
-        outlier_regressor = np.where(outlier_regressor == 1)[0]
-        
-        # look for outliers in onset arrays
-        for j in range(len(onsets1)):
-            if np.any(onsets1[i] == outlier_regressor):
-                onsets1[i] = -1
-        
-        for j in range(len(onsets2)):
-            if np.any(onsets2[i] == outlier_regressor):
-                onsets2[i] = -1
-        
-        # remove outliers
-        onsets1 = onsets1[onsets1 != -1]
-        onsets2 = onsets2[onsets2 != -1]
+    if len(outlier_input) > 0:
+        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input[i], condition1, condition2, TR, skipvol)
+    else:
+        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input, condition1, condition2, TR, skipvol)
 
     # look for baseline corrected time series
     if not os.path.isfile(os.path.join(path[i],"b"+file[i])):
@@ -189,14 +132,13 @@ mean_cnr = mean_cnr / len(path)
     
 # write output
 output = nb.Nifti1Image(mean_cnr, affine, header)
-fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+".nii")
 nb.save(output,fileOUT)
 
 # write log
 fileID = open(os.path.join(path_output,"cnr_info.txt"),"a")
 fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
 fileID.write("basename: "+name_output+"\n")
-fileID.write("data set: "+name_sess+"\n")
 fileID.write("condition1: "+condition1+"\n")
 fileID.write("condition2: "+condition2+"\n")
 fileID.write("TR: "+str(TR)+"\n")
