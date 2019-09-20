@@ -17,7 +17,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 13-02-2019
-Last modified: 15-07-2019
+Last modified: 20-09-2019
 """
 import os
 import shutil as sh
@@ -32,12 +32,12 @@ from lib.registration.mask_epi import mask_epi
 
 # input data
 file_mean_epi_source = "/data/pt_01880/Experiment2_Rivalry/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
-file_mean_epi_target = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/diagnosis/mean_data.nii"
+file_mean_epi_target = "/data/pt_01880/Experiment2_Rivalry/p3/odc/GE_EPI1/diagnosis/mean_data.nii"
 file_orig = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/orig.mgz"
 file_t1 = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 file_mask = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/brain.finalsurfs.manedit.mgz"
-file_orig2epi = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/orig2epi.nii.gz"
-file_epi2orig = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/epi2orig.nii.gz"
+file_orig2epi = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/odc/GE_EPI1/orig2epi.nii.gz"
+file_epi2orig = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/odc/GE_EPI1/epi2orig.nii.gz"
 path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/odc/GE_EPI2"
 cleanup = True
 
@@ -165,8 +165,8 @@ for i in range(len(path)):
 """
 syn
 """
-embedded_antsreg(os.path.join(path_epi_source,"pbepi.nii"), # source image
-                 os.path.join(path_epi_target,"pbepi.nii"), # target image 
+embedded_antsreg(os.path.join(path_epi_target,"pbepi.nii"), # source image
+                 os.path.join(path_epi_source,"pbepi.nii"), # target image 
                  run_rigid, # whether or not to run a rigid registration first 
                  rigid_iterations, # number of iterations in the rigid step
                  run_affine, # whether or not to run an affine registration first
@@ -191,7 +191,7 @@ merge deformations
 """
 # orig -> epi
 apply_coordinate_mappings(file_orig2epi, # input 
-                          os.path.join(path_syn,"syn_ants-invmap.nii.gz"), # cmap
+                          os.path.join(path_syn,"syn_ants-map.nii.gz"), # cmap
                           interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
@@ -201,7 +201,7 @@ apply_coordinate_mappings(file_orig2epi, # input
                           )
 
 # epi -> orig
-apply_coordinate_mappings(os.path.join(path_syn,"syn_ants-map.nii.gz"), # input
+apply_coordinate_mappings(os.path.join(path_syn,"syn_ants-invmap.nii.gz"), # input
                           file_epi2orig, # cmap
                           interpolation = "linear", # nearest or linear
                           padding = "zero", # closest, zero or max
