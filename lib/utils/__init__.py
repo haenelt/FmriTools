@@ -12,3 +12,4 @@ from .get_surface_voxel import get_surface_voxel
 from .get_rf_pulse_bw import get_rf_pulse_bw
 from .get_series import get_series
 from .get_bandpass_filter import get_bandpass_filter
+from .upsample_time_series import upsample_time_series
