@@ -10,8 +10,10 @@ conditions divided by the standard deviation of the second condition. The second
 a baseline condition if the CNR should make any sense. The CNR of the whole session is taken as the 
 average across single runs. Similar computations of CNR can be found in Scheffler et al. (2016). If
 the outlier input array is not empty, outlier volumes are discarded from the analysis. Optionally 
-(if n != 0), the time series can be upsampled. The input images should be in nifti format. Before 
-running the script, set the afni environment by calling AFNI in the terminal.
+(if n != 0), the time series can be upsampled. The input images should be in nifti format. 
+
+Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
+the terminal.
 
 created by Daniel Haenelt
 Date created: 03-05-2019             
@@ -95,12 +97,16 @@ path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# upsample time series
+# get TR for upsampled time series
+if n:
+    TR = TR / n
+
+# get upsampled time series
 if n:
     for i in range(len(img_input)):
-        upsample_time_series(img_input[i], n)
         file[i] = file[i]+"_upsampled"
-    TR = TR / n
+        if not os.path.isfile(os.path.join(path[i],file[i]+".nii")):
+            upsample_time_series(img_input[i], n)
 
 # get image header information from first entry of the input list
 data_img = nb.load(os.path.join(path[0],file[0]+".nii"))
@@ -123,7 +129,7 @@ for i in range(len(path)):
     # look for baseline corrected time series
     if not os.path.isfile(os.path.join(path[i],"b"+file[i]+".nii")):
         os.system("matlab" + \
-                  " -nodisplay -nodesktop -r " + \
+                  " -nodisplay -nodeskop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
                   format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_highpass, pathSPM))
 

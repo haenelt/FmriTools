@@ -22,7 +22,7 @@ def upsample_time_series(input, n=2):
         
     # prepare path and filename
     path_file = os.path.dirname(input)
-    name_file = os.path.splotext(os.path.basename(input))[0]
+    name_file = os.path.splitext(os.path.basename(input))[0]
 
     # upsample vaso and bold time series
     os.system("3dUpsample -overwrite -datum short " + \

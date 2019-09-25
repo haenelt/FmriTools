@@ -9,8 +9,10 @@ and all conditions can be converted to z-score. The OD index is computed by divi
 mean by the condition mean or max within a predefined mask before computing the difference of both
 conditions. The index for the whole session is taken as the average across single runs. If the 
 outlier input array is not empty, outlier volumes are discarded from the analysis. Optionally 
-(if n != 0), the time series can be upsampled. The input images should be in nifti format. Before 
-running the script, set the afni environment by calling AFNI in the terminal.
+(if n != 0), the time series can be upsampled. The input images should be in nifti format. 
+
+Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
+the terminal.
 
 created by Daniel Haenelt
 Date created: 16-09-2019             
@@ -28,42 +30,42 @@ from lib.utils import upsample_time_series
 
 # input data
 img_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_1/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_2/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_3/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_4/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_5/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_6/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_7/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_8/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_9/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_10/uadata.nii",
         ]
 
 cond_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/p3_GE_EPI2_Run1_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/p3_GE_EPI2_Run2_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/p3_GE_EPI2_Run3_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/p3_GE_EPI2_Run4_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/p3_GE_EPI2_Run5_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/p3_GE_EPI2_Run6_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/p3_GE_EPI2_Run7_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/p3_GE_EPI2_Run8_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/p3_GE_EPI2_Run9_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/p3_GE_EPI2_Run10_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_1/logfiles/p3_GE_EPI1_Run1_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_2/logfiles/p3_GE_EPI1_Run2_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_3/logfiles/p3_GE_EPI1_Run3_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_4/logfiles/p3_GE_EPI1_Run4_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_5/logfiles/p3_GE_EPI1_Run5_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_6/logfiles/p3_GE_EPI1_Run6_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_7/logfiles/p3_GE_EPI1_Run7_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_8/logfiles/p3_GE_EPI1_Run8_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_9/logfiles/p3_GE_EPI1_Run9_rivalry_Cond_threshold.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_10/logfiles/p3_GE_EPI1_Run10_rivalry_Cond_threshold.mat",
         ]
 
 outlier_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_1/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_2/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_3/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_4/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_5/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_6/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_7/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_8/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_9/logfiles/outlier_regressor.txt",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI1/Run_10/logfiles/outlier_regressor.txt",
         ]
 
 mask_input = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/prf/vol/native/roi_target_sigma_threshold.nii"
@@ -104,12 +106,16 @@ path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# upsample time series
+# get TR for upsampled time series
+if n:
+    TR = TR / n
+
+# get upsampled time series
 if n:
     for i in range(len(img_input)):
-        upsample_time_series(img_input[i], n)
         file[i] = file[i]+"_upsampled"
-    TR = TR / n
+        if not os.path.isfile(os.path.join(path[i],file[i]+".nii")):
+            upsample_time_series(img_input[i], n)
 
 # get image header information from first entry of the input list
 data_img = nb.load(os.path.join(path[0],file[0]+".nii"))
