@@ -8,11 +8,13 @@ format, time points for both blocks are defined. Time series for the whole time 
 and all conditions can be converted to z-score. The OD index is computed by dividing each condition
 mean by the condition mean or max within a predefined mask before computing the difference of both
 conditions. The index for the whole session is taken as the average across single runs. If the 
-outlier input array is not empty, outlier volumes are discarded from the analysis.
+outlier input array is not empty, outlier volumes are discarded from the analysis. Optionally 
+(if n != 0), the time series can be upsampled. The input images should be in nifti format. Before 
+running the script, set the afni environment by calling AFNI in the terminal.
 
 created by Daniel Haenelt
 Date created: 16-09-2019             
-Last modified: 16-09-2019  
+Last modified: 25-09-2019  
 """
 import sys
 import os
@@ -22,6 +24,7 @@ import nibabel as nb
 from scipy.stats import zscore
 from nighres.registration import apply_coordinate_mappings
 from lib.processing import get_onset_vols
+from lib.utils import upsample_time_series
 
 # input data
 img_input = [
@@ -85,6 +88,7 @@ use_z_score = False
 use_lowpass = False
 cutoff_lowpass = 0
 order_lowpass = 0
+n = 0 # upsampling factor
 
 """ do not edit below """
 
@@ -93,15 +97,22 @@ path = []
 file = []
 for i in range(len(img_input)):
     path.append(os.path.split(img_input[i])[0])
-    file.append(os.path.split(img_input[i])[1])
+    file.append(os.path.splitext(os.path.split(img_input[i])[1])[0])
 
 # output folder is taken from the first entry of the input list
 path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","od","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
+# upsample time series
+if n:
+    for i in range(len(img_input)):
+        upsample_time_series(img_input[i], n)
+        file[i] = file[i]+"_upsampled"
+    TR = TR / n
+
 # get image header information from first entry of the input list
-data_img = nb.load(img_input[0])
+data_img = nb.load(os.path.join(path[0],file[0]+".nii"))
 data_img.header["dim"][0] = 3
 data_img.header["dim"][4] = 1
 header = data_img.header
@@ -144,21 +155,21 @@ for i in range(len(path)):
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"lowpass_filter(\'{0}\', {1}, {2}, {3}, \'{4}\'); exit;\"". \
-                  format(img_input[i], TR, cutoff_lowpass, order_lowpass, pathSPM))
+                  format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_lowpass, order_lowpass, pathSPM))
         
         # change input to lowpass filtered time series
-        img_input[i] = os.path.join(path[i],"l"+file[i])
+        file[i] = "l"+file[i]
 
     # look for baseline corrected time series
-    if not os.path.isfile(os.path.join(path[i],"b"+file[i])):
+    if not os.path.isfile(os.path.join(path[i],"b"+file[i]+".nii")):
         os.chdir(pathLIB1)
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-                  format(img_input[i], TR, cutoff_highpass, pathSPM))
+                  format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_highpass, pathSPM))
 
     # open baseline corrected data
-    data_img = nb.load(os.path.join(path[i],"b"+file[i]))
+    data_img = nb.load(os.path.join(path[i],"b"+file[i]+".nii"))
     data_array = data_img.get_fdata()
     
     # sort volumes to conditions
@@ -227,4 +238,5 @@ fileID.write("TR: "+str(TR)+"\n")
 fileID.write("cutoff_highpass: "+str(cutoff_highpass)+"\n")
 fileID.write("skipvol: "+str(skipvol)+"\n")
 fileID.write("baseline calculation: "+baseline_calculation+"\n")
+fileID.write("n: "+str(n)+"\n")
 fileID.close()

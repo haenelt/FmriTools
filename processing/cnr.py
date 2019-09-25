@@ -9,17 +9,20 @@ time points for both conditions are defined. CNR is computed as absolute differe
 conditions divided by the standard deviation of the second condition. The second condition should be 
 a baseline condition if the CNR should make any sense. The CNR of the whole session is taken as the 
 average across single runs. Similar computations of CNR can be found in Scheffler et al. (2016). If
-the outlier input array is not empty, outlier volumes are discarded from the analysis.
+the outlier input array is not empty, outlier volumes are discarded from the analysis. Optionally 
+(if n != 0), the time series can be upsampled. The input images should be in nifti format. Before 
+running the script, set the afni environment by calling AFNI in the terminal.
 
 created by Daniel Haenelt
 Date created: 03-05-2019             
-Last modified: 16-09-2019  
+Last modified: 25-09-2019  
 """
 import os
 import datetime
 import numpy as np
 import nibabel as nb
 from lib.processing import get_onset_vols
+from lib.utils import upsample_time_series
 
 # input data
 img_input = [
@@ -73,6 +76,7 @@ condition1 = "right"
 condition2 = "rest"
 name_sess = "GE_EPI2"
 name_output = ""
+n = 0 # upsampling factor
 
 """ do not edit below """
 
@@ -84,15 +88,22 @@ path = []
 file = []
 for i in range(len(img_input)):
     path.append(os.path.split(img_input[i])[0])
-    file.append(os.path.split(img_input[i])[1])
+    file.append(os.path.splitext(os.path.split(img_input[i])[1])[0])
 
 # output folder is taken from the first entry of the input list
 path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","cnr","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
+# upsample time series
+if n:
+    for i in range(len(img_input)):
+        upsample_time_series(img_input[i], n)
+        file[i] = file[i]+"_upsampled"
+    TR = TR / n
+
 # get image header information from first entry of the input list
-data_img = nb.load(img_input[0])
+data_img = nb.load(os.path.join(path[0],file[0]+".nii"))
 data_img.header["dim"][0] = 3
 data_img.header["dim"][4] = 1
 header = data_img.header
@@ -110,14 +121,14 @@ for i in range(len(path)):
         onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input, condition1, condition2, TR, skipvol)
 
     # look for baseline corrected time series
-    if not os.path.isfile(os.path.join(path[i],"b"+file[i])):
+    if not os.path.isfile(os.path.join(path[i],"b"+file[i]+".nii")):
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-                  format(img_input[i], TR, cutoff_highpass, pathSPM))
+                  format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_highpass, pathSPM))
 
     # open baseline corrected data
-    data_img = nb.load(os.path.join(path[i],"b"+file[i]))
+    data_img = nb.load(os.path.join(path[i],"b"+file[i]+".nii"))
     data_array = data_img.get_fdata()
     
     # sort volumes to conditions
@@ -164,4 +175,5 @@ fileID.write("condition2: "+condition2+"\n")
 fileID.write("TR: "+str(TR)+"\n")
 fileID.write("cutoff_highpass: "+str(cutoff_highpass)+"\n")
 fileID.write("skipvol: "+str(skipvol)+"\n")
+fileID.write("n: "+str(n)+"\n")
 fileID.close()
