@@ -17,28 +17,28 @@ import numpy as np
 import nibabel as nb
 
 # input data
-img_vaso = ["/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_1/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_2/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_3/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_4/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_5/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_6/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_7/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_8/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_9/uvaso.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_10/uvaso.nii",
+img_vaso = ["/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_1/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_2/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_3/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_4/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_5/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_6/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_7/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_8/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_9/uvaso.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_10/uvaso.nii",
             ]
 
-img_bold = ["/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_1/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_2/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_3/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_4/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_5/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_6/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_7/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_8/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_9/ubold.nii",
-            "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_10/ubold.nii",
+img_bold = ["/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_1/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_2/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_3/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_4/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_5/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_6/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_7/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_8/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_9/ubold.nii",
+            "/data/pt_01880/Experiment1_ODC/p2/odc/VASO1/Run_10/ubold.nii",
             ]
 
 # parameters

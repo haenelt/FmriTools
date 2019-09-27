@@ -6,7 +6,7 @@
 
 % created by Daniel Haenelt
 % Date created: 15-09-2019
-% Last modified: 15-09-2019
+% Last modified: 27-09-2019
 
 % array of of input time series
 img_input = {
@@ -74,8 +74,8 @@ for i = 1:length(img_input)
     end
     
     % delete old motion regressor
-    if exist(fullfile(path_regressor,'outlier_regressor.txt'), 'file') == 2
-        delete(fullfile(path_regressor,'outlier_regressor.txt'));
+    if exist(fullfile(path_regressor,['outlier_regressor_' file '.txt']), 'file') == 2
+        delete(fullfile(path_regressor,['outlier_regressor_' file '.txt']));
     end
     
     % initialise outlier array
@@ -173,7 +173,7 @@ for i  = 1:length(img_input)
 
     M = zeros(nt,1);
     M(outlier_all) = 1;
-    dlmwrite(fullfile(path_regressor,'outlier_regressor.txt'),M);
+    dlmwrite(fullfile(path_regressor,['outlier_regressor_' file '.txt']),M);
     
 end
 

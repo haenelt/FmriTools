@@ -29,7 +29,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, outlier_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 15-09-2019
+% Last modified: 27-09-2019
 
 % add spm to path
 addpath(pathSPM);
@@ -348,7 +348,7 @@ for i  = 1:length(img_input)
 
     M = zeros(nt,1);
     M(outlier_all) = 1;
-    dlmwrite(fullfile(path_regressor,'outlier_regressor.txt'),M);
+    dlmwrite(fullfile(path_regressor,['outlier_regressor_' file '.txt']),M);
     
 end
 

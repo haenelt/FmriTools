@@ -12,7 +12,7 @@ volumes below threshold.
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 12-09-2019  
+Last modified: 27-09-2019  
 """
 import os
 import numpy as np
@@ -44,6 +44,12 @@ r_threshold = 0.95
 rc('font',**{'family':'serif','serif':['Palatino']})
 rc('text', usetex=True)
 
+# get filename from first input entry
+if os.path.splitext(input[0])[1] == ".gz":
+    name_file = os.path.splitext(os.path.splitext(os.path.basename(input[0]))[0])[0]
+else:
+    name_file = os.path.splitext(os.path.basename(input[0]))[0]
+
 # create output folder
 if len(input) < 2:
     path_output = os.path.join(os.path.dirname(input[0]),"correlation")
@@ -63,7 +69,7 @@ if len(input_mask_ref) > 0:
     mask_0 = nb.load(input_mask_ref).get_fdata()
 
 # open logfile
-file = open(os.path.join(path_output,"correlation.txt"),"w")
+file = open(os.path.join(path_output,"correlation_"+name_file+".txt"),"w")
 file.write("Percentage of volumes below threshold\n")
 file.write("Correlation threshold: "+str(r_threshold)+"\n\n")
 
@@ -92,7 +98,7 @@ for i in range(len(input)):
         os.makedirs(path_logfile)
     
     # open logfile for regressor of no interest
-    file2 = open(os.path.join(path_logfile,"correlation_regressor.txt"),"w")
+    file2 = open(os.path.join(path_logfile,"correlation_regressor_"+name_file+".txt"),"w")
     
     pearson_run = 0
     npearson_0 = 0
@@ -214,7 +220,7 @@ for i in range(len(input)):
 file.close()
 
 # save variables
-np.savez(os.path.join(path_output,"correlation_data"),
+np.savez(os.path.join(path_output,"correlation_"+name_file),
          r_shapiro=r_shapiro, p_shapiro=p_shapiro,
          r_pearson=r_pearson, p_pearson=p_pearson,
          r_pearson_0=r_pearson_0, p_pearson_0=p_pearson_0,
@@ -227,7 +233,7 @@ ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Shapiro-Wilk test)")
 ax.set_title("Shapiro-Wilk test for each time step")
 ax.hlines(r_threshold,0,len(r_shapiro),linestyle="dashed")
-fig.savefig(os.path.join(path_output,"r_shapiro"), format='svg', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"r_shapiro"+name_file), format='svg', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -235,7 +241,7 @@ ax.plot(p_shapiro, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Shapiro-Wilk test)")
 ax.set_title("Shapiro-Wilk test for each time step")
-fig.savefig(os.path.join(path_output,"p_shapiro"), format='svg', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"p_shapiro"+name_file), format='svg', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -244,7 +250,7 @@ ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume ref")
 ax.hlines(r_threshold,0,len(r_pearson_0),linestyle="dashed")
-fig.savefig(os.path.join(path_output,"r_pearson_0"), format='svg', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"r_pearson_0"+name_file), format='svg', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -252,7 +258,7 @@ ax.plot(p_pearson_0, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume ref")
-fig.savefig(os.path.join(path_output,"p_pearson_0"), format='svg', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"p_pearson_0"+name_file), format='svg', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -261,7 +267,7 @@ ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume i-1")
 ax.hlines(r_threshold,0,len(r_pearson),linestyle="dashed")
-fig.savefig(os.path.join(path_output,"r_pearson"), format='svg', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"r_pearson"+name_file), format='svg', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -269,5 +275,5 @@ ax.plot(p_pearson, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume i-1")
-fig.savefig(os.path.join(path_output,"p_pearson"), format='svg', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"p_pearson"+name_file), format='svg', bbox_inches='tight')
 #plt.show()
