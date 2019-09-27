@@ -22,15 +22,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/multipol_2/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/multipol_4/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/multipol_6/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/multipol_8/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/multipol_10/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/multipol_12/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/multipol_14/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_1/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_2/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_3/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_4/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_5/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_6/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_7/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_8/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_9/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_10/udata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment4_PSF/p2/psf/GE_EPI1/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/diagnosis/mean_data.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95
