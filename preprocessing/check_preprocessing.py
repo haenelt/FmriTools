@@ -22,18 +22,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_1/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_2/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_3/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_4/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_5/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_6/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_7/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_8/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_9/udata.nii",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/Run_10/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_1/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_2/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_3/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_4/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_5/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_6/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_7/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_8/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_9/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/Run_10/udata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment1_ODC/p2/odc/SE_EPI2/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment1_ODC/p1/odc/GE_EPI2/diagnosis/mean_data.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95
@@ -233,7 +233,7 @@ ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Shapiro-Wilk test)")
 ax.set_title("Shapiro-Wilk test for each time step")
 ax.hlines(r_threshold,0,len(r_shapiro),linestyle="dashed")
-fig.savefig(os.path.join(path_output,"r_shapiro"+name_file+".png"), format='png', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"r_shapiro_"+name_file+".png"), format='png', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -241,7 +241,7 @@ ax.plot(p_shapiro, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Shapiro-Wilk test)")
 ax.set_title("Shapiro-Wilk test for each time step")
-fig.savefig(os.path.join(path_output,"p_shapiro"+name_file+".png"), format='png', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"p_shapiro_"+name_file+".png"), format='png', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -250,7 +250,7 @@ ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume ref")
 ax.hlines(r_threshold,0,len(r_pearson_0),linestyle="dashed")
-fig.savefig(os.path.join(path_output,"r_pearson_0"+name_file+".png"), format='png', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"r_pearson_0_"+name_file+".png"), format='png', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -258,7 +258,7 @@ ax.plot(p_pearson_0, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume ref")
-fig.savefig(os.path.join(path_output,"p_pearson_0"+name_file+".png"), format='png', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"p_pearson_0_"+name_file+".png"), format='png', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -267,7 +267,7 @@ ax.set_xlabel("Time in TR")
 ax.set_ylabel("r-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume i-1")
 ax.hlines(r_threshold,0,len(r_pearson),linestyle="dashed")
-fig.savefig(os.path.join(path_output,"r_pearson"+name_file+".png"), format='png', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"r_pearson_"+name_file+".png"), format='png', bbox_inches='tight')
 #plt.show()
 
 fig, ax = plt.subplots()
@@ -275,5 +275,5 @@ ax.plot(p_pearson, "r")
 ax.set_xlabel("Time in TR")
 ax.set_ylabel("p-value (Pearson correlation)")
 ax.set_title("Time series spatial correlation to volume i-1")
-fig.savefig(os.path.join(path_output,"p_pearson"+name_file+".png"), format='png', bbox_inches='tight')
+fig.savefig(os.path.join(path_output,"p_pearson_"+name_file+".png"), format='png', bbox_inches='tight')
 #plt.show()
