@@ -16,16 +16,16 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 
 input = [
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_1/logfiles/p1_VASO2_Run1_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_2/logfiles/p1_VASO2_Run2_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_3/logfiles/p1_VASO2_Run3_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_4/logfiles/p1_VASO2_Run4_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_5/logfiles/p1_VASO2_Run5_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_6/logfiles/p1_VASO2_Run6_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_7/logfiles/p1_VASO2_Run7_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_8/logfiles/p1_VASO2_Run8_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_9/logfiles/p1_VASO2_Run9_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p1/odc/VASO2/Run_10/logfiles/p1_VASO2_Run10_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_1/logfiles/p4_GE_EPI2_Run1_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_2/logfiles/p4_GE_EPI2_Run2_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_3/logfiles/p4_GE_EPI2_Run3_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_4/logfiles/p4_GE_EPI2_Run4_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_5/logfiles/p4_GE_EPI2_Run5_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_6/logfiles/p4_GE_EPI2_Run6_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_7/logfiles/p4_GE_EPI2_Run7_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_8/logfiles/p4_GE_EPI2_Run8_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_9/logfiles/p4_GE_EPI2_Run9_odc.mat",
+        "/data/pt_01880/Experiment2_Rivalry/p4/odc/GE_EPI2/Run_10/logfiles/p4_GE_EPI2_Run10_odc.mat",
          ]
 
 """ do not edit below """
