@@ -22,12 +22,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment3_Stripes/p4/retinotopy/pol_anticlock/udata.nii",
-        "/data/pt_01880/Experiment3_Stripes/p4/retinotopy/pol_clock/udata.nii",
-        "/data/pt_01880/Experiment3_Stripes/p4/retinotopy/ecc_expanding/udata.nii",
-        "/data/pt_01880/Experiment3_Stripes/p4/retinotopy/ecc_contracting/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_1/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_2/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_3/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_4/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_5/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_6/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_7/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_8/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_9/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/Run_10/uadata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment3_Stripes/p4/retinotopy/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment2_Rivalry/p4/rivalry/GE_EPI2/diagnosis/mean_adata.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95
