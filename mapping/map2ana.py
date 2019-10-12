@@ -17,17 +17,18 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/results/od/native/od_left_right_GE_EPI2.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/retinotopy2/native/ecc_phase_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/retinotopy2/native/pol_phase_avg.nii",
         ]
 
 input_surf = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/lh.layer5",
-        "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/layer/rh.layer5",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/freesurfer/surf/lh.0p50",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/freesurfer/surf/rh.0p50",
         ]
 
 # parameters
-deformation = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/nonrivalry/GE_EPI2/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/results/od"
+deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/deformation/retinotopy2/epi2orig.nii.gz"
+path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/retinotopy2"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
