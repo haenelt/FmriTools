@@ -22,15 +22,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/multipol_2/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/multipol_4/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/multipol_6/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/multipol_8/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/multipol_10/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/multipol_12/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/multipol_14/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_1/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_2/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_3/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_4/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_5/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_6/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_7/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_8/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_9/uvaso.nii",
+        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_10/uvaso.nii",
         ]
-input_ref = "/data/pt_01880/Experiment4_PSF/p4/psf/SE_EPI1/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/diagnosis/mean_vaso.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95
