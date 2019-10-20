@@ -1,14 +1,15 @@
 """
 Split VASO and BOLD
 
-This scripts splits the vaso and bold time series into separate files. Additionally, volumes at the
-beginning (non steady-state volumes) are overwritten by following steady-state volumes. Furthermore,
-volumes at the end of the scan can be discarded. Note that the number of volumes refers here to the
-individual volumes in the bold+vaso time series.
+This scripts splits the vaso and bold time series into separate files. The time series always starts
+with the non-nulled BOLD volume. So, all even and odd time points are denoted as bold and vaso,
+respectively. Additionally, volumes at the beginning (non steady-state volumes) are overwritten by 
+following steady-state volumes. Furthermore, volumes at the end of the scan can be discarded. Note 
+that the number of volumes refers here to the individual volumes in the bold+vaso time series.
 
 created by Daniel Haenelt
 Date created: 02-05-2018             
-Last modified: 30-08-2019  
+Last modified: 20-10-2019  
 """
 import os
 import numpy as np
@@ -50,8 +51,8 @@ for i in range(len(img_input)):
     t_even = np.arange(0,np.shape(data_array)[3],2)
     t_odd = np.arange(1,np.shape(data_array)[3],2)
     
-    vaso_array = data_array[:,:,:,t_even]
-    bold_array = data_array[:,:,:,t_odd]
+    bold_array = data_array[:,:,:,t_even]
+    vaso_array = data_array[:,:,:,t_odd]
     
     # new array length
     data.header["dim"][4] = np.shape(vaso_array)[3]

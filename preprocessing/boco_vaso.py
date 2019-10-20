@@ -9,8 +9,8 @@ Before running the script, login to queen via ssh and set the afni environment b
 the terminal.
 
 created by Daniel Haenelt
-Date created: 02-05-2018             
-Last modified: 03-05-2019  
+Date created: 02-05-2018
+Last modified: 20-10-2019
 """
 import os
 import numpy as np
@@ -43,6 +43,7 @@ img_bold = ["/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_1/ubold.nii",
 
 # parameters
 TR = 2.5
+vaso_threshold = 10
 
 """ do not edit below """
 
@@ -78,7 +79,7 @@ for i in range(len(img_vaso)):
 
     # clean vaso data that are unrealistic
     vaso_array[vaso_array < 0] = 0
-    vaso_array[vaso_array >= 10] = 10
+    vaso_array[vaso_array >= vaso_threshold] = 10
 
     output = nb.Nifti1Image(vaso_array, vaso.affine, vaso.header)
     nb.save(output, os.path.join(path_vaso,file_vaso + "_upsampled_corrected.nii"))
