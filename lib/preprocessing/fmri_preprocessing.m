@@ -207,8 +207,8 @@ for i = 1:length(img_input)
     M = dlmread(['rp_' file '.txt']);
     
     transFig = figure('visible','off');
-    plot(M(:,1));
     hold on
+    plot(M(:,1));
     plot(M(:,2));
     plot(M(:,3));
     title(['Translational movement in session ' num2str(i)]);
@@ -219,12 +219,10 @@ for i = 1:length(img_input)
     close(transFig);
     
     radFig = figure('visible','off');
+    hold on
     plot(M(:,4));
-    hold on
     plot(M(:,5));
-    hold on
     plot(M(:,6));
-    hold on
     title(['Rotational movement in session ' num2str(i)]);
     xlabel('number of volume');
     ylabel('Rotation in rad');
