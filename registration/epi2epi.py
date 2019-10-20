@@ -5,9 +5,10 @@ The purpose of the following script is to compute the deformation field for the 
 between different epi time series. The script consists of the following steps:
     1. set output folder structure
     2. n4 correction epi
-    3. mask epi
-    4. antsreg
-    5. apply deformations
+    3. clean ana (remove ceiling and normalise)
+    4. mask epi
+    5. antsreg
+    6. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
@@ -26,6 +27,7 @@ from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
+from lib.registration.clean_ana import clean_ana
 
 # input data
 file_mean_epi_source = "/data/pt_01880/Experiment2_Rivalry/p3/localiser/diagnosis/mean_data.nii"
@@ -145,6 +147,11 @@ for i in range(len(path)):
     n4.inputs.bias_image = os.path.join(path[i],'n4bias.nii')
     n4.inputs.output_image = os.path.join(path[i],"bepi.nii")
     n4.run()
+
+"""
+clean ana
+"""
+clean_ana(os.path.join(path_t1,"T1.nii"), 1000.0, 4095.0, overwrite=True)
 
 """
 mask t1 and epi

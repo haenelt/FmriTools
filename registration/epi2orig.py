@@ -12,10 +12,11 @@ in freesurfer space via scanner coordinates. The script consists of the followin
     3. convert orig.mgz to orig.nii
     4. scanner transform orig <-> t1 and t1 <-> epi
     5. n4 correction epi
-    6. mask t1 and epi
-    7. antsreg
-    8. merge deformations
-    9. apply deformations
+    6. clean ana (remove ceiling and normalise)
+    7. mask t1 and epi
+    8. antsreg
+    9. merge deformations
+    10. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
@@ -35,6 +36,7 @@ from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 from lib.registration.get_scanner_transform import get_scanner_transform
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
+from lib.registration.clean_ana import clean_ana
 
 # input data
 file_mean_epi = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/diagnosis/mean_data.nii"
@@ -172,6 +174,11 @@ n4.inputs.input_image = os.path.join(path_epi,"epi.nii")
 n4.inputs.bias_image = os.path.join(path_epi,'n4bias.nii')
 n4.inputs.output_image = os.path.join(path_epi,"bepi.nii")
 n4.run()
+
+"""
+clean ana
+"""
+clean_ana(os.path.join(path_t1,"T1.nii"), 1000.0, 4095.0, overwrite=True)
 
 """
 mask t1 and epi

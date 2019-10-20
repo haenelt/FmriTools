@@ -6,9 +6,10 @@ between antomy and EPI in native space. The script consists of the following ste
     1. set output folder structure
     2. scanner transform t1 <-> epi
     3. n4 correction epi
-    4. mask t1 and epi
-    5. antsreg
-    6. apply deformations
+    4. clean ana (remove ceiling and normalise)
+    5. mask t1 and epi
+    6. antsreg
+    7. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
@@ -23,6 +24,7 @@ from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
+from lib.registration.clean_ana import clean_ana
 
 # input data
 file_mean_epi = "/nobackup/actinium2/haenelt/VasoTest/flicker/diagnosis/mean_bold_basis.nii"
@@ -82,6 +84,11 @@ n4.inputs.input_image = os.path.join(path_epi,"epi.nii")
 n4.inputs.bias_image = os.path.join(path_epi,'n4bias.nii')
 n4.inputs.output_image = os.path.join(path_epi,"bepi.nii")
 n4.run()
+
+"""
+clean ana
+"""
+clean_ana(os.path.join(path_t1,"T1.nii"), 1000.0, 4095.0, overwrite=True)
 
 """
 mask t1 and epi
