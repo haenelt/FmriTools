@@ -13,30 +13,29 @@ import os
 import numpy as np
 
 input_outlier_vaso = [
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_1/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_2/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_3/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_4/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_5/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_6/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_7/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_8/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_9/logfiles/outlier_regressor_vaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_10/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_1/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_2/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_3/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_4/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_5/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_6/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_7/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_8/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_9/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_10/logfiles/outlier_regressor_vaso.txt",
         ]
 input_outlier_bold = [
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_1/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_2/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_3/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_4/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_5/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_6/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_7/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_8/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_9/logfiles/outlier_regressor_bold.txt",
-        "/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_10/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_1/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_2/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_3/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_4/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_5/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_6/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_7/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_8/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_9/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_10/logfiles/outlier_regressor_bold.txt",
         ]
-
 
 """ do not edit below """
 
