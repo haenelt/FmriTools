@@ -26,7 +26,7 @@ def clean_ana(input, min_value, new_range, overwrite=True):
     
     # remove low intensity values
     data_array[data_array <= min_value] = 0
-    data_array = data_array - np.min(data[data_array != 0])
+    data_array = data_array - np.min(data_array[data_array != 0])
     data_array[data_array <= 0] = 0
     
     # normalise to new data range
