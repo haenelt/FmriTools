@@ -43,7 +43,7 @@ img_bold = ["/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/Run_1/ubold.nii",
 
 # parameters
 TR = 2.5
-vaso_threshold = 10
+vaso_threshold = 6
 
 """ do not edit below """
 
@@ -79,7 +79,7 @@ for i in range(len(img_vaso)):
 
     # clean vaso data that are unrealistic
     vaso_array[vaso_array < 0] = 0
-    vaso_array[vaso_array >= vaso_threshold] = 10
+    vaso_array[vaso_array >= vaso_threshold] = vaso_threshold
 
     output = nb.Nifti1Image(vaso_array, vaso.affine, vaso.header)
     nb.save(output, os.path.join(path_vaso,file_vaso + "_upsampled_corrected.nii"))

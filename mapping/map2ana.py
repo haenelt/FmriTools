@@ -17,18 +17,18 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/retinotopy2/native/ecc_phase_avg.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/retinotopy2/native/pol_phase_avg.nii",
+        "/data/pt_01880/MonocularBlindness/p1/flicker/results/spmT/native/vasa_spmT_off_on_GE_EPI1.nii",
+        "/data/pt_01880/MonocularBlindness/p1/flicker/results/spmT/native/vasa_spmT_on_off_GE_EPI1.nii",
         ]
 
 input_surf = [
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/freesurfer/surf/lh.0p50",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/freesurfer/surf/rh.0p50",
+        "/data/pt_01880/MonocularBlindness/p1/anatomy/layer/lh.layer5",
+        "/data/pt_01880/MonocularBlindness/p1/anatomy/layer/rh.layer5",
         ]
 
 # parameters
-deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/deformation/retinotopy2/epi2orig.nii.gz"
-path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/29997.cc/retinotopy2"
+deformation = "/data/pt_01880/MonocularBlindness/p1/deformation/flicker/GE_EPI1/epi2orig.nii.gz"
+path_output = "/data/pt_01880/MonocularBlindness/p1/flicker/results/spmT"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
