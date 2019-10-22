@@ -11,15 +11,21 @@
 
 % array of of input time series
 img_input = {
-    '/data/pt_01880/Experiment1_ODC/p4/retinotopy/pol_anticlock/data.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/retinotopy/pol_clock/data.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/retinotopy/ecc_expanding/data.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/retinotopy/ecc_contracting/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_1/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_2/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_3/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_4/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_5/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_6/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_7/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_8/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_9/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p4/odc/VASO2/Run_10/data.nii',...
     };
 
 % basenames
-basename_bold = 'ubold';
-basename_vaso = 'uvaso';
+basename_bold = 'bold';
+basename_vaso = 'vaso';
 
 %%% do not edit below %%%
 
@@ -43,12 +49,12 @@ for i = 1:length(img_input)
     
     transFig = figure('visible','off');
     hold on
-    plot(M_bold(:,1));
-    plot(M_bold(:,2));
-    plot(M_bold(:,3));
-    plot(M_vaso(:,1));
-    plot(M_vaso(:,2));
-    plot(M_vaso(:,3));
+    plot(M_bold(:,1),'red');
+    plot(M_bold(:,2),'blue');
+    plot(M_bold(:,3),'green');
+    plot(M_vaso(:,1),'red--');
+    plot(M_vaso(:,2),'blue--');
+    plot(M_vaso(:,3),'green--');
     title(['Translational movement in session ' num2str(i)]);
     xlabel('number of volume');
     ylabel('Translation in mm');
@@ -58,12 +64,12 @@ for i = 1:length(img_input)
     
     radFig = figure('visible','off');
     hold on
-    plot(M_bold(:,4));
-    plot(M_bold(:,5));
-    plot(M_bold(:,6));
-    plot(M_vaso(:,4));
-    plot(M_vaso(:,5));
-    plot(M_vaso(:,6));
+    plot(M_bold(:,4),'red');
+    plot(M_bold(:,5),'blue');
+    plot(M_bold(:,6),'green');
+    plot(M_vaso(:,4),'red--');
+    plot(M_vaso(:,5),'blue--');
+    plot(M_vaso(:,6),'green--');
     title(['Rotational movement in session ' num2str(i)]);
     xlabel('number of volume');
     ylabel('Rotation in rad');
