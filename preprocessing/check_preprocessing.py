@@ -22,9 +22,15 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/MonocularBlindness/p1/resting_state2/udata.nii",
+        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_2/udata.nii",
+        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_4/udata.nii",
+        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_6/udata.nii",
+        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_8/udata.nii",
+        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_10/udata.nii",
+        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_12/udata.nii",
+        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_14/udata.nii",
         ]
-input_ref = "/data/pt_01880/MonocularBlindness/p1/resting_state2/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/diagnosis/mean_data.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95
