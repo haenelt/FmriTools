@@ -9,7 +9,7 @@ def get_mean(input, path_output, name_output, type="mean"):
         
     created by Daniel Haenelt
     Date created: 04-02-2019         
-    Last modified: 12-09-2019
+    Last modified: 24-10-2019
     """
     import os
     import copy
@@ -58,7 +58,10 @@ def get_mean(input, path_output, name_output, type="mean"):
         print("Choose a valid mean type!")
     
     # write output
-    data_img = nb.load(input[0])
+    if len(np.shape(input)) > 0:
+        data_img = nb.load(input[0])
+    else:
+        data_img = nb.load(input)
     data_img.header["dim"][0] = 3
     data_img.header["dim"][4] = 1
     data_img.header["pixdim"][3] = 1

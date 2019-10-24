@@ -17,18 +17,17 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/results/spmT/native/spmT_left_right_GE_EPI1_test.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/native/spmT_left_right_GE_EPI1_1_1.nii",
         ]
 
 input_surf = [
         "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer5",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer5",
         ]
 
 # parameters
 deformation = "/data/pt_01880/Experiment1_ODC/p3/deformation/odc/GE_EPI1/epi2orig.nii.gz"
 path_output = "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT"
-interpolation = "linear" # can be linear or nearest
+interpolation = "nearest" # can be linear or nearest
 
 """ do not edit below """
 

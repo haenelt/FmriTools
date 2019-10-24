@@ -50,8 +50,8 @@ output_folder = 'contrast'; % name of folder where spm.mat is saved
 
 % lowpass filter of time series
 lowpass = false;
-cutoff_lowpass = 0;
-order_lowpass = 3;
+cutoff_lowpass = 10;
+order_lowpass = 1;
 
 % add spm and lib to path
 pathSPM = '/data/pt_01880/source/spm12'; 
