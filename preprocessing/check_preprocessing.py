@@ -22,15 +22,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_2/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_4/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_6/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_8/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_10/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_12/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/multipol_14/udata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_1/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_2/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_3/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_4/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_5/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_6/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_7/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_8/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_9/uadata.nii",
+        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_10/uadata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment4_PSF/p5/psf/GE_EPI2/diagnosis/mean_data.nii"
+input_ref = "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/diagnosis/mean_adata.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95

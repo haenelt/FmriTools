@@ -17,16 +17,22 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/native/spmT_left_right_GE_EPI1_1_1.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/retinotopy/native/ecc_imag_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/retinotopy/native/ecc_phase_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/retinotopy/native/ecc_real_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/retinotopy/native/pol_imag_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/retinotopy/native/pol_phase_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/retinotopy/native/pol_real_avg.nii",
         ]
 
 input_surf = [
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer5",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/freesurfer/surf/lh.0p50",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/freesurfer/surf/rh.0p50",
         ]
 
 # parameters
-deformation = "/data/pt_01880/Experiment1_ODC/p3/deformation/odc/GE_EPI1/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT"
+deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/deformation/retinotopy/epi2orig.nii.gz"
+path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/16690.98/retinotopy"
 interpolation = "nearest" # can be linear or nearest
 
 """ do not edit below """
