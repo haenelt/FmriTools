@@ -32,4 +32,4 @@ for i in range(len(input_surf)):
     hemi = os.path.splitext(os.path.basename(input_surf[i]))[0]
     
     # deform surface
-    deform_surface(input_surf[i], input_orig, input_deform, input_target, hemi, path_output)
+    deform_surface(input_surf[i], input_orig, input_deform, input_target, hemi, path_output, False)
