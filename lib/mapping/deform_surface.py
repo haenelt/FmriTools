@@ -99,7 +99,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     
     # get new indices
     ind_keep = np.arange(0,len(vtx[:,0]))
-    ind_keep[np.sum(vtx_new, axis=1) == 0] = np.nan
+    ind_keep[np.sum(vtx_new, axis=1) == 0] = -1
     
     # remove edges
     x_max = np.max(nb.load(os.path.join(path_mri,components[0]+"_deform.nii")).get_fdata())
@@ -109,14 +109,14 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     z_max = np.max(nb.load(os.path.join(path_mri,components[2]+"_deform.nii")).get_fdata())
     z_min = np.min(nb.load(os.path.join(path_mri,components[2]+"_deform.nii")).get_fdata())
     
-    ind_keep[vtx_new[:,:,0] == x_max] = np.nan
-    ind_keep[vtx_new[:,:,0] == x_min] = np.nan
-    ind_keep[vtx_new[:,:,1] == y_max] = np.nan
-    ind_keep[vtx_new[:,:,1] == y_min] = np.nan
-    ind_keep[vtx_new[:,:,2] == z_max] = np.nan
-    ind_keep[vtx_new[:,:,2] == z_min] = np.nan
+    ind_keep[vtx_new[:,:,0] == x_max] = -1
+    ind_keep[vtx_new[:,:,0] == x_min] = -1
+    ind_keep[vtx_new[:,:,1] == y_max] = -1
+    ind_keep[vtx_new[:,:,1] == y_min] = -1
+    ind_keep[vtx_new[:,:,2] == z_max] = -1
+    ind_keep[vtx_new[:,:,2] == z_min] = -1
 
-    ind_keep = ind_keep[~np.isnan(np.sum(vtx_new, axis=1))]
+    ind_keep = ind_keep[ind_keep != -1]
 
     # get new vertices
     vtx_new = vtx_new[ind_keep]
