@@ -12,11 +12,11 @@ import os
 from lib.mapping.map2surface import map2surface
 
 # input files
-input_surf = "/home/daniel/Schreibtisch/test/lh.layer0_def"
-input_vol = "/home/daniel/Schreibtisch/surface_voxel.nii"
-path_output = "/home/daniel/Schreibtisch"
-input_white = "/home/daniel/Schreibtisch/data/sampling_data/lh.white"
-input_ind = "/home/daniel/Schreibtisch/test/lh.layer0_ind.txt"
+input_surf = "/data/pt_01880/test/lh.layer5_def"
+input_vol = "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/native/spmT_left_right_GE_EPI2.nii"
+path_output = "/data/pt_01880/test2"
+input_white = "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer10"
+input_ind = "/data/pt_01880/test/lh.layer5_ind.txt"
 cleanup=False
 
 """ do not edit below """
