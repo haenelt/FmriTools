@@ -109,12 +109,12 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     z_max = np.max(nb.load(os.path.join(path_mri,components[2]+"_deform.nii")).get_fdata())
     z_min = np.min(nb.load(os.path.join(path_mri,components[2]+"_deform.nii")).get_fdata())
     
-    ind_keep[vtx_new[:,:,0] == x_max] = -1
-    ind_keep[vtx_new[:,:,0] == x_min] = -1
-    ind_keep[vtx_new[:,:,1] == y_max] = -1
-    ind_keep[vtx_new[:,:,1] == y_min] = -1
-    ind_keep[vtx_new[:,:,2] == z_max] = -1
-    ind_keep[vtx_new[:,:,2] == z_min] = -1
+    ind_keep[vtx_new[:,0] == x_max] = -1
+    ind_keep[vtx_new[:,0] == x_min] = -1
+    ind_keep[vtx_new[:,1] == y_max] = -1
+    ind_keep[vtx_new[:,1] == y_min] = -1
+    ind_keep[vtx_new[:,2] == z_max] = -1
+    ind_keep[vtx_new[:,2] == z_min] = -1
 
     ind_keep = ind_keep[ind_keep != -1]
 
