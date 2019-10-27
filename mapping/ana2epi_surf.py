@@ -20,9 +20,9 @@ input_surf = ["/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer5",
               ]
 
 input_orig = "/data/pt_01880/Experiment1_ODC/p3/anatomy/freesurfer/mri/orig.mgz"
-input_deform = "/data/pt_01880/Experiment1_ODC/p3/deformation/odc/GE_EPI1/epi2orig.nii.gz"
-input_target = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI1/diagnosis/mean_data.nii"
-path_output = "/data/pt_01880/test/non_rigid"
+input_deform = "/data/pt_01880/test/fieldmap_and_rigid/deformation/epi2orig.nii.gz" # epi2orig
+input_target = "/data/pt_01880/test/fieldmap_and_rigid/diagnosis/mean_data.nii"
+path_output = "/data/pt_01880/test/fieldmap_and_rigid"
 
 """ do not edit below """
 
