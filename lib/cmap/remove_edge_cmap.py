@@ -1,15 +1,18 @@
-def remove_edge_cmap(input_cmap, path_output, basename_output, edge_threshold=2):
+def remove_edge_cmap(input_cmap, path_output, basename_output, edge_threshold=5, min_threshold=5):
     """
     This function removes smeared edges from a coordinate mapping. Depending on the interpolation
     method, coordinate mapping slabs within a larger volume can have blurred edges where voxels are
     interpolated with the neighbouring background. The function identifies those affected edge
     voxels by comparing the difference of each voxel to its local neighbourhood. Background is
-    assumed to be filled by zeroes and identified edge voxels are set to the background value.
+    assumed to be filled by zeroes and identified edge voxels are set to the background value. A
+    voxels is classified as edge outlier if its difference to one local neighbour is larger than
+    edge_threshold or if its cmap value is below min_threshold in all dimensions.
     Inputs:
         *input_cmap: filename of 4d coordinate mapping.
         *path_output: path where output is saved.
         *basename_output: basename of output file.
-        *edge_threshold: maximum difference to neighbouring voxel.
+        *edge_threshold: maximum difference to neighbouring voxel (in voxel units).
+        *min_threshold: minimum cmap value in all dimensions (in voxel units).
     
     created by Daniel Haenelt
     Date created: 26-10-2019
@@ -126,10 +129,30 @@ def remove_edge_cmap(input_cmap, path_output, basename_output, edge_threshold=2)
     mask_array = cmap_array[:,:,:,0] * cmap_array[:,:,:,1] * cmap_array[:,:,:,2]
     mask_array[mask_array != 0] = 1
 
+    # get binary mask from min threshold
+    min_array1 = cmap_array[:,:,:,0].copy()
+    min_array2 = cmap_array[:,:,:,1].copy()
+    min_array3 = cmap_array[:,:,:,2].copy()
+    
+    min_array1[min_array1 < min_threshold] = 0
+    min_array2[min_array2 < min_threshold] = 0
+    min_array3[min_array3 < min_threshold] = 0
+
+    min_array1[min_array1 != 0] = 1
+    min_array2[min_array2 != 0] = 1
+    min_array3[min_array3 != 0] = 1
+    
+    min_array = min_array1 + min_array2 + min_array3
+    min_array[min_array != 0] = 1
+
     # mask cmap
     cmap_array[:,:,:,0] = cmap_array[:,:,:,0] * mask_array
     cmap_array[:,:,:,1] = cmap_array[:,:,:,1] * mask_array
     cmap_array[:,:,:,2] = cmap_array[:,:,:,2] * mask_array
+    
+    cmap_array[:,:,:,0] = cmap_array[:,:,:,0] * min_array
+    cmap_array[:,:,:,1] = cmap_array[:,:,:,1] * min_array
+    cmap_array[:,:,:,2] = cmap_array[:,:,:,2] * min_array
 
     # write output  
     output = nb.Nifti1Image(cmap_array, cmap.affine, cmap.header)

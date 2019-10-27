@@ -54,7 +54,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     sh.copyfile(input_deform, os.path.join(path_mri,"cmap.nii.gz"))
 
     # remove edges from cmap
-    remove_edge_cmap(os.path.join(path_mri,"cmap.nii.gz"), path_mri, "cmap", edge_threshold=2)
+    remove_edge_cmap(os.path.join(path_mri,"cmap.nii.gz"), path_mri, "cmap", 5, 5)
 
     # read surface geometry
     vtx, fac = read_geometry(input_surf)
@@ -142,7 +142,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         fac_new[temp] = i
         
         # print status
-        counter = np.floor(i / ind_keep * 100).astype(int)
+        counter = np.floor(i / len(ind_keep) * 100).astype(int)
         if counter == n_step[c_step]:
             print("sort faces: "+str(counter)+" %")
             c_step += 1
