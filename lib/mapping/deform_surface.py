@@ -25,6 +25,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     from nibabel.affines import apply_affine
     from nipype.interfaces.freesurfer import SampleToSurface
     from nipype.interfaces.freesurfer import SmoothTessellation
+    from lib.cmap import remove_edge_cmap
 
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
@@ -47,9 +48,13 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     os.makedirs(path_mri)
     os.makedirs(path_surf)
 
-    # copy orig and input surface to mimicked freesurfer folders
+    # copy orig,cmap and input surface to mimicked freesurfer folders
     sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
     sh.copyfile(input_orig, os.path.join(path_mri,"orig.mgz"))
+    sh.copyfile(input_deform, os.path.join(path_mri,"cmap.nii.gz"))
+
+    # remove edges from cmap
+    remove_edge_cmap(os.path.join(path_mri,"cmap.nii.gz"), path_mri, "cmap", edge_threshold=2)
 
     # read surface geometry
     vtx, fac = read_geometry(input_surf)
@@ -60,7 +65,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     vox2ras_tkr = np.array(num_transformation)
     
     # divide coordinate mapping into its x, y and z components
-    cmap_img = nb.load(input_deform)
+    cmap_img = nb.load(os.path.join(path_mri,"cmap_edge.nii.gz"))
     cmap_img.header["dim"][0] = 3
     cmap_img.header["dim"][4] = 1
 
@@ -130,9 +135,17 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     fac_new = fac[fac_keep == 3,:]
 
     # sort new faces
+    c_step = 0
+    n_step = [10,20,30,40,50,60,70,80,90,100]
     for i in range(len(ind_keep)):
         temp = np.where(ind_keep[i] == fac_temp)
         fac_new[temp] = i
+        
+        # print status
+        counter = np.floor(i / ind_keep * 100).astype(int)
+        if counter == n_step[c_step]:
+            print("sort faces: "+str(counter)+" %")
+            c_step += 1
 
     # write new surface
     write_geometry(os.path.join(path_surf,hemi+".transformed"), vtx_new, fac_new)
