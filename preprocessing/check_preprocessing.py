@@ -22,18 +22,18 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_1/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_2/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_3/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_4/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_5/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_6/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_7/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_8/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_9/uadata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/Run_10/uadata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_1/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_2/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_3/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_4/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_5/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_6/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_7/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_8/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_9/udata.nii",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_10/udata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment2_Rivalry/p3/rivalry/GE_EPI3/diagnosis/mean_adata.nii"
+input_ref = "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/diagnosis/mean_data.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95

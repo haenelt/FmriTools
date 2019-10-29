@@ -1,8 +1,8 @@
 """
 Make visual fieldsign map
 
-The purpose of the following script is to make a movie to illustrate the travelling waves on a 
-flattened patch.
+The purpose of the following script is to make a visual fieldsign map from sampled phase-encoded
+retinotopy data.
 
 Before running the script, login to queen via ssh and set the freesurfer environments by calling 
 FREESURFER in the terminal.
@@ -15,16 +15,16 @@ import os
 from lib.mapping.get_vfs import get_vfs
 
 # input files
-hemi = "rh"
-input_sphere = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/dense/rh.sphere"
-input_white = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/dense/rh.white"
-input_patch = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/dense/rh.occip1.patch.flat"
-input_aparc = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/label/rh.aparc.annot"
-ecc_real = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/rh.ecc_real_avg_def-img_layer5_def.mgh"
-ecc_imag = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/rh.ecc_imag_avg_def-img_layer5_def.mgh"
-pol_real = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/rh.pol_real_avg_def-img_layer5_def.mgh"
-pol_imag = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/rh.pol_imag_avg_def-img_layer5_def.mgh"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/avg/surf/"
+hemi = "lh"
+input_sphere = "/data/pt_01880/Experiment1_ODC/p3/anatomy/dense/lh.sphere"
+input_white = "/data/pt_01880/Experiment1_ODC/p3/anatomy/dense/lh.white"
+input_patch = "/data/pt_01880/Experiment1_ODC/p3/anatomy/dense/lh.occip.patch.flat"
+input_aparc = "/data/pt_01880/Experiment1_ODC/p3/anatomy/freesurfer/label/lh.aparc.annot"
+ecc_real = "/data/pt_01880/Experiment1_ODC/p3/retinotopy/avg/surf/lh.ecc_real_avg_def-img_layer5_def.mgh"
+ecc_imag = "/data/pt_01880/Experiment1_ODC/p3/retinotopy/avg/surf/lh.ecc_imag_avg_def-img_layer5_def.mgh"
+pol_real = "/data/pt_01880/Experiment1_ODC/p3/retinotopy/avg/surf/lh.pol_real_avg_def-img_layer5_def.mgh"
+pol_imag = "/data/pt_01880/Experiment1_ODC/p3/retinotopy/avg/surf/lh.pol_imag_avg_def-img_layer5_def.mgh"
+path_output = "/data/pt_01880/Experiment1_ODC/p3/retinotopy/avg/surf/"
 
 """ do not edit below """
 

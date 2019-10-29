@@ -16,16 +16,16 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 
 input = [
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_1/logfiles/p4_GE_EPI3_Run1_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_2/logfiles/p4_GE_EPI3_Run2_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_3/logfiles/p4_GE_EPI3_Run3_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_4/logfiles/p4_GE_EPI3_Run4_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_5/logfiles/p4_GE_EPI3_Run5_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_6/logfiles/p4_GE_EPI3_Run6_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_7/logfiles/p4_GE_EPI3_Run7_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_8/logfiles/p4_GE_EPI3_Run8_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_9/logfiles/p4_GE_EPI3_Run9_odc.mat",
-        "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/Run_10/logfiles/p4_GE_EPI3_Run10_odc.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_1/logfiles/p1_GE_EPI4_Run1_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_2/logfiles/p1_GE_EPI4_Run2_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_3/logfiles/p1_GE_EPI4_Run3_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_4/logfiles/p1_GE_EPI4_Run4_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_5/logfiles/p1_GE_EPI4_Run5_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_6/logfiles/p1_GE_EPI4_Run6_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_7/logfiles/p1_GE_EPI4_Run7_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_8/logfiles/p1_GE_EPI4_Run8_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_9/logfiles/p1_GE_EPI4_Run9_colour.mat",
+        "/data/pt_01880/Experiment3_Stripes/p1/colour/GE_EPI4/Run_10/logfiles/p1_GE_EPI4_Run10_colour.mat",
          ]
 
 """ do not edit below """
