@@ -339,13 +339,15 @@ elif part == 5:
     print("Map distortion data onto grid")
     for i in range(len(hemi)):
         map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
-                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".curv"),
+                 os.path.join(path_dense,hemi[i]+".curv"),
                  sigma_map,
-                 path_ortho)
+                 path_ortho,
+                 hemi[i]+"."+namePATCH+".curv")
         map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
-                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".thickness"),
+                 os.path.join(path_dense,hemi[i]+".thickness"),
                  sigma_map,
-                 path_ortho)
+                 path_ortho,
+                 hemi[i]+"."+namePATCH+".thickness")
       
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
