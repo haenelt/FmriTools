@@ -1,4 +1,4 @@
-def map2grid(file_grid, file_input, sigma, path_output, binary=False, overwrite=True):
+def map2grid(file_grid, file_input, sigma, path_output, basename_output="", binary=False, overwrite=True):
     """
     This script allows you to sample indexed morphological data onto the regular grid. Optional, a 
     gaussian filter can be applied to the output image.
@@ -7,6 +7,7 @@ def map2grid(file_grid, file_input, sigma, path_output, binary=False, overwrite=
         *file_input: filename of morphological data or *.mgh data.
         *sigma: standard deviation of Gaussian kernel.
         *path_output: path where output is saved.
+        *basename_output: basename of written output file.
         *binary: threshold output grid (for curvature file).
         *overwrite: write output to file.
     Output:
@@ -14,7 +15,7 @@ def map2grid(file_grid, file_input, sigma, path_output, binary=False, overwrite=
     
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 18-04-2019
+    Last modified: 30-10-2019
     """
     import os
     import numpy as np
@@ -59,13 +60,13 @@ def map2grid(file_grid, file_input, sigma, path_output, binary=False, overwrite=
     # write output data
     if overwrite:
         if sigma == 0 and binary is True:
-            filenameOUT = os.path.join(path_output,os.path.basename(file_input)+"_grid_binary.nii")
+            filenameOUT = os.path.join(path_output,basename_output+"_grid_binary.nii")
         elif sigma == 0 and binary is False:
-            filenameOUT = os.path.join(path_output,os.path.basename(file_input)+"_grid.nii")
+            filenameOUT = os.path.join(path_output,basename_output+"_grid.nii")
         elif sigma != 0 and binary is True:
-            filenameOUT = os.path.join(path_output,os.path.basename(file_input)+"_sigma"+str(sigma)+"_grid_binary.nii")
+            filenameOUT = os.path.join(path_output,basename_output+"_sigma"+str(sigma)+"_grid_binary.nii")
         else:
-            filenameOUT = os.path.join(path_output,os.path.basename(file_input)+"_sigma"+str(sigma)+"_grid.nii")
+            filenameOUT = os.path.join(path_output,basename_output+"_sigma"+str(sigma)+"_grid.nii")
         
         output = nb.Nifti1Image(grid_array, grid_img.affine, grid_img.header)
         nb.save(output,filenameOUT)
