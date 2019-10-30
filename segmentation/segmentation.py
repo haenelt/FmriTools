@@ -339,11 +339,11 @@ elif part == 5:
     print("Map distortion data onto grid")
     for i in range(len(hemi)):
         map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
-                 os.path.join(path_dense,hemi[i]+".curv"),
+                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".curv"),
                  sigma_map,
                  path_ortho)
         map2grid(os.path.join(path_ortho,hemi[i]+"."+namePATCH+".patch.flat.cmap.nii"),
-                 os.path.join(path_dense,hemi[i]+".thickness"),
+                 os.path.join(path_dense,hemi[i]+"."+namePATCH+".thickness"),
                  sigma_map,
                  path_ortho)
       
