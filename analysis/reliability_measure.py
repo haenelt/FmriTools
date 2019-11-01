@@ -6,7 +6,7 @@ is created.
 
 created by Daniel Haenelt
 Date created: 17-11-2018
-Last modified: 11-03-2019
+Last modified: 01-11-2019
 """
 import os
 import numpy as np
@@ -17,13 +17,19 @@ from nibabel.freesurfer.io import read_label, read_morph_data
 from scipy.stats import pearsonr
 
 # input paths
-input_label = '/data/pt_01880/test/lh.stripes_in.label'
-input_sess1 = '/data/pt_01880/V2STRIPES/p6/resting_state/alff_biopac/surf/lh.falff_z_def-img.nii_layer5_def.mgh'
-input_sess2 = '/data/pt_01880/V2STRIPES/p6/colour/results/spmT/surf/lh.spmT_colour_bw_GE_EPI1_def_layer5.mgh'
+input_label = '/data/pt_01880/ismrm_analysis/label/lh.roi2_v1.label'
+input_sess1 = '/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/surf/lh.spmT_left_right_SE_EPI1_def-img_layer10_def.mgh'
+input_sess2 = '/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/surf/lh.spmT_left_right_SE_EPI2_def-img_layer10_def.mgh'
 path_output = '/data/pt_01880'
+basename_output = "se_epi1_se_epi2"
+
+# correlation plot labels
+corr_title = ""
+corr_x_label = "t-score (session 3)"
+corr_y_label = "t-score (session 4)"
 
 # parameters
-frac = 0.1
+frac = 0.25
 niter = 1000
 
 """ do not edit below """
@@ -68,7 +74,7 @@ plt.axhline(md - 1.96*sd, color='gray', linestyle='--')
 plt.title('Bland-Altman Plot: '+os.path.basename(input_label))
 plt.xlabel("Average of 2 sessions")
 plt.ylabel("Difference between 2 sessions")
-plt.savefig(os.path.join(path_output,os.path.splitext((os.path.basename(input_label)))[0]+'_bland_altman.png'))
+plt.savefig(os.path.join(path_output,basename_output+'_bland_altman.png'))
 
 # compare correlation coefficient to change level (permutation)
 null_dist = []
@@ -96,9 +102,9 @@ print('p-value: '+str(p))
 plt.figure()
 plt.scatter(x, y)
 plt.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)),'r')
-plt.title(os.path.basename(input_label))
-plt.xlabel('t-score (session 1)')
-plt.ylabel('t-score (session 2)')
-plt.ylabel('curvature')
+plt.title(corr_title)
+plt.xlabel(corr_x_label)
+plt.ylabel(corr_y_label)
 plt.figtext(0.27, 0.8, "r = "+str(np.round(r[0],3))+", p = "+str(np.round(p, 3)), horizontalalignment="center")
-plt.savefig(os.path.join(path_output,os.path.splitext((os.path.basename(input_label)))[0]+'.png'))
+plt.savefig(os.path.join(path_output,basename_output+'.png'))
+plt.show()
