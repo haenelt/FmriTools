@@ -29,43 +29,14 @@ from lib.utils import upsample_time_series
 
 # input data
 img_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/udata.nii",
+        "/data/pt_01880/analysis/VASO3/mean_budata.nii",
         ]
 
 cond_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/p3_GE_EPI2_Run1_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/p3_GE_EPI2_Run2_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/p3_GE_EPI2_Run3_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/p3_GE_EPI2_Run4_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/p3_GE_EPI2_Run5_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/p3_GE_EPI2_Run6_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/p3_GE_EPI2_Run7_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/p3_GE_EPI2_Run8_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/p3_GE_EPI2_Run9_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/p3_GE_EPI2_Run10_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_1/logfiles/p3_VASO3_Run1_odc_Cond.mat",
         ]
 
-outlier_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/outlier_regressor.txt",
-        ]
+outlier_input = []
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
@@ -73,15 +44,16 @@ pathLIB1 = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
 
 # parameters
-TR = 3 # repetition time in s
+TR = 2.5 # repetition time in s
 cutoff_highpass = 180 # cutoff in s for baseline correction
-skipvol = 3 # skip number of volumes in each block
-condition1 = "left"
-condition2 = "right"
-name_sess = "GE_EPI2"
+skipvol = 2 # skip number of volumes in each block
+condition1 = "right"
+condition2 = "rest"
+name_sess = "VASO3"
 name_output = ""
 use_z_score = False
 use_lowpass = False
+rel_avg = False
 cutoff_lowpass = 0
 order_lowpass = 0
 n = 0 # upsampling factor
@@ -170,8 +142,12 @@ for i in range(len(path)):
     data_baseline_mean[data_baseline_mean == 0] = np.nan
     
     # percent signal change
-    percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_baseline_mean * 100
-    percent_signal2 = ( data_condition2_mean - data_condition1_mean ) / data_baseline_mean * 100
+    if rel_avg:
+        percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_baseline_mean * 100
+        percent_signal2 = ( data_condition2_mean - data_condition1_mean ) / data_baseline_mean * 100
+    else:
+        percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_condition2_mean * 100
+        percent_signal2 = ( data_condition2_mean - data_condition1_mean ) / data_condition1_mean * 100
     percent_signal1[np.isnan(percent_signal1)] = 0
     percent_signal2[np.isnan(percent_signal2)] = 0
 

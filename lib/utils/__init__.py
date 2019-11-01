@@ -1,4 +1,5 @@
 from .get_mean import get_mean
+from .get_mean4d import get_mean4d
 from .get_std import get_std
 from .get_tsnr import get_tsnr
 from .get_laminar_profile import get_laminar_profile
