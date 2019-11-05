@@ -93,9 +93,9 @@ from lib.utils.multiply_images import multiply_images
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
-fileINV1 = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
-fileINV2 = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
+fileUNI = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
+fileINV1 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
+fileINV2 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"

@@ -15,16 +15,16 @@
 % Last modified: 18-02-2019
 
 % input data
-input.pol.data.pos = '/data/pt_01880/Experiment4_PSF/p5/retinotopy/pol_anticlock/udata.nii'; % anticlock
-input.pol.data.neg = '/data/pt_01880/Experiment4_PSF/p5/retinotopy/pol_clock/udata.nii'; % clock
+input.pol.data.pos = '/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/pol_anticlock/udata.nii'; % anticlock
+input.pol.data.neg = '/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/pol_clock/udata.nii'; % clock
 input.pol.tr = 2; % repetition time in s
 input.pol.period = 64; % cycle period in s
 input.pol.fix = 12; % pre run baseline block in s (post run baseline did not work)
 input.pol.freq = 8.25; % number of cycles
 input.pol.cutoff = 192; % cutoff frequency 1/cutoff in Hz
 
-input.ecc.data.pos = '/data/pt_01880/Experiment4_PSF/p5/retinotopy/ecc_expanding/udata.nii'; % expanding
-input.ecc.data.neg = '/data/pt_01880/Experiment4_PSF/p5/retinotopy/ecc_contracting/udata.nii'; % contracting
+input.ecc.data.pos = '/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/ecc_expanding/udata.nii'; % expanding
+input.ecc.data.neg = '/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/ecc_contracting/udata.nii'; % contracting
 input.ecc.tr = 2;
 input.ecc.period = 32;
 input.ecc.fix = 12;

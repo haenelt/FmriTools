@@ -17,40 +17,23 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/native/spmT_left_rest_GE_EPI1.nii",
-        "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/native/spmT_left_right_GE_EPI1.nii",
-        "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/native/spmT_right_rest_GE_EPI1.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/ecc_imag_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/ecc_phase_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/ecc_real_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/pol_imag_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/pol_phase_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/pol_real_avg.nii",
         ]
 
 input_surf = [
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer0",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer1",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer2",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer3",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer4",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer5",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer6",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer7",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer8",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer9",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer10",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer0",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer1",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer2",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer3",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer4",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer5",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer6",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer7",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer8",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer9",
-        "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer10",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/anatomy/freesurfer/surf/lh.0p50",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/anatomy/freesurfer/surf/rh.0p50",
         ]
 
 # parameters
-deformation = "/data/pt_01880/Experiment1_ODC/p3/deformation/odc/GE_EPI1_rigid/epi2orig.nii.gz"
-path_output = "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT"
-interpolation = "nearest" # can be linear or nearest
+deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/deformation/retinotopy/epi2orig.nii.gz"
+path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg"
+interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
 
