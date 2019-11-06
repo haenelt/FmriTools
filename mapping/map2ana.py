@@ -17,22 +17,22 @@ from lib.mapping import map2surface
 
 # input
 input_file = [        
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/ecc_imag_avg.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/ecc_phase_avg.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/ecc_real_avg.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/pol_imag_avg.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/pol_phase_avg.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg/native/pol_real_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/avg/native/ecc_imag_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/avg/native/ecc_phase_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/avg/native/ecc_real_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/avg/native/pol_imag_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/avg/native/pol_phase_avg.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/avg/native/pol_real_avg.nii",
         ]
 
 input_surf = [
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/anatomy/freesurfer/surf/lh.0p50",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/anatomy/freesurfer/surf/rh.0p50",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/surf/lh.0p50",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/surf/rh.0p50",
         ]
 
 # parameters
-deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/deformation/retinotopy/epi2orig.nii.gz"
-path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/33764.44/retinotopy/avg"
+deformation = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/deformation/retinotopy/epi2orig.nii.gz"
+path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/avg"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """

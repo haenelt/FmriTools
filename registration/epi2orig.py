@@ -39,11 +39,11 @@ from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
 
 # input data
-file_mean_epi = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/diagnosis/mean_data.nii"
-file_t1 = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
-file_mask = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/brain.finalsurfs.manedit.mgz"
-file_orig = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy"
+file_mean_epi = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/diagnosis/mean_data.nii"
+file_t1 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
+file_mask = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/mri/brain.finalsurfs.mgz"
+file_orig = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/mri/orig.mgz"
+path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/deformation/retinotopy"
 cleanup = True
 
 # parameters for mask preparation

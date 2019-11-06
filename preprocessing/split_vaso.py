@@ -17,16 +17,16 @@ import numpy as np
 import nibabel as nb
 
 # input data
-img_input = ["/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_1/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_2/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_3/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_4/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_5/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_6/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_7/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_8/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_9/data.nii",
-             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_10/data.nii",
+img_input = ["/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_2/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_3/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_4/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_5/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_6/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_7/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_8/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_9/data.nii",
+             "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_10/data.nii",
              ]
 
 # paramteers

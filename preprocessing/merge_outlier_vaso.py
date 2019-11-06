@@ -13,28 +13,28 @@ import os
 import numpy as np
 
 input_outlier_vaso = [
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_1/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_2/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_3/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_4/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_5/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_6/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_7/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_8/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_9/logfiles/correlation_regressor_uvaso.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_10/logfiles/correlation_regressor_uvaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_2/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_3/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_4/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_5/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_6/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_7/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_8/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_9/logfiles/outlier_regressor_vaso.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_10/logfiles/outlier_regressor_vaso.txt",
         ]
 input_outlier_bold = [
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_1/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_2/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_3/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_4/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_5/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_6/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_7/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_8/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_9/logfiles/correlation_regressor_ubold.txt",
-        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO1/Run_10/logfiles/correlation_regressor_ubold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_2/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_3/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_4/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_5/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_6/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_7/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_8/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_9/logfiles/outlier_regressor_bold.txt",
+        "/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_10/logfiles/outlier_regressor_bold.txt",
         ]
 
 """ do not edit below """
