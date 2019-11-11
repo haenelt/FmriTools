@@ -129,7 +129,7 @@ for i in range(len(path)):
     # look for baseline corrected time series
     if not os.path.isfile(os.path.join(path[i],"b"+file[i]+".nii")):
         os.system("matlab" + \
-                  " -nodisplay -nodeskop -r " + \
+                  " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
                   format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_highpass, pathSPM))
 

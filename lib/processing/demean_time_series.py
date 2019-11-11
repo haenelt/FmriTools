@@ -1,28 +1,32 @@
-def demean_time_series(img_input):
+def demean_time_series(img_input, path_output="", name_output="", write_output=False):
     """
     This function demeans each voxel time series. Input is either a 4d nifti or compressed nifti 
     file.
     Inputs:
-        *img_input: 4d nifti volume.
+        *img_input: 4d nifti volume or string to filename.
+        *path_output: path where output is saved.
+        *name_output: basename of output.
+        *write_output: write nifti volume.
+    Outputs:
+        *output: demeaned 4d nifti volume.
     
     created by Daniel Haenelt
     Date created: 24-10-2019
-    Last modified: 24-10-2019
+    Last modified: 11-11-2019
     """
     import os
     import numpy as np
     import nibabel as nb
 
-    # get path and filename for output
-    path = os.path.dirname(img_input)
-    if os.path.splitext(img_input)[1] == ".gz":
-        file = os.path.splitext(os.path.splitext(os.path.basename(img_input))[0])[0]
+    # load data
+    if isinstance(img_input, nb.Nifti1Image):
+        data_array = img_input.get_fdata()
+    elif isinstance(img_input, str):
+        img_input = nb.load(img_input)
+        data_array = img_input.get_fdata()
     else:
-        file = os.path.splitext(os.path.basename(img_input))[0]
-
-    # load first dataset to initialize final time series
-    data = nb.load(img_input)
-    data_array = data.get_fdata()
+        print("Input must be either string or instance of nibabel class")
+        return
     
     # get mean of each voxel time series
     data_mean = np.mean(data_array, axis=3)
@@ -31,10 +35,9 @@ def demean_time_series(img_input):
     for i in range(np.shape(data_array)[3]):
         data_array[:,:,:,i] = ( data_array[:,:,:,i] - data_mean )/ data_mean * 100
        
-    # write output
-    output = nb.Nifti1Image(data_array, data.affine, data.header)
-    if os.path.splitext(img_input)[1] == ".gz":
-        nb.save(output,os.path.join(path,file+"_demean.nii.gz"))
-    else:
-        nb.save(output,os.path.join(path,file+"_demean.nii"))
+    # write output    
+    output = nb.Nifti1Image(data_array, img_input.affine, img_input.header)
+    if write_output:
+        nb.save(output, os.path.join(path_output, "demean_"+name_output+".nii"))
     
+    return output

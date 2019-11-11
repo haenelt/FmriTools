@@ -1,12 +1,12 @@
 """
 Make retinotopy movie
 
-The prupose of the following script is to make a movie to illustrate the travelling waves on a 
+The purpose of the following script is to make a movie to illustrate the travelling waves on a 
 flattened patch.
 
 created by Daniel Haenelt
 Date created: 14-02-2019
-Last modified: 18-02-2019
+Last modified: 11-11-2019
 """
 import os
 import glob
