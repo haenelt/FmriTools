@@ -61,7 +61,7 @@ def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False)
     """
     generate coordinate mapping
     """
-    generate_coordinate_mapping(os.path.join(path_temp,"flash.nii"), 0, path_temp, "flash", False)
+    generate_coordinate_mapping(os.path.join(path_temp,"flash.nii"), 0, path_temp, "flash", False, True)
     
     """
     scanner transform inv2 to flash

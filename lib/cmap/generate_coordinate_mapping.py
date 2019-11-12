@@ -1,4 +1,4 @@
-def generate_coordinate_mapping(input, pad, path_output, suffix="", time=False):
+def generate_coordinate_mapping(input, pad, path_output=None, suffix=None, time=False, write_output=False):
     """
     Generates coordinate mapping for an input volume. Either one or multiple coordinate maps are 
     saved in the output folder depending on the dimensionality (3d or 4d) of the input image. Image
@@ -9,10 +9,13 @@ def generate_coordinate_mapping(input, pad, path_output, suffix="", time=False):
         *path_output: path where output is saved.
         *suffix: add suffix to file name.
         *time: compute coordinate map for each time step.
+        *write_output: *write nifti volume.
+    Outputs:
+        *output: coordinate mapping.
 
     created by Daniel Haenelt
     Date created: 21-11-2018             
-    Last modified: 31-01-2019
+    Last modified: 12-11-2019
     """
     import os
     import numpy as np
@@ -20,8 +23,9 @@ def generate_coordinate_mapping(input, pad, path_output, suffix="", time=False):
     from numpy.matlib import repmat
     
     # create output folder
-    if not os.path.exists(path_output):
-        os.makedirs(path_output)
+    if path_output:
+        if not os.path.exists(path_output):
+            os.makedirs(path_output)
     
     # load data
     data_img = nb.load(input)
@@ -65,10 +69,13 @@ def generate_coordinate_mapping(input, pad, path_output, suffix="", time=False):
     # write coordinate mapping for each time point   
     if t_size == 1:
         fileOUT = os.path.join(path_output,'cmap_'+suffix+'.nii')
-        nb.save(output,fileOUT)
+        if write_output:
+            nb.save(output,fileOUT)
     else:
         for i in range(t_size):
             fileOUT = os.path.join(path_output,'cmap_'+suffix+'_'+str(i)+'.nii')
-            nb.save(output,fileOUT)
-
+            if write_output:
+                nb.save(output,fileOUT)
+    
+    return output
     

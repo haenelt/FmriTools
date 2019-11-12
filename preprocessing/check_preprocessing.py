@@ -22,15 +22,12 @@ from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
 
 input = [
-        "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_2/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_4/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_6/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_8/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_10/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_12/udata.nii",
-        "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_14/udata.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/pol_anticlock/udata.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/pol_clock/udata.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/ecc_expanding/udata.nii",
+        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/ecc_contracting/udata.nii",
         ]
-input_ref = "/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/diagnosis/mean_data.nii"
+input_ref = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/diagnosis/mean_data.nii"
 input_mask = []
 input_mask_ref = ""
 r_threshold = 0.95

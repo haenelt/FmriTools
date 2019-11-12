@@ -84,7 +84,7 @@ if end_vol != 0:
 
 # squeeze retinotopy data to one period
 period_length = int(retinotopy_period / TR)
-retinotopy_array = np.zeros(np.append(data.header["dim"][1:4],period_length))
+retinotopy_array = np.zeros(np.append(data.header["dim"][1:4], period_length))
 retinotopy_sort = np.mod(np.arange(0,np.shape(data_array)[3]), period_length)
 for i in range(len(retinotopy_sort)):
     retinotopy_array[:,:,:,retinotopy_sort[i]] += data_array[:,:,:,i] 
