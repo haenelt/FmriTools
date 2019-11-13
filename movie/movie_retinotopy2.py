@@ -21,7 +21,7 @@ input_deformation = "/nobackup/eminem2/haenelt/V2STRIPES/p6/deformation/retinoto
 input_surf = ["/nobackup/eminem2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer5",
               "/nobackup/eminem2/haenelt/V2STRIPES/p6/anatomy/layer/rh.layer5",
               ]
-path_output = "/data/pt_01880/frame"
+path_output = "/data/pt_01880/retinotopy"
 
 # paramteers
 TR = 3
