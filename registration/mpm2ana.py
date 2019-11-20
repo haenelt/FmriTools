@@ -49,7 +49,7 @@ path_mp2rage = os.path.join(path_res,"mp2rage")
 path_deformation = os.path.join(path_res,"deformation")
 
 if not os.path.exists(path_res):
-    os.mkdir(path_res)
+    os.makedirs(path_res)
 
 if not os.path.exists(path_mpm):
     os.mkdir(path_mpm)
