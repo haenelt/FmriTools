@@ -2,34 +2,47 @@
 Make retinotopy movie
 
 The purpose of the following script is to make a movie to illustrate directly the demeaned time 
-series (travelling wave) on the cortical surface.
+series (travelling wave) on the cortical surface. Optionally, the data will be additionally sampled 
+on a regular grid.
 
 created by Daniel Haenelt
 Date created: 11-11-2019
-Last modified: 11-11-2019
+Last modified: 04-12-2019
 """
 import os
+import re
+import glob
 import shutil as sh
 import numpy as np
 import nibabel as nb
 from nighres.registration import apply_coordinate_mappings
 from lib.processing.demean_time_series import demean_time_series
-from lib.mapping import map2surface
+from lib.mapping import map2surface, map2stack
 
-input_series = "/nobackup/eminem2/haenelt/V2STRIPES/p6/retinotopy/pol_anticlock/udata.nii"
-input_deformation = "/nobackup/eminem2/haenelt/V2STRIPES/p6/deformation/retinotopy/epi2ana.nii.gz"
-input_surf = ["/nobackup/eminem2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer5",
-              "/nobackup/eminem2/haenelt/V2STRIPES/p6/anatomy/layer/rh.layer5",
+input_series = "/nobackup/actinium2/haenelt/V2STRIPES/p6/psf/multipol_14/udata.nii"
+input_deformation = "/nobackup/actinium2/haenelt/V2STRIPES/p6/deformation/multipol/epi2orig.nii.gz"
+input_surf = ["/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer0",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer1",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer2",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer3",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer4",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer5",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer6",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer7",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer8",
+              "/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/lh.layer9",
               ]
-path_output = "/data/pt_01880/retinotopy"
+input_grid = ["/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/ortho/lh.occip4.patch.flat.cmap.nii"]
+path_output = "/data/pt_01880/multipol14_grid"
 
 # paramteers
 TR = 3
-cutoff_highpass = 180
-retinotopy_period = 60
-start_vol = 9
+cutoff_highpass = 144
+retinotopy_period = 48
+start_vol = 11
 end_vol = 4
 interpolation = "linear" # can be linear or nearest
+sigma_grid = 0.5
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
@@ -48,6 +61,7 @@ os.chdir(pathLIB)
 path_native = os.path.join(path_output,"native")
 path_def = os.path.join(path_output,"def")
 path_surf = os.path.join(path_output,"surf")
+path_grid = os.path.join(path_output,"grid")
 
 if not os.path.exists(path_output):
     os.mkdir(path_output)
@@ -60,6 +74,9 @@ if not os.path.exists(path_def):
 
 if not os.path.exists(path_surf):
     os.mkdir(path_surf)
+
+if not os.path.exists(path_grid):
+    os.mkdir(path_grid)
 
 # look for baseline corrected time series
 os.system("matlab" + \
@@ -111,18 +128,44 @@ for i in range(np.shape(retinotopy_array)[3]):
 # map to ana
 for i in range(np.shape(retinotopy_array)[3]):
     for j in range(len(input_surf)):
-        
+
         # hemisphere
         hemi = os.path.splitext(os.path.basename(input_surf[j]))[0]
-    
+        
         # sample on surface
         map2surface(input_surf[j], 
                     os.path.join(path_def,str(i+1)+"_def-img.nii.gz"), 
                     hemi, 
                     path_surf, 
-                    input_white=None, 
-                    input_ind=None, 
+                    input_white=None,
+                    input_ind=None,
                     cleanup=True)
+
+# sample on grid (optional)
+if len(input_grid) > 0:
+    for i in range(len(input_grid)):
+        
+        # hemisphere
+        hemi = os.path.basename(input_grid[i])[:2]
+        
+        # sample on grid
+        files = glob.glob(os.path.join(path_surf,'*'))
+        for j in range(np.shape(retinotopy_array)[3]):
+            stack = []
+            nstack = []
+            for k in range(len(files)):
+                if re.findall(r''+hemi+'.'+str(j+1)+'_', files[k]): # quite nasty
+                    stack.append(files[k])
+                    nstack.append(re.findall(r'\d+', files[k])[-1])
+                
+            # string to number
+            nstack = [int(x) for x in nstack]
+            
+            # get sorted list
+            stack = [x for _,x in sorted(zip(nstack,stack), reverse=True)]
+            
+            # map to stack
+            map2stack(stack, input_grid[i], sigma_grid, path_grid)
 
 # delete temp
 os.remove(os.path.join(path_native,"temp.nii"))
