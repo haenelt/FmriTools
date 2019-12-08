@@ -15,34 +15,13 @@ import os
 from lib.surface import deform_surface, remove_vertex_outliers
 
 # input files
-input_surf = ["/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer0",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer1",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer2",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer3",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer4",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer5",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer6",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer7",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer8",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer9",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer10",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer0",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer1",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer2",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer3",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer4",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer5",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer6",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer7",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer8",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer9",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer10",
+input_surf = ["/home/daniel/Schreibtisch/temo/lh.layer0",
               ]
 
-input_orig = "/data/pt_01880/Experiment1_ODC/p3/anatomy/freesurfer/mri/orig.mgz"
-input_deform = "/data/pt_01880/Experiment1_ODC/p3/deformation/odc/GE_EPI2_rigid/epi2orig.nii.gz" # epi2orig
-input_target = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
-path_output = "/data/pt_01880/Experiment1_ODC/p3/deformation/odc/GE_EPI2_rigid/epi_surf"
+input_orig = "/home/daniel/Schreibtisch/temo/orig.mgz"
+input_deform = "/home/daniel/Schreibtisch/temo/epi2orig.nii.gz" # epi2orig
+input_target = "/home/daniel/Schreibtisch/temo/mean_data.nii"
+path_output = "/home/daniel/Schreibtisch/output"
 
 """ do not edit below """
 

@@ -64,7 +64,7 @@ def remove_vertex_outliers(input_surf, input_ind, n=5, overwrite=True):
         # print status
         counter = np.floor(i / len(vtx) * 100).astype(int)
         if counter == n_step[c_step]:
-            print("clean vertices: "+str(counter)+" %")
+            print("remove outliers: "+str(counter)+" %")
             c_step += 1
 
     # remove outliers in vertex and ind
