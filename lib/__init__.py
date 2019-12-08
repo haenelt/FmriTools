@@ -10,3 +10,4 @@ from .segmentation import *
 from .simulation import *
 from .skullstrip import *
 from .utils import *
+from .surface import *

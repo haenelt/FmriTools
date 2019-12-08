@@ -14,7 +14,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 26-10-2019
+    Last modified: 08-12-2019
     """
     import os
     import subprocess
@@ -146,6 +146,34 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         if counter == n_step[c_step]:
             print("sort faces: "+str(counter)+" %")
             c_step += 1
+
+    # remove singularities (vertices without faces)
+    fac_counter = 0
+    c_step = 0
+    n_singularity = np.zeros(len(vtx_new))
+    for i in range(len(vtx_new)):
+        row, col = np.where(fac_new == i)
+
+        n_singularity[i] = len(row)
+        if not n_singularity[i]:    
+            fac_temp = fac_new.copy()
+            fac_temp[fac_temp >= fac_counter] = -1
+            fac_temp[fac_temp != -1] = 0
+            fac_new += fac_temp
+            fac_counter -= 1
+    
+        # update face counter
+        fac_counter += 1
+    
+        # print status
+        counter = np.floor(i / len(vtx_new) * 100).astype(int)
+        if counter == n_step[c_step]:
+            print("clean vertices: "+str(counter)+" %")
+            c_step += 1
+    
+    # vertices and indices without singularities
+    vtx_new = vtx_new[n_singularity != 0]
+    ind_keep = ind_keep[n_singularity != 0]
 
     # write new surface
     write_geometry(os.path.join(path_surf,hemi+".transformed"), vtx_new, fac_new)

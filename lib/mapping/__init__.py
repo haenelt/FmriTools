@@ -1,4 +1,3 @@
-from .deform_surface import deform_surface
 from .get_vfs import get_vfs
 from .get_weighted_vfs import get_weighted_vfs
 from .map2grid import map2grid

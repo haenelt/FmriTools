@@ -9,10 +9,10 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 07-02-2019
-Last modified: 18-02-2019
+Last modified: 08-12-2019
 """
 import os
-from lib.mapping.deform_surface import deform_surface
+from lib.surface import deform_surface, remove_vertex_outliers
 
 # input files
 input_surf = ["/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer0",
@@ -52,4 +52,16 @@ for i in range(len(input_surf)):
     hemi = os.path.splitext(os.path.basename(input_surf[i]))[0]
     
     # deform surface
-    deform_surface(input_surf[i], input_orig, input_deform, input_target, hemi, path_output, False)
+    deform_surface(input_surf[i], 
+                   input_orig, 
+                   input_deform, 
+                   input_target, 
+                   hemi, 
+                   path_output, 
+                   False)
+
+    # remove vertex outliers
+    remove_vertex_outliers(os.path.join(path_output,os.path.basename(input_surf)+"_def"), 
+                           os.path.join(path_output,os.path.basename(input_surf)+"_ind.txt"), 
+                           5, 
+                           True)
