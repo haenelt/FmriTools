@@ -12,7 +12,7 @@ Date created: 07-02-2019
 Last modified: 09-12-2019
 """
 from os.path import join, basename, splitext
-from lib.utils import get_filename
+from lib.io import get_filename
 from lib.cmap import remove_edge_cmap
 from lib.surface import deform_surface, remove_vertex_outliers
 

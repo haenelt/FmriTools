@@ -19,7 +19,7 @@ def remove_edge_cmap(input_cmap, edge_threshold=5, min_threshold=5):
     import os
     import numpy as np
     import nibabel as nb
-    from lib.utils import get_filename
+    from lib.io import get_filename
 
     # load input
     cmap = nb.load(input_cmap)

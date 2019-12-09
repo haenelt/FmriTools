@@ -144,9 +144,9 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
 
     # remove singularities (vertices without faces)
     fac_counter = 0
-    c_step = 0
     fac_old = fac_new.copy()
     n_singularity = np.zeros(len(vtx_new))
+    c_step = 0
     for i in range(len(vtx_new)):
         row, col = np.where(fac_old == i)
      
