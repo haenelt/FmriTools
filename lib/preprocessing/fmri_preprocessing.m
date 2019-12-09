@@ -1,5 +1,4 @@
 function fmri_preprocessing(img_input, slice_params, field_params, outlier_params, pathSPM)
-
 % This function performs slice time correction, fieldmap undistortion and
 % motion correction in the SPM12 framework which can be applied to a
 % session consisting of multiple runs. Slice time correction and fieldmap 

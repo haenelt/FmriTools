@@ -1,5 +1,4 @@
 function baseline_correction(input, TR, cutoff_highpass, pathSPM, prefix)
-
 % This function computes a baseline correction of a functional time series.
 % The output time series gets a prefix b to the file name.
 % Inputs:

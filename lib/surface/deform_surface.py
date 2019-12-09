@@ -14,7 +14,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 08-12-2019
+    Last modified: 09-12-2019
     """
     import os
     import subprocess
@@ -25,7 +25,6 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     from nibabel.affines import apply_affine
     from nipype.interfaces.freesurfer import SampleToSurface
     from nipype.interfaces.freesurfer import SmoothTessellation
-    from lib.cmap import remove_edge_cmap
 
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
@@ -51,10 +50,6 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     # copy orig,cmap and input surface to mimicked freesurfer folders
     sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
     sh.copyfile(input_orig, os.path.join(path_mri,"orig.mgz"))
-    sh.copyfile(input_deform, os.path.join(path_mri,"cmap.nii.gz"))
-
-    # remove edges from cmap
-    remove_edge_cmap(os.path.join(path_mri,"cmap.nii.gz"), path_mri, "cmap", 5, 5)
 
     # read surface geometry
     vtx, fac = read_geometry(input_surf)
@@ -65,7 +60,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     vox2ras_tkr = np.array(num_transformation)
     
     # divide coordinate mapping into its x, y and z components
-    cmap_img = nb.load(os.path.join(path_mri,"cmap_edge.nii.gz"))
+    cmap_img = nb.load(input_deform)
     cmap_img.header["dim"][0] = 3
     cmap_img.header["dim"][4] = 1
 
@@ -150,10 +145,11 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     # remove singularities (vertices without faces)
     fac_counter = 0
     c_step = 0
+    fac_old = fac_new.copy()
     n_singularity = np.zeros(len(vtx_new))
     for i in range(len(vtx_new)):
-        row, col = np.where(fac_new == i)
-
+        row, col = np.where(fac_old == i)
+     
         n_singularity[i] = len(row)
         if not n_singularity[i]:    
             fac_temp = fac_new.copy()
@@ -161,20 +157,20 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
             fac_temp[fac_temp != -1] = 0
             fac_new += fac_temp
             fac_counter -= 1
-    
+     
         # update face counter
         fac_counter += 1
-    
+     
         # print status
         counter = np.floor(i / len(vtx_new) * 100).astype(int)
         if counter == n_step[c_step]:
             print("clean vertices: "+str(counter)+" %")
             c_step += 1
-    
+     
     # vertices and indices without singularities
     vtx_new = vtx_new[n_singularity != 0]
     ind_keep = ind_keep[n_singularity != 0]
-
+ 
     # write new surface
     write_geometry(os.path.join(path_surf,hemi+".transformed"), vtx_new, fac_new)
 

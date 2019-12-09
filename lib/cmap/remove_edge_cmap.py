@@ -1,4 +1,4 @@
-def remove_edge_cmap(input_cmap, path_output, basename_output, edge_threshold=5, min_threshold=5):
+def remove_edge_cmap(input_cmap, edge_threshold=5, min_threshold=5):
     """
     This function removes smeared edges from a coordinate mapping. Depending on the interpolation
     method, coordinate mapping slabs within a larger volume can have blurred edges where voxels are
@@ -9,18 +9,17 @@ def remove_edge_cmap(input_cmap, path_output, basename_output, edge_threshold=5,
     edge_threshold or if its cmap value is below min_threshold in all dimensions.
     Inputs:
         *input_cmap: filename of 4d coordinate mapping.
-        *path_output: path where output is saved.
-        *basename_output: basename of output file.
         *edge_threshold: maximum difference to neighbouring voxel (in voxel units).
         *min_threshold: minimum cmap value in all dimensions (in voxel units).
     
     created by Daniel Haenelt
     Date created: 26-10-2019
-    Last modified: 27-10-2019
+    Last modified: 09-12-2019
     """
     import os
     import numpy as np
     import nibabel as nb
+    from lib.utils import get_filename
 
     # load input
     cmap = nb.load(input_cmap)
@@ -116,7 +115,7 @@ def remove_edge_cmap(input_cmap, path_output, basename_output, edge_threshold=5,
         # print status
         counter = np.floor(c_vox / n_vox * 100).astype(int)
         if counter == n_step[c_step]:
-            print(basename_output+": "+str(counter)+" %")
+            print("cmap edge removal: "+str(counter)+" %")
             c_step += 1
         
         # counter loop cycles
@@ -154,9 +153,7 @@ def remove_edge_cmap(input_cmap, path_output, basename_output, edge_threshold=5,
     cmap_array[:,:,:,1] = cmap_array[:,:,:,1] * min_array
     cmap_array[:,:,:,2] = cmap_array[:,:,:,2] * min_array
 
-    # write output  
+    # write output
+    path_output, basename_output, ext_output = get_filename(input_cmap)    
     output = nb.Nifti1Image(cmap_array, cmap.affine, cmap.header)
-    if os.path.splitext(input_cmap)[1] == ".gz":
-        nb.save(output,os.path.join(path_output,basename_output+"_edge.nii.gz"))
-    else:
-        nb.save(output,os.path.join(path_output,basename_output+"_edge.nii"))
+    nb.save(output,os.path.join(path_output,basename_output+"_edge"+ext_output))
