@@ -20,7 +20,7 @@ import numpy as np
 import nibabel as nb
 
 # input data
-img_input = ["/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI1/Run_1/udata.nii",
+img_input = ["/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/udata.nii",
              ]
 
 # path to SPM12 folder
