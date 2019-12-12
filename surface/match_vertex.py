@@ -33,7 +33,7 @@ input_pial_ind = ["/home/daniel/Schreibtisch/temp/lh.layer0_ind.txt",
 for i in range(len(input_white_surf)):
     
     # match vertex numbers
-    match_vertex_number(input_white_surf, 
-                        input_pial_surf, 
-                        input_white_ind, 
-                        input_pial_ind)
+    match_vertex_number(input_white_surf[i], 
+                        input_pial_surf[i], 
+                        input_white_ind[i], 
+                        input_pial_ind[i])

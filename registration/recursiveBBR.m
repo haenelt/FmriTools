@@ -16,21 +16,21 @@
 
 % input surfaces
 input_white = {
-    '/home/daniel/Schreibtisch/test/lh.layer10_def',...
-    '/home/daniel/Schreibtisch/test/rh.layer10_def',...
+    '/home/daniel/Schreibtisch/temp/lh.layer10_def_match',...
+    '/home/daniel/Schreibtisch/temp/rh.layer10_def_match',...
     };
 
 input_pial = {
-    '/home/daniel/Schreibtisch/test/lh.layer0_def',...
-    '/home/daniel/Schreibtisch/test/rh.layer0_def',...
+    '/home/daniel/Schreibtisch/temp/lh.layer0_def_match',...
+    '/home/daniel/Schreibtisch/temp/rh.layer0_def_match',...
     };
 
 % parameters
 subjects_dir = '/home/daniel/Schreibtisch';
-ref_vol = 'test/mean_data.nii';
+ref_vol = 'temo/mean_data.nii';
 mask = '';
-min_vox = 10;
-min_vtx = 500;
+min_vox = 50; % 10
+min_vtx = 2000; % 500
 cuboid = true;
 tetrahedra = false;
 nn_smooth = 0.5;
@@ -80,7 +80,7 @@ cfg.o_DisplacementMap = output_cmap;
 
 % surf2mat
 save_output = [cfg.i_SubjectDirectory fs cfg.i_Boundaries];
-[wSurface, pSurface, faceData] = surf2mat(input_white, input_pial, save_output);
+[wSurface, pSurface, faceData] = surf2mat(input_white, input_pial, pathFSURF, save_output);
 
 % registration
 tvm_recursiveBoundaryRegistration(cfg);
@@ -91,6 +91,6 @@ load([cfg.i_SubjectDirectory fs cfg.o_Boundaries]);
 % write surfaces
 hemi = {'lh','rh'};
 for i = 1:length(hemi)
-    write_surf([cfg.i_SubjectDirectory fs hemi{i} '.white_def'], wSurface{i}(:,1:3), faceData{i});
-    write_surf([cfg.i_SubjectDirectory fs hemi{i} '.pial_def'], pSurface{i}(:,1:3), faceData{i});
+    write_surf([cfg.i_SubjectDirectory fs hemi{i} '.white_def'], wSurface{i}(:,1:3), faceData{i} + 1);
+    write_surf([cfg.i_SubjectDirectory fs hemi{i} '.pial_def'], pSurface{i}(:,1:3), faceData{i} + 1);
 end
