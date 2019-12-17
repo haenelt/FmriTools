@@ -13,10 +13,10 @@ from lib.segmentation import upsample_surf_mesh
 from skimage import measure
 from nighres.laminar import volumetric_layering
 
-input_white = "/home/daniel/projects/GBB/test_data/lh.layer10_def"
-input_pial = "/home/daniel/projects/GBB/test_data/lh.layer0_def"
-input_vol = "/home/daniel/projects/GBB/test_data/mean_data.nii"
-path_output = "/home/daniel/Schreibtisch/test"
+input_white = "/home/raid2/haenelt/projects/GBB/test_data/lh.layer10_def"
+input_pial = "/home/raid2/haenelt/projects/GBB/test_data/lh.layer0_def"
+input_vol = "/home/raid2/haenelt/projects/GBB/test_data/mean_data.nii"
+path_output = "/data/pt_01880/bla"
 hemi = "lh"
 
 # parameters
@@ -43,7 +43,7 @@ upsample_volume(input_vol,
 # upsamples surface mesh
 upsample_surf_mesh(input_white, 
                    os.path.join(path_output,hemi+".white"),
-                   niter, 
+                   niter,
                    "linear")
 
 upsample_surf_mesh(input_pial, 
