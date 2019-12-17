@@ -80,16 +80,16 @@ from lib.segmentation.shift_white import shift_white
 from lib.segmentation.get_thickness import get_thickness
 from lib.segmentation.get_ribbon import get_ribbon
 from lib.segmentation.get_curvature import get_curvature
-from lib.mapping.morph2dense import morph2dense
-from lib.segmentation.smooth_surface import smooth_surface
 from lib.segmentation.include_pial_correction import include_pial_correction
 from lib.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
-from lib.segmentation.upsample_surf_mesh import upsample_surf_mesh
-from lib.segmentation.surface_flattening import surface_flattening
 from lib.segmentation.orthographic_projection import orthographic_projection
+from lib.surface.smooth_surface import smooth_surface
+from lib.surface.upsample_surf_mesh import upsample_surf_mesh
+from lib.surface.surface_flattening import surface_flattening
 from lib.skullstrip.skullstrip_spm12 import skullstrip_spm12
 from lib.utils.volume_threshold import volume_threshold
 from lib.utils.multiply_images import multiply_images
+from lib.mapping.morph2dense import morph2dense
 from lib.mapping.map2grid import map2grid
 
 # input data

@@ -1,3 +1,7 @@
 from .deform_surface import deform_surface
 from .remove_vertex_outliers import remove_vertex_outliers
 from .match_vertex_number import match_vertex_number
+from .smooth_surface import smooth_surface
+from .surface_flattening import surface_flattening
+from .upsample_surf_mesh import upsample_surf_mesh
+from .inflate_surf_mesh import inflate_surf_mesh
