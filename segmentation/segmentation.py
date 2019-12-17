@@ -69,7 +69,7 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 18-07-2019
+Last modified: 17-12-2019
 """
 import os
 import datetime
@@ -255,15 +255,16 @@ elif part == 4:
     print("Upsample surface mesh")
     orig_params = []
     dense_params = []
+    file_surf = ["sphere", "white", "pial", "inflated"] # list of surfaces to subdivide
     for i in range(len(hemi)):
-        orig, dense = upsample_surf_mesh(path,
-                                         sub,
-                                         hemi[i],
-                                         niter_upsample,
-                                         method_upsample,
-                                         path_dense)
-        orig_params.extend(orig)
-        dense_params.extend(dense)
+        orig, dense = upsample_surf_mesh(os.path.join(path,sub,"surf",hemi+"."+file_surf[i]),
+                                         os.path.join(path_dense,hemi+"."+file_surf[i]), 
+                                         niter_upsample, 
+                                         method_upsample)
+        
+        if i == 0:
+            orig_params.extend(orig)
+            dense_params.extend(dense)
     
     # transform curv to dense surface
     print("Transform morphological files to dense")

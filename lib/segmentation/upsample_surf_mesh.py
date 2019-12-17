@@ -1,53 +1,42 @@
-def upsample_surf_mesh(path, sub, hemi, niter, method, path_output):
+def upsample_surf_mesh(file_in, file_out, niter, method):
     """
     The scripts takes generated FreeSurfer surfaces and upsamples them using Jon Polimeni's function 
     mris_mesh_subdivide. A textfile with additional information (number of vertices and average edge 
     length) is also saved in the same folder.
     Inputs:
-        *path: path to the freesurfer segmentation folder.
-        *sub: name of the freesurfer segmentation folder.
-        *hemi: hemisphere.
+        *file_in: filename of input surface.
+        *file_out: filename of output surface.
         *niter: number of upsampling iterations.
         *method: upsampling method (linear, loop, butterfly).
-        *path_output: path where output is saved.
     Outputs:
         *orig_params: number of vertices and edge length of original surface.
         *dense_params: number of vertices and edge length of dense surface.
 
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 13-07-2019
+    Last modified: 17-12-2019
     """
     import os
     import numpy as np
     from nibabel.freesurfer.io import read_geometry
     from cortex.polyutils import Surface
-  
-    # parameters
-    surfs = ["sphere", "white", "pial", "inflated"] # list of surfaces to subdivide
 
     # make output folder
+    path_output = os.dirname(file_out)
     if not os.path.exists(path_output):
-        os.mkdir(path_output)
-
-    # get filenames for both hemispheres
-    filename = [hemi + "." + surfs for surfs in surfs]
+        os.makedirs(path_output)
 
     # subdivide the surfaces
-    for i in range(len(filename)):
-        os.system("mris_mesh_subdivide" + \
-                  " --surf " + os.path.join(path,sub,"surf",filename[i]) + \
-                  " --out " + os.path.join(path_output,filename[i]) + \
-                  " --method " + method + \
-                  " --iter " + str(niter))
-
-    # write information of the upsampled mesh to textfile
-    type = "white" # choose white surface
+    os.system("mris_mesh_subdivide" + \
+              " --surf " + file_in + \
+              " --out " + file_out + \
+              " --method " + method + \
+              " --iter " + str(niter))
 
     orig_params = []
     dense_params = []
-    pts, polys = read_geometry(os.path.join(path,sub,"surf",hemi+"."+type))
-    pts_dense, polys_dense = read_geometry(os.path.join(path_output,hemi+"."+type))
+    pts, polys = read_geometry(file_in)
+    pts_dense, polys_dense = read_geometry(file_out)
 
     # save output parameters (number of vertices and average edge length)
     orig_params.append([np.size(pts[:,0]),

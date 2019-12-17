@@ -16,3 +16,4 @@ from .get_bandpass_filter import get_bandpass_filter
 from .upsample_time_series import upsample_time_series
 from .average_layer import average_layer
 from .check_trigger import check_trigger
+from .upsample_volume import upsample_volume
