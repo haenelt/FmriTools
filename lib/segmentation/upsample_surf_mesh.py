@@ -22,7 +22,7 @@ def upsample_surf_mesh(file_in, file_out, niter, method):
     from cortex.polyutils import Surface
 
     # make output folder
-    path_output = os.dirname(file_out)
+    path_output = os.path.dirname(file_out)
     if not os.path.exists(path_output):
         os.makedirs(path_output)
 
