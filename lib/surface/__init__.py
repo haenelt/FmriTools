@@ -8,3 +8,4 @@ from .inflate_surf_mesh import inflate_surf_mesh
 from .get_curvature import get_curvature
 from .vox2ras import vox2ras
 from .make_mesh import make_mesh
+from .mesh_sampling import mesh_sampling
