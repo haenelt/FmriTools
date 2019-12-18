@@ -5,3 +5,5 @@ from .smooth_surface import smooth_surface
 from .surface_flattening import surface_flattening
 from .upsample_surf_mesh import upsample_surf_mesh
 from .inflate_surf_mesh import inflate_surf_mesh
+from .get_curvature import get_curvature
+from .vox2ras import vox2ras

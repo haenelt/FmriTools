@@ -19,13 +19,12 @@ Date created: 12-12-2019
 Last modified: 12-12-2019  
 """
 import os
-import subprocess
-import numpy as np
 import shutil as sh
 from os.path import join, exists
 from scipy.io import loadmat, savemat
 from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import write_geometry
+from lib.surface.vox2ras import vox2ras
 
 # input surface
 lh_white = "/data/pt_01880/rBBR_test/lh.layer10_def_match"
@@ -89,10 +88,7 @@ out_surf_mat_vox = join(subjects_dir, output_surf_vox)
 input_cfg = join(path_input,"cfg.mat")
 
 # get affine vox2ras-tkr and ras2vox-tkr transformation to reference volume
-transformation = subprocess.check_output(['mri_info', ref_vol, '--{}'.format("ras2vox-tkr")]).decode()
-num_transformation = [[float(x) for x in line.split()] for line in transformation.split('\n') if len(line)>0]
-ras2vox_tkr = np.array(num_transformation)
-vox2ras_tkr = np.linalg.inv(np.array(num_transformation))
+vox2ras_tkr, ras2vox_tkr = vox2ras(ref_vol)
 
 # surf2mat
 cwd = os.getcwd()

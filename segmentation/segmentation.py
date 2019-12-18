@@ -79,10 +79,10 @@ from lib.segmentation.bias_field_correction import bias_field_correction
 from lib.segmentation.shift_white import shift_white
 from lib.segmentation.get_thickness import get_thickness
 from lib.segmentation.get_ribbon import get_ribbon
-from lib.segmentation.get_curvature import get_curvature
 from lib.segmentation.include_pial_correction import include_pial_correction
 from lib.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from lib.segmentation.orthographic_projection import orthographic_projection
+from lib.surface.get_curvature import get_curvature
 from lib.surface.smooth_surface import smooth_surface
 from lib.surface.upsample_surf_mesh import upsample_surf_mesh
 from lib.surface.surface_flattening import surface_flattening
@@ -235,19 +235,37 @@ elif part == 3:
 
 elif part == 4:
 
+    # output folder (freesurfer trash folder)
+    path_trash = os.path.join(path,sub,"trash")
+    
+    # get date string for moved files
+    date = datetime.datetime.now().strftime("%Y%m%d%H%M")
+    
     # inward shift of final white surface
     print("Finalise white surface")
     shift_white(path,sub,w_shift)
     
     if niter_smooth != 0:
-        # smooth white and pial
         print("Smooth white and pial surface")
-        smooth_surface(path,sub,"white",niter_smooth)
-        smooth_surface(path,sub,"pial",niter_smooth)
+        for i in range(len(hemi)):
+            file_in = os.path.join(path,sub,"surf",hemi[i]+".white")
+            file_out = os.path.join(path_trash,hemi[i]+".white"+"_backup_"+date)
+            os.rename(file_in, file_out)
+            smooth_surface(file_out, file_in, niter_smooth)
+            
+            file_in = os.path.join(path,sub,"surf",hemi[i]+".pial")
+            file_out = os.path.join(path_trash,hemi[i]+".pial"+"_backup_"+date)
+            os.rename(file_in, file_out)
+            smooth_surface(file_out, file_in, niter_smooth)
     
     # generate new curvature, thickness and ribbon files
     print("Compute new morphological files")
-    get_curvature(path,sub)
+    for i in range(len(hemi)):
+        file_in = os.path.join(path,sub,"surf",hemi[i]+".curv")
+        file_out = os.path.join(path_trash,hemi[i]+".curv_backup_"+date)
+        os.rename(file_in, file_out)
+        get_curvature(os.path.join(path,sub,"surf",hemi[i]+".white"), os.path.join(path,sub,"surf"))
+    
     get_thickness(path,sub)
     get_ribbon(path,sub)
     

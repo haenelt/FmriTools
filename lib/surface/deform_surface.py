@@ -14,10 +14,9 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 09-12-2019
+    Last modified: 18-12-2019
     """
     import os
-    import subprocess
     import numpy as np
     import nibabel as nb
     import shutil as sh
@@ -25,6 +24,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     from nibabel.affines import apply_affine
     from nipype.interfaces.freesurfer import SampleToSurface
     from nipype.interfaces.freesurfer import SmoothTessellation
+    from lib.surface.vox2ras import vox2ras
 
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
@@ -55,9 +55,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     vtx, fac = read_geometry(input_surf)
 
     # get affine vox2ras-tkr transformation to target volume
-    transformation = subprocess.check_output(['mri_info', input_target, '--{}'.format("vox2ras-tkr")]).decode()
-    num_transformation = [[float(x) for x in line.split()] for line in transformation.split('\n') if len(line)>0]
-    vox2ras_tkr = np.array(num_transformation)
+    vox2ras_tkr, _ = vox2ras(input_target)
     
     # divide coordinate mapping into its x, y and z components
     cmap_img = nb.load(input_deform)

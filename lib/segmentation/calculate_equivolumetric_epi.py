@@ -1,5 +1,5 @@
-def calculate_equivolumetric_epi(input_white, input_pial, input_vol, r=[0.4,0.4,0.4], n_iter=2,
-                                 n_start, n_end, n_layers):
+def calculate_equivolumetric_epi(input_white, input_pial, input_vol, path_output, n_start, n_end, 
+                                 n_layers, r=[0.4,0.4,0.4], n_iter=2):
     """
     This function computes equivolumetric layers in volume space from input pial and white surfaces
     in freesurfer format. The input surfaces do not have to cover the whole brain. Number of 
@@ -9,18 +9,18 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, r=[0.4,0.4,
         *input_pial: filename of pial surface.
         *input_vol: filename of reference volume.
         *path_output: path where output is written.
-        *r: array of new voxel sizes for reference volume upsampling.
-        *n_iter: number of surface upsampling iterations.
         *n_start: number of slices (axis=2) to discard at the beginning of the upsampled volume.
         *n_end: number of slices (axis=2) to discard at the end of the upsampled volume.
         *n_layers: number of generated layers + 1.
+        *r: array of new voxel sizes for reference volume upsampling.
+        *n_iter: number of surface upsampling iterations.
     
     created by Daniel Haenelt
     Date created: 17-12-2019
     Last modified: 17-12-2019
     """
+    import sys
     import os
-    import subprocess
     import numpy as np
     import nibabel as nb
     from nibabel.affines import apply_affine
@@ -29,6 +29,7 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, r=[0.4,0.4,
     from nighres.surface import probability_to_levelset
     from nighres.laminar import volumetric_layering
     from lib.utils.upsample_volume import upsample_volume
+    from lib.surface.vox2ras import vox2ras
     from lib.surface.upsample_surf_mesh import upsample_surf_mesh
     
     # make output folder
@@ -36,9 +37,9 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, r=[0.4,0.4,
         os.makedirs(path_output)
     
     # get hemi from filename
-    hemi = os.path.basename(os.path.splitext(input_white)[0])
+    hemi = os.path.splitext(os.path.basename(input_white))[0]
     if not hemi == "lh" or hemi == "rh":
-        print("Could not identify hemi from filename!")
+        sys.exit("Could not identify hemi from filename!")
     
     # new filenames in output folder
     res_white = os.path.join(path_output,hemi+".white")
@@ -47,13 +48,11 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, r=[0.4,0.4,
     
     # upsample reference volume and input surface
     upsample_volume(input_vol, res_vol, dxyz=r, rmode="Cu")    
-    upsample_surf_mesh(input_white, res_white, niter, "linear")
-    upsample_surf_mesh(input_pial, res_pial, niter, "linear")
+    upsample_surf_mesh(input_white, res_white, n_iter, "linear")
+    upsample_surf_mesh(input_pial, res_pial, n_iter, "linear")
     
     # get affine ras2vox-tkr transformation to reference volume
-    transformation = subprocess.check_output(['mri_info', res_vol, '--{}'.format("ras2vox-tkr")]).decode()
-    num_transformation = [[float(x) for x in line.split()] for line in transformation.split('\n') if len(line)>0]
-    ras2vox_tkr = np.array(num_transformation)
+    _, ras2vox_tkr = vox2ras(res_vol)
     
     # load surface
     vtx_white, fac_white = read_geometry(res_white) 
