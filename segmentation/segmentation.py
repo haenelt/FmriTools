@@ -69,11 +69,13 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 17-12-2019
+Last modified: 18-12-2019
 """
 import os
 import datetime
 from nipype.interfaces.freesurfer import ApplyVolTransform
+from nibabel.freesurfer.io import read_geometry
+from cortex.polyutils import Surface
 from lib.segmentation.robust_combination import robust_combination
 from lib.segmentation.bias_field_correction import bias_field_correction
 from lib.segmentation.shift_white import shift_white
@@ -247,16 +249,13 @@ elif part == 4:
     
     if niter_smooth != 0:
         print("Smooth white and pial surface")
-        for i in range(len(hemi)):
-            file_in = os.path.join(path,sub,"surf",hemi[i]+".white")
-            file_out = os.path.join(path_trash,hemi[i]+".white"+"_backup_"+date)
-            os.rename(file_in, file_out)
-            smooth_surface(file_out, file_in, niter_smooth)
-            
-            file_in = os.path.join(path,sub,"surf",hemi[i]+".pial")
-            file_out = os.path.join(path_trash,hemi[i]+".pial"+"_backup_"+date)
-            os.rename(file_in, file_out)
-            smooth_surface(file_out, file_in, niter_smooth)
+        file_surf = ["white", "pial"]
+        for i in range(len(file_surf)):
+            for j in range(len(hemi)):
+                file_in = os.path.join(path,sub,"surf",hemi[j]+"."+file_surf[i])
+                file_out = os.path.join(path_trash,hemi[j]+"."+file_surf[i]+"_backup_"+date)
+                os.rename(file_in, file_out)
+                smooth_surface(file_out, file_in, niter_smooth)
     
     # generate new curvature, thickness and ribbon files
     print("Compute new morphological files")
@@ -274,16 +273,23 @@ elif part == 4:
     orig_params = []
     dense_params = []
     file_surf = ["sphere", "white", "pial", "inflated"] # list of surfaces to subdivide
-    for i in range(len(hemi)):
-        orig, dense = upsample_surf_mesh(os.path.join(path,sub,"surf",hemi+"."+file_surf[i]),
-                                         os.path.join(path_dense,hemi+"."+file_surf[i]), 
-                                         niter_upsample, 
-                                         method_upsample)
+    for i in range(len(file_surf)):
+        for j in range(len(hemi)):
+            file_in = os.path.join(path,sub,"surf",hemi[j]+"."+file_surf[i])
+            file_out = os.path.join(path_dense,hemi[j]+"."+file_surf[i])
+            upsample_surf_mesh(file_in,
+                               file_out, 
+                               niter_upsample, 
+                               method_upsample)
         
-        if i == 0:
-            orig_params.extend(orig)
-            dense_params.extend(dense)
-    
+            if i == 0:
+                vtx, fac = read_geometry(file_in)
+                vtx_dense, fac_dense = read_geometry(file_out)
+                orig = [len(vtx[:,0]), Surface(vtx,fac).avg_edge_length]
+                dense = [len(vtx_dense[:,0]), Surface(vtx_dense,fac_dense).avg_edge_length]
+                orig_params.extend(orig)
+                dense_params.extend(dense)
+            
     # transform curv to dense surface
     print("Transform morphological files to dense")
     for i in range(len(hemi)):
