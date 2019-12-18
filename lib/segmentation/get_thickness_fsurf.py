@@ -1,4 +1,4 @@
-def get_thickness(path, sub):
+def get_thickness_fsurf(path, sub):
     """
     This function calculates the cortical thickness using freesurfer. Old files are moved to the 
     freesurfer trash folder tagged with a date string as suffix.

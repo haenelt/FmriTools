@@ -1,14 +1,14 @@
-def mesh_sampling(surf_in, file_in, profile_in, path_output, layer, r=[0.4,0.4,0.4]):
+def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.4,0.4]):
     """
     This function samples data from an image volume to a surface mesh from specific layers defined 
     by a levelset image.
     Inputs:
         *surf_in: filename of input surface mesh.
         *file_in: filename of input volume from which data is sampled.
-        *profile_in: filename of 4D levelset image.
+        *boundaries_in: filename of 4D levelset image.
         *path_output: path where output is written.
         *layer: which layers to sample (array of integers).
-        *r: destination voxel size after upsampling.
+        *r: destination voxel size after upsampling (performed if not None).
     
     created by Daniel Haenelt
     Date created: 18-12-2019
@@ -16,6 +16,7 @@ def mesh_sampling(surf_in, file_in, profile_in, path_output, layer, r=[0.4,0.4,0
     """
     import sys
     import os
+    import shutil as sh
     import nibabel as nb
     from os.path import join, exists, basename, splitext
     from nighres.laminar import profile_sampling
@@ -32,7 +33,6 @@ def mesh_sampling(surf_in, file_in, profile_in, path_output, layer, r=[0.4,0.4,0
     _, hemi, name_surf = get_filename(surf_in)  
      
     name_surf = name_surf[1:]
-    name_upsampled = name_file+"_upsampled"
     name_profile = splitext(basename(file_in))[0]+"_profile"
     
     # check hemi
@@ -40,11 +40,17 @@ def mesh_sampling(surf_in, file_in, profile_in, path_output, layer, r=[0.4,0.4,0
         sys.exit("Could not identify hemi from filename!")
     
     # upsample volume
-    upsample_volume(file_in, join(path_output, name_upsampled+ext_file), r, "Cu")
+    if not r == None:
+        name_file = name_file+"_upsampled"
+        upsample_volume(file_in, join(path_output, name_file+ext_file), r, "Cu")
+    else:
+        if file_in != join(path_output, name_file+ext_file):
+            sh.copyfile(file_in, join(path_output, name_file+ext_file))
+        
     
     # get profile sampling
-    profile = profile_sampling(profile_in, 
-                               join(path_output, name_upsampled+ext_file),
+    profile = profile_sampling(boundaries_in, 
+                               join(path_output, name_file+ext_file),
                                save_data=True, 
                                overwrite=True,
                                output_dir=path_output,

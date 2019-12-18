@@ -15,7 +15,7 @@ def generate_coordinate_mapping(input, pad, path_output=None, suffix=None, time=
 
     created by Daniel Haenelt
     Date created: 21-11-2018             
-    Last modified: 12-11-2019
+    Last modified: 18-12-2019
     """
     import os
     import numpy as np
@@ -68,13 +68,13 @@ def generate_coordinate_mapping(input, pad, path_output=None, suffix=None, time=
 
     # write coordinate mapping for each time point   
     if t_size == 1:
-        fileOUT = os.path.join(path_output,'cmap_'+suffix+'.nii')
         if write_output:
+            fileOUT = os.path.join(path_output,'cmap_'+suffix+'.nii')
             nb.save(output,fileOUT)
     else:
         for i in range(t_size):
-            fileOUT = os.path.join(path_output,'cmap_'+suffix+'_'+str(i)+'.nii')
             if write_output:
+                fileOUT = os.path.join(path_output,'cmap_'+suffix+'_'+str(i)+'.nii')
                 nb.save(output,fileOUT)
     
     return output

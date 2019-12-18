@@ -79,8 +79,8 @@ from cortex.polyutils import Surface
 from lib.segmentation.robust_combination import robust_combination
 from lib.segmentation.bias_field_correction import bias_field_correction
 from lib.segmentation.shift_white import shift_white
-from lib.segmentation.get_thickness import get_thickness
-from lib.segmentation.get_ribbon import get_ribbon
+from lib.segmentation.get_thickness_fsurf import get_thickness_fsurf
+from lib.segmentation.get_ribbon_fsurf import get_ribbon_fsurf
 from lib.segmentation.include_pial_correction import include_pial_correction
 from lib.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from lib.segmentation.orthographic_projection import orthographic_projection
@@ -265,8 +265,8 @@ elif part == 4:
         os.rename(file_in, file_out)
         get_curvature(os.path.join(path,sub,"surf",hemi[i]+".white"), os.path.join(path,sub,"surf"))
     
-    get_thickness(path,sub)
-    get_ribbon(path,sub)
+    get_thickness_fsurf(path,sub)
+    get_ribbon_fsurf(path,sub)
     
     # upsample surface mesh
     print("Upsample surface mesh")

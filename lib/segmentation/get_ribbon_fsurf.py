@@ -1,4 +1,4 @@
-def get_ribbon(path, sub):
+def get_ribbon_fsurf(path, sub):
     """
     This function calculates the grey matter ribbon mask using a wrapped freesurfer function. Old 
     files are moved to the freesurfer trash folder tagged with a date string as suffix.

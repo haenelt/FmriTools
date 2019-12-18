@@ -5,8 +5,8 @@ from .calculate_distortion import calculate_distortion
 from .calculate_equivolumetric_epi import calculate_equivolumetric_epi
 from .calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from .calculate_equivolumetric_layer import calculate_equivolumetric_layer
-from .get_ribbon import get_ribbon
-from .get_thickness import get_thickness
+from .get_ribbon_fsurf import get_ribbon_fsurf
+from .get_thickness_fsurf import get_thickness_fsurf
 from .orthographic_projection import orthographic_projection
 from .robust_combination import robust_combination
 from .shift_white import shift_white
