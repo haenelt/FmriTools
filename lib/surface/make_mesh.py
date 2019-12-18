@@ -1,5 +1,5 @@
 def make_mesh(boundary_in, ref_in, file_out, nlayer, niter_smooth=2, niter_upsample=0, 
-              niter_inflate=15)
+              niter_inflate=15):
     """
     This function generates a surface mesh from a levelset image. The surface mesh is smoothed and a
     curvature file is generated. Vertices are in the vertex ras coordinate system. Optionally, the
