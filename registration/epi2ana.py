@@ -128,6 +128,8 @@ os.rename(os.path.join(path_output,"syn_ants-map.nii.gz"),
           os.path.join(path_output,"ana2epi.nii.gz"))
 os.rename(os.path.join(path_output,"syn_ants-invmap.nii.gz"),
           os.path.join(path_output,"epi2ana.nii.gz"))
+os.rename(os.path.join(path_output,"syn_ants-def.nii.gz"),
+          os.path.join(path_t1,"syn_ants-def.nii.gz"))
 
 """
 apply deformation
