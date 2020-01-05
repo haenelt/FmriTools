@@ -37,9 +37,6 @@ cleanup = True
 niter_mask = 3
 sigma_mask = 3
 
-# parameters for mask preparation
-mask_threshold = 1 # lower threshold for binarisation
-
 # parameters for syn 
 run_rigid = True
 rigid_iterations = 1000 
