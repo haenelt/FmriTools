@@ -16,7 +16,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 02-05-2019
-Last modified: 04-05-2019
+Last modified: 04-01-2020
 """
 import os
 import shutil as sh
