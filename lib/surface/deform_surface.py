@@ -1,5 +1,5 @@
 def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, path_output, 
-                   interpolation="nearest", smooth_iter=0, sort_faces=False, cleanup=True):
+                   smooth_iter=0, sort_faces=False, cleanup=True):
     """
     This function deforms a surface mesh in freesurfer convention using a coordinate map containing
     voxel coordinates. The computation takes quite a while because in the case of removed vertices,
@@ -11,9 +11,8 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         *input_target: target volume.
         *hemi: hemisphere.
         *path_output: path where to save output.
-        *interpolation: interpolation method for sampling the deformation field.
         *smooth_iter: number of smoothing iterations applied to final image (if set > 0).
-        *sort_faces: get new face array if vertices are removed during deformation.
+        *sort_faces: get new face array if vertices are cut off during deformation.
         *cleanup: remove intermediate files.
         
     created by Daniel Haenelt
@@ -56,6 +55,9 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     # get file extension of orig
     _, name_orig, ext_orig = get_filename(input_orig)
 
+    # name of surface file
+    name_surf = os.path.basename(input_surf)
+
     # copy orig, cmap and input surface to mimicked freesurfer folders
     sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
     if ext_orig != ".mgz":
@@ -96,7 +98,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         sampler.inputs.sampling_method = "point"
         sampler.inputs.sampling_range = 0
         sampler.inputs.sampling_units = "mm"
-        sampler.inputs.interp_method = interpolation
+        sampler.inputs.interp_method = "nearest" # or trilinear
         sampler.inputs.out_type = "mgh"
         sampler.inputs.out_file = os.path.join(path_surf,hemi+"."+components[i]+"_sampled.mgh")
         sampler.run()
@@ -106,6 +108,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     
     if sort_faces:
         
+        # get binary mask of slab
         background_array = np.ones(cmap_img.header["dim"][1:4])
         background_array[cmap_img.get_fdata()[:,:,:,0] == 0] = 0
         background_array[cmap_img.get_fdata()[:,:,:,1] == 0] = 0
@@ -133,24 +136,9 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         background_list = nb.load(os.path.join(path_surf,hemi+".background.mgh")).get_fdata()
         background_list = np.squeeze(background_list).astype(int)
         
+        # only keep vertex indices within the slab
         ind_keep = np.arange(0,len(vtx[:,0]))
         ind_keep[background_list == 0] = -1
-        
-        # remove edges
-        #x_max = np.max(nb.load(os.path.join(path_mri,components[0]+"_deform.nii")).get_fdata())
-        #x_min = np.min(nb.load(os.path.join(path_mri,components[0]+"_deform.nii")).get_fdata())
-        #y_max = np.max(nb.load(os.path.join(path_mri,components[1]+"_deform.nii")).get_fdata())
-        #y_min = np.min(nb.load(os.path.join(path_mri,components[1]+"_deform.nii")).get_fdata())
-        #z_max = np.max(nb.load(os.path.join(path_mri,components[2]+"_deform.nii")).get_fdata())
-        #z_min = np.min(nb.load(os.path.join(path_mri,components[2]+"_deform.nii")).get_fdata())
-        
-        #ind_keep[vtx_new[:,0] == x_max] = -1
-        #ind_keep[vtx_new[:,0] == x_min] = -1
-        #ind_keep[vtx_new[:,1] == y_max] = -1
-        #ind_keep[vtx_new[:,1] == y_min] = -1
-        #ind_keep[vtx_new[:,2] == z_max] = -1
-        #ind_keep[vtx_new[:,2] == z_min] = -1
-
         ind_keep = ind_keep[ind_keep != -1]
     
         # get new vertices
@@ -207,24 +195,21 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         ind_keep = ind_keep[n_singularity != 0]
         
         # save index mapping between original and transformed surface
-        np.savetxt(os.path.join(path_output,os.path.basename(input_surf)+"_ind.txt"), ind_keep, fmt='%d')
+        np.savetxt(os.path.join(path_output, name_surf+"_ind.txt"), ind_keep, fmt='%d')
     else:
         fac_new = fac
  
     # write new surface
-    write_geometry(os.path.join(path_surf,hemi+".transformed"), vtx_new, fac_new)
+    write_geometry(os.path.join(path_output, name_surf+"_def"), vtx_new, fac_new)
 
     # smooth surface
     if smooth_iter:
         smooth = SmoothTessellation()
-        smooth.inputs.in_file = os.path.join(path_surf,hemi+".transformed")
-        smooth.inputs.out_file = os.path.join(path_output,os.path.basename(input_surf)+"_def")
+        smooth.inputs.in_file = os.path.join(path_output, name_surf+"_def")
+        smooth.inputs.out_file = os.path.join(path_output, name_surf+"_def_smooth")
         smooth.inputs.smoothing_iterations = smooth_iter
         smooth.inputs.disable_estimates = True
         smooth.run()
-    else:
-        os.rename(os.path.join(path_surf,hemi+".transformed"),
-                   os.path.join(path_output,os.path.basename(input_surf)+"_def"))
 
     # delete intermediate files
     if cleanup:
