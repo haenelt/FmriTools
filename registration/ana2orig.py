@@ -46,10 +46,10 @@ sh.copyfile(file_t1, os.path.join(path_temp,"T1"+ext_t1))
 convert to nifti
 """
 if ext_orig != ".nii":
-    mgh2nii(os.path.join(path_temp, out_type="nii", "orig"+ext_orig), path_temp)
+    mgh2nii(os.path.join(path_temp, "orig"+ext_orig), path_temp, out_type="nii")
 
 if ext_t1 != ".nii":
-    mgh2nii(os.path.join(path_temp, out_type="nii", "T1"+ext_t1), path_temp)
+    mgh2nii(os.path.join(path_temp, "T1"+ext_t1), path_temp, out_type="nii")
 
 """
 scanner transformation

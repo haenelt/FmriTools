@@ -59,7 +59,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     # copy orig, cmap and input surface to mimicked freesurfer folders
     sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
     if ext_orig != ".mgz":
-        mgh2nii(input_orig, "mgz", path_mri)
+        mgh2nii(input_orig, path_mri, "mgz")
         os.rename(os.path.join(path_mri,name_orig+".mgz"),os.path.join(path_mri,"orig.mgz"))
     else:
         sh.copyfile(input_orig, os.path.join(path_mri,"orig.mgz"))

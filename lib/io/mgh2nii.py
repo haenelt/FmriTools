@@ -1,10 +1,10 @@
-def mgh2nii(filename, out_type="nii", path_output):
+def mgh2nii(filename, path_output, out_type="nii"):
     """
     This function converts a volume file from freesurfer mgh to nifti format.
     Inputs:
         *filename: full path of the input file.
-        *out_type: target type of file.
         *path_outupt: path where output is written.
+        *out_type: target type of file.
     
     created by Daniel Haenelt
     Date created: 06-01-2020             

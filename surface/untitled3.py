@@ -59,12 +59,12 @@ deform_surface(input_surf,
 
 #%%
 
-deform_surface("/data/pt_01880/odc_temp/lh.layer10_def", 
+deform_surface("/data/pt_01880/odc_temp/lh.layer10_def",
                input_ana,
                input_deform2, 
                input_target,
                hemi,
-               path_output, 
+               path_output,
                "nearest",
                0,
                True,
