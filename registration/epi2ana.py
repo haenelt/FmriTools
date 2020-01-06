@@ -16,7 +16,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 02-05-2019
-Last modified: 04-01-2020
+Last modified: 06-01-2020
 """
 import os
 import shutil as sh
@@ -57,6 +57,7 @@ set folder structure
 path_temp = os.path.join(path_output,"temp")
 path_epi = os.path.join(path_temp,"epi")
 path_t1 = os.path.join(path_temp,"t1")
+path_syn = os.path.join(path_temp,"syn")
 
 if not os.path.exists(path_output):
     os.makedirs(path_output)
@@ -69,6 +70,9 @@ if not os.path.exists(path_epi):
 
 if not os.path.exists(path_t1):
     os.makedirs(path_t1)
+
+if not os.path.exists(path_syn):
+    os.makedirs(path_syn)
 
 # copy input files
 sh.copyfile(file_mean_epi, os.path.join(path_epi,"epi.nii"))
@@ -119,17 +123,15 @@ embedded_antsreg(os.path.join(path_t1,"pT1.nii"), # source image
                  ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
                  save_data = True, # save output data to file
                  overwrite = True, # overwrite existing results 
-                 output_dir = path_output, # output directory
+                 output_dir = path_syn, # output directory
                  file_name = "syn", # output basename
                  )
 
 # rename final deformations
-os.rename(os.path.join(path_output,"syn_ants-map.nii.gz"),
+os.rename(os.path.join(path_syn,"syn_ants-map.nii.gz"),
           os.path.join(path_output,"ana2epi.nii.gz"))
-os.rename(os.path.join(path_output,"syn_ants-invmap.nii.gz"),
+os.rename(os.path.join(path_syn,"syn_ants-invmap.nii.gz"),
           os.path.join(path_output,"epi2ana.nii.gz"))
-os.rename(os.path.join(path_output,"syn_ants-def.nii.gz"),
-          os.path.join(path_t1,"syn_ants-def.nii.gz"))
 
 """
 apply deformation
