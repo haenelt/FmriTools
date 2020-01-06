@@ -1,4 +1,4 @@
-def mgh2nii(filename, out_type, path_output):
+def mgh2nii(filename, out_type="nii", path_output):
     """
     This function converts a volume file from freesurfer mgh to nifti format.
     Inputs:
@@ -20,7 +20,7 @@ def mgh2nii(filename, out_type, path_output):
     # convert volume to nifti format
     mc = MRIConvert()
     mc.inputs.in_file = filename
-    mc.inputs.out_file = os.path.join(path_output,name+".nii")
+    mc.inputs.out_file = os.path.join(path_output,name+"."+out_type)
     mc.inputs.in_type = ext[1:]
     mc.inputs.out_type = out_type
     mc.run()

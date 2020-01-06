@@ -15,9 +15,7 @@ from os.path import join, basename, splitext
 from lib.io import get_filename
 from lib.cmap import remove_edge_cmap
 from lib.surface import deform_surface, remove_vertex_outliers
-
 from lib.io.get_filename import get_filename
-from lib.io.mgh2nii import mgh2nii
 from lib.registration.get_scanner_transform import get_scanner_transform
 
 # input files
@@ -33,18 +31,19 @@ apply_header = True
 remove_edge = False
 remove_outliers = False
 
+# to do
+# probably trilinear interpolation only makes it nasty (do not do this)
+# delete edges?
+# get right output names
+# deformation as iterations with all parameters as arrays
+# write unsmoothed surface separately
+
 """ do not edit below """
 
-# get folder structure
-# copy files
-# get scanner cmap
-# apply first deformation
-# apply second deformation
-# get rid of point (remove_vertex_outliers?)
-
-   
 # get hemisphere from input surface file name
 hemi = splitext(basename(input_surf))[0]
+
+#%%
 
 # deform surface
 deform_surface(input_surf, 
@@ -60,13 +59,13 @@ deform_surface(input_surf,
 
 #%%
 
-deform_surface("/data/pt_01880/odc_temp/lh.layer10_def2", 
+deform_surface("/data/pt_01880/odc_temp/lh.layer10_def", 
                input_ana,
                input_deform2, 
                input_target,
                hemi,
                path_output, 
-               "trilinear",
+               "nearest",
                0,
                True,
-               True)
+               False)
