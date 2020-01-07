@@ -9,7 +9,7 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 07-02-2019
-Last modified: 06-01-2020
+Last modified: 07-01-2020
 """
 import os 
 from os.path import join, basename, splitext
@@ -24,14 +24,9 @@ input_deform1 = "/data/pt_01880/odc_temp/deformation/header/T1_2_orig_scanner.ni
 input_deform2 = "/data/pt_01880/odc_temp/deformation/ge_epi2/epi2ana.nii.gz" # epi2ana
 path_output = "/data/pt_01880/odc_temp/"
 
-# parameters
-smooth_iter = 10
-sort_faces = [False,True]
-clean_up = False
-
 """ do not edit below """
 
-for i in range(len(input_surf)):
+for i in range(len(input_surf)):    
     
     # orig -> ana
     deform_surface(input_surf[i], 
@@ -40,40 +35,31 @@ for i in range(len(input_surf)):
                    input_ana, 
                    splitext(basename(input_surf[i]))[0], 
                    path_output, 
-                   smooth_iter, 
-                   sort_faces[0],
-                   clean_up)
+                   smooth_iter=10, 
+                   sort_faces=False,
+                   cleanup=True)
 
     # rename output
     os.rename(join(path_output, basename(input_surf[i])+"_def"),
               join(path_output, basename(input_surf[i])+"_def1"))
+    os.rename(join(path_output, basename(input_surf[i])+"_def_smooth"),
+              join(path_output, basename(input_surf[i])+"_def1_smooth")) 
 
-    if smooth_iter:
-       os.rename(join(path_output, basename(input_surf[i])+"_def_smooth"),
-                 join(path_output, basename(input_surf[i])+"_def1_smooth")) 
-    
     # ana -> epi
-    if smooth_iter:
-        input_surf[i] = join(path_output, basename(input_surf[i])+"_def1_smooth")
-    else:
-        input_surf[i] = join(path_output, basename(input_surf[i])+"_def1")
-
-    deform_surface(input_surf[i],
+    deform_surface(join(path_output, basename(input_surf[i])+"_def1_smooth"),
                    input_ana,
                    input_deform2, 
                    input_epi,
                    splitext(basename(input_surf[i]))[0], 
                    path_output, 
-                   smooth_iter, 
-                   sort_faces[1],
-                   clean_up)
+                   smooth_iter=10, 
+                   sort_faces=True,
+                   cleanup=False)
 
     # rename output
-    if smooth_iter:
-        os.rename(join(path_output, basename(input_surf[i])+"_def1_smooth_def"),
-                  join(path_output, basename(input_surf[i])+"_def2"))
-        os.rename(join(path_output, basename(input_surf[i])+"_def1_smooth_def_smooth"),
-                  join(path_output, basename(input_surf[i])+"_def2_smooth")) 
-    else:
-        os.rename(join(path_output, basename(input_surf[i])+"_def1_def"),
-                  join(path_output, basename(input_surf[i])+"_def2"))
+    os.rename(join(path_output, basename(input_surf[i])+"_def1_smooth_def"),
+              join(path_output, basename(input_surf[i])+"_def2"))
+    os.rename(join(path_output, basename(input_surf[i])+"_def1_smooth_def_smooth"),
+              join(path_output, basename(input_surf[i])+"_def2_smooth"))
+    os.rename(join(path_output, basename(input_surf[i])+"_def1_smooth_ind.txt"),
+              join(path_output, basename(input_surf[i])+"_def2_ind"))
