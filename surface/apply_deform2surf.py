@@ -16,13 +16,16 @@ from os.path import join, basename, splitext
 from lib.surface import deform_surface
 
 # input files
-input_surf = ["/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer10"]
+input_surf = ["/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer0",
+              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer10",
+              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer0",
+              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/rh.layer10"]
 input_orig = "/data/pt_01880/Experiment1_ODC/p3/anatomy/freesurfer/mri/orig.mgz"
-input_ana = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S23_MP2RAGE_0p7_UNI_Images_2.45.nii"
+input_ana = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
 input_epi = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
-input_deform1 = "/data/pt_01880/odc_temp/deformation/header/T1_2_orig_scanner.nii" # ana2orig
+input_deform1 = "/data/pt_01880/odc_temp/deformation/header/T12orig.nii.gz" # ana2orig
 input_deform2 = "/data/pt_01880/odc_temp/deformation/ge_epi2/epi2ana.nii.gz" # epi2ana
-path_output = "/data/pt_01880/odc_temp/"
+path_output = "/data/pt_01880/odc_temp/surface/def"
 
 """ do not edit below """
 
@@ -37,7 +40,7 @@ for i in range(len(input_surf)):
                    path_output, 
                    smooth_iter=10, 
                    sort_faces=False,
-                   cleanup=True)
+                   cleanup=False)
 
     # rename output
     os.rename(join(path_output, basename(input_surf[i])+"_def"),
