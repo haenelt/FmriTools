@@ -1,4 +1,4 @@
-def get_scanner_transform(input_source, input_target, path_output):
+def get_scanner_transform(input_source, input_target, path_output, compress_file=False):
     """
     This function uses the scanner coordinates to create a coordinate map between two images in the 
     same scanner coordinate system. The orientation matrices written in the header of both files 
@@ -9,10 +9,11 @@ def get_scanner_transform(input_source, input_target, path_output):
         *input_source: absolute path of source file.
         *target_source: absolute path of target file.
         *path_output: path where output is saved.
+        *compress_file: gzip output.
 
     created by Daniel Haenelt
     Date created: 13-11-2018       
-    Last modified: 22-01-2019
+    Last modified: 08-01-2020
     """
     import os
     import numpy as np
@@ -76,6 +77,9 @@ def get_scanner_transform(input_source, input_target, path_output):
         name_target = os.path.splitext(os.path.splitext(os.path.basename(input_target))[0])[0]
     else:
         name_target = os.path.splitext(os.path.basename(input_target))[0]
-      
+    
     output = nb.Nifti1Image(coordinate_mapping, target_img.affine, target_img.header)
-    nb.save(output,os.path.join(path_output,name_source+"_2_"+name_target+"_scanner.nii"))
+    if compress_file == True:
+        nb.save(output,os.path.join(path_output,name_source+"_2_"+name_target+"_scanner.nii.gz"))
+    else:
+        nb.save(output,os.path.join(path_output,name_source+"_2_"+name_target+"_scanner.nii"))

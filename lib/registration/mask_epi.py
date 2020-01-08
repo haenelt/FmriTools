@@ -46,7 +46,7 @@ def mask_epi(epi, t1, mask, niter, sigma):
         name_epi = os.path.splitext(os.path.basename(epi))[0]
 
     # get scanner transform
-    get_scanner_transform(t1, epi, path_t1)
+    get_scanner_transform(t1, epi, path_t1, False)
 
     # scanner transform peeled t1 to epi
     apply_coordinate_mappings(t1, # input 

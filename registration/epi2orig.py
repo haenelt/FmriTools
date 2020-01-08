@@ -162,8 +162,8 @@ mc.run()
 """
 scanner transformation
 """
-get_scanner_transform(os.path.join(path_orig,"orig.nii"),os.path.join(path_t1,"T1.nii"),path_scanner)
-get_scanner_transform(os.path.join(path_t1,"T1.nii"),os.path.join(path_orig,"orig.nii"),path_scanner)
+get_scanner_transform(os.path.join(path_orig,"orig.nii"),os.path.join(path_t1,"T1.nii"),path_scanner, False)
+get_scanner_transform(os.path.join(path_t1,"T1.nii"),os.path.join(path_orig,"orig.nii"),path_scanner, False)
 
 """
 bias field correction to epi

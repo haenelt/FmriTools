@@ -14,6 +14,7 @@ import shutil as sh
 from lib.io.get_filename import get_filename
 from lib.io.mgh2nii import mgh2nii
 from lib.registration.get_scanner_transform import get_scanner_transform
+from nighres.registration import apply_coordinate_mappings
 
 # input data
 file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
@@ -54,16 +55,53 @@ if ext_t1 != ".nii":
 """
 scanner transformation
 """
-get_scanner_transform(os.path.join(path_temp,"orig.nii"),os.path.join(path_temp,"T1.nii"),path_temp)
-get_scanner_transform(os.path.join(path_temp,"T1.nii"),os.path.join(path_temp,"orig.nii"),path_temp)
+get_scanner_transform(os.path.join(path_temp,"orig.nii"),
+                      os.path.join(path_temp,"T1.nii"),
+                      path_temp,
+                      True)
+get_scanner_transform(os.path.join(path_temp,"T1.nii"),
+                      os.path.join(path_temp,"orig.nii"),
+                      path_temp,
+                      True)
 
 """
 get output
 """
-os.rename(os.path.join(path_temp,"orig_2_T1_scanner.nii"),
-          os.path.join(path_output,"orig_2_T1_scanner.nii"))
-os.rename(os.path.join(path_temp,"T1_2_orig_scanner.nii"),
-          os.path.join(path_output,"T1_2_orig_scanner.nii"))
+os.rename(os.path.join(path_temp,"orig_2_T1_scanner.nii.gz"),
+          os.path.join(path_output,"orig2T1.nii.gz"))
+os.rename(os.path.join(path_temp,"T1_2_orig_scanner.nii.gz"),
+          os.path.join(path_output,"T12orig.nii.gz"))
+
+"""
+apply deformation
+"""
+# ana -> epi
+apply_coordinate_mappings(os.path.join(path_temp,"orig.nii"), # input 
+                          os.path.join(path_output,"orig2T1.nii.gz"), # cmap
+                          interpolation = "linear", # nearest or linear
+                          padding = "zero", # closest, zero or max
+                          save_data = True, # save output data to file (boolean)
+                          overwrite = True, # overwrite existing results (boolean)
+                          output_dir = path_output, # output directory
+                          file_name = "orig2T1_example" # base name with file extension for output
+                          )
+
+# epi -> ana
+apply_coordinate_mappings(os.path.join(path_temp,"T1.nii"), # input 
+                          os.path.join(path_output,"T12orig.nii.gz"), # cmap
+                          interpolation = "linear", # nearest or linear
+                          padding = "zero", # closest, zero or max
+                          save_data = True, # save output data to file (boolean)
+                          overwrite = True, # overwrite existing results (boolean)
+                          output_dir = path_output, # output directory
+                          file_name = "T12orig_example" # base name with file extension for output
+                          )
+
+# rename final deformation examples
+os.rename(os.path.join(path_output,"orig2T1_example_def-img.nii.gz"),
+          os.path.join(path_output,"orig2T1_example.nii.gz"))
+os.rename(os.path.join(path_output,"T12orig_example_def-img.nii.gz"),
+          os.path.join(path_output,"T12orig_example.nii.gz"))
 
 # clean intermediate files
 if cleanup:

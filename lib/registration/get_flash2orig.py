@@ -54,9 +54,9 @@ def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False)
     """
     scanner transformation
     """
-    get_scanner_transform(os.path.join(path_temp,"inv2.nii"), os.path.join(path_temp,"flash.nii"), path_temp)
-    get_scanner_transform(os.path.join(path_temp,"flash.nii"), os.path.join(path_temp,"inv2.nii"), path_temp)
-    get_scanner_transform(os.path.join(path_temp,"inv2.nii"), os.path.join(path_temp,"orig.nii"), path_temp)
+    get_scanner_transform(os.path.join(path_temp,"inv2.nii"), os.path.join(path_temp,"flash.nii"), path_temp, False)
+    get_scanner_transform(os.path.join(path_temp,"flash.nii"), os.path.join(path_temp,"inv2.nii"), path_temp, False)
+    get_scanner_transform(os.path.join(path_temp,"inv2.nii"), os.path.join(path_temp,"orig.nii"), path_temp, False)
 
     """
     generate coordinate mapping
