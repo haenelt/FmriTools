@@ -28,6 +28,9 @@ input_pial_ind = ["/home/daniel/Schreibtisch/temp/lh.layer0_ind.txt",
                   "/home/daniel/Schreibtisch/temp/rh.layer0_ind.txt",
                   ]
 
+# output directory
+path_output = ""
+
 """ do not edit below """
 
 for i in range(len(input_white_surf)):
@@ -36,4 +39,5 @@ for i in range(len(input_white_surf)):
     match_vertex_number(input_white_surf[i], 
                         input_pial_surf[i], 
                         input_white_ind[i], 
-                        input_pial_ind[i])
+                        input_pial_ind[i],
+                        path_output)

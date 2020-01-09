@@ -1,4 +1,5 @@
-def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind, input_pial_ind):
+def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind, input_pial_ind, 
+                        path_output):
     """
     This function takes a white and a pial surface as input and matches the vertex numbers of both
     surfaces. Removed vertices (not found in the corresponding other surface) are removed and faces
@@ -8,14 +9,19 @@ def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind, inpu
         *input_pial_surf: filename of pial surface.
         *input_white_ind: corresponding index file of white surface.
         *input_pial_ind: corresponding index file of pial surface.
+        *path_output: path where output is written.
         
     created by Daniel Haenelt
     Date created: 10-12-2019
-    Last modified: 10-12-2019
+    Last modified: 09-01-2020
     """
     import os
     import numpy as np
     from nibabel.freesurfer.io import read_geometry, write_geometry
+
+    # make output folder
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
 
     # load geometry
     vtx_white, fac_white = read_geometry(input_white_surf)
@@ -97,6 +103,5 @@ def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind, inpu
     name_output = os.path.splitext(os.path.basename(input_white_ind))[0]
     np.savetxt(os.path.join(path_output,name_output+"_match.txt"), white_ind, fmt='%d')
 
-    path_output = os.path.dirname(input_pial_ind)
     name_output = os.path.splitext(os.path.basename(input_pial_ind))[0]
     np.savetxt(os.path.join(path_output,name_output+"_match.txt"), pial_ind, fmt='%d')
