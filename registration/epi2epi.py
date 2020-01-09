@@ -15,7 +15,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 19-08-2019
-Last modified: 05-01-2020
+Last modified: 09-01-2020
 """
 import os
 import shutil as sh
@@ -114,8 +114,8 @@ for i in range(len(path)):
 """
 syn
 """
-embedded_antsreg(os.path.join(path_epi_source,"pbepi.nii"), # source image
-                 os.path.join(path_epi_target,"pbepi.nii"), # target image 
+embedded_antsreg(os.path.join(path_epi_target,"pbepi.nii"), # source image
+                 os.path.join(path_epi_source,"pbepi.nii"), # target image 
                  run_rigid, # whether or not to run a rigid registration first 
                  rigid_iterations, # number of iterations in the rigid step
                  run_affine, # whether or not to run an affine registration first
@@ -137,9 +137,9 @@ embedded_antsreg(os.path.join(path_epi_source,"pbepi.nii"), # source image
 
 # rename final deformations
 os.rename(os.path.join(path_syn,"syn_ants-map.nii.gz"),
-          os.path.join(path_output,"source2target.nii.gz"))
-os.rename(os.path.join(path_syn,"syn_ants-invmap.nii.gz"),
           os.path.join(path_output,"target2source.nii.gz"))
+os.rename(os.path.join(path_syn,"syn_ants-invmap.nii.gz"),
+          os.path.join(path_output,"source2target.nii.gz"))
 
 """
 apply deformation
