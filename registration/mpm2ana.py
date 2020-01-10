@@ -7,21 +7,19 @@ between MPM and MP2RAGE T1-maps. The script consists of the following steps:
     2. scale PD-map (MPM)
     3. skullstrip MP2RAGE and MPM
     4. scale T1-map (MPM)
-    5. scanner transformation (MPM -> MP2RAGE)
-    6. rigid registration (MPM -> MP2RAGE)
+    5. scanner transformation (MPM <-> MP2RAGE)
+    6. rigid registration (MPM <-> MP2RAGE)
     7. merge both transformations
-    8. apply final transformation to MPM
+    8. apply final transformation to MPM and MP2RAGE
 
 created by Daniel Haenelt
 Date created: 31-01-2019
-Last modified: 04-05-2019
+Last modified: 10-01-2020
 """
 import os
 import numpy as np
 import nibabel as nb
-from nipype.interfaces.fsl import FLIRT
-from nipype.interfaces.fsl.preprocess import ApplyXFM
-from nighres.registration import apply_coordinate_mappings
+from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 from lib.registration.get_scanner_transform import get_scanner_transform
 from lib.skullstrip.skullstrip_spm12 import skullstrip_spm12
 
@@ -36,7 +34,18 @@ path_output = "/home/daniel/Schreibtisch"
 
 # set environments
 pathSPM12 = "/home/daniel/source/spm12"
-pathFSL = "/usr/share/fsl/5.0/bin"
+
+# parameters for syn 
+run_rigid = True
+rigid_iterations = 1000 
+run_affine = False 
+affine_iterations = 1000 
+run_syn = False
+coarse_iterations = 50 
+medium_iterations = 150 
+fine_iterations = 100 
+cost_function = 'CrossCorrelation' 
+interpolation = 'Linear'
 
 """ do not edit below """
 
@@ -122,6 +131,12 @@ get_scanner_transform(os.path.join(path_mpm,"mpm_t1.nii"),
                       path_deformation, 
                       False)
 
+get_scanner_transform(os.path.join(path_mp2rage,"mp2rage_t1.nii"), 
+                      os.path.join(path_mpm,"mpm_t1.nii"),
+                      path_deformation, 
+                      False)
+
+
 # apply scanner transformation to MPM
 apply_coordinate_mappings(os.path.join(path_mpm,"mpm_t1.nii"), # input
                           os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_scanner.nii"), # first cmap
@@ -136,35 +151,58 @@ apply_coordinate_mappings(os.path.join(path_mpm,"mpm_t1.nii"), # input
                           file_name = "scanner" # base name with file extension for output
                           )
 
-# rigid registration (FLIRT)
-flirt = FLIRT()
-flirt.inputs.environ['PATH'] = pathFSL
-flirt.inputs.cost_func = "corratio"
-flirt.inputs.dof = 6
-flirt.inputs.interp = "trilinear" # trilinear, nearestneighbour, sinc or spline
-flirt.inputs.in_file = os.path.join(path_mpm,"scanner_def-img.nii.gz")
-flirt.inputs.reference = os.path.join(path_mp2rage,"mp2rage_t1.nii")
-flirt.inputs.output_type = "NIFTI_GZ"
-flirt.inputs.out_file = os.path.join(path_mpm,"rigid_def-img.nii.gz")
-flirt.inputs.out_matrix_file = os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_rigid.txt")
-flirt.run()
+# rigid registration (SYN)
+embedded_antsreg(os.path.join(path_mpm,"scanner_def-img.nii.gz"), # source image
+                 os.path.join(path_mp2rage,"mp2rage_t1.nii"), # target image 
+                 run_rigid, # whether or not to run a rigid registration first 
+                 rigid_iterations, # number of iterations in the rigid step
+                 run_affine, # whether or not to run an affine registration first
+                 affine_iterations, # number of iterations in the affine step
+                 run_syn, # whether or not to run a SyN registration
+                 coarse_iterations, # number of iterations at the coarse level
+                 medium_iterations, # number of iterations at the medium level
+                 fine_iterations, # number of iterations at the fine level
+                 cost_function, # CrossCorrelation or MutualInformation
+                 interpolation, # interpolation for registration result (NeareastNeighbor or Linear)
+                 convergence = 1e-6, # threshold for convergence (can make algorithm very slow)
+                 ignore_affine = False, # ignore the affine matrix information extracted from the image header 
+                 ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
+                 save_data = True, # save output data to file
+                 overwrite = True, # overwrite existing results 
+                 output_dir = path_deformation, # output directory
+                 file_name = "rigid", # output basename
+                 )
 
-# merge deformations (scanner transformation + rigid transformation)
-applyxfm = ApplyXFM()
-applyxfm.inputs.environ['PATH'] = pathFSL
-applyxfm.inputs.in_file = os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_scanner.nii")
-applyxfm.inputs.reference = os.path.join(path_mp2rage,"mp2rage_t1.nii")
-applyxfm.inputs.in_matrix_file = os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_rigid.txt")
-applyxfm.inputs.interp = "trilinear"
-applyxfm.inputs.padding_size = 0
-applyxfm.inputs.output_type = "NIFTI"
-applyxfm.inputs.out_file = os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_final.nii")
-applyxfm.inputs.apply_xfm = True
-applyxfm.run()  
+# merge coordinate mappings
+apply_coordinate_mappings(os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_scanner.nii"), # input 
+                          os.path.join(path_deformation,"rigid_ants-map.nii.gz"), # first cmap
+                          mapping2 = None, # second cmap
+                          mapping3 = None, # third cmap
+                          mapping4 = None, # fourth cmap
+                          interpolation = "linear", # nearest or linear
+                          padding = "zero", # closest, zero or max
+                          save_data = True, # save output data to file (boolean)
+                          overwrite = True, # overwrite existing results (boolean)
+                          output_dir = path_deformation, # output directory
+                          file_name = "final" # base name with file extension for output
+                          )
+
+apply_coordinate_mappings(os.path.join(path_deformation,"rigid_ants-invmap.nii.gz"), # input
+                          os.path.join(path_deformation,"mp2rage_t1_2_mpm_t1_scanner.nii"), # first cmap
+                          mapping2 = None, # second cmap
+                          mapping3 = None, # third cmap
+                          mapping4 = None, # fourth cmap
+                          interpolation = "linear", # nearest or linear
+                          padding = "zero", # closest, zero or max
+                          save_data = True, # save output data to file (boolean)
+                          overwrite = True, # overwrite existing results (boolean)
+                          output_dir = path_deformation, # output directory
+                          file_name = "final_inv" # base name with file extension for output
+                          )
 
 # apply final deformation to MPM
 apply_coordinate_mappings(file_mpm_r1, # input 
-                          os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_final.nii"), # first cmap
+                          os.path.join(path_deformation,"final_def-img.nii.gz"), # first cmap
                           mapping2 = None, # second cmap
                           mapping3 = None, # third cmap
                           mapping4 = None, # fourth cmap
@@ -174,4 +212,17 @@ apply_coordinate_mappings(file_mpm_r1, # input
                           overwrite = True, # overwrite existing results (boolean)
                           output_dir = path_res, # output directory
                           file_name = "mpm_t1_2_mp2rage_t1_example.nii" # base name with file extension for output
+                          )
+
+apply_coordinate_mappings(file_mp2rage_t1, # input 
+                          os.path.join(path_deformation,"final_inv_def-img.nii.gz"), # first cmap
+                          mapping2 = None, # second cmap
+                          mapping3 = None, # third cmap
+                          mapping4 = None, # fourth cmap
+                          interpolation = "linear", # nearest or linear
+                          padding = "zero", # closest, zero or max
+                          save_data = True, # save output data to file (boolean)
+                          overwrite = True, # overwrite existing results (boolean)
+                          output_dir = path_res, # output directory
+                          file_name = "mp2rage_t1_2_mpm_t1_example.nii" # base name with file extension for output
                           )

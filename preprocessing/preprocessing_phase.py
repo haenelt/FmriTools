@@ -28,8 +28,8 @@ from lib.utils import get_mean, get_std
 from lib.preprocessing import plot_moco
 
 # input data
-input_magn = "/data/pt_01880/test/data.nii"
-input_phase = "/data/pt_01880/test/data_phase.nii"
+input_magn = "/data/pt_01880/odc_temp/resting_state/data.nii"
+input_phase = "/data/pt_01880/odc_temp/resting_state/data_phase.nii"
 
 # parameters
 phase_max = 0.25
@@ -68,7 +68,7 @@ magn_img = nb.load(input_magn)
 phase_img = nb.load(input_phase)
 
 # change header information
-magn_img.header["datatype"] = 64
+magn_img.header["datatype"] = 32
 phase_img.header["dim"][0] = 3
 phase_img.header["dim"][4] = 1
 
