@@ -91,17 +91,14 @@ def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind, inpu
     pial_ind = pial_ind[c_pial == 0]
 
     # write output
-    path_output = os.path.dirname(input_white_surf)
     name_output = os.path.basename(input_white_surf)
-    write_geometry(os.path.join(path_output,name_output+"_match"),vtx_white,fac_new)
+    write_geometry(os.path.join(path_output, name_output+"_match"),vtx_white,fac_new)
 
-    path_output = os.path.dirname(input_pial_surf)
     name_output = os.path.basename(input_pial_surf)
-    write_geometry(os.path.join(path_output,name_output+"_match"),vtx_pial,fac_new)
+    write_geometry(os.path.join(path_output, name_output+"_match"),vtx_pial,fac_new)
     
-    path_output = os.path.dirname(input_white_ind)
-    name_output = os.path.splitext(os.path.basename(input_white_ind))[0]
-    np.savetxt(os.path.join(path_output,name_output+"_match.txt"), white_ind, fmt='%d')
+    name_output = os.path.basename(input_white_ind)
+    np.savetxt(os.path.join(path_output, name_output+"_match.txt"), white_ind, fmt='%d')
 
-    name_output = os.path.splitext(os.path.basename(input_pial_ind))[0]
-    np.savetxt(os.path.join(path_output,name_output+"_match.txt"), pial_ind, fmt='%d')
+    name_output = os.path.basename(input_pial_ind)
+    np.savetxt(os.path.join(path_output, name_output+"_match.txt"), pial_ind, fmt='%d')

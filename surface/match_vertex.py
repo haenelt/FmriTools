@@ -12,24 +12,24 @@ Last modified: 10-12-2019
 from lib.surface import match_vertex_number
 
 # input files
-input_white_surf = ["/home/daniel/Schreibtisch/temp/lh.layer10_def",
-                    "/home/daniel/Schreibtisch/temp/rh.layer10_def",
-                    ]
-
-input_pial_surf = ["/home/daniel/Schreibtisch/temp/lh.layer0_def",
-                   "/home/daniel/Schreibtisch/temp/rh.layer0_def",
+input_white_surf = ["/data/pt_01880/odc_temp/surface/def/lh.layer10_def2_smooth",
+                   "/data/pt_01880/odc_temp/surface/def/rh.layer10_def2_smooth",
                    ]
 
-input_white_ind = ["/home/daniel/Schreibtisch/temp/lh.layer10_ind.txt",
-                   "/home/daniel/Schreibtisch/temp/rh.layer10_ind.txt",
+input_pial_surf = ["/data/pt_01880/odc_temp/surface/def/lh.layer0_def2_smooth",
+                   "/data/pt_01880/odc_temp/surface/def/rh.layer0_def2_smooth",
                    ]
 
-input_pial_ind = ["/home/daniel/Schreibtisch/temp/lh.layer0_ind.txt",
-                  "/home/daniel/Schreibtisch/temp/rh.layer0_ind.txt",
+input_white_ind = ["/data/pt_01880/odc_temp/surface/def/lh.layer10_def2_ind",
+                  "/data/pt_01880/odc_temp/surface/def/rh.layer10_def2_ind",
+                  ]
+
+input_pial_ind = ["/data/pt_01880/odc_temp/surface/def/lh.layer0_def2_ind",
+                  "/data/pt_01880/odc_temp/surface/def/rh.layer0_def2_ind",
                   ]
 
 # output directory
-path_output = ""
+path_output = "/data/pt_01880/odc_temp/surface/match"
 
 """ do not edit below """
 

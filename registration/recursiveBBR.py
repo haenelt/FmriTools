@@ -27,14 +27,14 @@ from nibabel.freesurfer.io import write_geometry
 from lib.surface.vox2ras import vox2ras
 
 # input surface
-lh_white = "/data/pt_01880/rBBR_test/lh.layer10_def_match"
-rh_white = "/data/pt_01880/rBBR_test/rh.layer10_def_match"
-lh_pial = "/data/pt_01880/rBBR_test/lh.layer0_def_match"
-rh_pial = "/data/pt_01880/rBBR_test/rh.layer0_def_match"
+lh_white = "/data/pt_01880/odc_temp/surface/match/lh.layer10_def2_smooth_match"
+rh_white = "/data/pt_01880/odc_temp/surface/match/rh.layer10_def2_smooth_match"
+lh_pial = "/data/pt_01880/odc_temp/surface/match/lh.layer0_def2_smooth_match"
+rh_pial = "/data/pt_01880/odc_temp/surface/match/rh.layer0_def2_smooth_match"
 
 # parameters
-subjects_dir = "/data/pt_01880/testtest" # absolute path to subject directory
-ref_vol = "/data/pt_01880/rBBR_test/mean_data.nii" # absolute path to reference volume
+subjects_dir = "/data/pt_01880/odc_temp/surface/rBBR" # absolute path to subject directory
+ref_vol = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/mean_data.nii" # absolute path to reference volume
 mask = "" # absolute path to mask volume
 min_vox = 10 
 min_vtx = 500
