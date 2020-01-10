@@ -68,7 +68,7 @@ magn_img = nb.load(input_magn)
 phase_img = nb.load(input_phase)
 
 # change header information
-magn_img.header["datatype"] = 32
+magn_img.header["datatype"] = 64
 phase_img.header["dim"][0] = 3
 phase_img.header["dim"][4] = 1
 
@@ -76,6 +76,7 @@ phase_img.header["dim"][4] = 1
 phase_array = phase_img.get_fdata()
 phase_array2 = np.zeros_like(phase_array)
 for i in range(np.shape(phase_array)[3]):
+    print("Unwrap volume "+str(i))
     temp_in = nb.Nifti1Image(phase_array[:,:,:,i], phase_img.affine, phase_img.header)
     temp_out = phase_unwrapping(temp_in, mask=None, nquadrants=3, tv_flattening=True, tv_scale=0.5,
                                 save_data=False, overwrite=False, output_dir=False, file_name=False)
@@ -92,7 +93,7 @@ apply motion correction to unwrapped phase time series
 """
 allineate = afni.Allineate()
 allineate.inputs.in_file = os.path.join(path_phase, name_phase+ext_phase)
-allineate.inputs.out_file= os.path.join(path_phase, "u"+name_phase+ext_phase)
+allineate.inputs.out_file = os.path.join(path_phase, "u"+name_phase+ext_phase)
 allineate.inputs.in_matrix= os.path.join(path_moco,'moco_matrix.1D')
 allineate.inputs.outputtype = 'NIFTI'
 allineate.inputs.final_interpolation = 'linear'
