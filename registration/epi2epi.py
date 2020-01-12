@@ -10,12 +10,14 @@ between different epi time series. The script consists of the following steps:
     5. antsreg
     6. apply deformations
 
+At the moment, we perform the antsreg on the unpeeled bias corrected source and target images.
+
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 19-08-2019
-Last modified: 09-01-2020
+Last modified: 12-01-2020
 """
 import os
 import shutil as sh
@@ -114,8 +116,8 @@ for i in range(len(path)):
 """
 syn
 """
-embedded_antsreg(os.path.join(path_epi_target,"pbepi.nii"), # source image
-                 os.path.join(path_epi_source,"pbepi.nii"), # target image 
+embedded_antsreg(os.path.join(path_epi_target,"bepi.nii"), # source image
+                 os.path.join(path_epi_source,"bepi.nii"), # target image 
                  run_rigid, # whether or not to run a rigid registration first 
                  rigid_iterations, # number of iterations in the rigid step
                  run_affine, # whether or not to run an affine registration first
