@@ -22,7 +22,7 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
         clean_unzip = 1
         file_in = os.path.splitext(file_in)[0]
 
-    # upsample vaso and bold time series
+    # upsample volume
     os.system("3dresample " + \
               "-dxyz " + str(dxyz[0]) + " " + str(dxyz[1]) + " " + str(dxyz[2]) + " " +\
               "-rmode " + str(rmode) + " " + \

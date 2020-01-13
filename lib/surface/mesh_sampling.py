@@ -68,7 +68,7 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
     
     # load profile
     data = profile["result"]
-    data.header["dim"][0] = 1        
+    data.header["dim"][0] = 3        
     data_array = data.get_fdata()
     
     # map single layers
