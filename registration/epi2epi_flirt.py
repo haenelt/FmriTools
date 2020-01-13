@@ -7,49 +7,42 @@ between different epi time series. The script consists of the following steps:
     2. n4 correction epi
     3. clean ana (remove ceiling and normalise)
     4. mask epi
-    5. antsreg
-    6. apply deformations
+    5. flirt
+    6. get deformation
+    7. apply deformations
 
-At the moment, we perform the antsreg on the unpeeled bias corrected source and target images.
+At the moment, we perform flirt on the unpeeled bias corrected source and target images.
 
-Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
-calling FREESURFER and ANTSENV in the terminal.
+Before running the script, login to queen via ssh and set the FSL environment by calling FSL in the 
+terminal.
 
 created by Daniel Haenelt
-Date created: 19-08-2019
-Last modified: 12-01-2020
+Date created: 13-01-2020
+Last modified: 13-01-2020
 """
 import os
 import shutil as sh
 from nipype.interfaces.ants import N4BiasFieldCorrection
-from nighres.registration import embedded_antsreg, apply_coordinate_mappings
+from nipype.interfaces.fsl import FLIRT
+from nipype.interfaces.fsl import ConvertXFM
+from nipype.interfaces.fsl.preprocess import ApplyXFM
+from nighres.registration import apply_coordinate_mappings
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
+from lib.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 
 # input data
-file_mean_epi_source = "/data/pt_01880/Experiment2_Rivalry/p3/localiser/diagnosis/mean_data.nii"
-file_mean_epi_target = "/data/pt_01880/Experiment2_Rivalry/p3/odc/GE_EPI1/diagnosis/mean_data.nii"
-file_t1 = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
-file_mask = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/brain.finalsurfs.manedit.mgz"
-path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/localiser"
-cleanup = True
+file_mean_epi_source = "/data/pt_01880/Experiment1_ODC/p3/odc/SE_EPI1/diagnosis/mean_data.nii"
+file_mean_epi_target = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
+file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
+file_mask = "/data/pt_01880/Experiment1_ODC/p3/anatomy/skull/skullstrip_mask.nii"
+path_output = "/data/pt_01880/odc_temp/deformation/test"
+cleanup = False
 
 # parameters for epi skullstrip
 niter_mask = 3
 sigma_mask = 3
-
-# parameters for syn 
-run_rigid = True
-rigid_iterations = 1000 
-run_affine = False 
-affine_iterations = 1000 
-run_syn = True 
-coarse_iterations = 50 
-medium_iterations = 150 
-fine_iterations = 100 
-cost_function = 'CrossCorrelation' 
-interpolation = 'Linear' 
 
 """ do not edit below """
 
@@ -60,7 +53,7 @@ path_temp = os.path.join(path_output,"temp")
 path_epi_source = os.path.join(path_temp,"epi_source")
 path_epi_target = os.path.join(path_temp,"epi_target")
 path_t1 = os.path.join(path_temp,"t1")
-path_syn = os.path.join(path_temp,"syn")
+path_flirt = os.path.join(path_temp,"flirt")
 
 if not os.path.exists(path_output):
     os.makedirs(path_output)
@@ -77,8 +70,8 @@ if not os.path.exists(path_epi_target):
 if not os.path.exists(path_t1):
     os.makedirs(path_t1)
 
-if not os.path.exists(path_syn):
-    os.makedirs(path_syn)
+if not os.path.exists(path_flirt):
+    os.makedirs(path_flirt)
 
 # copy input files
 sh.copyfile(file_mean_epi_source, os.path.join(path_epi_source,"epi.nii"))
@@ -114,34 +107,70 @@ for i in range(len(path)):
              niter_mask, sigma_mask)
 
 """
-syn
+flirt
 """
-embedded_antsreg(os.path.join(path_epi_target,"bepi.nii"), # source image
-                 os.path.join(path_epi_source,"bepi.nii"), # target image 
-                 run_rigid, # whether or not to run a rigid registration first 
-                 rigid_iterations, # number of iterations in the rigid step
-                 run_affine, # whether or not to run an affine registration first
-                 affine_iterations, # number of iterations in the affine step
-                 run_syn, # whether or not to run a SyN registration
-                 coarse_iterations, # number of iterations at the coarse level
-                 medium_iterations, # number of iterations at the medium level
-                 fine_iterations, # number of iterations at the fine level
-                 cost_function, # CrossCorrelation or MutualInformation
-                 interpolation, # interpolation for registration result (NeareastNeighbor or Linear)
-                 convergence = 1e-6, # threshold for convergence (can make algorithm very slow)
-                 ignore_affine = False, # ignore the affine matrix information extracted from the image header 
-                 ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
-                 save_data = True, # save output data to file
-                 overwrite = True, # overwrite existing results 
-                 output_dir = path_syn, # output directory
-                 file_name = "syn", # output basename
-                 )
+os.chdir(path_flirt)
+flirt = FLIRT()
+flirt.inputs.cost_func = "corratio"
+flirt.inputs.dof = 6
+flirt.inputs.interp = "trilinear" # trilinear, nearestneighbour, sinc or spline
+flirt.inputs.in_file = os.path.join(path_epi_target,"bepi.nii")
+flirt.inputs.reference = os.path.join(path_epi_source,"bepi.nii")
+flirt.inputs.output_type = "NIFTI"
+flirt.inputs.out_file = os.path.join(path_flirt, "flirt.nii")
+flirt.inputs.out_matrix_file = os.path.join(path_flirt,"flirt_matrix.mat")
+flirt.run()
 
-# rename final deformations
-os.rename(os.path.join(path_syn,"syn_ants-map.nii.gz"),
-          os.path.join(path_output,"target2source.nii.gz"))
-os.rename(os.path.join(path_syn,"syn_ants-invmap.nii.gz"),
-          os.path.join(path_output,"source2target.nii.gz"))
+"""
+invert matrix
+"""
+invt = ConvertXFM()
+invt.inputs.in_file = os.path.join(path_flirt, "flirt_matrix.mat")
+invt.inputs.invert_xfm = True
+invt.inputs.out_file = os.path.join(path_flirt, "flirt_inv_matrix.mat")
+invt.run()
+
+"""
+get cmap
+"""
+generate_coordinate_mapping(os.path.join(path_epi_target, "bepi.nii"), 
+                            pad = 0, 
+                            path_output = path_flirt, 
+                            suffix = "target", 
+                            time = False, 
+                            write_output = True)
+
+generate_coordinate_mapping(os.path.join(path_epi_source, "bepi.nii"), 
+                            pad = 0, 
+                            path_output = path_flirt, 
+                            suffix = "source", 
+                            time = False, 
+                            write_output = True)
+
+"""
+apply flirt to cmap
+"""
+applyxfm = ApplyXFM()
+applyxfm.inputs.in_file = os.path.join(path_flirt,"cmap_target.nii")
+applyxfm.inputs.reference = os.path.join(path_epi_source,"bepi.nii")
+applyxfm.inputs.in_matrix_file = os.path.join(path_flirt, "flirt_matrix.mat")
+applyxfm.inputs.interp = "trilinear"
+applyxfm.inputs.padding_size = 0
+applyxfm.inputs.output_type = "NIFTI_GZ"
+applyxfm.inputs.out_file = os.path.join(path_output, "target2source.nii.gz")
+applyxfm.inputs.apply_xfm = True
+applyxfm.run() 
+
+applyxfm = ApplyXFM()
+applyxfm.inputs.in_file = os.path.join(path_flirt,"cmap_source.nii")
+applyxfm.inputs.reference = os.path.join(path_epi_target,"bepi.nii")
+applyxfm.inputs.in_matrix_file = os.path.join(path_flirt, "flirt_inv_matrix.mat")
+applyxfm.inputs.interp = "trilinear"
+applyxfm.inputs.padding_size = 0
+applyxfm.inputs.output_type = "NIFTI_GZ"
+applyxfm.inputs.out_file = os.path.join(path_output, "source2target.nii.gz")
+applyxfm.inputs.apply_xfm = True
+applyxfm.run() 
 
 """
 apply deformation

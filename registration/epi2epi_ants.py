@@ -10,7 +10,7 @@ between different epi time series. The script consists of the following steps:
     5. antsreg
     6. apply deformations
 
-At the moment, we perform the antsreg on the unpeeled bias corrected source and target images.
+At the moment, we perform antsreg on the unpeeled bias corrected source and target images.
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
