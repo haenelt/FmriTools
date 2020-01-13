@@ -13,8 +13,8 @@ between different epi time series. The script consists of the following steps:
 
 At the moment, we perform flirt on the unpeeled bias corrected source and target images.
 
-Before running the script, login to queen via ssh and set the FSL environment by calling FSL in the 
-terminal.
+Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
+calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 13-01-2020
