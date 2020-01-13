@@ -1,4 +1,5 @@
-def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, input_ind=None, cleanup=True):
+def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, input_ind=None, 
+                cleanup=True):
     """
     This function samples data from the input volume to the input surface and optionally maps those
     values to a target surface if an index file is given.
@@ -6,14 +7,14 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, inpu
         *input_surf: surface mesh onto which volume data is sampled.
         *input_vol: volume from which data is sampled.
         *hemi: hemisphere.
+        *path_output: path where to save output.
         *input_white: white surface in target surface space (only necessary if index file is given).
         *input_ind: textfile with mapping of vertex indices to target space.
-        *path_output: path where to save output.
         *cleanup: remove intermediate files.
             
     created by Daniel Haenelt
     Date created: 06-02-2019      
-    Last modified: 06-03-2019
+    Last modified: 13-01-2020
     """
     import os
     import numpy as np

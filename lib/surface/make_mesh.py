@@ -16,7 +16,7 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, niter_smooth=2, niter_upsam
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 18-12-2019
+    Last modified: 13-01-2020
     """
     import os
     import nibabel as nb
@@ -29,6 +29,10 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, niter_smooth=2, niter_upsam
     from lib.surface.upsample_surf_mesh import upsample_surf_mesh
     from lib.surface.get_curvature import get_curvature
     from lib.surface import inflate_surf_mesh
+    
+    # make output folder
+    if not os.path.exists(os.path.dirname(file_out)):
+        os.makedirs(os.path.dirname(file_out))
     
     # get levelset boundary from single layer
     boundary = nb.load(boundary_in)

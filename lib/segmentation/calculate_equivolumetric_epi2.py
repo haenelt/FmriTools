@@ -1,5 +1,5 @@
-def calculate_equivolumetric_epi(input_white, input_pial, input_vol, path_output, n_start, n_end, 
-                                 n_layers, r=[0.4,0.4,0.4], n_iter=2):
+def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_output, n_layers, 
+                                  label_threshold=5, r=[0.4,0.4,0.4], n_iter=2):
     """
     This function computes equivolumetric layers in volume space from input pial and white surfaces
     in freesurfer format. The input surfaces do not have to cover the whole brain. Number of 
@@ -9,9 +9,8 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, path_output
         *input_pial: filename of pial surface.
         *input_vol: filename of reference volume.
         *path_output: path where output is written.
-        *n_start: number of slices (axis=2) to discard at the beginning of the upsampled volume.
-        *n_end: number of slices (axis=2) to discard at the end of the upsampled volume.
         *n_layers: number of generated layers + 1.
+        *label_threshold: threshold for label classes in binary filling.
         *r: array of new voxel sizes for reference volume upsampling.
         *n_iter: number of surface upsampling iterations.
     
@@ -31,6 +30,7 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, path_output
     from lib.utils.upsample_volume import upsample_volume
     from lib.surface.vox2ras import vox2ras
     from lib.surface.upsample_surf_mesh import upsample_surf_mesh
+    from scipy.ndimage.morphology import binary_fill_holes
     
     # make output folder
     if not os.path.exists(path_output):
@@ -67,92 +67,59 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, path_output
     
     # surfaces to lines in volume
     white_array = np.zeros(vol.header["dim"][1:4])
-    white_array[vtx_white[:,0],vtx_white[:,1],vtx_white[:,2]] = 1
-    white = nb.Nifti1Image(white_array, vol.affine, vol.header)   
+    white_array[vtx_white[:,0],vtx_white[:,1],vtx_white[:,2]] = 1   
+    white = nb.Nifti1Image(white_array, vol.affine, vol.header)
     
     pial_array = np.zeros(vol.header["dim"][1:4])
     pial_array[vtx_pial[:,0],vtx_pial[:,1],vtx_pial[:,2]] = 1
     pial = nb.Nifti1Image(pial_array, vol.affine, vol.header)
     
-    # lines to levelset
-    white_level = probability_to_levelset(white)
-    white_level_array = white_level["result"].get_fdata()
-    
-    pial_level = probability_to_levelset(pial)
-    pial_level_array = pial_level["result"].get_fdata()
-    
     """
     make wm
     """
-    white_label_array = np.zeros_like(white_level_array)
-    white_label_array[white_level_array > pial_level_array] = 1
-    white_label_array[white_label_array != 1] = 0
-    white_label_array -= 1
-    white_label_array = np.abs(white_label_array).astype(int)
+    white_label_array = np.zeros_like(white_array)
+    for i in range(np.shape(white_label_array)[2]):
+        white_label_array[:,:,i] = binary_fill_holes(white_array[:,:,i])
     white_label_array = white_label_array - white_array
-    white_label_array[white_label_array < 0] = 0
-    if n_start > 0:
-        white_label_array[:,:,:n_start] = 0
-    if n_end > 0:
-        white_label_array[:,:,-n_end:] = 0
     white_label_array = measure.label(white_label_array, connectivity=1)
-    white_label_array[white_label_array == 1] = 0
-    white_label_array[white_label_array > 0] = 1
+    white_label_array[white_label_array > label_threshold] = 0
+    white_label_array[white_label_array > 0] = 1    
     white_label = nb.Nifti1Image(white_label_array, vol.affine, vol.header)
         
     """
     make csf
     """
-    pial_label_array = np.zeros_like(pial_level_array)
-    pial_label_array[pial_level_array < white_level_array] = 1
-    pial_label_array[pial_label_array != 1] = 0
-    pial_label_array = np.abs(pial_label_array).astype(int)
+    pial_label_array = np.zeros_like(pial_array)
+    for i in range(np.shape(pial_label_array)[2]):
+        pial_label_array[:,:,i] = binary_fill_holes(pial_array[:,:,i])
     pial_label_array = pial_label_array - pial_array
-    pial_label_array[pial_label_array < 0] = 0
-    if n_start > 0:
-        pial_label_array[:,:,:n_start] = 0
-    if n_end > 0:
-        pial_label_array[:,:,-n_end:] = 0
     pial_label_array = measure.label(pial_label_array, connectivity=1)
-    pial_label_array[pial_label_array != 1] = 0
-    pial_label_array -= 1
-    pial_label_array = np.abs(pial_label_array)
-    pial_label_array[pial_array == 1] = 0
-    if n_start > 0:
-        pial_label_array[:,:,:n_start] = 0
-    if n_end > 0:
-        pial_label_array[:,:,-n_end:] = 0
+    pial_label_array[pial_label_array > label_threshold] = 0
+    pial_label_array[pial_label_array > 0] = 1    
     pial_label = nb.Nifti1Image(pial_label_array, vol.affine, vol.header)
-    
+       
     """
     make gm
     """
     ribbon_label_array = pial_label_array.copy()
-    ribbon_label_array -= 1
-    ribbon_label_array = np.abs(ribbon_label_array)
-    ribbon_label_array = ribbon_label_array + white_label_array
-    ribbon_label_array -= 1
-    ribbon_label_array = np.abs(ribbon_label_array).astype(int)
-    if n_start > 0:
-        ribbon_label_array[:,:,:n_start] = 0
-    if n_end > 0:
-        ribbon_label_array[:,:,-n_end:] = 0
+    ribbon_label_array = pial_label_array - white_label_array
+    ribbon_label_array[ribbon_label_array != 1] = 0
     ribbon_label = nb.Nifti1Image(ribbon_label_array, vol.affine, vol.header)
     
     """
     layers
     """
-    #csf_level = probability_to_levelset(pial_label)
-    #wm_level = probability_to_levelset(white_label)
+    csf_level = probability_to_levelset(pial_label)
+    wm_level = probability_to_levelset(white_label)
     
-    #volumetric_layering(wm_level["result"], 
-    #                    csf_level["result"], 
-    #                    n_layers=n_layers, 
-    #                    topology_lut_dir=None,
-    #                    save_data=True, 
-    #                    overwrite=True, 
-    #                    output_dir=path_output, 
-    #                    file_name="epi")
+    volumetric_layering(wm_level["result"], 
+                        csf_level["result"], 
+                        n_layers=n_layers, 
+                        topology_lut_dir=None,
+                        save_data=True, 
+                        overwrite=True, 
+                        output_dir=path_output, 
+                        file_name="epi")
     
     # write niftis
     nb.save(white, os.path.join(path_output,"wm_line.nii"))

@@ -1,7 +1,9 @@
-def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.4,0.4]):
+def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.4,0.4], 
+                  average_layer=False, write_profile=True):
     """
     This function samples data from an image volume to a surface mesh from specific layers defined 
-    by a levelset image.
+    by a levelset image. If average_layer is true, the parameter layer should contain only two 
+    integers which denote the start and ending layer.
     Inputs:
         *surf_in: filename of input surface mesh.
         *file_in: filename of input volume from which data is sampled.
@@ -9,14 +11,17 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
         *path_output: path where output is written.
         *layer: which layers to sample (array of integers).
         *r: destination voxel size after upsampling (performed if not None).
+        *average_layer: average across cortex.
+        *write_profile: write sampled profile.
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 18-12-2019
+    Last modified: 13-01-2020
     """
     import sys
     import os
     import shutil as sh
+    import numpy as np
     import nibabel as nb
     from os.path import join, exists, basename, splitext
     from nighres.laminar import profile_sampling
@@ -48,29 +53,55 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
             sh.copyfile(file_in, join(path_output, name_file+ext_file))
         
     
-    # get profile sampling
+    # get profile sampling            
     profile = profile_sampling(boundaries_in, 
                                join(path_output, name_file+ext_file),
-                               save_data=True, 
-                               overwrite=True,
+                               save_data=write_profile, 
+                               overwrite=write_profile,
                                output_dir=path_output,
                                file_name="profile")
     
     # rename profile sampling output
-    os.rename(join(path_output, "profile_lps-data.nii.gz"),
-              join(path_output, name_profile+".nii.gz"))
+    if write_profile:
+        os.rename(join(path_output, "profile_lps-data.nii.gz"),
+                  join(path_output, name_profile+".nii.gz"))
+    
+    # load profile
+    data = profile["result"]
+    data.header["dim"][0] = 1        
+    data_array = data.get_fdata()
     
     # map single layers
-    for i in range(len(layer)):
+    if not average_layer:
         
-        # get level
-        data = profile["result"]
-        data.header["dim"][0] = 1
-        data_array = data.get_fdata()
-        data_array = data_array[:,:,:,layer[i]]
+        for i in range(len(layer)):
+            data_array = data_array[:,:,:,layer[i]]
+            out = nb.Nifti1Image(data_array, data.affine, data.header)
+            nb.save(out, join(path_output,"temp.nii"))
+            
+            # do the mapping
+            map2surface(surf_in, 
+                        join(path_output,"temp.nii"),
+                        hemi, 
+                        path_output,
+                        input_white=None, 
+                        input_ind=None, 
+                        cleanup=True)
+
+            # rename mapping file
+            os.rename(join(path_output,hemi+".temp_"+name_surf+"_def.mgh"),
+                      join(path_output,hemi+"."+name_file+"_layer"+str(layer[i])+".mgh"))
+
+    else:
+
+        if len(layer) != 2:
+            sys.exit("For averaging, layer should only contain two elements!")
+        
+        data_array = data_array[:,:,:,layer[0]:layer[1]]
+        data_array = np.mean(data_array, axis=3)
         out = nb.Nifti1Image(data_array, data.affine, data.header)
         nb.save(out, join(path_output,"temp.nii"))
-        
+                
         # do the mapping
         map2surface(surf_in, 
                     join(path_output,"temp.nii"),
@@ -79,10 +110,10 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
                     input_white=None, 
                     input_ind=None, 
                     cleanup=True)
-    
+
         # rename mapping file
         os.rename(join(path_output,hemi+".temp_"+name_surf+"_def.mgh"),
-                  join(path_output,hemi+"."+name_file+"_layer"+str(layer[i])+".mgh"))
-    
+                  join(path_output,hemi+"."+name_file+"_avg_layer"+str(layer[0])+"_"+str(layer[1])+".mgh"))
+        
     # clean temp
     os.remove(join(path_output,"temp.nii"))

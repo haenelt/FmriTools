@@ -6,7 +6,7 @@ data to the surface in conformed freesurfer space.
 
 created by Daniel Haenelt
 Date created: 07-02-2019
-Last modified: 18-02-2019
+Last modified: 13-01-2020
 """
 import os
 from lib.mapping.map2surface import map2surface
