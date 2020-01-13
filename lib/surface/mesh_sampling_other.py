@@ -98,15 +98,10 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
     """
     rescale cmap
     """
-    dim_target = nb.load(target).header["dim"][1:4]
-    dim_source = nb.load(source).header["dim"][1:4]
-    dim_target_upsampled = nb.load(target_upsampled).header["dim"][1:4]
-    dim_source_upsampled = nb.load(source_upsampled).header["dim"][1:4]
-    
-    dim_target -= 1
-    dim_source -= 1
-    dim_target_upsampled -= 1
-    dim_source_upsampled -= 1
+    dim_target = nb.load(target).header["dim"][1:4] - 1
+    dim_source = nb.load(source).header["dim"][1:4] - 1
+    dim_target_upsampled = nb.load(target_upsampled).header["dim"][1:4] - 1
+    dim_source_upsampled = nb.load(source_upsampled).header["dim"][1:4] - 1
     
     cmap_t2s = nb.load(t2s_upsampled)
     cmap_s2t = nb.load(s2t_upsampled)
