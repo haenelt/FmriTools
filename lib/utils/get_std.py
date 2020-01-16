@@ -64,7 +64,6 @@ def get_std(input, path_output, name_output, set_outlier=None):
         data_img = nb.load(input)
     data_img.header["dim"][0] = 3
     data_img.header["dim"][4] = 1
-    data_img.header["pixdim"][3] = 1
     
     # write mean image
     mean_img = nb.Nifti1Image(data_std_array, data_img.affine, data_img.header)

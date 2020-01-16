@@ -1,5 +1,6 @@
 def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.4,0.4], 
-                  average_layer=False, write_profile=True):
+                  interpolation="Cu", average_layer=False, write_profile=True, 
+                  write_upsampled=True):
     """
     This function samples data from an image volume to a surface mesh from specific layers defined 
     by a levelset image. If average_layer is true, the parameter layer should contain only two 
@@ -11,12 +12,14 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
         *path_output: path where output is written.
         *layer: which layers to sample (array of integers).
         *r: destination voxel size after upsampling (performed if not None).
+        *interpolation: interpolation method for upsampling of file from whic data is sampled.
         *average_layer: average across cortex.
         *write_profile: write sampled profile.
+        *write_upsampled: write upsampled file.
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 13-01-2020
+    Last modified: 15-01-2020
     """
     import sys
     import os
@@ -47,12 +50,11 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
     # upsample volume
     if not r == None:
         name_file = name_file+"_upsampled"
-        upsample_volume(file_in, join(path_output, name_file+ext_file), r, "Cu")
+        upsample_volume(file_in, join(path_output, name_file+ext_file), r, interpolation)
     else:
         if file_in != join(path_output, name_file+ext_file):
             sh.copyfile(file_in, join(path_output, name_file+ext_file))
         
-    
     # get profile sampling            
     profile = profile_sampling(boundaries_in, 
                                join(path_output, name_file+ext_file),
@@ -69,13 +71,12 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
     # load profile
     data = profile["result"]
     data.header["dim"][0] = 3        
-    data_array = data.get_fdata()
     
     # map single layers
     if not average_layer:
         
         for i in range(len(layer)):
-            data_array = data_array[:,:,:,layer[i]]
+            data_array = data.get_fdata()[:,:,:,layer[i]]
             out = nb.Nifti1Image(data_array, data.affine, data.header)
             nb.save(out, join(path_output,"temp.nii"))
             
@@ -97,7 +98,7 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
         if len(layer) != 2:
             sys.exit("For averaging, layer should only contain two elements!")
         
-        data_array = data_array[:,:,:,layer[0]:layer[1]]
+        data_array = data.get_fdata()[:,:,:,layer[0]:layer[1]]
         data_array = np.mean(data_array, axis=3)
         out = nb.Nifti1Image(data_array, data.affine, data.header)
         nb.save(out, join(path_output,"temp.nii"))
@@ -117,3 +118,7 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
         
     # clean temp
     os.remove(join(path_output,"temp.nii"))
+    
+    # clean file
+    if not write_upsampled:
+        os.remove(join(path_output, name_file+ext_file))

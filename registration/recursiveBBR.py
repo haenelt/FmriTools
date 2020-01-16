@@ -33,8 +33,8 @@ lh_pial = "/data/pt_01880/odc_temp/surface/match/lh.layer0_def2_smooth_match"
 rh_pial = "/data/pt_01880/odc_temp/surface/match/rh.layer0_def2_smooth_match"
 
 # parameters
-subjects_dir = "/data/pt_01880/odc_temp/surface/rBBR_enhanced" # absolute path to subject directory
-ref_vol = "/data/pt_01880/odc_temp/surface/rBBR_enhanced/magnitude_enhanced_linear_def-img.nii" # absolute path to reference volume
+subjects_dir = "/data/pt_01880/odc_temp/surface/rBBR" # absolute path to subject directory
+ref_vol = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/mean_data.nii" # absolute path to reference volume
 mask = "" # absolute path to mask volume
 min_vox = 10 
 min_vtx = 500

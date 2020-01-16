@@ -1,4 +1,4 @@
-def calculate_distortion(file_patch, file_white, hemi):
+def calculate_distortion(file_patch, file_white, path_output, hemi):
     """
     This script computes two metrics (areal distortion and line distortion) to estimate the amount 
     of distortion in the flattening process. The form of the metric is similar to 
@@ -23,6 +23,7 @@ def calculate_distortion(file_patch, file_white, hemi):
     Inputs:
         *file_patch: filename of flattened patch.
         *file_white: filename of white surface.
+        *path_output: path where output is written.
         *hemi: hemisphere.
     Outputs:
         *VAD_params: Descriptive parameters of areal distortion.
@@ -30,7 +31,7 @@ def calculate_distortion(file_patch, file_white, hemi):
     
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 17-12-2018
+    Last modified: 15-01-2020
     """
     import os
     import numpy as np
@@ -38,6 +39,10 @@ def calculate_distortion(file_patch, file_white, hemi):
     from scipy.stats import sem
     from nibabel.freesurfer.io import read_geometry, write_morph_data
     from lib.io.read_patch import read_patch
+    
+    # make output folder
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
     
     # load data
     vtx_white, fac_white = read_geometry(file_white)
@@ -93,7 +98,7 @@ def calculate_distortion(file_patch, file_white, hemi):
                   VAD_miss]
    
     # save morphological data
-    write_morph_data(os.path.basename(file_patch)+".areal_distortion", VAD)
+    write_morph_data(os.path.join(path_output, os.path.basename(file_patch)+".areal_distortion"), VAD)
     
     """
     Linear distortion
@@ -129,6 +134,6 @@ def calculate_distortion(file_patch, file_white, hemi):
                   VLD_miss]
 
     # save morphological data
-    write_morph_data(os.path.basename(file_patch)+".line_distortion", VLD)
+    write_morph_data(os.path.join(path_output, os.path.basename(file_patch)+".line_distortion"), VLD)
 
     return VAD_params, VLD_params

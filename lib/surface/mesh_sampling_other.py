@@ -1,6 +1,7 @@
 def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in, source2target_in,
                         boundaries_in, path_output, layer, smooth_iter=2, r=[0.4,0.4,0.4],
-                        interpolation="Cu", average_layer=False, write_profile=False, cleanup=True):
+                        interpolation="Cu", average_layer=False, write_profile=False, 
+                        write_upsampled=True, cleanup=True):
     """
     This function samples data from an image volume to a surface mesh which is located in a 
     different space. Boundaries and surface mesh are first transformed to the space of the image 
@@ -22,11 +23,12 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
         *interpolation: interpolation method for upsampling of file from whic data is sampled.
         *average_layer: average across cortex.
         *write_profile: write sampled profile.
+        *write_upsampled: write upsampled file.
         *cleanup: remove intermediate files.
     
     created by Daniel Haenelt
     Date created: 13-01-2020
-    Last modified: 13-01-2020
+    Last modified: 14-01-2020
     """
     import os
     import shutil as sh
@@ -43,6 +45,7 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
     path_temp = os.path.join(path_output,"temp")
     path_cmap = os.path.join(path_temp,"cmap")
     path_data = os.path.join(path_temp,"data")
+    path_surf = os.path.join(path_temp,"surf")
      
     if not os.path.exists(path_output):
         os.makedirs(path_output)
@@ -55,7 +58,10 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
         
     if not os.path.exists(path_data):
         os.makedirs(path_data)
-    
+
+    if not os.path.exists(path_surf):
+        os.makedirs(path_surf)
+
     # get filenames
     _, hemi, name_surf = get_filename(surf_in)
     _, name_file, ext_file = get_filename(file_in)
@@ -67,13 +73,13 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
     # copy input files
     sh.copyfile(target2source_in, os.path.join(path_cmap, "t2s"+ext_t2s))
     sh.copyfile(source2target_in, os.path.join(path_cmap, "s2t"+ext_s2t))
-    sh.copyfile(file_in, os.path.join(path_data, "data"+ext_file))
+    sh.copyfile(file_in, os.path.join(path_data, name_file+ext_file))
     sh.copyfile(target_in, os.path.join(path_data, "target"+ext_target))
     sh.copyfile(source_in, os.path.join(path_data, "source"+ext_source))
     
     # set filenames
-    data = os.path.join(path_data, "data"+ext_file)
-    data_upsampled = os.path.join(path_data, "data_upsampled"+ext_file)
+    data = os.path.join(path_data, name_file+ext_file)
+    data_upsampled = os.path.join(path_data, name_file+"_upsampled"+ext_file)
     source = os.path.join(path_data, "source"+ext_source)
     source_upsampled = os.path.join(path_data, "source_upsampled"+ext_source)
     target = os.path.join(path_data, "target"+ext_target)
@@ -138,7 +144,7 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
                    input_deform = s2t_rescaled,
                    input_target = source_upsampled, 
                    hemi = hemi,
-                   path_output = path_output,
+                   path_output = path_surf,
                    smooth_iter = smooth_iter,
                    sort_faces = False, 
                    cleanup = True)
@@ -147,9 +153,9 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
     sample data
     """    
     if smooth_iter:
-        surf_in = os.path.join(path_output, hemi+name_surf+"_def_smooth")
+        surf_in = os.path.join(path_surf, hemi+name_surf+"_def_smooth")
     else:
-        surf_in = os.path.join(path_output, hemi+name_surf+"_def")
+        surf_in = os.path.join(path_surf, hemi+name_surf+"_def")
     
     mesh_sampling(surf_in = surf_in, 
                   file_in = data_upsampled, 
@@ -158,7 +164,8 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
                   layer = layer,
                   r = None, 
                   average_layer = average_layer, 
-                  write_profile = write_profile)
+                  write_profile = write_profile,
+                  write_upsampled = write_upsampled)
     
     # delete intermediate files
     if cleanup:

@@ -14,23 +14,11 @@ from lib.preprocessing.gnl_correction import gnl_correction
 
 # input
 input = [
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii",
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii",
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii",
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii",
-    "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2803151-124913-00001-00352-1_PD.nii",
-    "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2803151-124913-00001-00352-1_R1.nii",
-    "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2803151-124913-00001-00352-1_R2s_WOLS.nii",
+    "/data/pt_01880/odc_temp/gnl/S23_MP2RAGE_0p7_UNI_Images_2.45.nii",
     ]
 
 path_output = [
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/",
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/",
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/",
-    "/data/pt_01880/Experiment3_Stripes/p3/anatomy/",
-    "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/",
-    "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/",
-    "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/",
+    "/data/pt_01880/odc_temp/gnl",
     ]
 
 file_bash = "/home/raid2/haenelt/projects/gradunwarp/apply_grad.sh"
