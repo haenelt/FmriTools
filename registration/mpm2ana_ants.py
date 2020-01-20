@@ -136,7 +136,6 @@ get_scanner_transform(os.path.join(path_mp2rage,"mp2rage_t1.nii"),
                       path_deformation, 
                       False)
 
-
 # apply scanner transformation to MPM
 apply_coordinate_mappings(os.path.join(path_mpm,"mpm_t1.nii"), # input
                           os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_scanner.nii"), # first cmap
