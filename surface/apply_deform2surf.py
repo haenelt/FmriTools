@@ -9,7 +9,7 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 07-02-2019
-Last modified: 07-01-2020
+Last modified: 22-01-2020
 """
 import os 
 from os.path import join, basename, splitext
@@ -40,6 +40,7 @@ for i in range(len(input_surf)):
                    path_output, 
                    smooth_iter=10, 
                    sort_faces=False,
+                   flip_faces=True,
                    cleanup=False)
 
     # rename output
@@ -57,6 +58,7 @@ for i in range(len(input_surf)):
                    path_output, 
                    smooth_iter=10, 
                    sort_faces=True,
+                   flip_face=False,
                    cleanup=False)
 
     # rename output

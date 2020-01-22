@@ -1,5 +1,5 @@
 def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, path_output, 
-                   smooth_iter=0, sort_faces=False, cleanup=True):
+                   smooth_iter=0, sort_faces=False, flip_faces=False, cleanup=True):
     """
     This function deforms a surface mesh in freesurfer convention using a coordinate map containing
     voxel coordinates. The computation takes quite a while because in the case of removed vertices,
@@ -13,11 +13,12 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         *path_output: path where to save output.
         *smooth_iter: number of smoothing iterations applied to final image (if set > 0).
         *sort_faces: get new face array if vertices are cut off during deformation.
+        *flip_faces: reverse normal direction of mesh.
         *cleanup: remove intermediate files.
         
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 06-01-2020
+    Last modified: 22-01-2020
     """
     import os
     import numpy as np
@@ -199,6 +200,10 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
     else:
         fac_new = fac
  
+    # flip faces
+    if flip_faces:
+        fac_new = np.flip(fac_new, axis=1)
+    
     # write new surface
     write_geometry(os.path.join(path_output, name_surf+"_def"), vtx_new, fac_new)
 

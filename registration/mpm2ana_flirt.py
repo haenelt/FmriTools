@@ -14,9 +14,10 @@ between MPM and MP2RAGE T1-maps. The script consists of the following steps:
 
 created by Daniel Haenelt
 Date created: 20-01-2020
-Last modified: 20-01-2020
+Last modified: 22-01-2020
 """
 import os
+import shutil as sh
 import numpy as np
 import nibabel as nb
 from nipype.interfaces.fsl import FLIRT
@@ -32,6 +33,7 @@ file_mpm_r1 = "/home/daniel/Schreibtisch/mpm_reg/data/mpm/s122880a-145639-00001-
 file_mpm_pd = "/home/daniel/Schreibtisch/mpm_reg/data/mpm/s122880a-145639-00001-00352-1_PD.nii"
 file_mp2rage_t1 = "/home/daniel/Schreibtisch/mpm_reg/data/mp2rage/S5_mp2rage_whole_brain_T1_Images_2.45.nii"
 file_mp2rage_pd = "/home/daniel/Schreibtisch/mpm_reg/data/mp2rage/S4_mp2rage_whole_brain_INV2_2.45.nii"
+cleanup = False
 
 # output path
 path_output = "/home/daniel/Schreibtisch"
@@ -265,3 +267,7 @@ os.rename(os.path.join(path_output,"mpm_2_mp2rage_example_def-img.nii.gz"),
           os.path.join(path_output,"mpm_2_mp2rage_example.nii.gz"))
 os.rename(os.path.join(path_output,"mp2rage_2_mpm_example_def-img.nii.gz"),
           os.path.join(path_output,"mp2rage_2_mpm_example.nii.gz"))
+
+# clean intermediate files
+if cleanup:
+    sh.rmtree(path_res, ignore_errors=True)

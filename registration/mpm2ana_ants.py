@@ -14,9 +14,10 @@ between MPM and MP2RAGE T1-maps. The script consists of the following steps:
 
 created by Daniel Haenelt
 Date created: 31-01-2019
-Last modified: 10-01-2020
+Last modified: 22-01-2020
 """
 import os
+import shutil as sh
 import numpy as np
 import nibabel as nb
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
@@ -28,6 +29,7 @@ file_mpm_r1 = "/home/daniel/Schreibtisch/mpm_reg/data/mpm/s122880a-145639-00001-
 file_mpm_pd = "/home/daniel/Schreibtisch/mpm_reg/data/mpm/s122880a-145639-00001-00352-1_PD.nii"
 file_mp2rage_t1 = "/home/daniel/Schreibtisch/mpm_reg/data/mp2rage/S5_mp2rage_whole_brain_T1_Images_2.45.nii"
 file_mp2rage_pd = "/home/daniel/Schreibtisch/mpm_reg/data/mp2rage/S4_mp2rage_whole_brain_INV2_2.45.nii"
+cleanup = False
 
 # output path
 path_output = "/home/daniel/Schreibtisch"
@@ -182,8 +184,8 @@ apply_coordinate_mappings(os.path.join(path_deformation,"mpm_t1_2_mp2rage_t1_sca
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
-                          output_dir = path_deformation, # output directory
-                          file_name = "final" # base name with file extension for output
+                          output_dir = path_output, # output directory
+                          file_name = "mpm_2_mp2rage" # base name with file extension for output
                           )
 
 apply_coordinate_mappings(os.path.join(path_deformation,"rigid_ants-invmap.nii.gz"), # input
@@ -195,13 +197,19 @@ apply_coordinate_mappings(os.path.join(path_deformation,"rigid_ants-invmap.nii.g
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
-                          output_dir = path_deformation, # output directory
-                          file_name = "final_inv" # base name with file extension for output
+                          output_dir = path_output, # output directory
+                          file_name = "mp2rage_2_mpm" # base name with file extension for output
                           )
+
+# rename final deformation examples
+os.rename(os.path.join(path_output,"mpm_2_mp2rage_def-img.nii.gz"),
+          os.path.join(path_output,"mpm_2_mp2rage.nii.gz"))
+os.rename(os.path.join(path_output,"mp2rage_2_mpm_def-img.nii.gz"),
+          os.path.join(path_output,"mp2rage_2_mpm.nii.gz"))
 
 # apply final deformation to MPM
 apply_coordinate_mappings(file_mpm_r1, # input 
-                          os.path.join(path_deformation,"final_def-img.nii.gz"), # first cmap
+                          os.path.join(path_output,"mpm_2_mp2rage.nii.gz"), # first cmap
                           mapping2 = None, # second cmap
                           mapping3 = None, # third cmap
                           mapping4 = None, # fourth cmap
@@ -209,12 +217,12 @@ apply_coordinate_mappings(file_mpm_r1, # input
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
-                          output_dir = path_res, # output directory
-                          file_name = "mpm_t1_2_mp2rage_t1_example.nii" # base name with file extension for output
+                          output_dir = path_output, # output directory
+                          file_name = "mpm_2_mp2rage_example" # base name with file extension for output
                           )
 
 apply_coordinate_mappings(file_mp2rage_t1, # input 
-                          os.path.join(path_deformation,"final_inv_def-img.nii.gz"), # first cmap
+                          os.path.join(path_output,"mp2rage_2_mpm.nii.gz"), # first cmap
                           mapping2 = None, # second cmap
                           mapping3 = None, # third cmap
                           mapping4 = None, # fourth cmap
@@ -222,6 +230,16 @@ apply_coordinate_mappings(file_mp2rage_t1, # input
                           padding = "zero", # closest, zero or max
                           save_data = True, # save output data to file (boolean)
                           overwrite = True, # overwrite existing results (boolean)
-                          output_dir = path_res, # output directory
-                          file_name = "mp2rage_t1_2_mpm_t1_example.nii" # base name with file extension for output
+                          output_dir = path_output, # output directory
+                          file_name = "mp2rage_2_mpm_example" # base name with file extension for output
                           )
+
+# rename final deformation examples
+os.rename(os.path.join(path_output,"mpm_2_mp2rage_example_def-img.nii.gz"),
+          os.path.join(path_output,"mpm_2_mp2rage_example.nii.gz"))
+os.rename(os.path.join(path_output,"mp2rage_2_mpm_example_def-img.nii.gz"),
+          os.path.join(path_output,"mp2rage_2_mpm_example.nii.gz"))
+
+# clean intermediate files
+if cleanup:
+    sh.rmtree(path_res, ignore_errors=True)

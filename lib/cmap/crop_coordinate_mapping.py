@@ -10,11 +10,12 @@ def crop_coordinate_mapping(input, pad=0, overwrite_file=True, path_output=None)
 
     created by Daniel Haenelt
     Date created: 21-11-2018             
-    Last modified: 21-11-2018
+    Last modified: 22-01-2020
     """
     import os
     import numpy as np
     import nibabel as nb
+    from lib.io.get_filename import get_filename
 
     # define output folder
     if path_output is not None:
@@ -22,8 +23,7 @@ def crop_coordinate_mapping(input, pad=0, overwrite_file=True, path_output=None)
             os.makedirs(path_output)
 
     # get input path and file name
-    path = os.path.dirname(input)
-    file = os.path.splitext(os.path.basename(input))[0]
+    path, file, ext = get_filename(input)
 
     # load data
     data_img = nb.load(input)
@@ -43,9 +43,8 @@ def crop_coordinate_mapping(input, pad=0, overwrite_file=True, path_output=None)
 
     # write coordinate mapping for each time point
     if overwrite_file is True:
-        fileOUT = os.path.join(path,file+'.nii')
         os.remove(input)
-        nb.save(output,fileOUT)
+        nb.save(output, input)
     else:
-        fileOUT = os.path.join(path_output,file+'_crop.nii')
+        fileOUT = os.path.join(path_output, file+'_crop'+ext)
         nb.save(output,fileOUT)
