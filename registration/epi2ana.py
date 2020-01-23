@@ -27,11 +27,11 @@ from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
 
 # input data
-file_mean_epi = "/nobackup/actinium2/haenelt/VasoTest/flicker/diagnosis/mean_bold_basis.nii"
-file_t1 = "/nobackup/actinium2/haenelt/VasoTest/anatomy/T1_0p7.nii"
-file_mask = "/nobackup/actinium2/haenelt/VasoTest/anatomy/skull/skullstrip_mask.nii"
-path_output = "/nobackup/actinium2/haenelt/VasoTest/deformation/flicker"
-cleanup = True
+file_mean_epi = "/data/pt_01880/Experiment1_ODC/p3/resting_state/diagnosis/mean_data.nii"
+file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
+file_mask = "/data/pt_01880/Experiment1_ODC/p3/anatomy/skull/skullstrip_mask.nii"
+path_output = "/data/pt_01880/deformation/rigid"
+cleanup = False
 
 # parameters for epi skullstrip
 niter_mask = 3
@@ -42,7 +42,7 @@ run_rigid = True
 rigid_iterations = 1000 
 run_affine = False 
 affine_iterations = 1000 
-run_syn = True 
+run_syn = False
 coarse_iterations = 50 
 medium_iterations = 150 
 fine_iterations = 100 
