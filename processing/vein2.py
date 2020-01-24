@@ -1,14 +1,9 @@
 """
 Venous mask from phase data
 
-A binary mask of venous voxels is created from a set of time series. First, a baseline correction of
-each time series is applied if not done before (i.e., if no file with prefix b is found). Venous 
-voxels are classified in the following way: Mean epi and mean tSNR across all time series are 
-thresholded using arbitrary thresholds (<epi_threshold>, <tsnr_threshold>) considering only low mean
-and low tsnr voxels. The thresholds have to be adjusted individually. The final mask is created by 
-intersecting both masks. Both mean epi and mean tsnr are saved for single runs and the whole 
-session. Additionally, a text file is written containing the used parameters. The method is taken 
-from Kashyap et al., 2017.
+A binary mask of venous voxels is created from time series phase data. First the data is scaled to
+[-pi; +pi]. Then, the time series standard deviation is taken. Venous voxels are classified by 
+applying a threshold to identify voxels with large dispersion over time (phase_threshold).
 
 created by Daniel Haenelt
 Date created: 24-01-2020             
@@ -20,25 +15,19 @@ import numpy as np
 import nibabel as nb
 
 # input data
-phase_input = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/udata.nii",
+phase_input = "/data/pt_01880/test_data/data/udata_phase_unwrap.nii"
 
 # parameters
-phase_threshold = 0.2
+phase_threshold = 0.05 # in rad
 
 """ do not edit below """
 
 # prepare path and filename
-path = []
-file = []
-for i in range(len(img_input)):
-    path.append(os.path.split(img_input[i])[0])
-    file.append(os.path.split(img_input[i])[1])
+path = os.path.split(phase_input)[0]
+file = os.path.split(phase_input)[1]
 
 # output folder is taken from the first entry of the input list and set into 
-if len(img_input) > 1:
-    path_output = os.path.join(os.path.dirname(path[0]),"vein","native")
-else:
-    path_output = os.path.join(path[0],"vein","native")
+path_output = os.path.join(path,"vein","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
@@ -51,16 +40,25 @@ affine = phase_img.affine
 
 phase_array = phase_img.get_fdata()
 
-# normalize
+# normalize in range [-pi, pi]
 phase_array = 2 * ( phase_array - np.min(phase_array) ) / ( np.max(phase_array) - np.min(phase_array) ) - 1
 phase_array *= np.pi
+
+# get standard deviation
 phase_array = np.std(phase_array, axis=3)
-phase_array[phase_array > phase_threshold] = 0
-phase_array[phase_array != 0] = 1
-phase_array -= 1
-phase_array = np.abs(phase_array)
+
+# get vein mask
+mask_array = phase_array.copy()
+mask_array[mask_array > phase_threshold] = 0
+mask_array[mask_array != 0] = 1
+mask_array -= 1
+mask_array = np.abs(mask_array)
 
 output = nb.Nifti1Image(phase_array, affine, header)
+fileOUT = os.path.join(path_output,"phase_dispersion.nii")
+nb.save(output,fileOUT)
+
+output = nb.Nifti1Image(mask_array, affine, header)
 fileOUT = os.path.join(path_output,"vein.nii")
 nb.save(output,fileOUT)
 
