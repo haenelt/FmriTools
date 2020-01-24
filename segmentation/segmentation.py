@@ -102,7 +102,7 @@ pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 1
+part = 2
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)

@@ -1,5 +1,5 @@
-def make_mesh(boundary_in, ref_in, file_out, nlayer, niter_smooth=2, niter_upsample=0, 
-              niter_inflate=15):
+def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, niter_smooth=2, 
+              niter_upsample=0, niter_inflate=15):
     """
     This function generates a surface mesh from a levelset image. The surface mesh is smoothed and a
     curvature file is generated. Vertices are in the vertex ras coordinate system. Optionally, the
@@ -10,15 +10,17 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, niter_smooth=2, niter_upsam
         *ref_in: filename of reference volume for getting the coordinate transformation.
         *file_out: filename of output surface.
         *nlayer: layer from the 4D boundary input at which the mesh is generated.
+        *flip_faces: reverse normal direction of mesh.
         *niter_smooth: number of smoothing iterations.
         *niter_upsample: number of upsampling iterations (is performed if set > 0).
         *niter_inflate: number of inflating iterations (is performed if set > 0).
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 13-01-2020
+    Last modified: 24-01-2020
     """
     import os
+    import numpy as np
     import nibabel as nb
     from nibabel.affines import apply_affine
     from nighres.surface import levelset_to_mesh
@@ -53,6 +55,10 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, niter_smooth=2, niter_upsam
     
     # apply vox2ras to vertices
     vtx = apply_affine(vox2ras_tkr, vtx)
+    
+    # flip faces
+    if flip_faces:
+        fac = np.flip(fac, axis=1)
     
     # write mesh
     write_geometry(file_out, vtx, fac)

@@ -28,8 +28,8 @@ from lib.utils import get_mean, get_std
 from lib.preprocessing import plot_moco
 
 # input data
-input_magn = "/data/pt_01880/odc_temp/resting_state/data.nii"
-input_phase = "/data/pt_01880/odc_temp/resting_state/data_phase.nii"
+input_magn = "/data/pt_01880/test_data/data/data.nii"
+input_phase = "/data/pt_01880/test_data/data/data_phase.nii"
 
 # parameters
 phase_max = 0.25

@@ -1,5 +1,5 @@
 def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_output, n_layers, 
-                                  label_threshold=5, r=[0.4,0.4,0.4], n_iter=2):
+                                  r=[0.4,0.4,0.4], n_iter=2):
     """
     This function computes equivolumetric layers in volume space from input pial and white surfaces
     in freesurfer format. The input surfaces do not have to cover the whole brain. Number of 
@@ -10,13 +10,12 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
         *input_vol: filename of reference volume.
         *path_output: path where output is written.
         *n_layers: number of generated layers + 1.
-        *label_threshold: threshold for label classes in binary filling.
         *r: array of new voxel sizes for reference volume upsampling.
         *n_iter: number of surface upsampling iterations.
     
     created by Daniel Haenelt
     Date created: 17-12-2019
-    Last modified: 13-01-2020
+    Last modified: 24-01-2020
     """
     import sys
     import os
@@ -27,10 +26,11 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     from skimage import measure
     from nighres.surface import probability_to_levelset
     from nighres.laminar import volumetric_layering
+    from scipy.ndimage.morphology import binary_fill_holes
+    from collections import Counter
     from lib.utils.upsample_volume import upsample_volume
     from lib.surface.vox2ras import vox2ras
     from lib.surface.upsample_surf_mesh import upsample_surf_mesh
-    from scipy.ndimage.morphology import binary_fill_holes
     
     # make output folder
     if not os.path.exists(path_output):
@@ -82,10 +82,14 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
         white_label_array[:,:,i] = binary_fill_holes(white_array[:,:,i])
     white_label_array = white_label_array - white_array
     white_label_array = measure.label(white_label_array, connectivity=1)
-    white_label_array[white_label_array > label_threshold] = 0
+    white_label_flatten = np.ndarray.flatten(white_label_array)
+    white_label_flatten = white_label_flatten[white_label_flatten > 0]
+    label_number = Counter(white_label_flatten).most_common(1)[0][0]
+    white_label_array[white_label_array != label_number] = 0
     white_label_array[white_label_array > 0] = 1    
     white_label = nb.Nifti1Image(white_label_array, vol.affine, vol.header)
-        
+    nb.save(white_label, os.path.join(path_output,"bla.nii"))    
+    
     """
     make csf
     """
@@ -93,8 +97,11 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     for i in range(np.shape(pial_label_array)[2]):
         pial_label_array[:,:,i] = binary_fill_holes(pial_array[:,:,i])
     pial_label_array = pial_label_array - pial_array
-    pial_label_array = measure.label(pial_label_array, connectivity=1)
-    pial_label_array[pial_label_array > label_threshold] = 0
+    pial_label_array = measure.label(pial_label_array, connectivity=1)   
+    pial_label_flatten = np.ndarray.flatten(pial_label_array)
+    pial_label_flatten = pial_label_flatten[pial_label_flatten > 0]
+    label_number = Counter(pial_label_flatten).most_common(1)[0][0]
+    pial_label_array[pial_label_array != label_number] = 0
     pial_label_array[pial_label_array > 0] = 1    
     pial_label = nb.Nifti1Image(pial_label_array, vol.affine, vol.header)
        
