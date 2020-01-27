@@ -14,11 +14,11 @@ from lib.preprocessing.gnl_correction import gnl_correction
 
 # input
 input = [
-    "/data/pt_01880/odc_temp/gnl/S23_MP2RAGE_0p7_UNI_Images_2.45.nii",
+    "/data/pt_01880/data0.nii",
     ]
 
 path_output = [
-    "/data/pt_01880/odc_temp/gnl",
+    "/data/pt_01880/test0",
     ]
 
 file_bash = "/home/raid2/haenelt/projects/gradunwarp/apply_grad.sh"
