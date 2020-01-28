@@ -12,7 +12,7 @@ import os
 import pydicom
 
 # input data
-input = "/home/raid2/haenelt/Downloads/"
+input = "/data/pt_01880/dcm/disparity2/"
 
 # output data
 path_output = "/data/pt_01880" 
