@@ -9,7 +9,7 @@ def get_curvature(file_in, path_output, a=10):
         
     created by Daniel Haenelt
     Date created: 13-07-2019
-    Last modified: 18-12-2019
+    Last modified: 29-01-2020
     """
     import sys
     import os
@@ -17,7 +17,7 @@ def get_curvature(file_in, path_output, a=10):
     
     # get hemi from filename
     hemi = os.path.splitext(os.path.basename(file_in))[0]
-    if not hemi == "lh" or hemi == "rh":
+    if not hemi == "lh" and not hemi == "rh":
         sys.exit("Could not identify hemi from filename!")
     
     # calculate curvature file
