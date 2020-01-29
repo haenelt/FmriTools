@@ -102,7 +102,7 @@ pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip1"
 sub = "freesurfer"
-part = 3
+part = 4
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
@@ -110,7 +110,7 @@ w_shift = -0.5 # white surface shift (part 4)
 niter_smooth = 2 # number of smoothing iterations for white and pial surface (part 4)
 niter_upsample = 1 # number of upsampling iterations (part 4)
 method_upsample = "linear" # upsampling method (part 4)
-nsurf_layer = 11 # number of equivolumetric layers (part 4)
+nsurf_layer = 21 # number of equivolumetric layers (part 4)
 factor_layer = 0 # smoothing of area surfaces (part 4)
 niter_layer = 0 # number of smoothing iterations (part 4)
 imres_ortho = 0.25 # isotropic image resolution of the regular grid in mm (part 5)
