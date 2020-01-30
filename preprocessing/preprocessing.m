@@ -27,9 +27,9 @@ slice_params.TR = 3; % repetition time in seconds
 slice_params.slice_order = 'descending'; % slice ordering (ascending or descending)
 
 % fieldmap parameters
-field_params.fieldmap_undistortion = true; % run fieldmap undistortion
-field_params.fmap_magn = '/data/pt_01880/odc_temp/fmap/fmap1_TE6.nii';
-field_params.fmap_phase = '/data/pt_01880/odc_temp/fmap/fmap2_DeltaTE1p02.nii';
+field_params.fieldmap_undistortion = false; % run fieldmap undistortion
+field_params.fmap_magn = '';
+field_params.fmap_phase = '';
 field_params.fmap_te1 = 6.0; % shorter echo time in ms
 field_params.fmap_te2 = 7.02; % longer echo time in ms
 field_params.fmap_blipdir = -1; % phase-encoding direction
