@@ -3,34 +3,37 @@ EPI <-> ANA registration
 
 The purpose of the following script is to compute the deformation field for the registration 
 between antomy and EPI in native space. The script consists of the following steps:
-    1. set output folder structure
-    2. scanner transform t1 <-> epi
-    3. n4 correction epi
-    4. clean ana (remove ceiling and normalise)
-    5. mask t1 and epi
-    6. antsreg
-    7. apply deformations
+    1. enhance brainmask if second mask is given (brain.finalsurf.mgz)
+    2. set output folder structure
+    3. scanner transform t1 <-> epi
+    4. n4 correction epi
+    5. clean ana (remove ceiling and normalise)
+    6. mask t1 and epi
+    7. antsreg
+    8. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 02-05-2019
-Last modified: 06-01-2020
+Last modified: 31-01-2020
 """
 import os
 import shutil as sh
 from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
+from lib.skullstrip.skullstrip_refined import skullstrip_refined
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
 
 # input data
-file_mean_epi = "/data/pt_01880/Experiment1_ODC/p3/resting_state/diagnosis/mean_data.nii"
-file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
-file_mask = "/data/pt_01880/Experiment1_ODC/p3/anatomy/skull/skullstrip_mask.nii"
-path_output = "/data/pt_01880/deformation/rigid"
+file_mean_epi = "/data/pt_01880/Experiment3_Stripes/p3/colour/GE_EPI1/diagnosis/mean_data.nii"
+file_t1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45_gnlcorr.nii"
+file_mask1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/skull/skullstrip_mask.nii"
+file_mask2 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/freesurfer/mri/brain.finalsurfs.mgz"
+path_output = "/data/pt_01880/Experiment3_Stripes/p3/deformation/colour/GE_EPI1"
 cleanup = False
 
 # parameters for epi skullstrip
@@ -42,7 +45,7 @@ run_rigid = True
 rigid_iterations = 1000 
 run_affine = False 
 affine_iterations = 1000 
-run_syn = False
+run_syn = True
 coarse_iterations = 50 
 medium_iterations = 150 
 fine_iterations = 100 
@@ -50,6 +53,12 @@ cost_function = 'CrossCorrelation'
 interpolation = 'Linear' 
 
 """ do not edit below """
+
+"""
+enhance brainmask
+"""
+if file_mask2 is not None:
+    file_mask1 = skullstrip_refined(file_mask1, file_mask2)
 
 """
 set folder structure
@@ -77,7 +86,7 @@ if not os.path.exists(path_syn):
 # copy input files
 sh.copyfile(file_mean_epi, os.path.join(path_epi,"epi.nii"))
 sh.copyfile(file_t1, os.path.join(path_t1,"T1.nii"))
-sh.copyfile(file_mask, os.path.join(path_t1,"mask.nii"))
+sh.copyfile(file_mask1, os.path.join(path_t1,"mask.nii"))
 
 """
 bias field correction to epi

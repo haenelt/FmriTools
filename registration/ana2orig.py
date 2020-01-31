@@ -17,9 +17,9 @@ from lib.registration.get_scanner_transform import get_scanner_transform
 from nighres.registration import apply_coordinate_mappings
 
 # input data
-file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
-file_orig = "/data/pt_01880/Experiment1_ODC/p3/anatomy/freesurfer/mri/orig.mgz"
-path_output = "/data/pt_01880/odc_temp/deformation/header"
+file_t1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45_gnlcorr.nii"
+file_orig = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/freesurfer/mri/orig.mgz"
+path_output = "/data/pt_01880/Experiment3_Stripes/p3/deformation/header"
 cleanup = False
 
 """ do not edit below """
