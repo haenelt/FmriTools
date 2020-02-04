@@ -20,7 +20,7 @@ import numpy as np
 import nibabel as nb
 
 # input data
-img_input = ["/data/pt_01880/test_data/data/udata.nii",
+img_input = ["/data/pt_01880/temp_gbb/data/udata.nii",
              ]
 
 # path to SPM12 folder
@@ -30,8 +30,8 @@ pathLIB = "/home/raid2/haenelt/projects/scripts/lib"
 # parameters
 TR = 3 # repetition time in s
 cutoff_highpass = 180 # cutoff in s for baseline correction
-epi_threshold = 1300
-tsnr_threshold = 13
+epi_threshold = 2000
+tsnr_threshold = 20
 
 """ do not edit below """
 

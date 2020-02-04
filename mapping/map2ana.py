@@ -19,9 +19,13 @@ from lib.mapping import map2surface
 
 # input
 file_in = [        
-        "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2803151-124913-00001-00352-1_PD_gnlcorr_scaled_inverted.nii",
-        "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2803151-124913-00001-00352-1_R1_gnlcorr.nii",
-        "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2803151-124913-00001-00352-1_R2s_WOLS_gnlcorr_scaled.nii",
+        "/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT/native/spmT_bw_colour_GE_EPI1.nii",
+	"/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT/native/spmT_bw_GE_EPI1.nii",
+	"/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT/native/spmT_bw_rest_GE_EPI1.nii",
+	"/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT/native/spmT_colour_bw_GE_EPI1.nii",
+	"/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT/native/spmT_colour_GE_EPI1.nii",
+	"/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT/native/spmT_colour_rest_GE_EPI1.nii",
+	"/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT/native/spmT_rest_GE_EPI1.nii",
         ]
 
 surf_in = [
@@ -70,8 +74,9 @@ surf_in = [
         ]
 
 # parameters
-deformation_in = None
-path_output = "/data/pt_01880/Experiment3_Stripes/p3/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results"
+deformation_in1 = "/data/pt_01880/Experiment3_Stripes/p3/deformation/colour/GE_EPI1/epi2ana.nii.gz"
+deformation_in2 = "/data/pt_01880/Experiment3_Stripes/p3/deformation/mpm_gnl_flirt/mp2rage_2_mpm.nii.gz"
+path_output = "/data/pt_01880/Experiment3_Stripes/p3/colour/results/spmT"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
@@ -83,9 +88,10 @@ path_surf = os.path.join(path_output,"surf")
 for i in range(len(file_in)):
     
     # apply deformation    
-    if deformation_in is not None:
+    if deformation_in1 is not None:
         apply_coordinate_mappings(file_in[i], 
-                                  deformation_in, 
+                                  deformation_in1,
+                                  deformation_in2, 
                                   interpolation=interpolation, 
                                   padding='closest', 
                                   save_data=True, 
@@ -95,7 +101,7 @@ for i in range(len(file_in)):
                                   )
     
     # get filename of deformed file
-    if deformation_in is not None:
+    if deformation_in1 is not None:
         _, name_file, _ = get_filename(file_in[i])
         filename_def = os.path.join(path_def, name_file+"_def-img.nii.gz") 
     else:
