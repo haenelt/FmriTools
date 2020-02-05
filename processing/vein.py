@@ -30,8 +30,8 @@ pathLIB = "/home/raid2/haenelt/projects/scripts/lib"
 # parameters
 TR = 3 # repetition time in s
 cutoff_highpass = 180 # cutoff in s for baseline correction
-epi_threshold = 2000
-tsnr_threshold = 20
+epi_threshold = 1200
+tsnr_threshold = 12
 
 """ do not edit below """
 
