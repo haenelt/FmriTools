@@ -100,7 +100,7 @@ fileINV1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S5_MP2RAGE_0p7_INV1_2.
 fileINV2 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S6_MP2RAGE_0p7_INV2_2.45_gnlcorr.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
-namePATCH = "occip_all"
+namePATCH = "occip_v2_dorsal"
 sub = "freesurfer"
 part = 5
 
