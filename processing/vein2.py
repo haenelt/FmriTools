@@ -7,7 +7,7 @@ applying a threshold to identify voxels with large dispersion over time (phase_t
 
 created by Daniel Haenelt
 Date created: 24-01-2020             
-Last modified: 24-01-2020
+Last modified: 06-02-2020
 """
 import os
 import datetime
@@ -15,7 +15,8 @@ import numpy as np
 import nibabel as nb
 
 # input data
-phase_input = "/data/pt_01880/test_data/data/udata_phase_unwrap.nii"
+ref_input = "/data/pt_01880/temp_odc/resting_state/data.nii"
+phase_input = "/data/pt_01880/temp_odc/resting_state/udata_phase_unwrap.nii"
 
 # parameters
 phase_threshold = 0.05 # in rad
@@ -32,12 +33,13 @@ if not os.path.exists(path_output):
     os.makedirs(path_output)
 
 # get image header information
-phase_img = nb.load(phase_input)
-phase_img.header["dim"][0] = 3
-phase_img.header["dim"][4] = 1
-header = phase_img.header
-affine = phase_img.affine
+ref = nb.load(ref_input)
+ref.header["dim"][0] = 3
+ref.header["dim"][4] = 1
+header = ref.header
+affine = ref.affine
 
+phase_img = nb.load(phase_input)
 phase_array = phase_img.get_fdata()
 
 # normalize in range [-pi, pi]

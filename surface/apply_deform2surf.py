@@ -16,14 +16,13 @@ from os.path import join, basename, splitext
 from lib.surface import deform_surface
 
 # input files
-input_surf = ["/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer0",
-              "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer10"]
-input_orig = "/data/pt_01880/Experiment1_ODC/p3/anatomy/freesurfer/mri/orig.mgz"
-input_ana = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
-input_epi = "/data/pt_01880/test_data/data/mean_udata.nii"
-input_deform1 = "/data/pt_01880/odc_temp/deformation/header/T12orig.nii.gz" # ana2orig
-input_deform2 = "/data/pt_01880/test_data/deformation/nonrigid/epi2ana.nii.gz" # epi2ana
-path_output = "/data/pt_01880/test_data/nonrigid"
+input_surf = ["/data/pt_01880/temp_reg/data/lh.layer10"]
+input_orig = "/data/pt_01880/temp_reg/data/orig.mgz"
+input_ana = "/data/pt_01880/temp_reg/data/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
+input_epi = "/data/pt_01880/temp_reg/data/mean_test2.nii"
+input_deform1 = "/data/pt_01880/temp_reg/deformation/header/S22_MP2RAGE_0p7_T1_Images_2.45_2_orig_scanner.nii" # ana2orig
+input_deform2 = "/data/pt_01880/temp_reg/deformation/enhanced/epi2ana.nii.gz" # epi2ana
+path_output = "/data/pt_01880/temp_reg/surf/enhanced"
 
 """ do not edit below """
 
