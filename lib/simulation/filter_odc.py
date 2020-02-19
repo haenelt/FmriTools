@@ -59,6 +59,7 @@ def filter_odc_2d(nx, ny, fovx, fovy, rho, delta, epsilon, theta):
     
     return F
 
+
 def filter_odc_1d(n, fov, rho, delta):
     """
     This function defines the 1D ocular dominance column filter (anisotropic band-pass filter) in 

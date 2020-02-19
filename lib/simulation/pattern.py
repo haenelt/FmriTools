@@ -97,6 +97,7 @@ def pattern_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=10
     
     return pattern_img, y_img, ymri_img, F_bold_fft
 
+
 def pattern_1d(N_sim=1024, FOV=20, N_mri=100, omega=0.5, phi=0, rect_shape=True, beta=0.05, 
                fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, b_mask=1000):
     """

@@ -44,6 +44,7 @@ def filter_bold_2d(nx, ny, fovx, fovy, fwhm, beta):
     
     return F
 
+
 def filter_bold_1d(n, fov, fwhm, beta):
     """
     This defines the BOLD blurring in 1D. It is defined as modulation transfer function in spatial 

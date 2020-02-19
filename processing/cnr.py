@@ -17,14 +17,14 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 03-05-2019             
-Last modified: 25-09-2019  
+Last modified: 19-02-2020  
 """
 import os
 import datetime
 import numpy as np
 import nibabel as nb
 from lib.processing import get_onset_vols
-from lib.utils import upsample_time_series
+from lib.utils.upsample_time_series import regrid_time_series_afni
 
 # input data
 img_input = [
@@ -106,7 +106,7 @@ if n:
     for i in range(len(img_input)):
         file[i] = file[i]+"_upsampled"
         if not os.path.isfile(os.path.join(path[i],file[i]+".nii")):
-            upsample_time_series(img_input[i], n)
+            regrid_time_series_afni(img_input[i], n)
 
 # get image header information from first entry of the input list
 data_img = nb.load(os.path.join(path[0],file[0]+".nii"))

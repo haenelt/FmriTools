@@ -36,6 +36,7 @@ def mask_pattern_2d(nx, ny, a, b, alpha):
 
     return mask
 
+
 def mask_pattern_1d(n, a, b):
     """
     This function computes a mask to occlude parts of the columnar pattern.

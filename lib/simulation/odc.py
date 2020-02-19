@@ -95,6 +95,7 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100, r
     
     return white_img, odc_img, y_img, ymri_img, F_odc_fft, F_bold_fft
 
+
 def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4, beta=0.05, fwhm_bold=1.02, 
            fwhm_noise=0.001, a_mask=1000, b_mask=1000, path_white=False):
     """

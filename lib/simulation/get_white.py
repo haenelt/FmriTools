@@ -20,6 +20,7 @@ def get_white_2d(nx, ny, mu, sigma):
     
     return img
 
+
 def get_white_1d(n, mu, sigma):
     """
     Creates a 1D array with Gaussian noise.
