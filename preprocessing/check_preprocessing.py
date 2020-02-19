@@ -3,46 +3,32 @@ Spatial cross-correlation of the signal intensities in functional time series
 
 This scripts intends to identify corrupted volumes and runs in a set of functional time series to 
 get a quantifiable and reproducible exclusion criterion (cf. Marquardt et al. 2017; Bergmann et al.
-2019). Binary masks for each volume are created from the mean image intensity. Optionally, separate
-files for mask creation can be given as input. For the spatial correlation calculation, only voxels 
-included in brain masks of both input images are considered. Reference volumes can be either the 
-first volume of the input array if input_ref is given an empty string or another data set (e.g. the 
-session mean volume). A regressor of no interest is written for each input time series to denote 
-volumes below threshold.
+2019). Reference volumes can be for example the session mean. A regressor of no interest is written 
+for each input time series to denote volumes below threshold.
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 27-09-2019  
+Last modified: 19-02-2020  
 """
 import os
 import numpy as np
 import nibabel as nb
 import matplotlib.pyplot as plt
-from matplotlib import rc
 from scipy.stats import pearsonr, shapiro
+from lib.io.get_filename import get_filename
 
 input = [
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/pol_anticlock/udata.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/pol_clock/udata.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/ecc_expanding/udata.nii",
-        "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/ecc_contracting/udata.nii",
-        ]
-input_ref = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/19883.56/retinotopy/diagnosis/mean_data.nii"
-input_mask = []
-input_mask_ref = ""
+    "/data/pt_01880/temp/run1/udata.nii",
+    "/data/pt_01880/temp/run2/udata.nii",
+    ]
+input_ref = "/data/pt_01880/temp/input/mean_epi.nii"
+input_mask_ref = "/data/pt_01880/temp/input/mask_def-img3.nii.gz"
 r_threshold = 0.95
 
 """ do not edit below """
 
-# font parameters for plots
-rc('font',**{'family':'serif','serif':['Palatino']})
-rc('text', usetex=True)
-
 # get filename from first input entry
-if os.path.splitext(input[0])[1] == ".gz":
-    name_file = os.path.splitext(os.path.splitext(os.path.basename(input[0]))[0])[0]
-else:
-    name_file = os.path.splitext(os.path.basename(input[0]))[0]
+_, name_file, _ = get_filename(input[0])
 
 # create output folder
 if len(input) < 2:
@@ -53,11 +39,8 @@ else:
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# pool data from first (reference) volume
-if len(input_ref) > 0:
-    data_0 = nb.load(input_ref).get_fdata()
-else:
-    data_0 = nb.load(input[0]).get_fdata()[:,:,:,0]
+# load reference volume
+data_0 = nb.load(input_ref).get_fdata()
 
 if len(input_mask_ref) > 0:
     mask_0 = nb.load(input_mask_ref).get_fdata()
@@ -73,14 +56,10 @@ r_shapiro = []
 p_pearson_0 = []
 p_pearson = []
 p_shapiro = []
-neighbourFlag = 0 # omit correlation between neighbours for last time step
 for i in range(len(input)):
     
     # load time series
     data_temp = nb.load(input[i]).get_fdata()   
-    
-    if len(input_mask) > 0:
-        mask_temp = nb.load(input_mask[i]).get_fdata()   
     
     # print progress
     print("Time series "+str(i+1)+"/"+str(len(input)))
@@ -103,32 +82,13 @@ for i in range(len(input)):
         data_temp_0 = data_0.copy()
         data_temp_j = data_temp[:,:,:,j].copy()
         
-        if len(input_mask_ref) > 0:
-            mask_temp_0 = mask_0.copy()
-            
-        if len(input_mask) > 0:
-            mask_temp_j = mask_temp[:,:,:,j].copy()
-        
-        # get temporary mask
-        if len(input_mask_ref) > 0:
-            mask_0 = mask_temp_0.copy()
-        else:
-            mask_0 = data_temp_0.copy()            
-        
-        if len(input_mask) > 0:
-            mask_j = mask_temp_j.copy()
-        else:            
-            mask_j = data_temp_j.copy()
-
-        mask_0[mask_0 < np.mean(mask_0[mask_0 > 0])] = 0
-        mask_0[mask_0 != 0] = 1            
-        mask_j[mask_j < np.mean(mask_j[mask_j > 0])] = 0
-        mask_j[mask_j != 0] = 1        
-        mask_0j = mask_0 * mask_j
-        
         # mask time step
-        data_temp_0 = data_temp_0[mask_0j == 1].flatten()
-        data_temp_j = data_temp_j[mask_0j == 1].flatten()        
+        if len(input_mask_ref) > 0:
+            data_temp_0 = data_temp_0[mask_0 == 1].flatten()
+            data_temp_j = data_temp_j[mask_0 == 1].flatten()       
+        else:
+            data_temp_0 = data_temp_0.flatten()
+            data_temp_j = data_temp_j.flatten()       
         
         # shapiro wilk
         r_tmp, p_tmp = shapiro(data_temp_j)
@@ -153,45 +113,27 @@ for i in range(len(input)):
             file2.write("0\n")
         
         if j < np.shape(data_temp)[3]-1 and i < len(input):
-            data_temp_1 = data_temp[:,:,:,j]
-            data_temp_2 = data_temp[:,:,:,j+1]
-            
-            if len(input_mask) > 0:
-                mask_temp_1 = mask_temp[:,:,:,j]
-                mask_temp_2 = mask_temp[:,:,:,j+1]
+            data_temp_1 = data_temp[:,:,:,j].copy()
+            data_temp_2 = data_temp[:,:,:,j+1].copy()
             
         elif j == np.shape(data_temp)[3]-1 and i < len(input)-1:
-            data_temp_1 = data_temp[:,:,:,j]
+            data_temp_1 = data_temp[:,:,:,j].copy()
             data_temp_2 = nb.load(input[i+1]).get_fdata()[:,:,:,0]
             
-            if len(input_mask) > 0:
-                mask_temp_1 = mask_temp[:,:,:,j]
-                mask_temp_2 = nb.load(input_mask[i+1]).get_fdata()[:,:,:,0]
-            
         else:
-            neighbourFlag = 1
-
-        if neighbourFlag == 0:
+            break
             
-            if len(input_mask) > 0:
-                mask_1 = mask_temp_1.copy()
-                mask_2 = mask_temp_2.copy()
-            else:
-                mask_1 = data_temp_1.copy()
-                mask_2 = data_temp_2.copy()
-            
-            mask_1[mask_1 < np.mean(mask_1[mask_1 > 0])] = 0
-            mask_1[mask_1 != 0] = 1
-            mask_2[mask_2 < np.mean(mask_2[mask_2 > 0])] = 0
-            mask_2[mask_2 != 0] = 1
-            mask_12 = mask_1 * mask_2
-    
-            data_temp_1 = data_temp_1[mask_12 == 1].flatten()
-            data_temp_2 = data_temp_2[mask_12 == 1].flatten()
+        # mask time step
+        if len(input_mask_ref) > 0:
+            data_temp_1 = data_temp_1[mask_0 == 1].flatten()
+            data_temp_2 = data_temp_2[mask_0 == 1].flatten() 
+        else:
+            data_temp_1 = data_temp_1.flatten()
+            data_temp_2 = data_temp_2.flatten() 
         
-            r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
-            r_pearson = np.append(r_pearson, r_tmp)
-            p_pearson = np.append(p_pearson, p_tmp)
+        r_tmp, p_tmp = pearsonr(data_temp_1, data_temp_2)
+        r_pearson = np.append(r_pearson, r_tmp)
+        p_pearson = np.append(p_pearson, p_tmp)
                
     # close logfile for regressor of no interest
     file2.close()
