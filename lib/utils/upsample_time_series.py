@@ -88,3 +88,8 @@ def regrid_time_series(input, path_output, TR_source, TR_target, t_start=0):
     # write output
     output = nb.Nifti1Image(data_array_new, data.affine, data.header)
     nb.save(output, os.path.join(path_output,name_input+"_upsampled"+ext_input))
+    
+    # change TR in header
+    os.system("3drefit " + \
+              "-TR " + str(TR_target) + " " + \
+              os.path.join(path_output,name_input+"_upsampled"+ext_input))
