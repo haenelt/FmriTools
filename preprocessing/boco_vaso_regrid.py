@@ -15,6 +15,7 @@ Last modified: 20-10-2019
 import os
 import numpy as np
 import nibabel as nb
+from lib.utils.upsample_time_series import regrid_time_series
 
 # input data
 img_vaso = ["/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/uvaso.nii",
@@ -45,9 +46,14 @@ img_bold = ["/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/ubold.nii",
 TR = 2.5
 vaso_threshold = 6
 
+# regrid bold and vaso
+# 
+
 """ do not edit below """
 
 for i in range(len(img_vaso)):
+    
+    
     
     # prepare path and filename
     path_vaso = os.path.dirname(img_vaso[i])
