@@ -24,7 +24,7 @@ import datetime
 import numpy as np
 import nibabel as nb
 from lib.processing import get_onset_vols
-from lib.utils.upsample_time_series import regrid_time_series_afni
+from lib.utils.regrid_time_series import regrid_time_series_afni
 
 # input data
 img_input = [

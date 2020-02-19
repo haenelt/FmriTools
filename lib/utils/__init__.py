@@ -16,5 +16,5 @@ from .get_bandpass_filter import get_bandpass_filter
 from .average_layer import average_layer
 from .check_trigger import check_trigger
 from .upsample_volume import upsample_volume
-from .upsample_time_series import regrid_time_series
-from .upsample_time_series import regrid_time_series_afni
+from .regrid_time_series import regrid_time_series
+from .regrid_time_series import regrid_time_series_afni
