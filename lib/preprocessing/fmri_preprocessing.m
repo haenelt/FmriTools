@@ -177,9 +177,9 @@ if realign_params.unwarp
     matlabbatch{1}.spm.spatial.realignunwarp.eoptions.einterp = 7;
     matlabbatch{1}.spm.spatial.realignunwarp.eoptions.ewrap = [0 0 0];
     if realign_params.mask
-        matlabbatch{1}.spm.spatial.realignunwarp.eoptions.weight = fullfile(path_diagnosis,'moco_mask.nii');
+        matlabbatch{1}.spm.spatial.realignunwarp.eoptions.weight = {fullfile(path_diagnosis,'moco_mask.nii')};
     else
-        matlabbatch{1}.spm.spatial.realignunwarp.eoptions.weight = '';
+        matlabbatch{1}.spm.spatial.realignunwarp.eoptions.weight = {''};
     end
 
     % estimate unwarping parameters
@@ -230,9 +230,9 @@ else
     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.interp = 7;
     matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.wrap = [0 0 0];
     if realign_params.mask
-        matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = fullfile(path_diagnosis,'moco_mask.nii');
+        matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = {fullfile(path_diagnosis,'moco_mask.nii')};
     else
-        matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = '';
+        matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = {''};
     end
     matlabbatch{1}.spm.spatial.realign.estwrite.roptions.which = [2 1];
     matlabbatch{1}.spm.spatial.realign.estwrite.roptions.interp = 7;
