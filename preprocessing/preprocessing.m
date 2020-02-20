@@ -2,10 +2,9 @@
 
 % This script performs slice timing correction, fieldmap undistortion and
 % realignment of an array of fmri time series. Realignment can be done
-% across multiple time series or for each time series independently. Note
-% that in both cases, the same slice timing and fieldmap parameters are
-% assumed for all time series. So, it makes most sense to only put time
-% series from the same session into one array.
+% across multiple time series. Note that the same slice timing and fieldmap 
+% parameters are assumed for all time series. So, it makes most sense to 
+% only put time series from the same session into one array.
 %
 % BandwidthPerPixelPhaseEncode: 
 % retinotopy_1p0 -> 20.27
@@ -14,7 +13,7 @@
 
 % created by Daniel Haenelt
 % Date created: 06-08-2019
-% Last modified: 15-09-2019
+% Last modified: 20-02-2020
 
 % array of of input time series
 img_input = {
@@ -36,7 +35,10 @@ field_params.fmap_blipdir = -1; % phase-encoding direction
 field_params.fmap_BandwidthPerPixelPhaseEncode = 16.304; % phase-encoding bandwidth Hz/px
 
 % realignment parameters
-realign_params.independent = false;
+realign_params.unwarp = false;
+realign_params.mask = false;
+realign_params.c = [100 100 30];
+realign_params.r = [10 5 2];
 
 % outlier parameters
 outlier_params.moco_out_mm_short = 0.4; % in mm
@@ -55,20 +57,10 @@ pathLIB = '/home/raid2/haenelt/projects/scripts/lib/preprocessing';
 addpath(pathLIB);
 
 % start preprocessing
-if realign_params.independent 
-    for i = 1:length(img_input)
-        fmri_preprocessing(...
-            {img_input{i}},...
-            slice_params,...
-            field_params,...
-            outlier_params,...
-            pathSPM);
-    end
-else
-    fmri_preprocessing(...
-        img_input,...
-        slice_params,...
-        field_params,...
-        outlier_params,...
-        pathSPM);
-end
+fmri_preprocessing(...
+    img_input,...
+    slice_params,...
+    field_params,...
+    realign_params,...
+    outlier_params,...
+    pathSPM);

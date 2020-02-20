@@ -3,11 +3,14 @@ def regrid_time_series(input, path_output, TR_source, TR_target, t_start=0):
     This function interpolates the time series onto a new time grid using cubic interpolation.
     Inputs:
         *input: time series filename.
-        *n: upsampling factor.
+        *path_output: path where output is written.
+        *TR_source: TR of time series ins .
+        *TR_target: TR of regridded time series in s.
+        *t_start: shift in s if time series does not start at t=0.
         
     created by Daniel Haenelt
     Date created: 19-02-2020           
-    Last modified: 19-02-2020
+    Last modified: 20-02-2020
     """
     import os
     import numpy as np
@@ -27,15 +30,22 @@ def regrid_time_series(input, path_output, TR_source, TR_target, t_start=0):
     ny = np.shape(data_array)[1]
     nz = np.shape(data_array)[2]
     nt = np.shape(data_array)[3]
-
+    
     # source time points
     t = TR_source * np.arange(0,nt) + t_start
-
+    t0 = TR_source * np.arange(0,nt)
+    
     # target time points
-    t_end = np.max(t) + 10
-    t_new = np.arange(0,t_end, TR_target)
-    t_new = t_new[t_new <= np.max(t)]
+    t_new = []
+    i = 0
+    while True:
+        x = TR_target * i
+        t_new = np.append(t_new, x)
+        i += 1
+        if x > np.max(t0):
+            break
 
+    # regrid time series
     data_array_new = np.zeros((nx,ny,nz,len(t_new)))
     for x in range(nx):    
         for y in range(ny):

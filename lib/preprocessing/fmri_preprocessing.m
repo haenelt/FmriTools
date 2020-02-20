@@ -1,4 +1,4 @@
-function fmri_preprocessing(img_input, slice_params, field_params, outlier_params, pathSPM)
+function fmri_preprocessing(img_input, slice_params, field_params, realign_params, outlier_params, pathSPM)
 % This function performs slice time correction, fieldmap undistortion and
 % motion correction in the SPM12 framework which can be applied to a
 % session consisting of multiple runs. Slice time correction and fieldmap 
@@ -23,12 +23,13 @@ function fmri_preprocessing(img_input, slice_params, field_params, outlier_param
     % input: cell array of filenames of input time series.
     % slice_params: struct of slice time correction parameters.
     % field_params: struct of fieldmap parameters.
+    % realign_params: struct of realignment parameters.
     % outlier_params: struct of realignment check parameters.
     % pathSPM: path to spm12 folder.
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 27-09-2019
+% Last modified: 20-02-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -45,6 +46,17 @@ end
 
 if ~exist(path_diagnosis,'dir') 
     mkdir(path_diagnosis); 
+end
+
+% create mask 
+if realign_params.mask
+    cubic_mask(...
+        img_input{1},...
+        path_diagnosis,...
+        'moco_mask',...
+        realign_params.c,...
+        realign_params.r,...
+        pathSPM)
 end
 
 % path and filename of fieldmap phase
@@ -126,64 +138,109 @@ if field_params.fieldmap_undistortion
 end
 
 % realignment
-for i = 1:length(img_input)
-    
-    % get time series length
-    data_img = spm_vol(img_input{i});
-    nt = length(data_img);
-    
-    % get time series path and filename
-    [path, file, ext] = fileparts(img_input{i});
-    if slice_params.slice_timing
-        file = ['a' file];
-    end
-    
-    % get input data
-    for j = 1:nt
-        matlabbatch{1}.spm.spatial.realignunwarp.data(i).scans{j,1} = fullfile(path,[file ext ',' num2str(j)]);
-        if field_params.fieldmap_undistortion
-            if length(img_input) > 1
-                matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
-            else
-                matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '.nii,1'])};
-            end
-        else
-            matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = '';
+cd(fileparts(img_input{1})); % change to first run directory
+if realign_params.unwarp
+
+    for i = 1:length(img_input)
+
+        % get time series length
+        data_img = spm_vol(img_input{i});
+        nt = length(data_img);
+
+        % get time series path and filename
+        [path, file, ext] = fileparts(img_input{i});
+        if slice_params.slice_timing
+            file = ['a' file];
         end
+
+        % get input data
+        for j = 1:nt
+            matlabbatch{1}.spm.spatial.realignunwarp.data(i).scans{j,1} = fullfile(path,[file ext ',' num2str(j)]);
+            if field_params.fieldmap_undistortion
+                if length(img_input) > 1
+                    matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '_session' num2str(i) '.nii,1'])};
+                else
+                    matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = {fullfile(path_fmap2,['vdm5_sc' file_fmap2 '.nii,1'])};
+                end
+            else
+                matlabbatch{1}.spm.spatial.realignunwarp.data(i).pmscan = '';
+            end
+        end
+
     end
+
+    % realignment (coregister only)
+    matlabbatch{1}.spm.spatial.realignunwarp.eoptions.quality = 1;
+    matlabbatch{1}.spm.spatial.realignunwarp.eoptions.sep = 1;
+    matlabbatch{1}.spm.spatial.realignunwarp.eoptions.fwhm = 1;
+    matlabbatch{1}.spm.spatial.realignunwarp.eoptions.rtm = 0;
+    matlabbatch{1}.spm.spatial.realignunwarp.eoptions.einterp = 7;
+    matlabbatch{1}.spm.spatial.realignunwarp.eoptions.ewrap = [0 0 0];
+    if realign_params.mask
+        matlabbatch{1}.spm.spatial.realignunwarp.eoptions.weight = fullfile(path_diagnosis,'moco_mask.nii');
+    else
+        matlabbatch{1}.spm.spatial.realignunwarp.eoptions.weight = '';
+    end
+
+    % estimate unwarping parameters
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.basfcn = [12 12];
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.regorder = 1;
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.lambda = 100000;
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.jm = 0;
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.fot = [4 5];
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.sot = [];
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.uwfwhm = 1;
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.rem = 1;
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.noi = 5;
+    matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.expround = 'Average';
+
+    % write unwarped images
+    matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.uwwhich = [2 1];
+    matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.rinterp = 7;
+    matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.wrap = [0 0 0];
+    matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.mask = 1;
+    matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.prefix = 'u';
+
+else
+
+    for i = 1:length(img_input)
+
+        % get time series length
+        data_img = spm_vol(img_input{i});
+        nt = length(data_img);
+
+        % get time series path and filename
+        [path, file, ext] = fileparts(img_input{i});
+        if slice_params.slice_timing
+            file = ['a' file];
+        end
+
+        % get input data
+        for j = 1:nt
+            matlabbatch{1}.spm.spatial.realign.estwrite.data{1,i}{j,1} = fullfile(path,[file ext ',' num2str(j)]);
+        end
+
+    end
+
+    % realignment (coregister only)
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.quality = 1;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.sep = 1;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.fwhm = 1;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.rtm = 0;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.interp = 7;
+    matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.wrap = [0 0 0];
+    if realign_params.mask
+        matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = fullfile(path_diagnosis,'moco_mask.nii');
+    else
+        matlabbatch{1}.spm.spatial.realign.estwrite.eoptions.weight = '';
+    end
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.which = [2 1];
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.interp = 7;
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.wrap = [0 0 0];
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.mask = 1;
+    matlabbatch{1}.spm.spatial.realign.estwrite.roptions.prefix = 'u';
     
 end
-
-% change to first run directory
-cd(fileparts(img_input{1}));
-
-% realignment (coregister only)
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.quality = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.sep = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.fwhm = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.rtm = 0;
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.einterp = 7;
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.ewrap = [0 0 0];
-matlabbatch{1}.spm.spatial.realignunwarp.eoptions.weight = '';
-
-% estimate unwarping parameters
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.basfcn = [12 12];
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.regorder = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.lambda = 100000;
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.jm = 0;
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.fot = [4 5];
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.sot = [];
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.uwfwhm = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.rem = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.noi = 5;
-matlabbatch{1}.spm.spatial.realignunwarp.uweoptions.expround = 'Average';
-
-% write unwarped images
-matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.uwwhich = [2 1];
-matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.rinterp = 7;
-matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.wrap = [0 0 0];
-matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.mask = 1;
-matlabbatch{1}.spm.spatial.realignunwarp.uwroptions.prefix = 'u';
 
 % run
 spm_jobman('run',matlabbatch);
