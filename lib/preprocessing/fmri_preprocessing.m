@@ -29,7 +29,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 20-02-2020
+% Last modified: 21-02-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -370,6 +370,26 @@ end
 
 % open textfile
 fileID = fopen(fullfile(path_diagnosis,['preprocessing_summary_' file '.txt']),'w');
+fprintf(fileID,'List of input parameters\n');
+fprintf(fileID,'----------\n\n');
+fprintf(fileID,'Preprocessed data\n');
+for i = 1:length(img_input)
+    fprintf(fileID,[img_input{i} '\n']);
+end
+fprintf(fileID,['run slice timing correction: ' mat2str(slice_params.slice_timing) '\n']);
+fprintf(fileID,['slice timing parameter (TR): ' num2str(slice_params.TR) '\n']);
+fprintf(fileID,['slice timing parameter (order): ' slice_params.slice_order '\n']);
+fprintf(fileID,['run fieldmap undistortion: ' mat2str(field_params.fieldmap_undistortion) '\n']);
+fprintf(fileID,['fieldmap undistortion parameter (magn): ' field_params.fmap_magn '\n']);
+fprintf(fileID,['fieldmap undistortion parameter (phase): ' field_params.fmap_phase '\n']);
+fprintf(fileID,['fieldmap undistortion parameter (TE1): ' num2str(field_params.fmap_te1) '\n']);
+fprintf(fileID,['fieldmap undistortion parameter (TE2): ' num2str(field_params.fmap_te2) '\n']);
+fprintf(fileID,['fieldmap undistortion parameter (blipdir): ' num2str(field_params.fmap_blipdir) '\n']);
+fprintf(fileID,['fieldmap undistortion parameter (bw): ' num2str(field_params.fmap_BandwidthPerPixelPhaseEncode) '\n']);
+fprintf(fileID,['run unwarp: ' mat2str(realign_params.unwarp) '\n']);
+fprintf(fileID,['realign parameter (mask): ' mat2str(realign_params.mask) '\n']);
+fprintf(fileID,['realign parameter (c): ' num2str(realign_params.c) '\n']);
+fprintf(fileID,['realign parameter (r): ' num2str(realign_params.r) '\n\n']);
 fprintf(fileID,'Percentage of within-run motion and intensity outliers\n');
 fprintf(fileID,['motion threshold (mm, short): ' num2str(outlier_params.moco_out_mm_short) '\n']);
 fprintf(fileID,['motion threshold (mm, long): ' num2str(outlier_params.moco_out_mm_long) '\n']);

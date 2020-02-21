@@ -18,62 +18,17 @@ from lib.io.get_filename import get_filename
 from lib.mapping import map2surface
 
 # input
-file_in = ["/nobackup/actinium2/haenelt/V2STRIPES/p2/colour/results/spmT/def/spmT_colour_bw_GE_EPI1_def.nii.gz",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/colour/results/spmT/def/spmT_colour_bw_GE_EPI2_def.nii.gz",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/colour/results/spmT/def/spmT_colour_bw_GE_EPI_def_mean.nii.gz",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/colour/results/spmT/def/spmT_colour_bw_SE_EPI1_def.nii.gz",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/colour/results/spmT/def/spmT_colour_bw_SE_EPI2_def.nii.gz",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/colour/results/spmT/def/spmT_colour_bw_SE_EPI_def_mean.nii.gz",
+file_in = ["/data/pt_01880/temp/results/spmT/native/spmT_colour_bw_try1_old_deform.nii",
            ]
 
-surf_in = ["/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer0",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer1",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer2",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer3",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer4",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer5",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer6",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer7",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer8",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer9",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer10",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer11",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer12",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer13",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer14",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer15",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer16",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer17",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer18",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer19",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/lh.layer20",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer0",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer1",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer2",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer3",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer4",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer5",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer6",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer7",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer8",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer9",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer10",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer11",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer12",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer13",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer14",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer15",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer16",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer17",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer18",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer19",
-           "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab/layer/rh.layer20",
+surf_in = ["/data/pt_01880/Experiment3_Stripes/p3/anatomy/layer_mpm/lh.layer10_mpm",
+           "/data/pt_01880/Experiment3_Stripes/p3/anatomy/layer_mpm/rh.layer10_mpm",
            ]
 
 # parameters
-deformation_in1 = None
-deformation_in2 = None
-path_output = "/nobackup/actinium2/haenelt/V2STRIPES/p2/sab"
+deformation_in1 = "/data/pt_01880/Experiment3_Stripes/p3/deformation/colour/GE_EPI1/epi2ana.nii.gz"
+deformation_in2 = "/data/pt_01880/Experiment3_Stripes/p3/deformation/mpm_gnl_flirt/mp2rage_2_mpm.nii.gz"
+path_output = "/data/pt_01880/temp/results/spmT"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
@@ -100,7 +55,7 @@ for i in range(len(file_in)):
     # get filename of deformed file
     if deformation_in1 is not None:
         _, name_file, _ = get_filename(file_in[i])
-        filename_def = os.path.join(path_def, name_file+"_def-img.nii.gz") 
+        filename_def = os.path.join(path_def, name_file+"_def-img.nii") 
     else:
         filename_def = file_in[i]
         
