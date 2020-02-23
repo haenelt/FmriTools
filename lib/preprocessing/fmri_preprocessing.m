@@ -29,7 +29,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 21-02-2020
+% Last modified: 23-02-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -248,7 +248,7 @@ spm_jobman('run',matlabbatch);
 % clear
 clear matlabbatch
 
-% plot motion regressors
+% check realignment processing
 for i = 1:length(img_input)
 
     % change to single run
@@ -259,117 +259,25 @@ for i = 1:length(img_input)
         file = ['a' file];
     end
     
-    % read realignment parameters
-    M = dlmread(['rp_' file '.txt']);
+    % plot realignment parameters
+    plot_moco(...
+        ['rp_' file '.txt'], ...
+        path_diagnosis, ...
+        ['rp_run_' num2str(i)]...
+        );
     
-    transFig = figure('visible','off');
-    hold on
-    plot(M(:,1));
-    plot(M(:,2));
-    plot(M(:,3));
-    title(['Translational movement in session ' num2str(i)]);
-    xlabel('number of volume');
-    ylabel('Translation in mm');
-    legend('x','y','z');
-    saveas(gcf,fullfile(path_diagnosis,['moco_mm_' file '_' num2str(i) '.png']));
-    close(transFig);
-    
-    radFig = figure('visible','off');
-    hold on
-    plot(M(:,4));
-    plot(M(:,5));
-    plot(M(:,6));
-    title(['Rotational movement in session ' num2str(i)]);
-    xlabel('number of volume');
-    ylabel('Rotation in rad');
-    legend('pitch','roll','yaw');
-    saveas(gcf,fullfile(path_diagnosis,['moco_rad_' file '_' num2str(i) '.png']));
-    close(radFig);
+    % check for realignment and/or intensity outliers
+    outlier_all = get_outlier(...
+        ['rp_' file '.txt'], ...
+        ['u' file ext], ...
+        outlier_params, ...
+        fullfile(path,'logfiles')...
+        );
 
-end
-
-% get motion and intensity outliers
-for i = 1:length(img_input)
-
-    % initialise outlier array
-    motion_outlier = struct();
-    motion_outlier.short.mm = [];
-    motion_outlier.short.dir = [];
-    motion_outlier.short.t = [];
-    motion_outlier.long.mm = [];
-    motion_outlier.long.dir = [];
-    motion_outlier.long.t = [];
-    
-    % change to single run
-    cd(fileparts(img_input{i}));
-    
-    [path, file, ext] = fileparts(img_input{i});
-    if slice_params.slice_timing
-        file = ['a' file];
-    end
-    
-    % read realignment parameters
-    M = dlmread(['rp_' file '.txt']);
-        
-    % compute absolute difference between volumes
-    for j = 1:length(M(:,1))-1
-        for k = 1:length(M(1,:)) % number of motion parameters
-            diff_short = abs(M(j+1,k) - M(j,k));
-            diff_long = abs(M(j+1,k) - M(1,k));
-            
-            if k < 4 % set different threshold for displacement and rotation
-                threshold_short = outlier_params.moco_out_mm_short;
-                threshold_long = outlier_params.moco_out_mm_long;
-            else
-                threshold_short = outlier_params.moco_out_rad_short;
-                threshold_long = outlier_params.moco_out_rad_long;
-            end
-            
-            % check for volume-to-volume outliers
-            if diff_short >= threshold_short
-                motion_outlier.short.mm = [motion_outlier.short.mm diff_short];
-                motion_outlier.short.dir = [motion_outlier.short.dir k];
-                motion_outlier.short.t = [motion_outlier.short.t j+1];
-            end
-            
-            % check for volume-to-reference outliers
-            if diff_long >= threshold_long
-                motion_outlier.long.mm = [motion_outlier.long.mm diff_long];
-                motion_outlier.long.dir = [motion_outlier.long.dir k];
-                motion_outlier.long.t = [motion_outlier.long.t j+1];
-            end
-        end
-    end
-    
-    % initialise outlier array
-    intensity_outlier = struct();
-    intensity_outlier.z = [];
-    intensity_outlier.t = [];
-    
-    % read time series
-    data_img = spm_vol(fullfile(path,['u' file ext]));
-    data_array = spm_read_vols(data_img);
-    nt = length(data_img);
-    
-    data_mean = mean(data_array(:));
-    for j = 1:nt
-        % compute threshold based on z-score
-        data_array(data_array < data_mean) = NaN;
-        z = (data_array(:,:,:,j) - nanmean(data_array,4)) ./ nanstd(data_array,0,4);
-        z_avg = nanmean(z(:));
-        
-        if z_avg > outlier_params.int_out_z
-            intensity_outlier.z = [intensity_outlier.z z_avg];
-            intensity_outlier.t = [intensity_outlier.t j];
-        end
-    end
-    
-    % save summed outliers in mat file
-    save(['outlier_' file '.mat'],'motion_outlier','intensity_outlier');
 end
 
 % open textfile
-fileID = fopen(fullfile(path_diagnosis,['preprocessing_summary_' file '.txt']),'w');
+fileID = fopen(fullfile(path_diagnosis,['preprocessing_summary_u' file '.txt']),'w');
 fprintf(fileID,'List of input parameters\n');
 fprintf(fileID,'----------\n\n');
 fprintf(fileID,'Preprocessed data\n');
@@ -393,36 +301,32 @@ fprintf(fileID,['realign parameter (r): ' num2str(realign_params.r) '\n\n']);
 fprintf(fileID,'Percentage of within-run motion and intensity outliers\n');
 fprintf(fileID,['motion threshold (mm, short): ' num2str(outlier_params.moco_out_mm_short) '\n']);
 fprintf(fileID,['motion threshold (mm, long): ' num2str(outlier_params.moco_out_mm_long) '\n']);
-fprintf(fileID,['motion threshold (rad, short): ' num2str(outlier_params.moco_out_rad_short) '\n']);
-fprintf(fileID,['motion threshold (rad, long): ' num2str(outlier_params.moco_out_rad_long) '\n']);
+fprintf(fileID,['motion threshold (deg, short): ' num2str(outlier_params.moco_out_deg_short) '\n']);
+fprintf(fileID,['motion threshold (deg, long): ' num2str(outlier_params.moco_out_deg_long) '\n']);
 fprintf(fileID,['intensity threshold (z-score): ' num2str(outlier_params.int_out_z) '\n']);
 fprintf(fileID,'----------\n\n');
 
 for i  = 1:length(img_input)
 
+    % change to single run
     cd(fileparts(img_input{i}));
-    load(['outlier_' file '.mat']);
+    
+    [path, file, ext] = fileparts(img_input{i});
+    if slice_params.slice_timing
+        file = ['a' file];
+    end
+    
+    cd(fullfile(fileparts(img_input{i}), 'logfiles'));
+    load(['outlier_u' file '.mat']);
     
     data_img = spm_vol(img_input{i});
     nt = length(data_img);
     
     % get within-run outlier percentage
-    outlier_all = [motion_outlier.short.t motion_outlier.long.t intensity_outlier.t];
-    outlier_all = unique(outlier_all);
     outlier_percentage = length(outlier_all) / nt * 100;
     
     % get ratio of outliers within time series
-    fprintf(fileID,'%.2f\n',outlier_percentage);
-        
-    % write regressor of no interest
-    path_regressor = fullfile(pwd,'logfiles');
-    if ~exist(path_regressor,'dir') 
-        mkdir(path_regressor); 
-    end
-
-    M = zeros(nt,1);
-    M(outlier_all) = 1;
-    dlmwrite(fullfile(path_regressor,['outlier_regressor_' file '.txt']),M);
+    fprintf(fileID,'%.2f\n', outlier_percentage);
     
 end
 
@@ -441,7 +345,7 @@ for i = 1:length(img_input)
     data_img = spm_vol(fullfile(path,['u' file ext]));
     data_array = spm_read_vols(data_img);
     
-    data_img_out(i).fname = fullfile(path_diagnosis, ['vol1_' file '.nii']);
+    data_img_out(i).fname = fullfile(path_diagnosis, ['vol1_u' file '.nii']);
     spm_write_vol(data_img_out(i), data_array(:,:,:,1));
 
 end
@@ -467,5 +371,5 @@ for i = 1:length(img_input)
     
 end
 data_mean_array = data_mean_array ./ counter;
-data_img_out.fname = fullfile(path_diagnosis, ['mean_' file '.nii']);
+data_img_out.fname = fullfile(path_diagnosis, ['mean_u' file '.nii']);
 spm_write_vol(data_img_out, data_mean_array);

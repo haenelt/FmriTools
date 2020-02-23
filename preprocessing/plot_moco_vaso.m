@@ -7,10 +7,23 @@
 
 % created by Daniel Haenelt
 % Date created: 20-10-2019
-% Last modified: 20-10-2019
+% Last modified: 23-02-2020
 
 % array of of input time series
-img_input = {
+rp_bold = {
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_2/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_3/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_4/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_5/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_6/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_7/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_8/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_9/data.nii',...
+    '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_10/data.nii',...
+    };
+
+rp_vaso = {
     '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/data.nii',...
     '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_2/data.nii',...
     '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_3/data.nii',...
@@ -24,28 +37,42 @@ img_input = {
     };
 
 % basenames
+path_output = '';
 basename_bold = 'bold';
 basename_vaso = 'vaso';
 
 %%% do not edit below %%%
 
-% preprocessing summary
-if length(img_input) > 1
-    path_diagnosis = fullfile(fileparts(fileparts(img_input{1})),'diagnosis');
-else
-    path_diagnosis = fullfile(fileparts(img_input{1}),'diagnosis');
-end
-
-if ~exist(path_diagnosis,'dir') 
-    mkdir(path_diagnosis); 
+% make folder
+if ~exist(path_output,'dir') 
+    mkdir(path_output); 
 end
 
 % plot motion regressors
-for i = 1:length(img_input)
+for i = 1:length(rp_bold)
+    
+    % basename of output
+    name_output = [basename_bold '_' basename_vaso '_run_' num2str(i)];
     
     % read realignment parameters
-    M_bold = dlmread(fullfile(fileparts(img_input{i}),['rp_' basename_bold '.txt']));
-    M_vaso = dlmread(fullfile(fileparts(img_input{i}),['rp_' basename_vaso '.txt']));
+    M_bold = dlmread(rp_bold{i});
+    M_vaso = dlmread(rp_vaso{i});
+    
+    % rad2deg
+    M_bold(:,4) = radtodeg(M_bold(:,4));
+    M_bold(:,5) = radtodeg(M_bold(:,5));
+    M_bold(:,6) = radtodeg(M_bold(:,6));
+    M_vaso(:,4) = radtodeg(M_vaso(:,4));
+    M_vaso(:,5) = radtodeg(M_vaso(:,5));
+    M_vaso(:,6) = radtodeg(M_vaso(:,6));
+    
+    % translational displacement
+    M_bold_trans = sqrt(M_bold(:,1).^2+M_bold(:,2).^2+M_bold(:,3).^2);
+    M_vaso_trans = sqrt(M_vaso(:,1).^2+M_vaso(:,2).^2+M_vaso(:,3).^2);
+    
+    % rotational displacement
+    M_bold_rot = sqrt(M_bold(:,4).^2+M_bold(:,5).^2+M_bold(:,6).^2);
+    M_vaso_rot = sqrt(M_vaso(:,4).^2+M_vaso(:,5).^2+M_vaso(:,6).^2);
     
     transFig = figure('visible','off');
     hold on
@@ -55,11 +82,13 @@ for i = 1:length(img_input)
     plot(M_vaso(:,1),'red--');
     plot(M_vaso(:,2),'blue--');
     plot(M_vaso(:,3),'green--');
-    title(['Translational movement in session ' num2str(i)]);
+    plot(M_bold_trans,'black','LineWidth',2);
+    plot(M_vaso_trans,'black--','LineWidth',2);
+    title(['Translational movement in session ' name_output],'Interpreter','None');
     xlabel('number of volume');
     ylabel('Translation in mm');
-    legend('x (bold)','y (bold)','z (bold)','x (vaso)','y (VASO)','z (VASO)');
-    saveas(gcf,fullfile(path_diagnosis,['moco_mm_' basename_bold '_' basename_vaso '_' num2str(i) '.png']));
+    legend('x (BOLD)','y (BOLD)','z (BOLD)','x (vaso)','y (VASO)','z (VASO)','total translation (BOLD)','total translation (VASO)');
+    saveas(gcf,fullfile(path_output, [name_output '_trans.png']));
     close(transFig);
     
     radFig = figure('visible','off');
@@ -70,11 +99,13 @@ for i = 1:length(img_input)
     plot(M_vaso(:,4),'red--');
     plot(M_vaso(:,5),'blue--');
     plot(M_vaso(:,6),'green--');
-    title(['Rotational movement in session ' num2str(i)]);
+    plot(M_bold_rot,'black','LineWidth',2);
+    plot(M_vaso_rot,'black--','LineWidth',2);
+    title(['Rotational movement in session ' name_output],'Interpreter','None');
     xlabel('number of volume');
-    ylabel('Rotation in rad');
-    legend('pitch (BOLD)','roll (BOLD)','yaw (BOLD)','pitch (VASO)','roll (VASO)','yaw (VASO)');
-    saveas(gcf,fullfile(path_diagnosis,['moco_rad_' basename_bold '_' basename_vaso '_' num2str(i) '.png']));
+    ylabel('Rotation in deg');
+    legend('pitch (BOLD)','roll (BOLD)','yaw (BOLD)','pitch (VASO)','roll (VASO)','yaw (VASO)','total rotation (BOLD)','total rotation (VASO)');
+    saveas(gcf,fullfile(path_output,[name_output '_rot.png']));
     close(radFig);
 
 end

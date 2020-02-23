@@ -13,12 +13,12 @@
 
 % created by Daniel Haenelt
 % Date created: 06-08-2019
-% Last modified: 20-02-2020
+% Last modified: 23-02-2020
 
 % array of of input time series
 img_input = {
-    '/data/pt_01880/temp/try4/Run_1/data.nii',...
-    '/data/pt_01880/temp/try4/Run_2/data.nii',...
+    '/home/daniel/Schreibtisch/test_sess/Run_1/data.nii',...
+    '/home/daniel/Schreibtisch/test_sess/Run_2/data.nii',...
     };
 
 % slice timing parameters
@@ -44,8 +44,8 @@ realign_params.r = [35 25 20];
 % outlier parameters
 outlier_params.moco_out_mm_short = 0.4; % in mm
 outlier_params.moco_out_mm_long = 0.8; % in mm
-outlier_params.moco_out_rad_short = 0.02; % in rad
-outlier_params.moco_out_rad_long = 0.04; % in rad
+outlier_params.moco_out_deg_short = 0.5; % in rad
+outlier_params.moco_out_deg_long = 1.0; % in rad
 outlier_params.int_out_z = 2; % in z-score
 
 % add spm and lib to path
