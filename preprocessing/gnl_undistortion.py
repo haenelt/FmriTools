@@ -14,11 +14,13 @@ from lib.preprocessing.gnl_correction import gnl_correction
 
 # input
 input = [
-    "/data/pt_01880/data0.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_PD.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_R1.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_R2s_WOLS.nii",
     ]
 
 path_output = [
-    "/data/pt_01880/test0",
+    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results",
     ]
 
 file_bash = "/home/raid2/haenelt/projects/gradunwarp/apply_grad.sh"

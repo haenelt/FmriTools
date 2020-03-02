@@ -95,14 +95,14 @@ from lib.mapping.morph2dense import morph2dense
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45_gnlcorr.nii"
-fileINV1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S5_MP2RAGE_0p7_INV1_2.45_gnlcorr.nii"
-fileINV2 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S6_MP2RAGE_0p7_INV2_2.45_gnlcorr.nii"
+fileUNI = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
+fileINV1 = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
+fileINV2 = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
-namePATCH = "occip_v2_dorsal"
+namePATCH = "occip"
 sub = "freesurfer"
-part = 5
+part = 1
 
 # parameters
 reg_background = 8 # parameter for background noise removal (part 1)
