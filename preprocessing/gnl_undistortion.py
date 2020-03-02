@@ -17,10 +17,20 @@ input = [
     "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_PD.nii",
     "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_R1.nii",
     "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_R2s_WOLS.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy/S3_MP2RAGE_0p7_INV1_2.45.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy/S4_MP2RAGE_0p7_T1_Images_2.45.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy/S5_MP2RAGE_0p7_UNI_Images_2.45.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii",
     ]
 
 path_output = [
     "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results",
+    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results",
+    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
+    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
     ]
 
 file_bash = "/home/raid2/haenelt/projects/gradunwarp/apply_grad.sh"
