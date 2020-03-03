@@ -8,9 +8,10 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2020
-Last modified: 10-01-2020
+Last modified: 03-03-2020
 """
 from lib.preprocessing.gnl_correction import gnl_correction
+from lib.io.get_filename import get_filename
 
 # input
 input = [
@@ -23,16 +24,6 @@ input = [
     "/data/pt_01880/Experiment3_Stripes/p1/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii",
     ]
 
-path_output = [
-    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results",
-    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results",
-    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results",
-    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
-    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
-    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
-    "/data/pt_01880/Experiment3_Stripes/p1/anatomy",
-    ]
-
 file_bash = "/home/raid2/haenelt/projects/gradunwarp/apply_grad.sh"
 file_coeff = "/home/raid2/haenelt/projects/gradunwarp/7t_coeff.grad"
 python3_env = "daniel"
@@ -42,5 +33,9 @@ cleanup = True
 """ do not edit below """
 
 for i in range(len(input)):
-    gnl_correction(input[i], file_bash, file_coeff, python3_env, python2_env, path_output[i], 
-                   cleanup)
+    
+    # get filename
+    path_output, _, _ = get_filename(input[i])
+    
+    # gnl correction
+    gnl_correction(input[i], file_bash, file_coeff, python3_env, python2_env, path_output, cleanup)
