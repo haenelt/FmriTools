@@ -11,3 +11,4 @@ from .vox2ras import vox2ras
 from .make_mesh import make_mesh
 from .mesh_sampling import mesh_sampling
 from .mesh_sampling_other import mesh_sampling_other
+from .heat_kernel_smoothing import heat_kernel_smoothing
