@@ -14,10 +14,9 @@ from nibabel.freesurfer.io import read_geometry
 from nibabel.freesurfer.io import write_geometry
 from lib_gbb.normal.get_normal import get_normal
 
-file_surf = "/home/daniel/projects/column_analysis/test_data/lh.refined_enhanced_inflated"
-file_data = "/home/daniel/projects/column_analysis/test_data/lh.spmT_left_right_GE_EPI2_upsampled_avg_layer4_16.mgh"
-file_label = "/home/daniel/projects/column_analysis/test_data/lh.v1.label"
-file_out = "/home/daniel/Schreibtisch/relief"
+file_surf = "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.refined_enhanced_inflated"
+file_data = "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.spmT_left_right_GE_EPI2_upsampled_avg_layer4_16.mgh"
+file_out = "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.refined_enhanced_inflated_relief"
 scale_factor = 2
 
 """ do not edit below """
