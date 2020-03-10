@@ -9,7 +9,7 @@
 
 % created by Daniel Haenelt
 % Date created: 10-12-2018
-% Last modified: 04-12-2019
+% Last modified: 10-03-2020
 
 % input data
 img_input = {
@@ -43,6 +43,7 @@ multi_input = {};
 % parameters
 TR = 3; % repetition time  in s
 cutoff_highpass = 180; % 1/cutoff_highpass frequency in Hz (odc: 180, localiser: 96)
+microtime_onset = 8; % only change to 1 if reference slice in slice timing is first slice
 nconds = 3; % only 2-4 are supported
 name_sess = 'try3'; % name of session (if multiple sessions exist)
 name_output = ''; % basename of output contrasts
@@ -97,7 +98,7 @@ matlabbatch{1}.spm.stats.fmri_spec.dir = {path_output};
 matlabbatch{1}.spm.stats.fmri_spec.timing.units = 'secs';
 matlabbatch{1}.spm.stats.fmri_spec.timing.RT = TR;
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = 16;
-matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = 8;
+matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = microtime_onset;
 
 for i = 1:length(img_input)    
     for j = 1:nt

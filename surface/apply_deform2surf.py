@@ -9,7 +9,7 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 07-02-2019
-Last modified: 22-01-2020
+Last modified: 10-03-2020
 """
 import os 
 from os.path import join, basename, splitext
@@ -35,6 +35,7 @@ for i in range(len(input_surf)):
                    input_ana, 
                    splitext(basename(input_surf[i]))[0], 
                    path_output, 
+                   interp_method="nearest",
                    smooth_iter=10, 
                    sort_faces=False,
                    flip_faces=True,
@@ -53,6 +54,7 @@ for i in range(len(input_surf)):
                    input_epi,
                    splitext(basename(input_surf[i]))[0], 
                    path_output, 
+                   interp_method="nearest",
                    smooth_iter=10, 
                    sort_faces=True,
                    flip_faces=False,

@@ -1,5 +1,6 @@
 def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, path_output, 
-                   smooth_iter=0, sort_faces=False, flip_faces=False, cleanup=True):
+                   interp_method="nearest", smooth_iter=0, sort_faces=False, flip_faces=False, 
+                   cleanup=True):
     """
     This function deforms a surface mesh in freesurfer convention using a coordinate map containing
     voxel coordinates. The computation takes quite a while because in the case of removed vertices,
@@ -11,6 +12,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         *input_target: target volume.
         *hemi: hemisphere.
         *path_output: path where to save output.
+        *interp_method: interpolation method (nearest or trilinear).
         *smooth_iter: number of smoothing iterations applied to final image (if set > 0).
         *sort_faces: get new face array if vertices are cut off during deformation.
         *flip_faces: reverse normal direction of mesh.
@@ -18,7 +20,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 22-01-2020
+    Last modified: 10-03-2020
     """
     import os
     import numpy as np
@@ -99,7 +101,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         sampler.inputs.sampling_method = "point"
         sampler.inputs.sampling_range = 0
         sampler.inputs.sampling_units = "mm"
-        sampler.inputs.interp_method = "nearest" # or trilinear
+        sampler.inputs.interp_method = interp_method
         sampler.inputs.out_type = "mgh"
         sampler.inputs.out_file = os.path.join(path_surf,hemi+"."+components[i]+"_sampled.mgh")
         sampler.run()

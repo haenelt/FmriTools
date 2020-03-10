@@ -28,7 +28,7 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
     
     created by Daniel Haenelt
     Date created: 13-01-2020
-    Last modified: 22-01-2020
+    Last modified: 10-03-2020
     """
     import os
     import shutil as sh
@@ -145,6 +145,7 @@ def mesh_sampling_other(surf_in, file_in, source_in, target_in, target2source_in
                    input_target = source_upsampled, 
                    hemi = hemi,
                    path_output = path_surf,
+                   interp_method = "nearest",
                    smooth_iter = smooth_iter,
                    sort_faces = False, 
                    flip_faces = False,
