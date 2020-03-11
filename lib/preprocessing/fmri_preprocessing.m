@@ -29,7 +29,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 23-02-2020
+% Last modified: 11-03-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -249,6 +249,7 @@ spm_jobman('run',matlabbatch);
 clear matlabbatch
 
 % check realignment processing
+outlier_all = [];
 for i = 1:length(img_input)
 
     % change to single run
@@ -267,13 +268,14 @@ for i = 1:length(img_input)
         );
     
     % check for realignment and/or intensity outliers
-    outlier_all = get_outlier(...
+    outlier = get_outlier(...
         ['rp_' file '.txt'], ...
         ['u' file ext], ...
         outlier_params, ...
         fullfile(path,'logfiles')...
         );
-
+    outlier_all = [outlier_all ; length(outlier)];
+    
 end
 
 % open textfile
@@ -323,7 +325,7 @@ for i  = 1:length(img_input)
     nt = length(data_img);
     
     % get within-run outlier percentage
-    outlier_percentage = length(outlier_all) / nt * 100;
+    outlier_percentage = outlier_all(i) / nt * 100;
     
     % get ratio of outliers within time series
     fprintf(fileID,'%.2f\n', outlier_percentage);

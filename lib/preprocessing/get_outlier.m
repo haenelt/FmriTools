@@ -10,6 +10,8 @@ function outlier_all = get_outlier(file_rp, file_in, outlier_params, path_output
     % file_in: filename of realigned time series.
     % outlier_params: structure containing outlier thresholds.
     % path_output: path where output is written.
+% Outputs:
+    % outlier_all: array indicated outlier volumes.
     
 % created by Daniel Haenelt
 % Date created: 23-02-2020
@@ -91,23 +93,23 @@ end
 outlier_all = [];
 
 if motion_outlier.short.mm
-    outlier_all = [outlier_all motion_outlier.short.mm(:,1)];
+    outlier_all = [outlier_all ; motion_outlier.short.mm(:,1)];
 end
 
 if motion_outlier.long.mm
-    outlier_all = [outlier_all motion_outlier.long.mm(:,1)];
+    outlier_all = [outlier_all ; motion_outlier.long.mm(:,1)];
 end
    
 if motion_outlier.short.deg
-    outlier_all = [outlier_all motion_outlier.short.deg(:,1)];
+    outlier_all = [outlier_all ; motion_outlier.short.deg(:,1)];
 end
 
 if motion_outlier.long.deg
-    outlier_all = [outlier_all motion_outlier.long.deg(:,1)];
+    outlier_all = [outlier_all ; motion_outlier.long.deg(:,1)];
 end
 
 if intensity_outlier
-    outlier_all = [outlier_all intensity_outlier(:,1)];
+    outlier_all = [outlier_all ; intensity_outlier(:,1)];
 end
 
 outlier_all = unique(outlier_all);
