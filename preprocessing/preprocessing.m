@@ -37,7 +37,7 @@ field_params.fmap_BandwidthPerPixelPhaseEncode = 16.304; % phase-encoding bandwi
 
 % realignment parameters
 realign_params.unwarp = false;
-realign_params.mask = true;
+realign_params.mask = false;
 realign_params.c = [95 130 25];
 realign_params.r = [35 25 20];
 
