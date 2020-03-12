@@ -1,3 +1,9 @@
+% mitigate latency-induced amplitude bias (Calhound 2004)
+% use temporal derivative
+% decrease the residual error e by regressing out the variance associated with temporal derivative
+
+% sign(b1)*sqrt(b1^2+b2^2)/e >= tau
+
 cond_input = {
     '/data/pt_01880/Experiment6_Albinism/p1/odc/GE_EPI1/Run_1/logfiles/p1_GE_EPI1_Run1_odc_Cond.mat',...
     '/data/pt_01880/Experiment6_Albinism/p1/odc/GE_EPI1/Run_2/logfiles/p1_GE_EPI1_Run2_odc_Cond.mat',...
