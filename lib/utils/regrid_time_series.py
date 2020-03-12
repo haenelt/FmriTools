@@ -1,72 +1,89 @@
-def regrid_time_series(input, path_output, TR_source, TR_target, t_start=0):
+def regrid_time_series(input, path_output, TR_old, TR_new, t_start=0):
     """
-    This function interpolates the time series onto a new time grid using cubic interpolation.
+    This function interpolates the time series onto a new time grid using cubic interpolation. Only 
+    for writing the new TR in the header of the output time series, AFNI has to be included in the 
+    search path.
     Inputs:
         *input: time series filename.
         *path_output: path where output is written.
-        *TR_source: TR of time series ins .
-        *TR_target: TR of regridded time series in s.
-        *t_start: shift in s if time series does not start at t=0.
+        *TR_old: TR of time series in s.
+        *TR_new: TR of regridded time series in s.
+        *t_start: shift time series in s (t_start >= 0 and <= TR_old).
         
     created by Daniel Haenelt
     Date created: 19-02-2020           
-    Last modified: 20-02-2020
+    Last modified: 12-03-2020
     """
     import os
     import numpy as np
     import nibabel as nb
-    from scipy.interpolate import griddata
+    from scipy.interpolate import InterpolatedUnivariateSpline as Interp
     from lib.io.get_filename import get_filename
 
     # get filename
     _, name_input, ext_input = get_filename(input)    
     
-    # load input time series
+    # print to console
+    print("time series regridding for: "+name_input)
+    
+    # load data
     data = nb.load(input)
-    data_array = data.get_fdata()
-
-    # get matrix dimensions
-    nx = np.shape(data_array)[0]
-    ny = np.shape(data_array)[1]
-    nz = np.shape(data_array)[2]
-    nt = np.shape(data_array)[3]
+    nx = data.header["dim"][1]
+    ny = data.header["dim"][2]
+    nz = data.header["dim"][3]
+    nt = data.header["dim"][4]
     
-    # source time points
-    t = TR_source * np.arange(0,nt) + t_start
-    t0 = TR_source * np.arange(0,nt)
+    # get time grid
+    TT = TR_old * nt # total acquisition time
+    TR_append = np.floor(t_start/TR_old + 1).astype(int) * TR_old # number of appended TRs in input array
     
-    # target time points
-    t_new = []
-    i = 0
-    while True:
-        x = TR_target * i
-        t_new = np.append(t_new, x)
-        i += 1
-        if x > np.max(t0):
-            break
-
-    # regrid time series
-    data_array_new = np.zeros((nx,ny,nz,len(t_new)))
-    for x in range(nx):    
+    # input grid
+    t_old = np.arange(-TR_append, TT + TR_append, TR_old) + t_start
+    
+    # output grid
+    t_new = np.arange(0, TT + TR_append, TR_new)
+    t_new_append = np.flip(np.arange(0,-TR_append,-TR_new)[1:])
+    if not len(t_new_append):
+        t_new_append = -TR_new    
+    t_new = np.append(t_new_append, t_new)
+    
+    # load array with appended volumes
+    n_append = int(TR_append/TR_old)
+    data_array = np.zeros((nx, ny, nz, nt+2*n_append))
+    data_array[:,:,:,n_append:-n_append] = data.get_fdata()
+    for i in range(n_append):
+        data_array[:,:,:,i] = data.get_fdata()[:,:,:,0]
+        data_array[:,:,:,-(i+1)] = data.get_fdata()[:,:,:,-1]
+    
+    # temporal interpolation
+    data_array_regrid = np.zeros((nx,ny,nz,len(t_new)))
+    for x in range(nx):
         for y in range(ny):
             for z in range(nz):
-                data_array_new[x,y,z,:] = griddata(t, data_array[x,y,z,:], t_new, method="cubic")
+                cubic_interper = Interp(t_old, data_array[x,y,z,:], k=3)
+                data_array_regrid[x,y,z,:] = cubic_interper(t_new)
     
-    # clean upsampled array
-    data_array_new[np.isnan(data_array_new)] = 0
-    data_array_new[data_array_new < 0] = 0
+    # delete appended volumes
+    vols_keep1 = t_new >= 0
+    vols_keep2 = t_new < TT
+    vols_keep = vols_keep1 * vols_keep2
+    data_array_regrid = data_array_regrid[:,:,:,vols_keep]
+    
+    # clean corrected array
+    data_array_regrid[np.isnan(data_array_regrid)] = 0
+    data_array_regrid[data_array_regrid < 0] = 0
     
     # update data header
-    data.header["dim"][4] = len(t_new)
+    data.header["dim"][4] = np.shape(data_array_regrid)[3]
     data.header["datatype"] = 16
-
+    
     # write output
-    output = nb.Nifti1Image(data_array_new, data.affine, data.header)
+    output = nb.Nifti1Image(data_array_regrid, data.affine, data.header)
     nb.save(output, os.path.join(path_output,name_input+"_upsampled"+ext_input))
     
     # change TR in header
     os.system("3drefit " + \
-              "-TR " + str(TR_target) + " " + \
+              "-TR " + str(TR_new) + " " + \
               os.path.join(path_output,name_input+"_upsampled"+ext_input))
 
 def regrid_time_series_afni(input, n=2):
