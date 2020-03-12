@@ -17,7 +17,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 06-12-2018             
-Last modified: 25-09-2019  
+Last modified: 12-03-2020  
 """
 import os
 import datetime
@@ -68,7 +68,7 @@ for i in range(len(img_input)):
     file.append(os.path.splitext(os.path.split(img_input[i])[1])[0])
 
 # output folder is taken from the first entry of the input list
-path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","percent","native")
+path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","raw","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
@@ -161,17 +161,17 @@ mean_percent_signal2 = mean_percent_signal2 / len(path)
 
 # name of output files
 if len(name_output) and len(name_sess):
-    fileOUT1 = os.path.join(path_output,"percent_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
-    fileOUT2 = os.path.join(path_output,"percent_"+name_output+"_"+condition2+"_"+condition1+"_"+name_sess+".nii")
+    fileOUT1 = os.path.join(path_output,"psc_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+    fileOUT2 = os.path.join(path_output,"psc_"+name_output+"_"+condition2+"_"+condition1+"_"+name_sess+".nii")
 elif len(name_output) and not len(name_sess):
-    fileOUT1 = os.path.join(path_output,"percent_"+name_output+"_"+condition1+"_"+condition2+".nii")
-    fileOUT2 = os.path.join(path_output,"percent_"+name_output+"_"+condition2+"_"+condition1+".nii")
+    fileOUT1 = os.path.join(path_output,"psc_"+name_output+"_"+condition1+"_"+condition2+".nii")
+    fileOUT2 = os.path.join(path_output,"psc_"+name_output+"_"+condition2+"_"+condition1+".nii")
 elif not len(name_output) and len(name_sess):
-    fileOUT1 = os.path.join(path_output,"percent_"+condition1+"_"+condition2+"_"+name_sess+".nii")
-    fileOUT2 = os.path.join(path_output,"percent_"+condition2+"_"+condition1+"_"+name_sess+".nii")
+    fileOUT1 = os.path.join(path_output,"psc_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+    fileOUT2 = os.path.join(path_output,"psc_"+condition2+"_"+condition1+"_"+name_sess+".nii")
 else:
-    fileOUT1 = os.path.join(path_output,"percent_"+condition1+"_"+condition2+".nii")
-    fileOUT2 = os.path.join(path_output,"percent_"+condition2+"_"+condition1+".nii")
+    fileOUT1 = os.path.join(path_output,"psc_"+condition1+"_"+condition2+".nii")
+    fileOUT2 = os.path.join(path_output,"psc_"+condition2+"_"+condition1+".nii")
 
 # write output
 output = nb.Nifti1Image(mean_percent_signal1, affine, header)
@@ -181,7 +181,7 @@ output = nb.Nifti1Image(mean_percent_signal2, affine, header)
 nb.save(output,fileOUT2)
 
 # write log
-fileID = open(os.path.join(path_output,"percent_info.txt"),"a")
+fileID = open(os.path.join(path_output,"psc_info.txt"),"a")
 fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
 fileID.write("session: "+name_sess+"\n")
 fileID.write("basename: "+name_output+"\n")

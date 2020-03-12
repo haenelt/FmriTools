@@ -10,7 +10,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 19-02-2020
-Last modified: 20-02-2020
+Last modified: 12-03-2020
 """
 import os
 import numpy as np
@@ -44,7 +44,8 @@ img_bold = ["/data/pt_01880/temp/try2/Run_1/ubold.nii",
             ]
 
 # parameters
-TR = 5 # effective TR of bold+vaso
+TR_old = 5 # effective TR of bold+vaso
+TR_new = 2 # TR of upsampled bold corrected time series
 vaso_shift = 2.838 # start of vaso block (asymmetric TR)
 vaso_threshold = 6
 
@@ -57,8 +58,8 @@ for i in range(len(img_vaso)):
     path_vaso, name_vaso, ext_vaso = get_filename(img_vaso[i])
     
     # upsample time series
-    regrid_time_series(img_bold[i], path_bold, TR, TR/2, t_start=0)    
-    regrid_time_series(img_vaso[i], path_vaso, TR, TR/2, t_start=vaso_shift)    
+    regrid_time_series(img_bold[i], path_bold, TR_old, TR_new, t_start=0)    
+    regrid_time_series(img_vaso[i], path_vaso, TR_old, TR_new, t_start=vaso_shift)    
 
     # new filenames
     file_bold = os.path.join(path_bold,name_bold+"_upsampled"+ext_bold)
@@ -69,39 +70,9 @@ for i in range(len(img_vaso)):
     bold = nb.load(file_bold)
     bold_array = bold.get_fdata()
     
-    # overwrite bold time steps at the end
-    n = 0
-    while True:
-        if np.sum(bold_array[:,:,:,-(n+1)]) == 0:
-            n += 1
-        else:
-            break
-    
-    for j in range(n):
-        bold_array[:,:,:,-(j+1)] = bold_array[:,:,:,-(n+1)]
-    
-    # overwrite upsampled bold
-    output = nb.Nifti1Image(bold_array, bold.affine, bold.header)
-    nb.save(output, file_bold)
-    
     # load vaso data
     vaso = nb.load(file_vaso)
     vaso_array = vaso.get_fdata()
-    
-    # overwrite vaso time steps at the beginning
-    n = 0
-    while True:
-        if np.sum(vaso_array[:,:,:,n]) == 0:
-            n += 1
-        else:
-            break
-    
-    for j in range(n):
-        vaso_array[:,:,:,j] = vaso_array[:,:,:,n]
-
-    # overwrite upsampled vaso
-    output = nb.Nifti1Image(vaso_array, vaso.affine, vaso.header)
-    nb.save(output, file_vaso)
 
     # bold correction
     vaso_array = np.divide(vaso_array, bold_array)
