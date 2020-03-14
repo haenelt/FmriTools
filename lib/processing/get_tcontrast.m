@@ -1,20 +1,72 @@
-% mitigate latency-induced amplitude bias (Calhound 2004)
-% use temporal derivative
-% decrease the residual error e by regressing out the variance associated with temporal derivative
+function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_derivative, pathSPM)
 
-% sign(b1)*sqrt(b1^2+b2^2)/e >= tau
+% This function calculates contrasts (con, spmT) and percent signal changes
+% (psc) from general linear model using spm. Only 2-4 experimental
+% conditions are supported in a block design. Not all contrast permutations
+% are computed. Percent signal change calculations are largely bsaed on
+% Mazaika 2009. Optionally, contrast estimates are computed with
+% consideration of the hrf amplitude and its temporal derivative in the
+% design matrix. To mitigate latency-induced amplitude bias in the
+% resulting effect sizes, percent signal changes are also computed based on
+% the method by Calhoun et al. 2004.
 
-cond_input = {
-    '/data/pt_01880/Experiment6_Albinism/p1/odc/GE_EPI1/Run_1/logfiles/p1_GE_EPI1_Run1_odc_Cond.mat',...
-    '/data/pt_01880/Experiment6_Albinism/p1/odc/GE_EPI1/Run_2/logfiles/p1_GE_EPI1_Run2_odc_Cond.mat',...
-    '/data/pt_01880/Experiment6_Albinism/p1/odc/GE_EPI1/Run_3/logfiles/p1_GE_EPI1_Run3_odc_Cond.mat',...
-    };
+% Inputs:
+    % cond_input: cell array containing filenames of condition files.
+    % path_contrast: path where spm.mat is saved.
+    % name_output: name of output (optional).
+    % name_sess: name of session (optional).
+    % hrf_derivative: use hrf temporal derivatives (boolean).
+    % pathSPM: path to spm12 folder.
+    
+% created by Daniel Haenelt
+% Date created: 13-03-2020
+% Last modified: 14-03-2020
 
+if ~exist('name_output', 'var')  
+    name_output = '';
+end
+
+if ~exist('name_sess', 'var')  
+    name_sess = '';
+end
+
+if ~exist('hrf_derivative', 'var')  
+    hrf_derivative = false;
+end
+
+% add spm to path
+addpath(pathSPM);
+
+% print to console
+disp('compute percent signal changes');
+
+% load conditions first cell entry
 cond = load(cond_input{1});
 
-nruns = 4;
-nconds = 3;
-hrf_derivative = true;
+% get number of conditions and number of runs
+nruns = length(cond_input);
+nconds = length(cond.names);
+
+% make output folders
+if nruns == 1
+    path_spmT = fullfile(fileparts(path_contrast),'results','spmT','native'); 
+    path_con = fullfile(fileparts(path_contrast),'results','con','native'); 
+    path_psc = fullfile(fileparts(path_contrast),'results','psc','native');
+else
+    path_spmT = fullfile(fileparts(fileparts(path_contrast)),'results','spmT','native'); 
+    path_con = fullfile(fileparts(fileparts(path_contrast)),'results','con','native');
+    path_psc = fullfile(fileparts(fileparts(path_contrast)),'results','psc','native');
+end
+
+if ~exist(path_spmT,'dir')
+    mkdir(path_spmT);
+end
+if ~exist(path_con,'dir')
+    mkdir(path_con);
+end
+if ~exist(path_psc,'dir')
+    mkdir(path_psc);
+end
 
 % get condition names
 if nconds == 2
@@ -47,60 +99,113 @@ elseif nconds == 4
         };
 end
 
+% double contrast names if design matrix with temporal derivative
+if hrf_derivative == true
+    name_contrast = repelem(name_contrast,2);
+    name_contrast(2:2:end) = cellfun(@(c)[c '_diff'], name_contrast(2:2:end),'uni',false);
+end
+
+% get basenames for output files
+basename = {};
+for i = 1:length(name_contrast)
+    if isempty(name_output) && isempty(name_sess)
+        basename{i} = name_contrast{i};
+    elseif isempty(name_output) && ~isempty(name_sess)
+        basename{i} =  [name_contrast{i} '_' name_sess];
+    elseif ~isempty(name_output) && isempty(name_sess)
+        basename{i} = [name_output '_' name_contrast{i}];
+    else
+        basename{i} = [name_output '_' name_contrast{i} '_' name_sess];
+    end
+end
+
 % get contrast vector
 if hrf_derivative == true
     if nconds == 2
         c = [-1 0 1 0 ; 
-              1 0 -1 0 ; 
-              1 0 0 0 ; 
-              0 0 1 0 ; 
-              0 -1 0 1 ; 
-              0 1 0 -1 ; 
-              0 1 0 0 ; 
-              0 0 0 1];
+             0 -1 0 1 ; 
+             1 0 -1 0 ; 
+             0 1 0 -1 ; 
+             1 0 0 0 ; 
+             0 1 0 0 ; 
+             0 0 1 0 ; 
+             0 0 0 1];
     elseif nconds == 3
-        c = [0 0 -1 0 1 0 ; 0 0 1 0 -1 0 ; -1 0 0 0 1 0 ; -1 0 1 0 0 0 ; 1 0 0 0 0 0 ; 0 0 1 0 0 0 ; 0 0 0 0 1 0 ;
-            0 0 0 -1 0 1 ; 0 0 0 1 0 -1 ; 0 -1 0 0 0 1 ; 0 -1 0 1 0 0 ; 0 1 0 0 0 0 ; 0 0 0 1 0 0 ; 0 0 0 0 0 1];
+        c = [0 0 -1 0 1 0 ; 
+             0 0 0 -1 0 1 ; 
+             0 0 1 0 -1 0 ; 
+             0 0 0 1 0 -1 ; 
+             -1 0 0 0 1 0 ; 
+             0 -1 0 0 0 1 ; 
+             -1 0 1 0 0 0 ; 
+             0 -1 0 1 0 0 ; 
+             1 0 0 0 0 0 ; 
+             0 1 0 0 0 0 ; 
+             0 0 1 0 0 0 ; 
+             0 0 0 1 0 0 ; 
+             0 0 0 0 1 0 ;
+             0 0 0 0 0 1];
     elseif nconds == 4
-        c = [1 0 -1 0 0 0 0 0 ; -1 0 1 0 0 0 0 0 ; 1 0 0 0 -1 0 0 0 ; 0 0 1 0 0 0 -1 0 ; 1 0 0 0 0 0 0 0 ; 0 0 1 0 0 0 0 0 ; 0 0 0 0 1 0 0 0 ; 0 0 0 0 0 0 1 0 ; 
-            0 1 0 -1 0 0 0 0 ; 0 -1 0 1 0 0 0 0 ; 0 1 0 0 0 -1 0 0 ; 0 0 0 1 0 0 0 -1 ; 0 1 0 0 0 0 0 0 ; 0 0 0 1 0 0 0 0 ; 0 0 0 0 0 1 0 0 ; 0 0 0 0 0 0 0 1];
+        c = [1 0 -1 0 0 0 0 0 ; 
+             0 1 0 -1 0 0 0 0 ; 
+             -1 0 1 0 0 0 0 0 ; 
+             0 -1 0 1 0 0 0 0 ; 
+             1 0 0 0 -1 0 0 0 ; 
+             0 1 0 0 0 -1 0 0 ; 
+             0 0 1 0 0 0 -1 0 ; 
+             0 0 0 1 0 0 0 -1 ; 
+             1 0 0 0 0 0 0 0 ; 
+             0 1 0 0 0 0 0 0 ; 
+             0 0 1 0 0 0 0 0 ; 
+             0 0 0 1 0 0 0 0 ; 
+             0 0 0 0 1 0 0 0 ; 
+             0 0 0 0 0 1 0 0 ; 
+             0 0 0 0 0 0 1 0 ; 
+             0 0 0 0 0 0 0 1];
     end
 else
     if nconds == 2
-        c = [-1 1 ; 1 -1 ; 1 0 ; 0 1];
+        c = [-1 1 ; 
+             1 -1 ; 
+             1 0 ; 
+             0 1];
     elseif nconds == 3
-        c = [0 -1 1 ; 0 1 -1 ; -1 0 1 ; -1 1 0 ; 1 0 0 ; 0 1 0 ; 0 0 1];
+        c = [0 -1 1 ; 
+             0 1 -1 ; 
+             -1 0 1 ; 
+             -1 1 0 ; 
+             1 0 0 ; 
+             0 1 0 ; 
+             0 0 1];
     elseif nconds == 4
-        c = [1 -1 0 0 ; -1 1 0 0 ; 1 0 -1 0 ; 0 1 0 -1 ; 1 0 0 0 ; 0 1 0 0 ; 0 0 1 0 ; 0 0 0 1];
+        c = [1 -1 0 0 ; 
+             -1 1 0 0 ; 
+             1 0 -1 0 ; 
+             0 1 0 -1 ; 
+             1 0 0 0 ; 
+             0 1 0 0 ; 
+             0 0 1 0 ; 
+             0 0 0 1];
     end
 end
 
-
+% add for multiple runs and scale
 contrast = [];
 for i=1:nruns
     contrast = [contrast c/nruns];
-    %contrast5 = [contrast5 zeros(1,nconds)];
 end
 
-% get constant term
+% add zeros for constant term
 contrast = [contrast zeros(size(contrast,1),nruns)];
-contrast = [contrast ; zeros(1,size(contrast,2))];
-contrast(end,end+1-nruns:end) = 1/nruns;
 
-
-% include also if for hrf derivative
-
-matlabbatch{1}.spm.stats.con.spmmat = {fullfile('bla','SPM.mat')};
+% compute tscores
+matlabbatch{1}.spm.stats.con.spmmat = {fullfile(path_contrast,'SPM.mat')};
 matlabbatch{1}.spm.stats.con.delete = 0; % append contrast to old contrasts
-
 for i = 1:length(name_contrast)
     matlabbatch{1}.spm.stats.con.consess{i}.tcon.name = name_contrast{i};
     matlabbatch{1}.spm.stats.con.consess{i}.tcon.weights = contrast(i,:);
     matlabbatch{1}.spm.stats.con.consess{i}.tcon.sessrep = 'none';
 end
-
-
-%%
 
 % run
 spm_jobman('run',matlabbatch);
@@ -108,41 +213,16 @@ spm_jobman('run',matlabbatch);
 % clear after completion
 clear matlabbatch
 
-% make folders for spmT and con images
-if length(img_input) == 1
-    path_spmT = fullfile(fileparts(img_input{1}),'results','spmT','native'); 
-    path_con = fullfile(fileparts(img_input{1}),'results','con','native'); 
-else
-    path_spmT = fullfile(fileparts(fileparts(fileparts(img_input{1}))),'results','spmT','native'); 
-    path_con = fullfile(fileparts(fileparts(fileparts(img_input{1}))),'results','con','native'); 
-end
-
-if ~exist(path_spmT,'dir')
-    mkdir(path_spmT);
-end
-if ~exist(path_con,'dir')
-    mkdir(path_con);
-end
-
-% sort results
+% sort results to output folder
 for i = 1:length(name_contrast)
+
     % copy file
-    file_in_spmT = fullfile(path_output,['spmT_' sprintf('%04d',i) '.nii']);
-    file_in_con = fullfile(path_output,['con_' sprintf('%04d',i) '.nii']);
+    file_in_spmT = fullfile(path_contrast,['spmT_' sprintf('%04d',i) '.nii']);
+    file_in_con = fullfile(path_contrast,['con_' sprintf('%04d',i) '.nii']);
     
-    if isempty(name_output) && isempty(name_sess)
-        file_out_spmT = fullfile(path_spmT,['spmT_' name_contrast{i} '.nii']);
-        file_out_con = fullfile(path_con,['con_' name_contrast{i} '.nii']);
-    elseif isempty(name_output) && ~isempty(name_sess)
-        file_out_spmT = fullfile(path_spmT,['spmT_' name_contrast{i} '_' name_sess '.nii']);
-        file_out_con = fullfile(path_con,['con_' name_contrast{i} '_' name_sess '.nii']);
-    elseif ~isempty(name_output) && isempty(name_sess)
-        file_out_spmT = fullfile(path_spmT,['spmT_' name_output '_' name_contrast{i} '.nii']);
-        file_out_con = fullfile(path_con,['con_' name_output '_' name_contrast{i} '.nii']);  
-    else
-        file_out_spmT = fullfile(path_spmT,['spmT_' name_output '_' name_contrast{i} '_' name_sess '.nii']);
-        file_out_con = fullfile(path_con,['con_' name_output '_' name_contrast{i} '_' name_sess '.nii']);        
-    end
+    file_out_spmT = fullfile(path_spmT,['spmT_' basename{i} '.nii']);
+    file_out_con = fullfile(path_con,['con_' basename{i} '.nii']);
+    
     copyfile(file_in_spmT, file_out_spmT);
     copyfile(file_in_con, file_out_con);
     
@@ -150,10 +230,73 @@ for i = 1:length(name_contrast)
     data_img = spm_vol(file_out_spmT);
     data_array = spm_read_vols(data_img);
     data_array(isnan(data_array)) = 0;
-    spm_write_vol(data_img,data_array);
+    spm_write_vol(data_img, data_array);
     
     data_img = spm_vol(file_out_con);
     data_array = spm_read_vols(data_img);
     data_array(isnan(data_array)) = 0;
-    spm_write_vol(data_img,data_array);
+    spm_write_vol(data_img, data_array);
+    
+end
+
+% compute psc
+
+% load mask
+mask_img = spm_vol(fullfile(path_contrast,'mask.nii'));
+mask_array = spm_read_vols(mask_img);
+mask_array(isnan(mask_array)) = 0;
+
+% load constant
+nbeta = size(contrast,2);
+constant_array = zeros(size(mask_array));
+for i = 1:nruns
+    file_constant = fullfile(path_contrast,['beta_' sprintf('%04d',nbeta-nruns+i) '.nii']);
+    constant_img = spm_vol(file_constant);
+    constant_array = constant_array + spm_read_vols(constant_img);
+end
+constant_array(isnan(constant_array)) = 0;
+constant_array = constant_array / nruns;
+
+% get baseline value
+bmean = mean(constant_array(mask_array > 0));
+
+% get peak value
+load(fullfile(path_contrast,'SPM.mat'))
+peak = max(SPM.xX.X(:));
+
+% print to console
+disp(['Peak value for psc calculation: ' num2str(peak)]);
+disp(['Baseline value for psc calculation: ' num2str(bmean)]);
+
+for i = 1:length(name_contrast)
+    
+    file_in_con = fullfile(path_con,['con_' basename{i} '.nii']);
+    file_out_psc = fullfile(path_psc,['psc_' basename{i} '.nii']);
+    
+    psc_img = spm_vol(file_in_con);
+    psc_array = spm_read_vols(psc_img);
+    psc_array = psc_array * peak / bmean * 100;
+    psc_img.fname = file_out_psc;
+    spm_write_vol(psc_img, psc_array);
+    
+end
+
+% psc free of latency-induced amplitude bias
+if hrf_derivative == true
+    for i = 1:2:length(name_contrast)
+
+        file_in_psc1 = fullfile(path_psc,['psc_' basename{i} '.nii']);
+        file_in_psc2 = fullfile(path_psc,['psc_' basename{i+1} '.nii']);
+        file_out_psc = fullfile(path_psc,['psc_' basename{i} '_calhoun.nii']);
+
+        beta_img = spm_vol(file_in_psc1);
+        beta_diff_img = spm_vol(file_in_psc2);
+        beta_array = spm_read_vols(beta_img);
+        beta_diff_array = spm_read_vols(beta_diff_img);
+
+        beta_array = sign(beta_array) .* sqrt(beta_array.^2 + beta_diff_array.^2);
+        beta_img.fname = file_out_psc;
+        spm_write_vol(beta_img, beta_array);
+
+    end
 end
