@@ -31,7 +31,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 11-03-2020
+% Last modified: 17-03-2020
 
 % add spm to path
 addpath(pathSPM);
