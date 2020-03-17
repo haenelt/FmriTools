@@ -2,14 +2,14 @@
 
 % This script executes the TDM method developed by Kendrick Kay et al.
 % (2019) to separate early and late BOLD contributions within an fmri
-% timeseries. In this example, a simple block design with one experimental
-% and one baseline condition is assumed. Furthermore, the onset times and
+% timeseries. In this script, a simple block design with one experimental
+% and one baseline condition is expected. Furthermore, the onset times and
 % stimulus durations of the experimental conditions are assumed to be the
 % same across functional runs.
 
 % created by Daniel Haenelt
 % Date created: 16-03-2020
-% Last modified: 16-03-2020
+% Last modified: 17-03-2020
 
 % input data
 img_input = {
@@ -31,13 +31,13 @@ sigma = 2; % sigma for gaussian blurring (bias corrected epi)
 mask_threshold = 0.8; % masking threshold for implicit mask
 fir_steps = 30; % number of time steps for fir model
 basename = ''; % basename of output files
-output_folder = 'contrast2'; % name of folder where glm output is saved
+output_folder = 'contrast3'; % name of folder where glm output is saved
 
 % add libs to path
 pathKNKUTILS = '/home/daniel/source/knkutils';
 pathGLMDENOISE = '/home/daniel/source/GLMdenoise';
 pathTDM = '/home/daniel/source/TDM';
-pathSPM = '/data/pt_01880/source/spm12'; 
+pathSPM = '/home/daniel/source/spm12'; 
 
 %%% do not edit below %%%
 
@@ -70,7 +70,7 @@ data = get_TDMdata(img_input, pathSPM);
 % get design
 % We take the condition file of the first run assuming that all runs have
 % the same condition onsets and duratations. The condition file contains
-% two conditions (flicer, baseline) and we only extract the onsets of the
+% two conditions (flicker, baseline) and we only extract the onsets of the
 % flicker condition.
 design = get_TDMdesign(cond_input{1}, TR, size(data{1},2), size(data,2));
 
@@ -108,7 +108,7 @@ resultsFIR = GLMdenoisedata(...
     );
 
 % determine an R2 threshold for the FIR results
-% We want to collect timecourses from vertices that have some minimum
+% We want to collect timecourses from voxels that have some minimum
 % level of signal-to-noise ratio for experimentally evoked BOLD responses.
 % Use an automatic method for determining a reasonable threshold.
 r2thresh = findtailthreshold(resultsFIR.R2(:));
@@ -125,6 +125,7 @@ bcvalues = bc(ix);
 % to derive estimate of the latent early and late timecourses. In the TDM
 % output figures, black and gray dots indicate the early and late response,
 % respectively.
+close all % close all open figures
 resultsTDM = extracthrfmanifold(...
     permute(timecourses, [1 3 2]),...
     bcvalues,...
@@ -179,7 +180,7 @@ ny = data_header.dim(2);
 nz = data_header.dim(3);
 nvox = nx * ny * nz;
 
-name_file = {'early', 'late'};
+name_file = {'tdm_early', 'tdm_late'};
 for i = 1:length(name_file)
     
     % get psc
@@ -259,7 +260,7 @@ design = {};
 for i = 1:nruns
     design{i} = zeros(TR*nvols, nconds);
     for j = 1:nconds
-        design{i}(round(design_mat.onsets{j}),j) = 1;
+        design{i}(round(design_mat.onsets{j}/3),j) = 1;
     end
     design{i} = sparse(design{i});
 end
@@ -326,7 +327,7 @@ if write_output == true
     spm_write_vol(data, data_array_res);
 
     data.fname = fullfile(path_output, [name_file '_gauss' ext_file]);
-    spm_write_vol(data_out, data_array_gaussian);
+    spm_write_vol(data, data_array_gaussian);
 
 end
 
