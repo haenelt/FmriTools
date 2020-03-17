@@ -2,21 +2,20 @@
 OD index
 
 This scripts calculates a defined ocular dominance (OD) index for a session consisting of several
-runs. First, a baseline correction of each time series is applied if not done before (i.e., if no 
-file with prefix b is found). From the condition file which has to be in the SPM compatible *.mat 
-format, time points for both blocks are defined. Time series for the whole time series (baseline) 
-and all conditions can be converted to z-score. The OD index is computed by dividing each condition
-mean by the condition mean or max within a predefined mask before computing the difference of both
-conditions. The index for the whole session is taken as the average across single runs. If the 
-outlier input array is not empty, outlier volumes are discarded from the analysis. Optionally 
-(if n != 0), the time series can be upsampled. The input images should be in nifti format. 
+runs. From the condition file which has to be in the SPM compatible *.mat format, time points for 
+both experimental conditions are extracted. Condition time points can be converted to z-scores. The 
+OD index is computed by dividing each condition mean by the condition mean or max within a 
+predefined mask before computing the difference of both conditions. The index for the whole session 
+is taken as the average across single runs. If the outlier input array is not empty, outlier volumes 
+are discarded from the analysis. Optionally, the time series can be filtered by a lowpass and a 
+highpass filter. The input images should be in nifti format.
 
 Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
 the terminal.
 
 created by Daniel Haenelt
 Date created: 16-09-2019             
-Last modified: 25-09-2019  
+Last modified: 17-03-2020  
 """
 import sys
 import os
@@ -25,8 +24,8 @@ import numpy as np
 import nibabel as nb
 from scipy.stats import zscore
 from nighres.registration import apply_coordinate_mappings
+from lib.io.get_filename import get_filename
 from lib.processing import get_onset_vols
-from lib.utils.regrid_time_series import regrid_time_series_afni
 
 # input data
 img_input = [
@@ -78,47 +77,32 @@ pathLIB1 = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
 
 # parameters
+condition1 = "left" # experimental condition 1
+condition2 = "right" # experimental condition 2
 TR = 3 # repetition time in s
-cutoff_highpass = 180 # cutoff in s for baseline correction
-skipvol = 3 # skip number of volumes in each block
-condition1 = "left"
-condition2 = "right"
-name_sess = "GE_EPI2"
-name_output = ""
+skip_vol = 3 # skip number of volumes in each block
 baseline_calculation = "mean" # mean or max
 use_z_score = False
+use_highpass = True
 use_lowpass = False
+cutoff_highpass = 180 # cutoff in s for baseline correction
 cutoff_lowpass = 0
 order_lowpass = 0
-n = 0 # upsampling factor
+name_sess = "GE_EPI2"
+name_output = ""
 
 """ do not edit below """
 
-# prepare path and filename
-path = []
-file = []
-for i in range(len(img_input)):
-    path.append(os.path.split(img_input[i])[0])
-    file.append(os.path.splitext(os.path.split(img_input[i])[1])[0])
+# get path from first entry
+path_file, _, _ = get_filename(img_input[0])
 
-# output folder is taken from the first entry of the input list
-path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","od","native")
+# make output folder
+path_output = os.path.join(os.path.dirname(os.path.dirname(path_file)),"results","od","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# get TR for upsampled time series
-if n:
-    TR = TR / n
-
-# get upsampled time series
-if n:
-    for i in range(len(img_input)):
-        file[i] = file[i]+"_upsampled"
-        if not os.path.isfile(os.path.join(path[i],file[i]+".nii")):
-            regrid_time_series_afni(img_input[i], n)
-
-# get image header information from first entry of the input list
-data_img = nb.load(os.path.join(path[0],file[0]+".nii"))
+# get image header information
+data_img = nb.load(img_input[0])
 data_img.header["dim"][0] = 3
 data_img.header["dim"][4] = 1
 header = data_img.header
@@ -126,6 +110,10 @@ affine = data_img.affine
 
 # get image dimension
 dim = data_img.header["dim"][1:4]
+
+# get outlier dummy array if not outlier input
+if not len(outlier_input):
+    outlier_input = np.zeros(len(img_input))
 
 # deform mask
 apply_coordinate_mappings(mask_input, # input 
@@ -148,34 +136,40 @@ mask = nb.load(os.path.join(path_output,"mask.nii.gz")).get_fdata()
 
 mean_od_index1 = np.zeros(dim)
 mean_od_index2 = np.zeros(dim)
-for i in range(len(path)):
+for i in range(len(img_input)):
     
-    if len(outlier_input) > 0:
-        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input[i], condition1, condition2, TR, skipvol)
-    else:
-        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input, condition1, condition2, TR, skipvol)
-
-    # lopass filter time series
+    # get filename
+    path_file, name_file, ext_file = get_filename(img_input[i])
+    
+    # get condition specific onsets
+    onsets1 = get_onset_vols(cond_input[i], outlier_input[i], condition1, TR, skip_vol)
+    onsets2 = get_onset_vols(cond_input[i], outlier_input[i], condition2, TR, skip_vol)
+    
+    # lowpass filter time series
     if use_lowpass:
         os.chdir(pathLIB2)
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"lowpass_filter(\'{0}\', {1}, {2}, {3}, \'{4}\'); exit;\"". \
-                  format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_lowpass, order_lowpass, pathSPM))
+                  format(os.path.join(path_file,name_file+ext_file), TR, cutoff_lowpass, 
+                         order_lowpass, pathSPM))
         
         # change input to lowpass filtered time series
-        file[i] = "l"+file[i]
+        name_file = "l" + name_file
 
-    # look for baseline corrected time series
-    if not os.path.isfile(os.path.join(path[i],"b"+file[i]+".nii")):
+    # highpass filter time series
+    if use_highpass:
         os.chdir(pathLIB1)
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-                  format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_highpass, pathSPM))
+                  format(os.path.join(path_file,name_file+ext_file), TR, cutoff_highpass, pathSPM))
+
+        # change input to highpass filtered time series
+        name_file = "b" + name_file
 
     # open baseline corrected data
-    data_img = nb.load(os.path.join(path[i],"b"+file[i]+".nii"))
+    data_img = nb.load(os.path.join(path_file,name_file+ext_file))
     data_array = data_img.get_fdata()
     
     # sort volumes to conditions
@@ -198,19 +192,22 @@ for i in range(len(path)):
         data_condition1_baseline = np.max(data_condition1_mean[mask == 1])
         data_condition2_baseline = np.max(data_condition2_mean[mask == 1])   
     else:
-        sys.exit("choose between mean or max for baseline calculation!")
+        sys.exit("select either mean or max for baseline calculation!")
     
     # od index
-    od_index1 = ( data_condition1_mean / data_condition1_baseline - data_condition2_mean / data_condition2_baseline) * 100
-    od_index2 = ( data_condition2_mean / data_condition2_baseline - data_condition1_mean / data_condition1_baseline) * 100
+    data_condition1_rel = data_condition1_mean / data_condition1_baseline
+    data_condition2_rel = data_condition2_mean / data_condition2_baseline
+        
+    od_index1 = ( data_condition1_rel - data_condition2_rel ) * 100
+    od_index2 = ( data_condition2_rel - data_condition1_rel ) * 100
 
     # sum volumes for each run
     mean_od_index1 += od_index1
     mean_od_index2 += od_index2
     
 # divide by number of runs
-mean_od_index1 = mean_od_index1 / len(path)
-mean_od_index2 = mean_od_index2 / len(path)
+mean_od_index1 /= len(img_input)
+mean_od_index2 /= len(img_input)
 
 # name of output files
 if len(name_output) and len(name_sess):
@@ -241,8 +238,12 @@ fileID.write("basename: "+name_output+"\n")
 fileID.write("condition1: "+condition1+"\n")
 fileID.write("condition2: "+condition2+"\n")
 fileID.write("TR: "+str(TR)+"\n")
-fileID.write("cutoff_highpass: "+str(cutoff_highpass)+"\n")
-fileID.write("skipvol: "+str(skipvol)+"\n")
+fileID.write("skip_vol: "+str(skip_vol)+"\n")
 fileID.write("baseline calculation: "+baseline_calculation+"\n")
-fileID.write("n: "+str(n)+"\n")
+fileID.write("z-score: "+str(use_z_score)+"\n")
+fileID.write("highpass: "+str(use_highpass)+"\n")
+fileID.write("lowpass: "+str(use_lowpass)+"\n")
+fileID.write("cutoff highpass: "+str(cutoff_highpass)+"\n")
+fileID.write("cutoff lowpass: "+str(cutoff_lowpass)+"\n")
+fileID.write("order lowpass: "+str(order_lowpass)+"\n")
 fileID.close()

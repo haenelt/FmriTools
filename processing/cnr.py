@@ -3,28 +3,27 @@ Contrast-to-noise ratio of functional time series (task-based activation)
 
 This scripts calculates the contrast-to-noise ratio (CNR) in percent from functional time series  
 containing task-based activation following a block design. The input can be a list of several runs. 
-First, a baseline correction of each time series is applied if not done before (i.e., if no file 
-with prefix b is found). From the condition file which has to be in the SPM compatible *.mat format, 
-time points for both conditions are defined. CNR is computed as absolute difference between both 
-conditions divided by the standard deviation of the second condition. The second condition should be 
-a baseline condition if the CNR should make any sense. The CNR of the whole session is taken as the 
-average across single runs. Similar computations of CNR can be found in Scheffler et al. (2016). If
-the outlier input array is not empty, outlier volumes are discarded from the analysis. Optionally 
-(if n != 0), the time series can be upsampled. The input images should be in nifti format. 
+From the condition file which has to be in the SPM compatible *.mat format, time points for both an
+experimental and a baseline condition are extracted. CNR is computed as absolute difference between 
+both conditions divided by the standard deviation of the baseline condition. The CNR of the whole 
+session is taken as the average across single runs. Similar computations of CNR can be found in 
+Scheffler et al. (2016). If the outlier input array is not empty, outlier volumes are discarded from 
+the analysis. Optionally, the time series can be filtered by a highpass filter. The input images 
+should be in nifti format.
 
 Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
 the terminal.
 
 created by Daniel Haenelt
 Date created: 03-05-2019             
-Last modified: 19-02-2020  
+Last modified: 17-03-2020  
 """
 import os
 import datetime
 import numpy as np
 import nibabel as nb
+from lib.io.get_filename import get_filename
 from lib.processing import get_onset_vols
-from lib.utils.regrid_time_series import regrid_time_series_afni
 
 # input data
 img_input = [
@@ -71,45 +70,27 @@ pathSPM = "/data/pt_01880/source/spm12"
 pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
+condition0 = "rest" # baseline condition
+condition1 = "right" # experimental condition
 TR = 3 # repetition time in s
+skip_vol = 0 # skip number of volumes in each block
+use_highpass = True
 cutoff_highpass = 180 # cutoff in s for baseline correction
-skipvol = 0 # skip number of volumes in each block
-condition1 = "right"
-condition2 = "rest"
 name_sess = "GE_EPI2"
 name_output = ""
-n = 0 # upsampling factor
 
 """ do not edit below """
 
-# change to lib folder
-os.chdir(pathLIB)
+# get path from first entry
+path_file, _, _ = get_filename(img_input[0])
 
-# prepare path and filename
-path = []
-file = []
-for i in range(len(img_input)):
-    path.append(os.path.split(img_input[i])[0])
-    file.append(os.path.splitext(os.path.split(img_input[i])[1])[0])
-
-# output folder is taken from the first entry of the input list
-path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","cnr","native")
+# make output folder
+path_output = os.path.join(os.path.dirname(os.path.dirname(path_file)),"results","cnr","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# get TR for upsampled time series
-if n:
-    TR = TR / n
-
-# get upsampled time series
-if n:
-    for i in range(len(img_input)):
-        file[i] = file[i]+"_upsampled"
-        if not os.path.isfile(os.path.join(path[i],file[i]+".nii")):
-            regrid_time_series_afni(img_input[i], n)
-
-# get image header information from first entry of the input list
-data_img = nb.load(os.path.join(path[0],file[0]+".nii"))
+# get image header information
+data_img = nb.load(img_input[0])
 data_img.header["dim"][0] = 3
 data_img.header["dim"][4] = 1
 header = data_img.header
@@ -118,54 +99,64 @@ affine = data_img.affine
 # get image dimension
 dim = data_img.header["dim"][1:4]
 
-mean_cnr = np.zeros(dim)
-for i in range(len(path)):
-    
-    if len(outlier_input) > 0:
-        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input[i], condition1, condition2, TR, skipvol)
-    else:
-        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input, condition1, condition2, TR, skipvol)
+# get outlier dummy array if not outlier input
+if not len(outlier_input):
+    outlier_input = np.zeros(len(img_input))
 
-    # look for baseline corrected time series
-    if not os.path.isfile(os.path.join(path[i],"b"+file[i]+".nii")):
+mean_cnr = np.zeros(dim)
+for i in range(len(img_input)):
+
+    # get filename
+    path_file, name_file, ext_file = get_filename(img_input[i])
+    
+    # get condition specific onsets
+    onsets0 = get_onset_vols(cond_input[i], outlier_input[i], condition0, TR, skip_vol)
+    onsets1 = get_onset_vols(cond_input[i], outlier_input[i], condition1, TR, skip_vol)
+    
+    # highpass filter time series
+    if use_highpass:
+        os.chdir(pathLIB)
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-                  format(os.path.join(path[i],file[i]+".nii"), TR, cutoff_highpass, pathSPM))
+                  format(os.path.join(path_file,name_file+ext_file), TR, cutoff_highpass, pathSPM))
 
+        # change input to highpass filtered time series
+        name_file = "b" + name_file
+    
     # open baseline corrected data
-    data_img = nb.load(os.path.join(path[i],"b"+file[i]+".nii"))
+    data_img = nb.load(os.path.join(path_file,name_file+ext_file))
     data_array = data_img.get_fdata()
     
     # sort volumes to conditions
+    data_condition0 = data_array[:,:,:,onsets0]
     data_condition1 = data_array[:,:,:,onsets1]
-    data_condition2 = data_array[:,:,:,onsets2]
        
     # mean
+    data_condition0_mean = np.mean(data_condition0, axis=3)
     data_condition1_mean = np.mean(data_condition1, axis=3)
-    data_condition2_mean = np.mean(data_condition2, axis=3)
-    data_condition2_std = np.std(data_condition2, axis=3)
-    data_condition2_std[data_condition2_std == 0] = np.nan
+    data_condition0_std = np.std(data_condition0, axis=3)
+    data_condition0_std[data_condition0_std == 0] = np.nan
     
     # percent signal change
-    cnr = ( np.abs(data_condition1_mean - data_condition2_mean) ) / data_condition2_std * 100
+    cnr = ( np.abs(data_condition1_mean - data_condition0_mean) ) / data_condition0_std * 100
     cnr[np.isnan(cnr)] = 0
 
     # sum volumes for each run
     mean_cnr += cnr
     
 # divide by number of runs
-mean_cnr = mean_cnr / len(path)
+mean_cnr /= len(img_input)
 
 # name of output files
 if len(name_output) and len(name_sess):
-    fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+    fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition0+"_"+name_sess+".nii")
 elif len(name_output) and not len(name_sess):
-    fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition2+".nii")
+    fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition0+".nii")
 elif not len(name_output) and len(name_sess):
-    fileOUT = os.path.join(path_output,"cnr_"+condition1+"_"+condition2+"_"+name_sess+".nii")
+    fileOUT = os.path.join(path_output,"cnr_"+condition1+"_"+condition0+"_"+name_sess+".nii")
 else:
-    fileOUT = os.path.join(path_output,"cnr_"+condition1+"_"+condition2+".nii")
+    fileOUT = os.path.join(path_output,"cnr_"+condition1+"_"+condition0+".nii")
 
 # write output
 output = nb.Nifti1Image(mean_cnr, affine, header)
@@ -176,10 +167,10 @@ fileID = open(os.path.join(path_output,"cnr_info.txt"),"a")
 fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
 fileID.write("session: "+name_sess+"\n")
 fileID.write("basename: "+name_output+"\n")
+fileID.write("condition0: "+condition0+"\n")
 fileID.write("condition1: "+condition1+"\n")
-fileID.write("condition2: "+condition2+"\n")
 fileID.write("TR: "+str(TR)+"\n")
-fileID.write("cutoff_highpass: "+str(cutoff_highpass)+"\n")
-fileID.write("skipvol: "+str(skipvol)+"\n")
-fileID.write("n: "+str(n)+"\n")
+fileID.write("skip_vol: "+str(skip_vol)+"\n")
+fileID.write("highpass: "+str(use_highpass)+"\n")
+fileID.write("cutoff highpass: "+str(cutoff_highpass)+"\n")
 fileID.close()
