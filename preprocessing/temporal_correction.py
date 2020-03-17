@@ -13,11 +13,21 @@ Last modified: 11-03-2020
 from lib.preprocessing.slice_timing_correction import slice_timing_correction
 
 # input
-input = ["/data/pt_01880/Experiment5_Mono/p1/meridian/GE_EPI1/data.nii",
-         "/data/pt_01880/Experiment5_Mono/p1/meridian/GE_EPI2/data.nii",
+input = ["/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_1/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_2/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_3/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_4/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_5/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI2/Run_1/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI2/Run_2/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI2/Run_3/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI2/Run_4/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI2/Run_5/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI2/Run_6/data.nii",
+         "/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI2/Run_7/data.nii",
          ]
-TR_old = 2
-TR_new = 2
+TR_old = 3
+TR_new = 1
 order = "interleaved"
 
 """ do not edit below """
