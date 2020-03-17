@@ -260,7 +260,7 @@ design = {};
 for i = 1:nruns
     design{i} = zeros(TR*nvols, nconds);
     for j = 1:nconds
-        design{i}(round(design_mat.onsets{j}/3),j) = 1;
+        design{i}(round(design_mat.onsets{j}),j) = 1;
     end
     design{i} = sparse(design{i});
 end
