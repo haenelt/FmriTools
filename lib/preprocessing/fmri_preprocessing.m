@@ -308,6 +308,8 @@ fprintf(fileID,['motion threshold (mm, long): ' num2str(outlier_params.moco_out_
 fprintf(fileID,['motion threshold (deg, short): ' num2str(outlier_params.moco_out_deg_short) '\n']);
 fprintf(fileID,['motion threshold (deg, long): ' num2str(outlier_params.moco_out_deg_long) '\n']);
 fprintf(fileID,['intensity threshold (z-score): ' num2str(outlier_params.int_out_z) '\n']);
+fprintf(fileID,['data range (min): ' num2str(range_params.data_min) '\n']);
+fprintf(fileID,['data range (max): ' num2str(range_params.data_max) '\n']);
 fprintf(fileID,'----------\n\n');
 
 for i  = 1:length(img_input)
