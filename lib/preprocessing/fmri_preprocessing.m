@@ -343,11 +343,18 @@ for i = 1:length(img_input)
         file = ['a' file];
     end
     
+    data_img_old = spm_vol(fullfile(path,[file ext]));
+    data_array_old = spm_read_vols(data_img_old);
+    
     data_img = spm_vol(fullfile(path,['u' file ext]));
     data_array = spm_read_vols(data_img);
     
+    data_min = min(data_array_old(:));
+    data_max = max(data_array_old(:));
+    
     data_array(isnan(data_array)) = 0;
-    data_array(data_array < 0) = 0;
+    data_array(data_array < data_min) = data_min;
+    data_array(data_array > data_max) = data_max;
     
     for j = 1:length(data_img)
         spm_write_vol(data_img(j), data_array(:,:,:,j));
