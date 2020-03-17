@@ -27,57 +27,46 @@ from lib.processing import get_onset_vols
 
 # input data
 img_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/udata.nii",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/udata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_2/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_3/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_4/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_5/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_6/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_7/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_8/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_9/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_10/budata.nii",
         ]
 
 cond_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/p3_GE_EPI2_Run1_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/p3_GE_EPI2_Run2_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/p3_GE_EPI2_Run3_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/p3_GE_EPI2_Run4_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/p3_GE_EPI2_Run5_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/p3_GE_EPI2_Run6_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/p3_GE_EPI2_Run7_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/p3_GE_EPI2_Run8_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/p3_GE_EPI2_Run9_nonrivalry_Cond.mat",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/p3_GE_EPI2_Run10_nonrivalry_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/logfiles/p3_GE_EPI2_Run1_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_2/logfiles/p3_GE_EPI2_Run2_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_3/logfiles/p3_GE_EPI2_Run3_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_4/logfiles/p3_GE_EPI2_Run4_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_5/logfiles/p3_GE_EPI2_Run5_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_6/logfiles/p3_GE_EPI2_Run6_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_7/logfiles/p3_GE_EPI2_Run7_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_8/logfiles/p3_GE_EPI2_Run8_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_9/logfiles/p3_GE_EPI2_Run9_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_10/logfiles/p3_GE_EPI2_Run10_odc_Cond.mat",
         ]
 
-outlier_input = [
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_1/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_2/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_3/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_4/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_5/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_6/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_7/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_8/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_9/logfiles/outlier_regressor.txt",
-        "/data/pt_01880/Experiment2_Rivalry/p3/nonrivalry/GE_EPI2/Run_10/logfiles/outlier_regressor.txt",
-        ]
+outlier_input = []
+
+# parameters
+condition0 = "rest" # baseline condition
+condition1 = "left" # experimental condition
+TR = 3 # repetition time in s
+skip_vol = 2 # skip number of volumes in each block
+use_highpass = False
+cutoff_highpass = 180 # cutoff in s for baseline correction
+name_sess = "GE_EPI2"
+name_output = "super"
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
 pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
-
-# parameters
-condition0 = "rest" # baseline condition
-condition1 = "right" # experimental condition
-TR = 3 # repetition time in s
-skip_vol = 0 # skip number of volumes in each block
-use_highpass = True
-cutoff_highpass = 180 # cutoff in s for baseline correction
-name_sess = "GE_EPI2"
-name_output = ""
 
 """ do not edit below """
 

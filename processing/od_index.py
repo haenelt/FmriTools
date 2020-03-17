@@ -71,11 +71,6 @@ mask_input = "/data/pt_01880/Experiment2_Rivalry/p3/retinotopy/prf/vol/native/ro
 epi2orig_input = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/retinotopy/epi2orig.nii.gz"
 orig2epi_input = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/nonrivalry/GE_EPI2/orig2epi.nii.gz"
 
-# path to SPM12 folder
-pathSPM = "/data/pt_01880/source/spm12"
-pathLIB1 = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
-pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
-
 # parameters
 condition1 = "left" # experimental condition 1
 condition2 = "right" # experimental condition 2
@@ -90,6 +85,11 @@ cutoff_lowpass = 0
 order_lowpass = 0
 name_sess = "GE_EPI2"
 name_output = ""
+
+# path to SPM12 folder
+pathSPM = "/data/pt_01880/source/spm12"
+pathLIB1 = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
+pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
 
 """ do not edit below """
 

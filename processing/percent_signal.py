@@ -27,34 +27,52 @@ from lib.processing import get_onset_vols
 
 # input data
 img_input = [
-        "/data/pt_01880/analysis/VASO3/mean_budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_2/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_3/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_4/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_5/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_6/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_7/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_8/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_9/budata.nii",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_10/budata.nii",
         ]
 
 cond_input = [
-        "/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/Run_1/logfiles/p3_VASO3_Run1_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/logfiles/p3_GE_EPI2_Run1_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_2/logfiles/p3_GE_EPI2_Run2_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_3/logfiles/p3_GE_EPI2_Run3_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_4/logfiles/p3_GE_EPI2_Run4_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_5/logfiles/p3_GE_EPI2_Run5_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_6/logfiles/p3_GE_EPI2_Run6_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_7/logfiles/p3_GE_EPI2_Run7_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_8/logfiles/p3_GE_EPI2_Run8_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_9/logfiles/p3_GE_EPI2_Run9_odc_Cond.mat",
+        "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_10/logfiles/p3_GE_EPI2_Run10_odc_Cond.mat",
         ]
 
 outlier_input = []
+
+# parameters
+condition0 = "rest" # baseline condition
+condition1 = "left" # experimental condition 1
+condition2 = "right" # experimental condition 2
+TR = 3 # repetition time in s
+skip_vol = 2 # skip number of volumes in each block
+use_z_score = False
+use_highpass = False
+use_lowpass = False
+cutoff_highpass = 180 # cutoff in s for baseline correction
+cutoff_lowpass = 0
+order_lowpass = 0
+name_sess = "GE_EPI2"
+name_output = ""
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
 pathLIB1 = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
 pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
-
-# parameters
-condition0 = "rest" # baseline condition
-condition1 = "right" # experimental condition 1
-condition2 = "rest" # experimental condition 2
-TR = 2.5 # repetition time in s
-skip_vol = 2 # skip number of volumes in each block
-use_z_score = False
-use_highpass = True
-use_lowpass = False
-cutoff_highpass = 180 # cutoff in s for baseline correction
-cutoff_lowpass = 0
-order_lowpass = 0
-name_sess = "VASO3"
-name_output = ""
 
 """ do not edit below """
 
