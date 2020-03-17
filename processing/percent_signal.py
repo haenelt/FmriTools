@@ -4,28 +4,27 @@ Percent signal change
 This scripts calculates the percent signal change between two conditions of a block design for a 
 session consisting of several runs. First, a baseline correction of each time series is applied if 
 not done before (i.e., if no file with prefix b is found). From the condition file which has to be 
-in the SPM compatible *.mat format, time points for both blocks are defined. Time series for the 
-whole time series (baseline) and all conditions can be converted to z-score. The percent signal 
-change is computed as the difference of the mean between both conditions divided by the time series 
-mean. The mean percent signal change of the whole session is taken as the average across single 
-runs. The percent signal change is computed for both contrasts. If the outlier input array is not
-empty, outlier volumes are discarded from the analysis. Optionally (if n != 0), the time series can
-be upsampled. The input images should be in nifti format.
+in the SPM compatible *.mat format, time points for both experimental blocks and baseline blocks are 
+defined. The percent signal change (psc) is computed as the difference of the mean between both
+conditions relative to either the mean of the whole time series or to a baseline condition. The mean
+psc of the whole session is taken as the average across single runs. PSC is computed for both
+contrast directions. If the outlier input array is not epty, outlier volumes are discarded from the
+analysis. The input images should be in nifti format.
 
 Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
 the terminal.
 
 created by Daniel Haenelt
-Date created: 06-12-2018             
-Last modified: 12-03-2020  
+Date created: 06-12-2018         
+Last modified: 17-03-2020
 """
 import os
 import datetime
 import numpy as np
 import nibabel as nb
 from scipy.stats import zscore
+from lib.io.get_filename import get_filename
 from lib.processing import get_onset_vols
-from lib.utils.regrid_time_series import regrid_time_series_afni
 
 # input data
 img_input = [
@@ -46,17 +45,17 @@ pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
 # parameters
 TR = 2.5 # repetition time in s
 cutoff_highpass = 180 # cutoff in s for baseline correction
-skipvol = 2 # skip number of volumes in each block
+skip_vol = 2 # skip number of volumes in each block
+condition0 = "rest"
 condition1 = "right"
 condition2 = "rest"
 name_sess = "VASO3"
 name_output = ""
 use_z_score = False
 use_lowpass = False
-rel_avg = False
+baseline_all = False
 cutoff_lowpass = 0
 order_lowpass = 0
-n = 0 # upsampling factor
 
 """ do not edit below """
 
@@ -64,24 +63,19 @@ n = 0 # upsampling factor
 path = []
 file = []
 for i in range(len(img_input)):
-    path.append(os.path.split(img_input[i])[0])
-    file.append(os.path.splitext(os.path.split(img_input[i])[1])[0])
+    path_temp, file_temp, _ = get_filename(img_input[i])
+    path.append(path_temp)
+    file.append(file_temp)
 
 # output folder is taken from the first entry of the input list
 path_output = os.path.join(os.path.dirname(os.path.dirname(path[0])),"results","raw","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
-# get TR for upsampled time series
-if n:
-    TR = TR / n
-
-# get upsampled time series
-if n:
-    for i in range(len(img_input)):
-        file[i] = file[i]+"_upsampled"
-        if not os.path.isfile(os.path.join(path[i],file[i]+".nii")):
-            regrid_time_series_afni(img_input[i], n)
+# outlier
+if not len(outlier_input):
+    outlier_input = np.zeros(len(img_input))
+    
 
 # get image header information from first entry of the input list
 data_img = nb.load(os.path.join(path[0],file[0]+".nii"))
@@ -97,10 +91,10 @@ mean_percent_signal1 = np.zeros(dim)
 mean_percent_signal2 = np.zeros(dim)
 for i in range(len(path)):
     
-    if len(outlier_input) > 0:
-        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input[i], condition1, condition2, TR, skipvol)
-    else:
-        onsets1, onsets2 = get_onset_vols(cond_input[i], outlier_input, condition1, condition2, TR, skipvol)
+    # get condition specific onsets
+    onsets0 = get_onset_vols(cond_input[i], outlier_input[i], condition0, TR, skip_vol)
+    onsets1 = get_onset_vols(cond_input[i], outlier_input[i], condition1, TR, skip_vol)
+    onsets2 = get_onset_vols(cond_input[i], outlier_input[i], condition2, TR, skip_vol)
 
     # lopass filter time series
     if use_lowpass:
@@ -126,28 +120,32 @@ for i in range(len(path)):
     data_array = data_img.get_fdata()
     
     # sort volumes to conditions
+    data_condition0 = data_array[:,:,:,onsets0]
     data_condition1 = data_array[:,:,:,onsets1]
     data_condition2 = data_array[:,:,:,onsets2]
     
     # z-score
     if use_z_score:
+        data_condition0 = zscore(data_condition0, axis=3)
         data_condition1 = zscore(data_condition1, axis=3)
         data_condition2 = zscore(data_condition2, axis=3)
         data_array = zscore(data_array, axis=3)
     
     # mean
+    data_condition0_mean = np.mean(data_condition0, axis=3)
     data_condition1_mean = np.mean(data_condition1, axis=3)
     data_condition2_mean = np.mean(data_condition2, axis=3)
     data_baseline_mean = np.mean(data_array, axis=3)
     data_baseline_mean[data_baseline_mean == 0] = np.nan
     
     # percent signal change
-    if rel_avg:
+    if baseline_all:
         percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_baseline_mean * 100
         percent_signal2 = ( data_condition2_mean - data_condition1_mean ) / data_baseline_mean * 100
     else:
-        percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_condition2_mean * 100
-        percent_signal2 = ( data_condition2_mean - data_condition1_mean ) / data_condition1_mean * 100
+        percent_signal1 = ( data_condition1_mean - data_condition2_mean ) / data_condition0_mean * 100
+        percent_signal2 = ( data_condition2_mean - data_condition1_mean ) / data_condition0_mean * 100
+
     percent_signal1[np.isnan(percent_signal1)] = 0
     percent_signal2[np.isnan(percent_signal2)] = 0
 
@@ -189,6 +187,5 @@ fileID.write("condition1: "+condition1+"\n")
 fileID.write("condition2: "+condition2+"\n")
 fileID.write("TR: "+str(TR)+"\n")
 fileID.write("cutoff_highpass: "+str(cutoff_highpass)+"\n")
-fileID.write("skipvol: "+str(skipvol)+"\n")
-fileID.write("n: "+str(n)+"\n")
+fileID.write("skip_vol: "+str(skip_vol)+"\n")
 fileID.close()

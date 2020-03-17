@@ -335,6 +335,26 @@ end
 % close file
 fclose(fileID);
 
+% set nan and negative values to zero
+for i = 1:length(img_input)
+
+    [path, file, ext] = fileparts(img_input{i});
+    if slice_params.slice_timing
+        file = ['a' file];
+    end
+    
+    data_img = spm_vol(fullfile(path,['u' file ext]));
+    data_array = spm_read_vols(data_img);
+    
+    data_array(isnan(data_array)) = 0;
+    data_array(data_array < 0) = 0;
+    
+    for j = 1:length(data_img)
+        spm_write_vol(data_img(j), data_array(:,:,:,j));
+    end
+
+end
+
 % get time series of first volumes
 data_img_out = spm_vol(img_input{1});
 for i = 1:length(img_input)
