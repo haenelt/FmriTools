@@ -1,4 +1,5 @@
-function fmri_preprocessing(img_input, slice_params, field_params, realign_params, outlier_params, pathSPM)
+function fmri_preprocessing(img_input, slice_params, field_params, realign_params, ...
+    outlier_params, range_params, pathSPM)
 % This function performs slice time correction, fieldmap undistortion and
 % motion correction in the SPM12 framework which can be applied to a
 % session consisting of multiple runs. Slice time correction and fieldmap 
@@ -25,6 +26,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
     % field_params: struct of fieldmap parameters.
     % realign_params: struct of realignment parameters.
     % outlier_params: struct of realignment check parameters.
+    % range_params: struct of data range parameters.
     % pathSPM: path to spm12 folder.
 
 % created by Daniel Haenelt
@@ -343,18 +345,12 @@ for i = 1:length(img_input)
         file = ['a' file];
     end
     
-    data_img_old = spm_vol(fullfile(path,[file ext]));
-    data_array_old = spm_read_vols(data_img_old);
-    
     data_img = spm_vol(fullfile(path,['u' file ext]));
     data_array = spm_read_vols(data_img);
     
-    data_min = min(data_array_old(:));
-    data_max = max(data_array_old(:));
-    
     data_array(isnan(data_array)) = 0;
-    data_array(data_array < data_min) = data_min;
-    data_array(data_array > data_max) = data_max;
+    data_array(data_array < range_params.data_min) = range_params.data_min;
+    data_array(data_array > range_params.data_max) = range_params.data_max;
     
     for j = 1:length(data_img)
         spm_write_vol(data_img(j), data_array(:,:,:,j));

@@ -48,6 +48,10 @@ outlier_params.moco_out_deg_short = 0.5; % in rad
 outlier_params.moco_out_deg_long = 1.0; % in rad
 outlier_params.int_out_z = 2; % in z-score
 
+% data range parameters
+range_params.data_min = 0;
+range_params.data_max = 4095;
+
 % add spm and lib to path
 pathSPM = '/data/pt_01880/source/spm12';
 pathLIB = '/home/raid2/haenelt/projects/scripts/lib/preprocessing';
@@ -64,4 +68,5 @@ fmri_preprocessing(...
     field_params,...
     realign_params,...
     outlier_params,...
+    range_params,...
     pathSPM);
