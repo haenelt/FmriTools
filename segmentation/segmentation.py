@@ -95,9 +95,9 @@ from lib.mapping.morph2dense import morph2dense
 from lib.mapping.map2grid import map2grid
 
 # input data
-fileUNI = "/data/pt_01880/Experiment5_Mono/p1/anatomy/S8_MP2RAGE_0p7_UNI_Images_2.45.nii"
-fileINV1 = "/data/pt_01880/Experiment5_Mono/p1/anatomy/S5_MP2RAGE_0p7_INV1_2.45.nii"
-fileINV2 = "/data/pt_01880/Experiment5_Mono/p1/anatomy/S6_MP2RAGE_0p7_INV2_2.45.nii"
+fileUNI = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S6_MP2RAGE_0p7_UNI_Images_2.45.nii"
+fileINV1 = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S3_MP2RAGE_0p7_INV1_2.45.nii"
+fileINV2 = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S4_MP2RAGE_0p7_INV2_2.45.nii"
 pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/home/raid2/haenelt/projects/scripts/segmentation"
 namePATCH = "occip"
