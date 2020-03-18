@@ -13,24 +13,32 @@
 
 % input data
 img_input = {
-    '/data/pt_01880/Experiment5_Mono/p1/meridian/GE_EPI2/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_1/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_2/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_3/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_4/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_5/uadata.nii',...
     };
 
 cond_input = {
-    '/data/pt_01880/Experiment5_Mono/p1/meridian/GE_EPI2/logfiles/p1_GE_EPI2_meridian_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_1/logfiles/p1_GE_EPI1_Run1_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_2/logfiles/p1_GE_EPI1_Run2_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_3/logfiles/p1_GE_EPI1_Run3_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_4/logfiles/p1_GE_EPI1_Run4_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_5/logfiles/p1_GE_EPI1_Run5_flicker_Cond.mat',...
     };
 
 multi_input = {};
 
 % parameters
-TR = 2; % repetition time  in s
-cutoff_highpass = 192; % 1/cutoff_highpass frequency in Hz (odc: 180, localiser: 96)
+TR = 1; % repetition time  in s
+cutoff_highpass = 180; % 1/cutoff_highpass frequency in Hz (odc: 180, localiser: 96)
 microtime_onset = 1; % only change to 1 if reference slice in slice timing is first slice
-hrf_derivative = false; % include hrf derivative in model
-nconds = 4; % only 2-4 are supported
-name_sess = 'GE_EPI2'; % name of session (if multiple sessions exist)
-name_output = ''; % basename of output contrasts
-output_folder = 'contrast'; % name of folder where spm.mat is saved
+hrf_derivative = true; % include hrf derivative in model
+nconds = 2; % only 2-4 are supported
+name_sess = 'GE_EPI1'; % name of session (if multiple sessions exist)
+name_output = 'diff'; % basename of output contrasts
+output_folder = 'contrast_diff'; % name of folder where spm.mat is saved
 
 % lowpass filter of time series
 lowpass = false;

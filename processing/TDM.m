@@ -9,35 +9,39 @@
 
 % created by Daniel Haenelt
 % Date created: 16-03-2020
-% Last modified: 17-03-2020
+% Last modified: 18-03-2020
 
 % input data
 img_input = {
-    '/home/daniel/Schreibtisch/GE_EPI1/Run_1/uadata.nii',...
-    '/home/daniel/Schreibtisch/GE_EPI1/Run_2/uadata.nii',...
-    '/home/daniel/Schreibtisch/GE_EPI1/Run_3/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_1/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_2/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_3/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_4/uadata.nii',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_5/uadata.nii',...
     };
 
 cond_input = {
-    '/home/daniel/Schreibtisch/GE_EPI1/Run_1/logfiles/p1_GE_EPI1_Run1_flicker_Cond.mat',...
-    '/home/daniel/Schreibtisch/GE_EPI1/Run_2/logfiles/p1_GE_EPI1_Run2_flicker_Cond.mat',...
-    '/home/daniel/Schreibtisch/GE_EPI1/Run_3/logfiles/p1_GE_EPI1_Run3_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_1/logfiles/p1_GE_EPI1_Run1_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_2/logfiles/p1_GE_EPI1_Run2_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_3/logfiles/p1_GE_EPI1_Run3_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_4/logfiles/p1_GE_EPI1_Run4_flicker_Cond.mat',...
+    '/data/pt_01880/Experiment5_Mono/p1/flicker/GE_EPI1/Run_5/logfiles/p1_GE_EPI1_Run5_flicker_Cond.mat',...
     };
 
 % parameters
 TR = 1; % repetition time in s
-stim_duration = 10; % stimulus duration in s
+stim_duration = 30; % stimulus duration in s
 sigma = 2; % sigma for gaussian blurring (bias corrected epi)
 mask_threshold = 0.8; % masking threshold for implicit mask
-fir_steps = 30; % number of time steps for fir model
-basename = ''; % basename of output files
-output_folder = 'contrast3'; % name of folder where glm output is saved
+fir_steps = 60; % number of time steps for fir model
+basename = 'aaaaaaaaaa'; % basename of output files
+output_folder = 'contrast_tdm3'; % name of folder where glm output is saved
 
 % add libs to path
-pathKNKUTILS = '/home/daniel/source/knkutils';
-pathGLMDENOISE = '/home/daniel/source/GLMdenoise';
-pathTDM = '/home/daniel/source/TDM';
-pathSPM = '/home/daniel/source/spm12'; 
+pathKNKUTILS = '/data/pt_01880/source/knkutils';
+pathGLMDENOISE = '/data/pt_01880/source/GLMdenoise';
+pathTDM = '/data/pt_01880/source/TDM';
+pathSPM = '/data/pt_01880/source/spm12'; 
 
 %%% do not edit below %%%
 
@@ -182,10 +186,7 @@ nvox = nx * ny * nz;
 
 name_file = {'tdm_early', 'tdm_late'};
 for i = 1:length(name_file)
-    
-    % get psc
-    betas0(:,i) = betas0(:,i) / mean(resultsTDMGLM.meanvol) * 100;
-    
+        
     % get new filename
     data_header.fname = fullfile(path_psc, ['psc_' basename '_' name_file{i} '.nii']);
 

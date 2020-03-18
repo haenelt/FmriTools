@@ -17,7 +17,7 @@ def slice_timing_correction(input, TR_old, TR_new, order, prefix="a"):
             
     created by Daniel Haenelt
     Date created: 11-03-2019
-    Last modified: 11-03-2019
+    Last modified: 18-03-2019
     """
     import os
     import sys
@@ -79,8 +79,11 @@ def slice_timing_correction(input, TR_old, TR_new, order, prefix="a"):
     data_array_corrected = data_array_corrected[:,:,:,vols_keep]
 
     # clean corrected array
+    data_min = np.min(data.get_fdata())
+    data_max = np.max(data.get_fdata())    
     data_array_corrected[np.isnan(data_array_corrected)] = 0
-    data_array_corrected[data_array_corrected < 0] = 0
+    data_array_corrected[data_array_corrected < data_min] = data_min
+    data_array_corrected[data_array_corrected > data_max] = data_max
 
     # update data header
     data.header["dim"][4] = np.shape(data_array_corrected)[3]

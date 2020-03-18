@@ -31,7 +31,7 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 17-03-2020
+% Last modified: 18-03-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -340,24 +340,26 @@ end
 fclose(fileID);
 
 % set nan and negative values to zero
-for i = 1:length(img_input)
+if range_params.apply
+    for i = 1:length(img_input)
 
-    [path, file, ext] = fileparts(img_input{i});
-    if slice_params.slice_timing
-        file = ['a' file];
-    end
-    
-    data_img = spm_vol(fullfile(path,['u' file ext]));
-    data_array = spm_read_vols(data_img);
-    
-    data_array(isnan(data_array)) = 0;
-    data_array(data_array < range_params.data_min) = range_params.data_min;
-    data_array(data_array > range_params.data_max) = range_params.data_max;
-    
-    for j = 1:length(data_img)
-        spm_write_vol(data_img(j), data_array(:,:,:,j));
-    end
+        [path, file, ext] = fileparts(img_input{i});
+        if slice_params.slice_timing
+            file = ['a' file];
+        end
 
+        data_img = spm_vol(fullfile(path,['u' file ext]));
+        data_array = spm_read_vols(data_img);
+
+        data_array(isnan(data_array)) = 0;
+        data_array(data_array < range_params.data_min) = range_params.data_min;
+        data_array(data_array > range_params.data_max) = range_params.data_max;
+
+        for j = 1:length(data_img)
+            spm_write_vol(data_img(j), data_array(:,:,:,j));
+        end
+
+    end
 end
 
 % get time series of first volumes

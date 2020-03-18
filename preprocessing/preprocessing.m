@@ -13,7 +13,7 @@
 
 % created by Daniel Haenelt
 % Date created: 06-08-2019
-% Last modified: 23-02-2020
+% Last modified: 18-03-2020
 
 % array of of input time series
 img_input = {
@@ -49,6 +49,7 @@ outlier_params.moco_out_deg_long = 1.0; % in rad
 outlier_params.int_out_z = 2; % in z-score
 
 % data range parameters
+range_params.apply = false;
 range_params.data_min = 0;
 range_params.data_max = 4095;
 
