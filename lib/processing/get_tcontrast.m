@@ -20,7 +20,7 @@ function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_de
     
 % created by Daniel Haenelt
 % Date created: 13-03-2020
-% Last modified: 14-03-2020
+% Last modified: 19-03-2020
 
 if ~exist('name_output', 'var')  
     name_output = '';
@@ -48,14 +48,14 @@ nruns = length(cond_input);
 nconds = length(cond.names);
 
 % make output folders
-if nruns == 1
+if ~isempty(name_sess)
+    path_spmT = fullfile(fileparts(fileparts(path_contrast)),'results','spmT','native');
+    path_con = fullfile(fileparts(fileparts(path_contrast)),'results','con','native');
+    path_psc = fullfile(fileparts(fileparts(path_contrast)),'results','psc','native');
+else
     path_spmT = fullfile(fileparts(path_contrast),'results','spmT','native'); 
     path_con = fullfile(fileparts(path_contrast),'results','con','native'); 
     path_psc = fullfile(fileparts(path_contrast),'results','psc','native');
-else
-    path_spmT = fullfile(fileparts(fileparts(path_contrast)),'results','spmT','native'); 
-    path_con = fullfile(fileparts(fileparts(path_contrast)),'results','con','native');
-    path_psc = fullfile(fileparts(fileparts(path_contrast)),'results','psc','native');
 end
 
 if ~exist(path_spmT,'dir')
