@@ -46,7 +46,7 @@ HOWTO: manual pial surface correction
     *best to overlay with surfaces
     *N.B. in freesurfer, manual changes of the pial surfaces are applied by creating the file
     *brain.finalsurfs.manedit.mgz (copy of brainmask.mgz) and include there all changes 
-    *(brush value: 255, eraser: -1). We apply the changes to a copy of orig because there, the
+    *(brush value: 255, eraser: 1). We apply the changes to a copy of orig because there, the
     *pial surface can be better delineated. However, from those changes brain.finalsurfs.manedit.mgz
     *will be created.
 
