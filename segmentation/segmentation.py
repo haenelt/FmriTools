@@ -24,7 +24,7 @@ Part 4
     *smooth pial and white surface (optional)    
     *compute upsampled surface mesh
     *compute morphological data onto upsampled surface mesh
-    *compute volumetric layers
+    *compute volumetric layers (optional)
 Part 5
     *surface flattening of occipital patch
     *orthographic projection of flattened patch
@@ -69,7 +69,7 @@ HOWTO: defining a patch for surface flattening
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 18-12-2019
+Last modified: 25-03-2020
 """
 import os
 import datetime
@@ -110,7 +110,7 @@ w_shift = -0.5 # white surface shift (part 4)
 niter_smooth = 2 # number of smoothing iterations for white and pial surface (part 4)
 niter_upsample = 1 # number of upsampling iterations (part 4)
 method_upsample = "linear" # upsampling method (part 4)
-nsurf_layer = 21 # number of equivolumetric layers (part 4)
+nsurf_layer = 0 # number of equivolumetric layers, set 0 to omit (part 4)
 factor_layer = 0 # smoothing of area surfaces (part 4)
 niter_layer = 0 # number of smoothing iterations (part 4)
 imres_ortho = 0.25 # isotropic image resolution of the regular grid in mm (part 5)
@@ -304,17 +304,18 @@ elif part == 4:
                     path_dense)
     
     # calculate volumetric surfaces
-    print("Compute volumetric layers")
-    for i in range(len(hemi)):
-        file_white = os.path.join(path_dense,hemi[i]+".white") 
-        file_pial = os.path.join(path_dense,hemi[i]+".pial")
-        calculate_equivolumetric_surfaces(file_white, 
-                                         file_pial, 
-                                         nsurf_layer, 
-                                         factor_layer, 
-                                         niter_layer, 
-                                         hemi[i],
-                                         path_layer)
+    if nsurf_layer != 0:
+        print("Compute volumetric layers")
+        for i in range(len(hemi)):
+            file_white = os.path.join(path_dense,hemi[i]+".white") 
+            file_pial = os.path.join(path_dense,hemi[i]+".pial")
+            calculate_equivolumetric_surfaces(file_white, 
+                                              file_pial, 
+                                              nsurf_layer, 
+                                              factor_layer, 
+                                              niter_layer, 
+                                              hemi[i],
+                                              path_layer)
         
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
