@@ -15,7 +15,10 @@ from lib.io.get_filename import get_filename
 
 # input
 input = [
-    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_R2s_WOLS_gnlcorr.nii",
+    "/data/pt_01880/Experiment3_Stripes/p2/mpm/sess1/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s1971775-170527-00001-00352-1_R2s_WOLS_gnlcorr.nii",
+    "/data/pt_01880/Experiment3_Stripes/p2/mpm/sess2/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s1971775-165558-00001-00352-1_R2s_WOLS_gnlcorr.nii",
+    "/data/pt_01880/Experiment3_Stripes/p2/mpm/sess2/pdw_kp_mtflash3d_v1ex_0p5_0010/Results/s1971775-173449-00001-00352-1_R2s_WOLS_gnlcorr.nii",
+    "/data/pt_01880/Experiment3_Stripes/p4/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s286633c-144900-00001-00352-1_R2s_WOLS_gnlcorr.nii",
     ]
 
 val_min = 0 # if not None
