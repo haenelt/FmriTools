@@ -13,11 +13,11 @@
 
 % input data
 img_input = {
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_1/udata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_2/udata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_3/udata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_4/udata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_5/udata.nii',...
+    '/data/pt_01983/func/flicker/GE_EPI1/Run_1/uadata.nii',...
+    '/data/pt_01983/func/flicker/GE_EPI1/Run_2/uadata.nii',...
+    '/data/pt_01983/func/flicker/GE_EPI1/Run_3/uadata.nii',...
+    '/data/pt_01983/func/flicker/GE_EPI1/Run_4/uadata.nii',...
+    '/data/pt_01983/func/flicker/GE_EPI1/Run_5/uadata.nii',...
     };
 
 cond_input = {
@@ -29,12 +29,12 @@ cond_input = {
     };
 
 % parameters
-TR = 3; % repetition time in s
-stim_duration = 10; % stimulus duration in s
+TR = 1; % repetition time in s
+stim_duration = 30; % stimulus duration in s
 sigma = 2; % sigma for gaussian blurring (bias corrected epi)
 mask_threshold = 0.8; % masking threshold for implicit mask
-fir_steps = 20; % number of time steps for fir model
-basename = 'aaaaaaaaaa'; % basename of output files
+fir_steps = 60; % number of time steps for fir model
+basename = 'on'; % basename of output files
 output_folder = 'contrast_tdm'; % name of folder where glm output is saved
 
 % add libs to path
