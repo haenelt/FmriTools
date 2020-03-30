@@ -1,16 +1,18 @@
-def mask_ana(t1, mask):
+def mask_ana(t1, mask, background_bright=False):
     """
     This function masked an image with a corresponding binary mask by multiplication. The masked 
     volume is saved in the same folder as the input image with the prefix p.
     Inputs:
         *t1: input anatomy.
         *mask: corresponding binary mask.
+        *background_bright: set values outside mask to maximum value (boolean).
         
     created by Daniel Haenelt
-    Date created: 13-02-2019     
-    Last modified: 13-02-2019
+    Date created: 13-02-2019   
+    Last modified: 30-03-2020
     """
     import os
+    import numpy as np
     import nibabel as nb
 
     # get path and filename of anatomy
@@ -30,6 +32,10 @@ def mask_ana(t1, mask):
     
     # multiply images
     masked_ana_array = ana_array * mask_array
+    
+    # set all outside mask values to maximum to mimic bright CSF values
+    if background_bright:
+        masked_ana_array[mask_array == 0] = np.max(ana_array)
     
     # write masked anatomy
     out_img = nb.Nifti1Image(masked_ana_array, ana_img.affine, ana_img.header)

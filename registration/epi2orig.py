@@ -23,7 +23,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2019
-Last modified: 15-07-2019
+Last modified: 30-03-2020
 """
 import os
 import shutil as sh
@@ -183,7 +183,7 @@ clean_ana(os.path.join(path_t1,"T1.nii"), 1000.0, 4095.0, overwrite=True)
 """
 mask t1 and epi
 """
-mask_ana(os.path.join(path_t1,"T1.nii"),os.path.join(path_t1,"mask.nii"))
+mask_ana(os.path.join(path_t1,"T1.nii"),os.path.join(path_t1,"mask.nii"), background_bright=True)
 mask_epi(os.path.join(path_epi,"bepi.nii"), 
          os.path.join(path_t1,"pT1.nii"), 
          os.path.join(path_t1,"mask.nii"), 
