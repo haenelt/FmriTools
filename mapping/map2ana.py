@@ -18,17 +18,25 @@ from lib.io.get_filename import get_filename
 from lib.mapping import map2surface
 
 # input
-file_in = ["/data/pt_01880/temp/results/spmT/native/spmT_colour_bw_try1_old_deform.nii",
+file_in = ["/data/pt_01983/func/flicker/results/psc/native/psc_on_diff_GE_EPI2_diff.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_diff.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_diff_calhoun.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_tdm_early.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_tdm_late.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_diff_GE_EPI2_diff.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_GE_EPI2.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_GE_EPI2_diff.nii",
+           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_GE_EPI2_diff_calhoun.nii",
            ]
 
-surf_in = ["/data/pt_01880/Experiment3_Stripes/p3/anatomy/layer_mpm/lh.layer10_mpm",
-           "/data/pt_01880/Experiment3_Stripes/p3/anatomy/layer_mpm/rh.layer10_mpm",
+surf_in = ["/data/pt_01983/func/anatomy/layer/lh.layer10",
            ]
 
 # parameters
-deformation_in1 = "/data/pt_01880/Experiment3_Stripes/p3/deformation/colour/GE_EPI1/epi2ana.nii.gz"
-deformation_in2 = "/data/pt_01880/Experiment3_Stripes/p3/deformation/mpm_gnl_flirt/mp2rage_2_mpm.nii.gz"
-path_output = "/data/pt_01880/temp/results/spmT"
+deformation_in1 = "/data/pt_01983/func/deformation/flicker/GE_EPI2/epi2orig.nii.gz"
+deformation_in2 = None
+path_output = "/data/pt_01983/func/flicker/results/psc"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
