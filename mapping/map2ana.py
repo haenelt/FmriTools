@@ -10,7 +10,7 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 06-03-2019            
-Last modified: 31-01-2020  
+Last modified: 31-01-2020
 """
 import os
 from nighres.registration import apply_coordinate_mappings
@@ -31,6 +31,9 @@ file_in = ["/data/pt_01983/func/flicker/results/psc/native/psc_on_diff_GE_EPI2_d
            ]
 
 surf_in = ["/data/pt_01983/func/anatomy/layer/lh.layer10",
+           "/data/pt_01983/func/anatomy/layer/rh.layer10",
+           "/data/pt_01983/func/anatomy/layer/lh.layer20",
+           "/data/pt_01983/func/anatomy/layer/rh.layer20",
            ]
 
 # parameters

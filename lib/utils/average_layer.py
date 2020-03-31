@@ -10,12 +10,16 @@ def average_layer(img_input, path_output, basename_output, mode="mean"):
     
     created by Daniel Haenelt
     Date created: 25-10-2019
-    Last modified: 31-01-2020
+    Last modified: 31-03-2020
     """
     import sys
     import os
     import numpy as np
     import nibabel as nb
+    
+    # make output folder
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
     
     # initialise array
     data = nb.load(img_input[0])
