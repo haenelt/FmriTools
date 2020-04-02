@@ -55,7 +55,7 @@ range_params.data_max = 4095;
 
 % add spm and lib to path
 pathSPM = '/data/pt_01880/source/spm12';
-pathLIB = '/home/raid2/haenelt/projects/scripts/lib/preprocessing';
+pathLIB = '/data/hu_haenelt/projects/scripts/lib/preprocessing';
 
 %%% do not edit below %%%
 
