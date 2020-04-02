@@ -18,28 +18,16 @@ from lib.io.get_filename import get_filename
 from lib.mapping import map2surface
 
 # input
-file_in = ["/data/pt_01983/func/flicker/results/psc/native/psc_on_diff_GE_EPI2_diff.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_diff.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_diff_calhoun.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_tdm_early.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_GE_EPI2_tdm_late.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_diff_GE_EPI2_diff.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_GE_EPI2.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_GE_EPI2_diff.nii",
-           "/data/pt_01983/func/flicker/results/psc/native/psc_on_off_GE_EPI2_diff_calhoun.nii",
+file_in = ["/nobackup/actinium2/haenelt/V2STRIPES/p6/resting_state/meanudata.nii",
            ]
 
-surf_in = ["/data/pt_01983/func/anatomy/layer/lh.layer10",
-           "/data/pt_01983/func/anatomy/layer/rh.layer10",
-           "/data/pt_01983/func/anatomy/layer/lh.layer20",
-           "/data/pt_01983/func/anatomy/layer/rh.layer20",
+surf_in = ["/nobackup/actinium2/haenelt/V2STRIPES/p6/anatomy/layer/rh.layer5",
            ]
 
 # parameters
-deformation_in1 = "/data/pt_01983/func/deformation/flicker/GE_EPI2/epi2orig.nii.gz"
+deformation_in1 = "/nobackup/actinium2/haenelt/V2STRIPES/p6/deformation/resting_state/epi2orig.nii.gz"
 deformation_in2 = None
-path_output = "/data/pt_01983/func/flicker/results/psc"
+path_output = "/data/pt_01880"
 interpolation = "linear" # can be linear or nearest
 
 """ do not edit below """
