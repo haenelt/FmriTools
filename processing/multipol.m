@@ -34,7 +34,7 @@ path_output = '/data/pt_01880/Experiment4_PSF/p6/psf';
 
 % add spm and lib to path
 pathSPM = '/data/pt_01880/source/spm12'; 
-pathLIB = '/home/raid2/haenelt/projects/scripts/lib';
+pathLIB = '/data/hu_haenelt/projects/scripts/lib';
 
 %%% do not edit below %%%
 

@@ -66,7 +66,7 @@ name_output = "super"
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
+pathLIB = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
 
 """ do not edit below """
 

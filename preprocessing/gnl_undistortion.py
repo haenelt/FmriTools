@@ -37,8 +37,8 @@ input = [
     "/data/pt_01880/Experiment3_Stripes/p4/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s286633c-144900-00001-00352-1_R2s_WOLS.nii",
     ]
 
-file_bash = "/home/raid2/haenelt/projects/gradunwarp/apply_grad.sh"
-file_coeff = "/home/raid2/haenelt/projects/gradunwarp/7t_coeff.grad"
+file_bash = "/data/hu_haenelt/projects/gradunwarp/apply_grad.sh"
+file_coeff = "/data/hu_haenelt/projects/gradunwarp/7t_coeff.grad"
 python3_env = "daniel"
 python2_env = "daniel2"
 cleanup = True

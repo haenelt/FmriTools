@@ -71,8 +71,8 @@ name_output = ""
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB1 = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
-pathLIB2 = "/home/raid2/haenelt/projects/scripts/lib/processing"
+pathLIB1 = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
+pathLIB2 = "/data/hu_haenelt/projects/scripts/lib/processing"
 
 """ do not edit below """
 

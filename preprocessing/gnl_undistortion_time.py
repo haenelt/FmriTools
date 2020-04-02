@@ -24,8 +24,8 @@ file_in = [
     "/data/pt_01880/Experiment3_Stripes/p3/colour/GE_EPI1/Run_1/data.nii",
     ]
 
-file_bash = "/home/raid2/haenelt/projects/gradunwarp/apply_grad.sh"
-file_coeff = "/home/raid2/haenelt/projects/gradunwarp/7t_coeff.grad"
+file_bash = "/data/hu_haenelt/projects/gradunwarp/apply_grad.sh"
+file_coeff = "/data/hu_haenelt/projects/gradunwarp/7t_coeff.grad"
 python3_env = "daniel"
 python2_env = "daniel2"
 cleanup = True

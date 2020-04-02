@@ -35,7 +35,7 @@ input.ecc.cutoff = 96;
 pathSPM = '/data/pt_01880/source/spm12'; 
 
 % add library to path
-pathLIB = '/home/raid2/haenelt/projects/scripts/lib/';
+pathLIB = '/data/hu_haenelt/projects/scripts/lib/';
 
 %%% do not edit below %%%
 

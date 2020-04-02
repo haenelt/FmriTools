@@ -47,7 +47,7 @@ order_lowpass = 1;
 
 % add spm and lib to path
 pathSPM = '/data/pt_01880/source/spm12'; 
-pathLIB = '/home/raid2/haenelt/projects/scripts/lib/';
+pathLIB = '/data/hu_haenelt/projects/scripts/lib/';
 
 %%% do not edit below %%%
 

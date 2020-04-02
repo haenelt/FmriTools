@@ -48,8 +48,8 @@ contrast_method = "gradient" # gradient, average, fixedDistance, relativeDistanc
 
 # path
 pathSPM = "/data/pt_01880/source/spm12"
-pathMOURIK = "/home/raid2/haenelt/projects/OpenFmriAnalysis"
-pathLIB = "/home/raid2/haenelt/projects/scripts/lib"
+pathMOURIK = "/data/hu_haenelt/projects/OpenFmriAnalysis"
+pathLIB = "/data/hu_haenelt/projects/scripts/lib"
 
 """ do not edit below """
 

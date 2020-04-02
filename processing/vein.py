@@ -25,7 +25,7 @@ img_input = ["/data/pt_01880/temp_gbb/data/udata.nii",
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/home/raid2/haenelt/projects/scripts/lib"
+pathLIB = "/data/hu_haenelt/projects/scripts/lib"
 
 # parameters
 TR = 3 # repetition time in s

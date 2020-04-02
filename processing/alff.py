@@ -27,7 +27,7 @@ path_output = "/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess4/alf
 
 # add path
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/home/raid2/haenelt/projects/scripts/lib/preprocessing"
+pathLIB = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
 TR = 3 # repetition time in s
