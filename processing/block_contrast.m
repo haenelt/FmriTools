@@ -9,7 +9,7 @@
 
 % created by Daniel Haenelt
 % Date created: 10-12-2018
-% Last modified: 19-03-2020
+% Last modified: 03-04-2020
 
 % input data
 img_input = {
@@ -57,6 +57,7 @@ cutoff_highpass = 180; % 1/cutoff_highpass frequency in Hz (odc: 180, localiser:
 microtime_onset = 8; % only change to 1 if reference slice in slice timing is first slice
 hrf_derivative = false; % include hrf derivative in model
 nconds = 3; % only 2-4 are supported
+n_multi = 1; % number of regressors of no interest loaded in multi_input
 name_sess = 'GE_EPI1_outlier'; % name of session (if multiple sessions exist)
 name_output = ''; % basename of output contrasts
 output_folder = 'contrast_outlier'; % name of folder where spm.mat is saved
@@ -159,4 +160,4 @@ spm_jobman('run',matlabbatch);
 clear matlabbatch
 
 % calculate contrasts
-get_tcontrast(cond_input, path_output, name_output, name_sess, hrf_derivative, pathSPM);
+get_tcontrast(cond_input, path_output, name_output, name_sess, hrf_derivative, n_multi, pathSPM);
