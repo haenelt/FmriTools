@@ -2,7 +2,9 @@
 EPI <-> ANA registration
 
 The purpose of the following script is to compute the deformation field for the registration 
-between antomy and EPI in native space. The script consists of the following steps:
+between antomy and EPI in native space. The mask should be in ana space. Optionally, a 
+second mask can be applied which must be in orig space. The script consists of the following 
+steps:
     1. enhance brainmask if second mask is given (brain.finalsurf.mgz)
     2. set output folder structure
     3. scanner transform t1 <-> epi
@@ -17,7 +19,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 02-05-2019
-Last modified: 30-03-2020
+Last modified: 14-04-2020
 """
 import os
 import shutil as sh
