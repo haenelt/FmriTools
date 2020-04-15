@@ -15,24 +15,21 @@ def get_alff(input, TR, path_output, hp_freq=0.01, lp_freq=0.08, cleanup=True):
 
     created by Daniel Haenelt
     Date created: 27-02-2019        
-    Last modified: 27-02-2019
+    Last modified: 15-04-2020
     """
     import os
     import nibabel as nb
     from scipy.stats import zscore
     from nipype.interfaces.afni.preprocess import Bandpass
     from nipype.interfaces.afni.utils import TStat, Calc
+    from lib.io.get_filename import get_filename
 
     # make output folder
     if not os.path.exists(path_output):
-        os.mkdir(path_output)
+        os.makedirs(path_output)
 
     # get path and filename
-    path = os.path.dirname(input)
-    if os.path.splitext(os.path.basename(input))[1] == ".gz":
-        file = os.path.splitext(os.path.splitext(os.path.basename(input))[0])[0]
-    else:
-        file = os.path.splitext(os.path.basename(input))[0]
+    _, file, _ = get_filename(input)
     
     # filtering
     bandpass = Bandpass()

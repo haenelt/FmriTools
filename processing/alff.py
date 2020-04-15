@@ -10,7 +10,7 @@ by calling FREESURFER, ANTSENV and AFNI in the terminal.
 
 created by Daniel Haenelt
 Date created: 02-03-2019
-Last modified: 03-03-2019
+Last modified: 15-04-2020
 """
 import os
 import nibabel as nb
@@ -20,10 +20,10 @@ from lib.processing.get_alff import get_alff
 
 # input
 anatomy = "" # T1w full brain anatomy (e.g. orig)
-function = "/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess4/uep2d_bold_sine_676b_11_100.nii" # baseline uncorrected
+function = "/data/pt_01983/func/resting_state2/uadata.nii" # baseline uncorrected
 deformation = "" # deformation ana -> epi
 biopac_input = "" # *.mat file
-path_output = "/nobackup/actinium2/haenelt/ForOthers/AlffLuke/dataset2/sess4/alff"
+path_output = "/data/pt_01983/func/resting_state2/alff/native"
 
 # add path
 pathSPM = "/data/pt_01880/source/spm12"
@@ -31,7 +31,7 @@ pathLIB = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
 TR = 3 # repetition time in s
-cutoff_highpass = 120 # cutoff frequency for baseline correction in 1/Hz
+cutoff_highpass = 180 # cutoff frequency for baseline correction in 1/Hz
 nerode_wm = 1 # number of wm mask eroding iterations
 nerode_csf = 1 # number of csf mask eroding iterations
 hp_freq = 0.01 # highpass cutoff frequency (bandpass filter) in Hz
@@ -47,7 +47,7 @@ cleanup = True
 
 # make output folder
 if not os.path.exists(path_output):
-    os.mkdir(path_output)
+    os.makedirs(path_output)
 
 # get path and filenames
 path = os.path.dirname(function)
