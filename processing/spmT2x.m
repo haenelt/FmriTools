@@ -51,10 +51,10 @@
 % Last modified: 17-04-2020
 
 % input
-spm_mat_in = '/data/pt_01983/func/flicker/GE_EPI1/contrast/SPM.mat'; % SPM.mat
-path_output = '/data/pt_01880/temp_remove'; % path where output is written
+spm_mat_in = '/data/pt_01983/func/flicker/GE_EPI2/contrast_diff/SPM.mat'; % SPM.mat
+path_output = '/data/pt_01983/func/flicker/results'; % path where output is written
 name_output = ''; % basename of output contrasts
-name_sess = ''; % name of session (if multiple sessions exist)
+name_sess = 'GE_EPI2_diff'; % name of session (if multiple sessions exist)
 
 % add spm to path
 pathSPM = '/data/pt_01880/source/spm12';

@@ -15,14 +15,14 @@ from lib.io.get_filename import get_filename
 
 # input
 input = [
-    "/data/pt_01880/Experiment3_Stripes/p2/mpm/sess1/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s1971775-170527-00001-00352-1_R2s_WOLS_gnlcorr.nii",
-    "/data/pt_01880/Experiment3_Stripes/p2/mpm/sess2/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s1971775-165558-00001-00352-1_R2s_WOLS_gnlcorr.nii",
-    "/data/pt_01880/Experiment3_Stripes/p2/mpm/sess2/pdw_kp_mtflash3d_v1ex_0p5_0010/Results/s1971775-173449-00001-00352-1_R2s_WOLS_gnlcorr.nii",
-    "/data/pt_01880/Experiment3_Stripes/p4/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s286633c-144900-00001-00352-1_R2s_WOLS_gnlcorr.nii",
+    "/data/pt_01983/anat/Session1/mpms/afi/Results/s2019-10-17_13-17-140642-00001-00352-1__dis3d_R1.nii",
+    "/data/pt_01983/anat/Session1/mpms/seste/Results/s2019-10-17_13-17-140642-00001-00352-1__dis3d_R1.nii",
+    "/data/pt_01983/anat/Session2/mpms/afi/Results/s2019-10-22_12-57-140400-00001-00352-1__dis3d_R1.nii",
+    "/data/pt_01983/anat/Session2/mpms/seste/Results/s2019-10-22_12-57-140400-00001-00352-1__dis3d_R1.nii",
     ]
 
 val_min = 0 # if not None
-val_max = None # if not None
+val_max = 2 # if not None
 val_invert = False # if True
 
 """ do not edit below """
