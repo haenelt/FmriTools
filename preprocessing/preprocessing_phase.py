@@ -9,14 +9,15 @@ time and an mean epi magnitude image with enhanced GM/WM contrast. The following
     4. get mean magnitude and phase
     5. get phase variance
     6. rescale mean phase image
-    7. weight mean magnitude epi
+    7. filter mean phase image
+    8. weight mean magnitude epi
 
 Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
 the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2020
-Last modified: 10-01-2020
+Last modified: 20-04-2020
 """
 import os
 import numpy as np
@@ -26,13 +27,17 @@ from nighres.intensity import phase_unwrapping
 from lib.io import get_filename
 from lib.utils import get_mean, get_std
 from lib.preprocessing import plot_moco
+from lib.preprocessing import deweight_mask
 
 # input data
 input_magn = "/data/pt_01880/test_data/data/data.nii"
 input_phase = "/data/pt_01880/test_data/data/data_phase.nii"
 
 # parameters
-phase_max = 0.25
+phase_max = 0.25 # threshold mean phase data
+std_max = 0.25 # threshold for mask generation before phase filtering
+sigma_gaussian = 10.0 # sigma for gaussian filter
+
 
 """ do not edit below """
 
@@ -137,9 +142,15 @@ nb.save(output, os.path.join(path_phase,"mean_"+name_phase+ext_phase))
 enhanced contrast
 """
 magn_img = nb.load(os.path.join(path_magn,"mean_"+name_magn+ext_magn))
-phase_img = nb.load(os.path.join(path_phase,"mean_"+name_phase+ext_phase))
 magn_array = magn_img.get_fdata()
-phase_array = phase_img.get_fdata()
+
+# filter phase
+phase_array = deweight_mask(os.path.join(path_phase,"mean_"+name_phase+ext_phase), 
+                            os.path.join(path_phase,"std_"+name_phase+ext_phase), 
+                            std_max, 
+                            sigma_gaussian, 
+                            write_output=None, 
+                            path_output=None)
 
 # weight magnitude image
 magn_array = magn_array * phase_array
