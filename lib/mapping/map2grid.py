@@ -1,4 +1,5 @@
-def map2grid(file_grid, file_input, sigma, path_output, basename_output="", binary=False, overwrite=True):
+def map2grid(file_grid, file_input, sigma, path_output="", basename_output="", binary=False, 
+             overwrite=True):
     """
     This script allows you to sample indexed morphological data onto the regular grid. Optional, a 
     gaussian filter can be applied to the output image.
@@ -15,17 +16,13 @@ def map2grid(file_grid, file_input, sigma, path_output, basename_output="", bina
     
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 30-10-2019
+    Last modified: 22-04-2020
     """
     import os
     import numpy as np
     import nibabel as nb
     from nibabel.freesurfer.io import read_morph_data
     from scipy.ndimage.filters import gaussian_filter
-
-    # make output folder
-    if not os.path.exists(path_output):
-        os.mkdir(path_output)
 
     # load data
     grid_img = nb.load(file_grid)
@@ -59,6 +56,11 @@ def map2grid(file_grid, file_input, sigma, path_output, basename_output="", bina
     
     # write output data
     if overwrite:
+        
+        # make output folder
+        if not os.path.exists(path_output):
+            os.mkdir(path_output)
+        
         if sigma == 0 and binary is True:
             filenameOUT = os.path.join(path_output,basename_output+"_grid_binary.nii")
         elif sigma == 0 and binary is False:
