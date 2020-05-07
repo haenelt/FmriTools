@@ -128,9 +128,9 @@ for Ic = 1:nspmT
     xCon = SPM.xCon;                    % contrast definitions
     df   = [xCon(Ic).eidf SPM.xX.erdf]; % degrees of freedom
     STAT = xCon(Ic).STAT;               % statistic indicator
-    R    = SPM.xVol.R;			        % vector of resel counts
-    S    = SPM.xVol.S;			        % volume (in vox)
-    XYZ  = SPM.xVol.XYZ;			    % in-mask XYZ coordinates
+    R    = SPM.xVol.R;			% vector of resel counts
+    S    = SPM.xVol.S;			% volume (in vox)
+    XYZ  = SPM.xVol.XYZ;		% in-mask XYZ coordinates
     FWHM = SPM.xVol.FWHM;               % smoothness of components (in vox)
     v2r  = 1/prod(FWHM(~isinf(FWHM)));  % voxels to resels
     
