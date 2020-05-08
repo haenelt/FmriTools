@@ -1,15 +1,16 @@
-function plot_moco(file_rp, path_output, name_output)
+function plot_moco(file_rp, software, path_output, name_output)
 % This function plots the motion parameter from the SPM12 realignment
 % processing. Separate plots for translation (in mm) and rotation (in deg)
 % are saved.
 % Inputs:
     % file_rp: file name of textfile with realignment parameters.
+    % software: which software was used (spm or afni).
     % path_output: path where output is written.
     % name_output: basename of saved plots.
     
 % created by Daniel Haenelt
 % Date created: 23-02-2020
-% Last modified: 23-02-2020
+% Last modified: 08-05-2020
 
 % make output folder
 if ~exist(path_output,'dir') 
@@ -19,10 +20,15 @@ end
 % read realignment parameters
 M = dlmread(file_rp);
 
-% rad2deg
-M(:,4) = radtodeg(M(:,4));
-M(:,5) = radtodeg(M(:,5));
-M(:,6) = radtodeg(M(:,6));
+if strcmp(software, 'afni')
+    M = M(:,[4 5 6 1 2 3]); % swap rotation and translation columns
+elseif strcmp(software, 'spm')
+    M(:,4) = radtodeg(M(:,4)); % rad2deg
+    M(:,5) = radtodeg(M(:,5));
+    M(:,6) = radtodeg(M(:,6));
+else
+    error('Input the used software package (afni or spm)!');
+end
 
 % translational displacement
 M_trans = sqrt(M(:,1).^2+M(:,2).^2+M(:,3).^2);
