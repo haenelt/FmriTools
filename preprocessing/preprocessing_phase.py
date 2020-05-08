@@ -26,7 +26,6 @@ from nipype.interfaces import afni
 from nighres.intensity import phase_unwrapping
 from lib.io import get_filename
 from lib.utils import get_mean, get_std
-from lib.preprocessing import plot_moco
 from lib.preprocessing import deweight_mask
 
 # input data
@@ -63,8 +62,6 @@ moco.inputs.md1d_file = os.path.join(path_moco,'max_disp.1D')
 moco.inputs.oned_file = os.path.join(path_moco,'moco_params.1D')
 moco.inputs.oned_matrix_save = os.path.join(path_moco,'moco_matrix.1D')
 moco.run()
-
-plot_moco(path_moco)
 
 """
 unwrap phase data
