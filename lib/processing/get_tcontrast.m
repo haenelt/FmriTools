@@ -2,9 +2,9 @@ function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_de
     regressor_nointerest, pathSPM)
 
 % This function calculates contrasts (con, spmT) and percent signal changes
-% (psc) from general linear model using spm. Only 2-4 experimental
+% (psc) from a general linear model using spm. Only 2-4 experimental
 % conditions are supported in a block design. Not all contrast permutations
-% are computed. Percent signal change calculations are largely bsaed on
+% are computed. Percent signal change calculations are largely based on
 % Mazaika 2009. Optionally, contrast estimates are computed with
 % consideration of the hrf amplitude and its temporal derivative in the
 % design matrix. To mitigate latency-induced amplitude bias in the
@@ -22,7 +22,7 @@ function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_de
     
 % created by Daniel Haenelt
 % Date created: 13-03-2020
-% Last modified: 03-04-2020
+% Last modified: 08-05-2020
 
 if ~exist('name_output', 'var')  
     name_output = '';
@@ -41,6 +41,11 @@ addpath(pathSPM);
 
 % print to console
 disp('compute percent signal changes');
+
+% check if noise regressor vector has correct length
+if length(cond_input) ~= length(regressor_nointerest)
+    error('regressor_nointerest has wrong size!');
+end
 
 % load conditions first cell entry
 cond = load(cond_input{1});
@@ -191,15 +196,10 @@ else
     end
 end
 
-% add zeros for regressors of no interest
-if regressor_nointerest > 0
-    c = [c zeros(length(c),regressor_nointerest)];
-end
-
 % add for multiple runs and scale
 contrast = [];
 for i=1:nruns
-    contrast = [contrast c/nruns];
+    contrast = [contrast c/nruns zeros(length(c),regressor_nointerest(i))];
 end
 
 % add zeros for constant term

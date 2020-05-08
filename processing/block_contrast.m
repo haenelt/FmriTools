@@ -4,12 +4,15 @@
 % one session. The script is designed for paradigms with 2-4 experimental 
 % conditions. However, for more than 2 conditions, not all contrasts are 
 % computed:) Stimulus parameters are read from a spm12 compatible *.mat 
-% file. Optionally, regressors of no interest can be specified. Regressors
-% of no interest are not considered if multi_input is an empty cell array.
+% file. Optionally, regressors of no interest and scan nulling regressors
+% can be specified. Regressors of no interest are expected to be in a
+% format like the rp*.txt file. Scan nulling regressors are expected to be
+% loaded as textfile containing one column with either zeroes for valid 
+% time points or ones for outliers in different rows.
 
 % created by Daniel Haenelt
 % Date created: 10-12-2018
-% Last modified: 03-04-2020
+% Last modified: 08-05-2020
 
 % input data
 img_input = {
@@ -38,6 +41,8 @@ cond_input = {
     '/data/pt_01880/Experiment1_ODC/p5/odc/GE_EPI1/Run_10/logfiles/p5_GE_EPI1_Run10_odc_Cond.mat',...
     };
 
+null_input = {};
+
 multi_input = {
     '/data/pt_01880/Experiment1_ODC/p5/odc/GE_EPI1/Run_1/logfiles/outlier_regressor_udata.txt',...
     '/data/pt_01880/Experiment1_ODC/p5/odc/GE_EPI1/Run_2/logfiles/outlier_regressor_udata.txt',...
@@ -57,7 +62,6 @@ cutoff_highpass = 180; % 1/cutoff_highpass frequency in Hz (odc: 180, localiser:
 microtime_onset = 8; % only change to 1 if reference slice in slice timing is first slice
 hrf_derivative = false; % include hrf derivative in model
 nconds = 3; % only 2-4 are supported
-n_multi = 1; % number of regressors of no interest loaded in multi_input
 name_sess = 'GE_EPI1_outlier'; % name of session (if multiple sessions exist)
 name_output = ''; % basename of output contrasts
 output_folder = 'contrast_outlier'; % name of folder where spm.mat is saved
@@ -103,6 +107,9 @@ if ~exist(path_output,'dir')
 end
 cd(path_output);
 
+% initialize vector for number of noise regressors per run
+n_noise = zeros(length(img_input),1);
+
 % number of volumes is taken from the first entry of the input list
 data_img = spm_vol(img_input{1});
 nt = length(data_img);
@@ -114,18 +121,46 @@ matlabbatch{1}.spm.stats.fmri_spec.timing.RT = TR;
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t = 16;
 matlabbatch{1}.spm.stats.fmri_spec.timing.fmri_t0 = microtime_onset;
 
-for i = 1:length(img_input)    
+for i = 1:length(img_input)
+    
+    % add data
     for j = 1:nt
         matlabbatch{1}.spm.stats.fmri_spec.sess(i).scans{j,1} = [img_input{i} ',' num2str(j)];
     end
+    
+    % add condition regressors
     matlabbatch{1}.spm.stats.fmri_spec.sess(i).cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});
     matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi = {cond_input{i}};
-    matlabbatch{1}.spm.stats.fmri_spec.sess(i).regress = struct('name', {}, 'val', {});
+    
+    % add scan nulling regressors
+    if ~isempty(null_input)
+        outlier = dlmread(null_input{i});
+        outlier = find(outlier == 1);
+        n_noise(i) = n_noise(i) + length(outlier); 
+        if isempty(outlier)
+            matlabbatch{1}.spm.stats.fmri_spec.sess(i).regress = struct('name', {}, 'val', {});
+        else
+            for j = 1:length(outlier)
+                scan_null_regressor = zeros(nt,1);
+                scan_null_regressor(outlier(j)) = 1;
+                matlabbatch{1}.spm.stats.fmri_spec.sess(i).regress(j).name = ['Scan nulling regressor ' num2str(j)];
+                matlabbatch{1}.spm.stats.fmri_spec.sess(i).regress(j).val = scan_null_regressor;
+            end
+        end
+    else
+        matlabbatch{1}.spm.stats.fmri_spec.sess(i).regress = struct('name', {}, 'val', {});
+    end
+    
+    % add other regressors of no interest
     if ~isempty(multi_input)
+        outlier = dlmread(multi_input{i});
+        n_noise(i) = n_noise(i) + size(outlier,2);
         matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi_reg = {multi_input{i}};
     else
         matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi_reg = {''};
     end
+    
+    % add highpass filter size
     matlabbatch{1}.spm.stats.fmri_spec.sess(i).hpf = cutoff_highpass;    
 end
 
@@ -160,4 +195,4 @@ spm_jobman('run',matlabbatch);
 clear matlabbatch
 
 % calculate contrasts
-get_tcontrast(cond_input, path_output, name_output, name_sess, hrf_derivative, n_multi, pathSPM);
+get_tcontrast(cond_input, path_output, name_output, name_sess, hrf_derivative, n_noise, pathSPM);
