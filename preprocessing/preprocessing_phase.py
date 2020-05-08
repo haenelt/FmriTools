@@ -29,8 +29,8 @@ from lib.utils import get_mean, get_std
 from lib.preprocessing import deweight_mask
 
 # input data
-input_magn = "/data/pt_01880/test_data/data/data.nii"
-input_phase = "/data/pt_01880/test_data/data/data_phase.nii"
+input_magn = "/data/pt_01880/temp_phase/data.nii"
+input_phase = "/data/pt_01880/temp_phase/data_phase.nii"
 
 # parameters
 phase_max = 0.25 # threshold mean phase data
@@ -39,6 +39,7 @@ sigma_gaussian = 10.0 # sigma for gaussian filter
 outlier_params = [0.4, 0.8, 0.5, 1.0, 2.0] # mm short, mm long, rad short, rad long, z
 
 # path to lib
+pathSPM = "/data/pt_01880/source/spm12"
 pathLIB = "/data/hu_haenelt/projects/scripts/lib"
 
 """ do not edit below """
@@ -72,17 +73,18 @@ moco.run()
 # plot motion parameters
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
-          "\"plot_moco(\'{0}\', afni, \'{1}\', \'{2}\'); exit;\"". \
-          format(os.path.join(path_moco,'moco_params.1D'), path_moco, 'rp_'))
+          "\"plot_moco(\'{0}\', \'afni\', \'{1}\', \'{2}\'); exit;\"". \
+          format(os.path.join(path_moco,'moco_params.1D'), path_moco, 'rp'))
 
 # sum motion outliers
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
-          "\"get_outlier(\'{0}\', \'{1}\', \'{2}\', afni, \'{3}\'); exit;\"". \
-          format(os.path.join(path_moco,'moco_params.1D'), 
+          "\"get_outlier(\'{0}\', \'{1}\', \'{2}\', \'afni\', \'{3}\', \'{4}\'); exit;\"". \
+          format(os.path.join(path_moco,"moco_params.1D"), 
                  os.path.join(path_magn,'u'+name_magn+ext_magn), 
                  outlier_params, 
-                 path_magn))
+                 os.path.join(path_magn,"logfiles"),
+                 pathSPM))
 
 """
 unwrap phase data

@@ -1,5 +1,5 @@
 function outlier_all = get_outlier(file_rp, file_in, outlier_params,...
-    software, path_output)
+    software, path_output, pathSPM)
 % This function uses the realignment parameter file to identify motion
 % outlier volumes which exceed a defined motion threshold. Furthermore,
 % the realigned time series is checked for intensity outliers by checking
@@ -12,12 +12,16 @@ function outlier_all = get_outlier(file_rp, file_in, outlier_params,...
     % outlier_params: structure containing outlier thresholds.
     % software: which software was used (spm or afni).
     % path_output: path where output is written.
+    % pathSPM: path to spm12 folder.
 % Outputs:
     % outlier_all: array indicated outlier volumes.
     
 % created by Daniel Haenelt
 % Date created: 23-02-2020
 % Last modified: 08-05-2020
+
+% add spm to path
+addpath(pathSPM);
 
 % make output folder
 if ~exist(path_output,'dir') 
@@ -49,9 +53,9 @@ M = dlmread(file_rp);
 if strcmp(software, 'afni')
     M = M(:,[4 5 6 1 2 3]); % swap rotation and translation columns
 elseif strcmp(software, 'spm')
-    M(:,4) = radtodeg(M(:,4)); % rad2deg
-    M(:,5) = radtodeg(M(:,5));
-    M(:,6) = radtodeg(M(:,6));
+    M(:,4) = rad2deg(M(:,4)); % rad2deg
+    M(:,5) = rad2deg(M(:,5));
+    M(:,6) = rad2deg(M(:,6));
 else
     error('Input the used software package (afni or spm)!');
 end
