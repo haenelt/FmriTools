@@ -24,6 +24,17 @@ if ~exist(path_output,'dir')
     mkdir(path_output); 
 end
 
+% if outlier parameters are given as 1d array
+if ~isstruct(outlier_params)
+    outlier_temp = outlier_params;
+    outlier_params = struct();
+    outlier_params.moco_out_mm_short = outlier_temp(1);
+    outlier_params.moco_out_mm_long = outlier_temp(2);
+    outlier_params.moco_out_deg_short = outlier_temp(3);
+    outlier_params.moco_out_deg_long = outlier_temp(4);
+    outlier_params.int_out_z = outlier_temp(5);
+end
+
 % initialize outlier arrays
 motion_outlier = struct();
 motion_outlier.short.mm = [];

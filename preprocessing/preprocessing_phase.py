@@ -17,7 +17,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2020
-Last modified: 20-04-2020
+Last modified: 08-05-2020
 """
 import os
 import numpy as np
@@ -36,9 +36,15 @@ input_phase = "/data/pt_01880/test_data/data/data_phase.nii"
 phase_max = 0.25 # threshold mean phase data
 std_max = 0.25 # threshold for mask generation before phase filtering
 sigma_gaussian = 10.0 # sigma for gaussian filter
+outlier_params = [0.4, 0.8, 0.5, 1.0, 2.0] # mm short, mm long, rad short, rad long, z
 
+# path to lib
+pathLIB = "/data/hu_haenelt/projects/scripts/lib"
 
 """ do not edit below """
+
+# change to lib folder
+os.chdir(os.path.join(pathLIB,"preprocessing"))
 
 path_magn, name_magn, ext_magn = get_filename(input_magn)
 path_phase, name_phase, ext_phase = get_filename(input_phase)
@@ -62,6 +68,21 @@ moco.inputs.md1d_file = os.path.join(path_moco,'max_disp.1D')
 moco.inputs.oned_file = os.path.join(path_moco,'moco_params.1D')
 moco.inputs.oned_matrix_save = os.path.join(path_moco,'moco_matrix.1D')
 moco.run()
+
+# plot motion parameters
+os.system("matlab" + \
+          " -nodisplay -nodesktop -r " + \
+          "\"plot_moco(\'{0}\', afni, \'{1}\', \'{2}\'); exit;\"". \
+          format(os.path.join(path_moco,'moco_params.1D'), path_moco, 'rp_'))
+
+# sum motion outliers
+os.system("matlab" + \
+          " -nodisplay -nodesktop -r " + \
+          "\"get_outlier(\'{0}\', \'{1}\', \'{2}\', afni, \'{3}\'); exit;\"". \
+          format(os.path.join(path_moco,'moco_params.1D'), 
+                 os.path.join(path_magn,'u'+name_magn+ext_magn), 
+                 outlier_params, 
+                 path_magn))
 
 """
 unwrap phase data
