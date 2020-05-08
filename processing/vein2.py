@@ -3,11 +3,12 @@ Venous mask from phase data
 
 A binary mask of venous voxels is created from time series phase data. First the data is scaled to
 [-pi; +pi]. Then, the time series standard deviation is taken. Venous voxels are classified by 
-applying a threshold to identify voxels with large dispersion over time (phase_threshold).
+applying a threshold to identify voxels with large dispersion over time (phase_threshold). 
+Optionally, outliers are volumes are removed from the baseline corrected timeseries.
 
 created by Daniel Haenelt
 Date created: 24-01-2020             
-Last modified: 06-02-2020
+Last modified: 08-05-2020
 """
 import os
 import datetime
@@ -17,6 +18,7 @@ import nibabel as nb
 # input data
 ref_input = "/data/pt_01880/temp_odc/resting_state/data.nii"
 phase_input = "/data/pt_01880/temp_odc/resting_state/udata_phase_unwrap.nii"
+outlier_input = None
 
 # parameters
 phase_threshold = 0.05 # in rad
@@ -45,6 +47,11 @@ phase_array = phase_img.get_fdata()
 # normalize in range [-pi, pi]
 phase_array = 2 * ( phase_array - np.min(phase_array) ) / ( np.max(phase_array) - np.min(phase_array) ) - 1
 phase_array *= np.pi
+
+# remove outlier vols from array
+if outlier_input:
+    t = np.loadtxt(outlier_input).astype(int)
+    phase_array = phase_array[:,:,:,t==0]
 
 # get standard deviation
 phase_array = np.std(phase_array, axis=3)

@@ -7,12 +7,13 @@ voxels are classified in the following way: Mean epi and mean tSNR across all ti
 thresholded using arbitrary thresholds (<epi_threshold>, <tsnr_threshold>) considering only low mean
 and low tsnr voxels. The thresholds have to be adjusted individually. The final mask is created by 
 intersecting both masks. Both mean epi and mean tsnr are saved for single runs and the whole 
-session. Additionally, a text file is written containing the used parameters. The method is taken 
-from Kashyap et al., 2017.
+session. Additionally, a text file is written containing the used parameters. Optionally, outliers
+are volumes are removed from the baseline corrected timeseries. The method is taken from Kashyap et 
+al., 2017.
 
 created by Daniel Haenelt
 Date created: 06-12-2018             
-Last modified: 13-09-2019
+Last modified: 08-05-2020
 """
 import os
 import datetime
@@ -22,6 +23,9 @@ import nibabel as nb
 # input data
 img_input = ["/data/pt_01880/temp_gbb/data/udata.nii",
              ]
+
+# input outlier
+outlier_input = []
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
@@ -67,6 +71,10 @@ affine = data_img.affine
 # get image dimension
 dim = data_img.header["dim"][1:4]
 
+# get outlier dummy array if not outlier input
+if not len(outlier_input):
+    outlier_input = np.zeros(len(img_input))
+
 # mean epi of each time series
 for i in range(len(path)):
     
@@ -82,6 +90,11 @@ for i in range(len(path)):
         data_img = nb.load(os.path.join(path[i],"b"+file[i]))
         data_array = data_img.get_fdata()
 
+        # remove outlier vols from array
+        if outlier_input[i]:
+            t = np.loadtxt(outlier_input[i]).astype(int)
+            data_array = data_array[:,:,:,t==0]
+            
         # calculate mean of time series
         data_array_mean = np.mean(data_array, axis=3)
 
@@ -94,6 +107,11 @@ for i in range(len(path)):
         # open baseline corrected time series
         data_img = nb.load(os.path.join(path[i],"b"+file[i]))
         data_array = data_img.get_fdata()
+    
+        # remove outlier vols from array
+        if outlier_input[i]:
+            t = np.loadtxt(outlier_input[i]).astype(int)
+            data_array = data_array[:,:,:,t==0]
     
         # calculate mean and std of time series
         data_array_mean = np.mean(data_array, axis=3)
@@ -111,7 +129,7 @@ for i in range(len(path)):
 
 # mean epi across time series
 if not os.path.isfile(name_epi):
-    mean_epi_array = np.zeros(dim)  
+    mean_epi_array = np.zeros(dim)
     for i in range(len(path)):
         # load mean
         epi_img = nb.load(os.path.join(path[i],"mean_b"+file[i]))   
