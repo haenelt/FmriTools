@@ -8,7 +8,7 @@ Optionally, outliers are volumes are removed from the baseline corrected timeser
 
 created by Daniel Haenelt
 Date created: 24-01-2020             
-Last modified: 08-05-2020
+Last modified: 09-05-2020
 """
 import os
 import datetime
@@ -16,9 +16,9 @@ import numpy as np
 import nibabel as nb
 
 # input data
-ref_input = "/data/pt_01880/temp_odc/resting_state/data.nii"
-phase_input = "/data/pt_01880/temp_odc/resting_state/udata_phase_unwrap.nii"
-outlier_input = None
+ref_input = "/data/pt_01880/temp_phase/data.nii"
+phase_input = "/data/pt_01880/temp_phase/udata_phase_unwrap.nii"
+outlier_input = "/data/pt_01880/temp_phase/logfiles/outlier_regressor_udata.txt"
 
 # parameters
 phase_threshold = 0.05 # in rad
@@ -30,7 +30,7 @@ path = os.path.split(phase_input)[0]
 file = os.path.split(phase_input)[1]
 
 # output folder is taken from the first entry of the input list and set into 
-path_output = os.path.join(path,"vein","native")
+path_output = os.path.join(path,"vein_phase","native")
 if not os.path.exists(path_output):
     os.makedirs(path_output)
 
@@ -71,8 +71,14 @@ output = nb.Nifti1Image(mask_array, affine, header)
 fileOUT = os.path.join(path_output,"vein.nii")
 nb.save(output,fileOUT)
 
+if outlier_input:
+    outlier_text = True
+else:
+    outlier_text = False
+
 # write log
 fileID = open(os.path.join(path_output,"vein_info.txt"),"a")
 fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+"\n")
 fileID.write("phase_threshold: "+str(phase_threshold)+"\n")
+fileID.write("outlier input: "+str(outlier_text)+"\n")
 fileID.close()

@@ -6,18 +6,19 @@ time and an mean epi magnitude image with enhanced GM/WM contrast. The following
     1. motion correction to magnitude time series
     2. unwrap phase time series
     3. apply correction to phase
-    4. get mean magnitude and phase
-    5. get phase variance
-    6. rescale mean phase image
-    7. filter mean phase image
-    8. weight mean magnitude epi
+    4. remove outlier volumes from timeseries
+    5. get mean magnitude and phase
+    6. get phase variance
+    7. rescale mean phase image
+    8. filter mean phase image
+    9. weight mean magnitude epi
 
 Before running the script, login to queen via ssh and set the afni environment by calling AFNI in 
 the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2020
-Last modified: 08-05-2020
+Last modified: 09-05-2020
 """
 import os
 import numpy as np
@@ -126,17 +127,42 @@ allineate.inputs.no_pad = True # do not use zero-padding on the base image
 allineate.run()
 
 """
-get mean time series
+set new basenames to target realigned and temporary timeseries
 """
 name_magn = "u"+name_magn
 name_phase = "u"+name_phase
-get_mean(os.path.join(path_magn, name_magn+ext_magn), path_magn, name_magn, type="mean")
-get_mean(os.path.join(path_phase, name_phase+ext_phase), path_phase, name_phase, type="mean")
+name_magn_temp = name_magn+"_temp"
+name_phase_temp = name_phase+"_temp"
+
+"""
+remove outliers
+"""
+t = np.loadtxt(os.path.join(path_magn,"logfiles", "outlier_regressor_"+name_magn+".txt")).astype(int)
+    
+# remove vols from magnitude data
+magn_img = nb.load(os.path.join(path_magn, name_magn+ext_magn))
+magn_array = magn_img.get_data()
+magn_array = magn_array[:,:,:,t==0]
+output = nb.Nifti1Image(magn_array, magn_img.affine, magn_img.header)
+nb.save(output,os.path.join(path_magn, name_magn_temp+ext_magn))
+    
+# remove vols from phase data
+phase_img = nb.load(os.path.join(path_phase, name_phase+ext_phase))
+phase_array = phase_img.get_data()
+phase_array = phase_array[:,:,:,t==0]
+output = nb.Nifti1Image(phase_array, phase_img.affine, phase_img.header)
+nb.save(output,os.path.join(path_phase, name_phase_temp+ext_phase))
+
+"""
+get mean time series
+"""
+get_mean(os.path.join(path_magn, name_magn_temp+ext_magn), path_magn, name_magn, type="mean")
+get_mean(os.path.join(path_phase, name_phase_temp+ext_phase), path_phase, name_phase, type="mean")
 
 """
 phase variance over time
 """
-get_std(os.path.join(path_phase, name_phase+ext_phase), path_phase, name_phase)
+get_std(os.path.join(path_phase, name_phase_temp+ext_phase), path_phase, name_phase)
 
 """
 rescale phase data
@@ -177,3 +203,9 @@ magn_array = magn_array * phase_array
 
 output = nb.Nifti1Image(magn_array, magn_img.affine, magn_img.header)
 nb.save(output, os.path.join(path_magn,"mean_"+name_magn+"_enhanced"+ext_magn))
+
+"""
+remove copied timeseries
+"""
+os.remove(os.path.join(path_magn, name_magn_temp+ext_magn))
+os.remove(os.path.join(path_phase, name_phase_temp+ext_phase))

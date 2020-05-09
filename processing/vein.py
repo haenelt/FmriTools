@@ -13,7 +13,7 @@ al., 2017.
 
 created by Daniel Haenelt
 Date created: 06-12-2018             
-Last modified: 08-05-2020
+Last modified: 09-05-2020
 """
 import os
 import datetime
@@ -21,11 +21,12 @@ import numpy as np
 import nibabel as nb
 
 # input data
-img_input = ["/data/pt_01880/temp_gbb/data/udata.nii",
+img_input = ["/data/pt_01880/temp_phase/udata.nii",
              ]
 
 # input outlier
-outlier_input = []
+outlier_input = ["/data/pt_01880/temp_phase/logfiles/outlier_regressor_udata.txt",
+                 ]
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
@@ -36,6 +37,7 @@ TR = 3 # repetition time in s
 cutoff_highpass = 180 # cutoff in s for baseline correction
 epi_threshold = 1200
 tsnr_threshold = 12
+tsnr_max = 200
 
 """ do not edit below """
 
@@ -121,6 +123,7 @@ for i in range(len(path)):
         # tsnr of time series
         tsnr_array = data_array_mean / data_array_std
         tsnr_array[np.isnan(tsnr_array)] = 0
+        tsnr_array[tsnr_array > tsnr_max] = tsnr_max
     
         # write output
         output = nb.Nifti1Image(tsnr_array, affine, header)
@@ -201,4 +204,6 @@ fileID.write("script executed: "+datetime.datetime.now().strftime("%Y-%m-%d %H:%
 fileID.write("cutoff_highpass: "+str(cutoff_highpass)+"\n")
 fileID.write("mean epi threshold: "+str(epi_threshold)+"\n")
 fileID.write("tsnr threshold: "+str(tsnr_threshold)+"\n")
+fileID.write("tsnr max: "+str(tsnr_max)+"\n")
+fileID.write("outlier input: "+str(len(outlier_input))+"\n")
 fileID.close()
