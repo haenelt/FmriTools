@@ -1,11 +1,12 @@
 """
 Vessel distance map
 
-This scripts calculates a distance map to vessels found as ridge structures in a T2s weighted GRE.
+This scripts calculates a distance map to vessels found as ridge structures in a GRE. If multiple
+inputs images are set, the geometric mean of all inputs is computed.
 
 created by Daniel Haenelt
 Date created: 23-02-2020 
-Last modified: 23-02-2020  
+Last modified: 11-05-2020  
 """
 import os
 import numpy as np
@@ -20,26 +21,34 @@ file_in = ["/home/daniel/Schreibtisch/temp/S13_3D_GRE_3ech_iso0p5_slab_8.42.nii"
            ]
 
 # parameters
-path_output = "/home/daniel/Schreibtisch"
+t2s = False
 img_res = 0.5
 vessel_threshold = 0.3
+path_output = "/data/pt_01880/"
 
 """ do not edit below """
 
+# look for bright or dark structures depending on set contrast
+if t2s is True:
+    structure_intensity = "dark"
+else:
+    structure_intensity = "bright"
+
 # initialize array
 flash = nb.load(file_in[0])
-flash_array = np.zeros_like(flash.get_fdata())
 
-# get geometry average
-for i in range(len(file_in)):
-    flash_array += nb.load(file_in[i]).get_fdata() ** 2
+# geometric averaging if multiple inputs are given
+if len(file_in) > 1:
+    flash_array = np.zeros_like(flash.get_fdata())
+    for i in range(len(file_in)):
+        flash_array += nb.load(file_in[i]).get_fdata() ** 2
 
-flash_array = np.sqrt(flash_array)
-flash = nb.Nifti1Image(flash_array, flash.affine, flash.header)
+    flash_array = np.sqrt(flash_array)
+    flash = nb.Nifti1Image(flash_array, flash.affine, flash.header)
 
 # filter ridge structures
 ridge = filter_ridge_structures(flash,
-                                structure_intensity='dark', 
+                                structure_intensity=structure_intensity,
                                 output_type='probability', 
                                 use_strict_min_max_filter=True, 
                                 save_data=False, 
@@ -70,6 +79,8 @@ vessel_distance = nb.Nifti1Image(vessel_distance_array,
                                  vessel_distance["result"].header)
 
 # write output
-nb.save(flash, os.path.join(path_output, "magn_geom_average.nii"))
+if len(file_in) > 1:
+    nb.save(flash, os.path.join(path_output, "magn_geom_average.nii"))
+
 nb.save(ridge, os.path.join(path_output,"vessel_filter.nii"))
 nb.save(vessel_distance, os.path.join(path_output,"vessel_distance.nii"))
