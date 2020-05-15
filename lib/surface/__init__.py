@@ -1,3 +1,4 @@
+from .apply_fieldmap import apply_fieldmap
 from .deform_surface import deform_surface
 from .remove_vertex_outliers import remove_vertex_outliers
 from .match_vertex_number import match_vertex_number
