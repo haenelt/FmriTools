@@ -4,7 +4,8 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, niter_smo
     This function generates a surface mesh from a levelset image. The surface mesh is smoothed and a
     curvature file is generated. Vertices are in the vertex ras coordinate system. Optionally, the
     mesh can be upsampled and an inflated version of the mesh can be written out. The hemisphere
-    has to be indicated as prefix in the output file.
+    has to be indicated as prefix in the output file. If nlayer is set to -1, a 3D levelset image
+    can be used as boundary input file.
     Inputs:
         *boundary_in: filename of 4D levelset image.
         *ref_in: filename of reference volume for getting the coordinate transformation.
@@ -17,7 +18,7 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, niter_smo
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 24-01-2020
+    Last modified: 18-05-2020
     """
     import os
     import numpy as np
@@ -40,7 +41,10 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, niter_smo
     boundary = nb.load(boundary_in)
     boundary.header["dim"][0] = 1
     boundary_array = boundary.get_fdata()
-    boundary_array = boundary_array[:,:,:,nlayer]
+    
+    if nlayer != -1:
+        boundary_array = boundary_array[:,:,:,nlayer]
+
     boundary = nb.Nifti1Image(boundary_array, boundary.affine, boundary.header)
     
     # make mesh
