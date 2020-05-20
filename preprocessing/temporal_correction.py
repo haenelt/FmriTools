@@ -13,20 +13,14 @@ Last modified: 11-03-2020
 from lib.preprocessing.slice_timing_correction import slice_timing_correction
 
 # input
-input = ["/data/pt_01880/temp_slice/slice_yes/Run_1/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_2/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_3/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_4/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_5/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_6/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_7/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_8/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_9/data.nii",
-         "/data/pt_01880/temp_slice/slice_yes/Run_10/data.nii",
+input = ["/data/pt_01880/Experiment2_Rivalry/p4/retinotopy2/pol_anticlock/data.nii",
+         "/data/pt_01880/Experiment2_Rivalry/p4/retinotopy2/pol_clock/data.nii",
+         "/data/pt_01880/Experiment2_Rivalry/p4/retinotopy2/ecc_expanding/data.nii",
+         "/data/pt_01880/Experiment2_Rivalry/p4/retinotopy2/ecc_contracting/data.nii",
          ]
-TR_old = 3
+TR_old = 2
 TR_new = 2
-order = "interleaved"
+order = "descending"
 
 """ do not edit below """
 
