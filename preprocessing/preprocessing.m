@@ -54,7 +54,7 @@ range_params.data_min = 0;
 range_params.data_max = 4095;
 
 % separate realignment for each time series
-run_separate = true;
+run_separate = false;
 
 % add spm and lib to path
 pathSPM = '/data/pt_01880/source/spm12';
