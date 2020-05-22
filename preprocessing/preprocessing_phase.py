@@ -18,7 +18,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2020
-Last modified: 09-05-2020
+Last modified: 22-05-2020
 """
 import os
 import numpy as np

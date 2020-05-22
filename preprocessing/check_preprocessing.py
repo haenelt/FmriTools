@@ -8,7 +8,7 @@ for each input time series to denote volumes below threshold.
 
 created by Daniel Haenelt
 Date created: 31-07-2019             
-Last modified: 19-02-2020  
+Last modified: 22-05-2020  
 """
 import os
 import numpy as np
