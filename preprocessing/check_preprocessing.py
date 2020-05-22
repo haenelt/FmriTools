@@ -65,8 +65,7 @@ for i in range(len(input)):
     print("Time series "+str(i+1)+"/"+str(len(input)))
     
     # create output folder for regressor of no interest
-    path_logfile = os.path.join(os.path.dirname(input[i]),"logfiles")
-    
+    path_logfile = os.path.join(os.path.dirname(input[i]),"outlier")
     if not os.path.exists(path_logfile):
         os.makedirs(path_logfile)
     

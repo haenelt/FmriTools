@@ -84,7 +84,7 @@ os.system("matlab" + \
           format(os.path.join(path_moco,"moco_params.1D"), 
                  os.path.join(path_magn,'u'+name_magn+ext_magn), 
                  outlier_params, 
-                 os.path.join(path_magn,"logfiles"),
+                 os.path.join(path_magn,"outlier"),
                  pathSPM))
 
 """
@@ -137,7 +137,7 @@ name_phase_temp = name_phase+"_temp"
 """
 remove outliers
 """
-t = np.loadtxt(os.path.join(path_magn,"logfiles", "outlier_regressor_"+name_magn+".txt")).astype(int)
+t = np.loadtxt(os.path.join(path_magn,"outlier", "outlier_regressor_"+name_magn+".txt")).astype(int)
     
 # remove vols from magnitude data
 magn_img = nb.load(os.path.join(path_magn, name_magn+ext_magn))
