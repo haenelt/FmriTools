@@ -15,14 +15,11 @@ from lib.io.get_filename import get_filename
 
 # input
 input = [
-    "/data/pt_01983/anat/Session1/mpms/afi/Results/s2019-10-17_13-17-140642-00001-00352-1__dis3d_R1.nii",
-    "/data/pt_01983/anat/Session1/mpms/seste/Results/s2019-10-17_13-17-140642-00001-00352-1__dis3d_R1.nii",
-    "/data/pt_01983/anat/Session2/mpms/afi/Results/s2019-10-22_12-57-140400-00001-00352-1__dis3d_R1.nii",
-    "/data/pt_01983/anat/Session2/mpms/seste/Results/s2019-10-22_12-57-140400-00001-00352-1__dis3d_R1.nii",
+    "/data/pt_01880/Experiment3_Stripes/p1/mpm/pd_kp_mtflash3d_v1ax_0p5_0008/Results/s2899875-124739-00001-00352-1_PD_gnlcorr.nii",
     ]
 
 val_min = 0 # if not None
-val_max = 2 # if not None
+val_max = 100 # if not None
 val_invert = False # if True
 
 """ do not edit below """
