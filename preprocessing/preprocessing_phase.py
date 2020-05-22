@@ -52,7 +52,7 @@ path_magn, name_magn, ext_magn = get_filename(input_magn)
 path_phase, name_phase, ext_phase = get_filename(input_phase)
 
 # make subfolders
-path_moco = os.path.join(path_magn,'moco')
+path_moco = os.path.join(path_magn,'diagnosis')
 if not os.path.exists(path_moco):
     os.makedirs(path_moco)
     
