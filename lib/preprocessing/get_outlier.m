@@ -18,7 +18,7 @@ function outlier_all = get_outlier(file_rp, file_in, outlier_params,...
     
 % created by Daniel Haenelt
 % Date created: 23-02-2020
-% Last modified: 08-05-2020
+% Last modified: 23-05-2020
 
 % add spm to path
 addpath(pathSPM);

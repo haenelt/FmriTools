@@ -1,5 +1,5 @@
 function fmri_preprocessing(img_input, slice_params, field_params, realign_params, ...
-    outlier_params, range_params, pathSPM)
+    range_params, outlier_params, pathSPM)
 % This function performs slice time correction, fieldmap undistortion and
 % motion correction in the SPM12 framework which can be applied to a
 % session consisting of multiple runs. Slice time correction and fieldmap 
@@ -25,13 +25,13 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
     % slice_params: struct of slice time correction parameters.
     % field_params: struct of fieldmap parameters.
     % realign_params: struct of realignment parameters.
-    % outlier_params: struct of realignment check parameters.
     % range_params: struct of data range parameters.
+    % outlier_params: struct of realignment check parameters.
     % pathSPM: path to spm12 folder.
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 22-05-2020
+% Last modified: 23-05-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -304,16 +304,16 @@ fprintf(fileID,['fieldmap undistortion parameter (bw): ' num2str(field_params.fm
 fprintf(fileID,['run unwarp: ' mat2str(realign_params.unwarp) '\n']);
 fprintf(fileID,['realign parameter (mask): ' mat2str(realign_params.mask) '\n']);
 fprintf(fileID,['realign parameter (c): ' num2str(realign_params.c) '\n']);
-fprintf(fileID,['realign parameter (r): ' num2str(realign_params.r) '\n\n']);
+fprintf(fileID,['realign parameter (r): ' num2str(realign_params.r) '\n']);
+fprintf(fileID,['adjust data range: ' mat2str(range_params.apply) '\n']);
+fprintf(fileID,['data range (min): ' num2str(range_params.data_min) '\n']);
+fprintf(fileID,['data range (max): ' num2str(range_params.data_max) '\n\n']);
 fprintf(fileID,'Percentage of within-run motion and intensity outliers\n');
 fprintf(fileID,['motion threshold (mm, short): ' num2str(outlier_params.moco_out_mm_short) '\n']);
 fprintf(fileID,['motion threshold (mm, long): ' num2str(outlier_params.moco_out_mm_long) '\n']);
 fprintf(fileID,['motion threshold (deg, short): ' num2str(outlier_params.moco_out_deg_short) '\n']);
 fprintf(fileID,['motion threshold (deg, long): ' num2str(outlier_params.moco_out_deg_long) '\n']);
 fprintf(fileID,['intensity threshold (z-score): ' num2str(outlier_params.int_out_z) '\n']);
-fprintf(fileID,['adjust data range: ' mat2str(range_params.apply) '\n']);
-fprintf(fileID,['data range (min): ' num2str(range_params.data_min) '\n']);
-fprintf(fileID,['data range (max): ' num2str(range_params.data_max) '\n']);
 fprintf(fileID,'----------\n\n');
 
 for i  = 1:length(img_input)

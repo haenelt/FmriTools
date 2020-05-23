@@ -13,7 +13,7 @@
 
 % created by Daniel Haenelt
 % Date created: 06-08-2019
-% Last modified: 22-05-2020
+% Last modified: 23-05-2020
 
 % array of of input time series
 img_input = {
@@ -41,17 +41,17 @@ realign_params.mask = false;
 realign_params.c = [95 130 25];
 realign_params.r = [35 25 20];
 
-% outlier parameters
-outlier_params.moco_out_mm_short = 0.4; % in mm
-outlier_params.moco_out_mm_long = 0.8; % in mm
-outlier_params.moco_out_deg_short = 0.5; % in rad
-outlier_params.moco_out_deg_long = 1.0; % in rad
-outlier_params.int_out_z = 2; % in z-score
-
 % data range parameters
 range_params.apply = true;
 range_params.data_min = 0;
 range_params.data_max = 4095;
+
+% outlier parameters
+outlier_params.moco_out_mm_short = 0.4; % in mm
+outlier_params.moco_out_mm_long = 0.8; % in mm
+outlier_params.moco_out_deg_short = 0.5; % in deg
+outlier_params.moco_out_deg_long = 1.0; % in deg
+outlier_params.int_out_z = 2; % in z-score
 
 % separate realignment for each time series
 run_separate = false;
@@ -73,8 +73,8 @@ if run_separate
             slice_params,...
             field_params,...
             realign_params,...
-            outlier_params,...
             range_params,...
+            outlier_params,...
             pathSPM);
     end
 else
@@ -83,7 +83,7 @@ else
         slice_params,...
         field_params,...
         realign_params,...
-        outlier_params,...
         range_params,...
+        outlier_params,...
         pathSPM);
 end

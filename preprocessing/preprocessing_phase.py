@@ -18,7 +18,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2020
-Last modified: 22-05-2020
+Last modified: 23-05-2020
 """
 import os
 import numpy as np
@@ -37,7 +37,7 @@ input_phase = "/data/pt_01880/temp_phase/data_phase.nii"
 phase_max = 0.25 # threshold mean phase data
 std_max = 0.25 # threshold for mask generation before phase filtering
 sigma_gaussian = 10.0 # sigma for gaussian filter
-outlier_params = [0.4, 0.8, 0.5, 1.0, 2.0] # mm short, mm long, rad short, rad long, z
+outlier_params = [0.4, 0.8, 0.5, 1.0, 2.0] # mm short, mm long, deg short, deg long, z
 
 # path to lib
 pathSPM = "/data/pt_01880/source/spm12"
