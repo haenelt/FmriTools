@@ -86,7 +86,7 @@ os.system("matlab" + \
                  outlier_params, 
                  os.path.join(path_magn,"outlier"),
                  pathSPM))
-
+    
 """
 unwrap phase data
 """
@@ -209,3 +209,31 @@ remove copied timeseries
 """
 os.remove(os.path.join(path_magn, name_magn_temp+ext_magn))
 os.remove(os.path.join(path_phase, name_phase_temp+ext_phase))
+
+"""
+outlier percentage
+"""
+n_outlier = np.sum(np.loadtxt(os.path.join(path_magn,"outlier"),"outlier_regressor_"+name_magn+".txt"))
+outlier_percentage = n_outlier / np.shape(phase_array)[3] * 100
+
+"""
+write summary
+"""
+fileID = open(os.path.join(path_moco,"preprocessing_summary_"+name_magn+".txt"),"w")
+fileID.write("List of input parameters\n")
+fileID.write("----------\n\n")
+fileID.write("Preprocessed data\n")
+fileID.write(input_magn+"\n")
+fileID.write(input_phase+"\n")
+fileID.write("threshold mean phase: "+str(phase_max)+"\n")
+fileID.write("threshold std phase: "+str(std_max)+"\n")
+fileID.write("gaussian filter (sigma): "+str(sigma_gaussian)+"\n\n")
+fileID.write("Percentage of within-run motion and intensity outliers\n")
+fileID.write("motion threshold (mm, short): "+str(outlier_params[0])+"\n")
+fileID.write("motion threshold (mm, long): "+str(outlier_params[1])+"\n")
+fileID.write("motion threshold (deg, short): "+str(outlier_params[2])+"\n")
+fileID.write("motion threshold (deg, long): "+str(outlier_params[3])+"\n")
+fileID.write("intensity threshold (z-score): "+str(outlier_params[4])+"\n")
+fileID.write("----------\n\n")
+fileID.write(str(round(outlier_percentage,2))+"\n")
+fileID.close() 
