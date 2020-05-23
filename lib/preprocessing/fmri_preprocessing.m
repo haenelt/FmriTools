@@ -318,17 +318,7 @@ fprintf(fileID,'----------\n\n');
 
 for i  = 1:length(img_input)
 
-    % change to single run
-    cd(fileparts(img_input{i}));
-    
-    [path, file, ext] = fileparts(img_input{i});
-    if slice_params.slice_timing
-        file = ['a' file];
-    end
-    
-    cd(fullfile(fileparts(img_input{i}), 'outlier'));
-    load(['outlier_u' file '.mat']);
-    
+    % time series length
     data_img = spm_vol(img_input{i});
     nt = length(data_img);
     
