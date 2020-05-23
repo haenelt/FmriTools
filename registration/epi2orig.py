@@ -16,14 +16,15 @@ in freesurfer space via scanner coordinates. The script consists of the followin
     7. mask t1 and epi
     8. antsreg
     9. merge deformations
-    10. apply deformations
+    10. clean deformations
+    11. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 10-01-2019
-Last modified: 30-03-2020
+Last modified: 23-05-2020
 """
 import os
 import shutil as sh
@@ -33,6 +34,7 @@ from nipype.interfaces.freesurfer import ApplyVolTransform
 from nipype.interfaces.freesurfer.preprocess import MRIConvert
 from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
+from lib.cmap.clean_coordinate_mapping import clean_coordinate_mapping
 from lib.registration.get_scanner_transform import get_scanner_transform
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
@@ -44,6 +46,7 @@ file_t1 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/an
 file_mask = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/mri/brain.finalsurfs.mgz"
 file_orig = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/mri/orig.mgz"
 path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/deformation/retinotopy"
+clean_cmap = True
 cleanup = True
 
 # parameters for mask preparation
@@ -243,6 +246,16 @@ os.rename(os.path.join(path_output,"orig2epi_def-img.nii.gz"),
           os.path.join(path_output,"orig2epi.nii.gz"))
 os.rename(os.path.join(path_output,"epi2orig_def-img.nii.gz"),
           os.path.join(path_output,"epi2orig.nii.gz"))
+
+"""
+clean deformation
+"""
+if clean_cmap:
+    epi2ana_cleaned = clean_coordinate_mapping(os.path.join(path_output,"orig2epi.nii.gz"), 
+                                               os.path.join(path_output,"epi2orig.nii.gz"), 
+                                               overwrite_file=True,
+                                               save_mask=False)
+    nb.save(epi2ana_cleaned["mask"], os.path.join(path_syn,"mask.nii"))
 
 """
 apply deformation

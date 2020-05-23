@@ -12,19 +12,22 @@ steps:
     5. clean ana (remove ceiling and normalise)
     6. mask t1 and epi
     7. antsreg
-    8. apply deformations
+    8. clean deformations
+    9. apply deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 02-05-2019
-Last modified: 14-04-2020
+Last modified: 23-05-2020
 """
 import os
 import shutil as sh
+import nibabel as nb
 from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
+from lib.cmap.clean_coordinate_mapping import clean_coordinate_mapping
 from lib.skullstrip.skullstrip_refined import skullstrip_refined
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
@@ -36,6 +39,7 @@ file_t1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S7_MP2RAGE_0p7_T1_Image
 file_mask1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/skull/skullstrip_mask.nii"
 file_mask2 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/freesurfer/mri/brain.finalsurfs.mgz"
 path_output = "/data/pt_01880/Experiment3_Stripes/p3/deformation/colour/GE_EPI1"
+clean_cmap = True
 cleanup = False
 
 # parameters for epi skullstrip
@@ -143,6 +147,16 @@ os.rename(os.path.join(path_syn,"syn_ants-map.nii.gz"),
           os.path.join(path_output,"ana2epi.nii.gz"))
 os.rename(os.path.join(path_syn,"syn_ants-invmap.nii.gz"),
           os.path.join(path_output,"epi2ana.nii.gz"))
+
+"""
+clean deformation
+"""
+if clean_cmap:
+    epi2ana_cleaned = clean_coordinate_mapping(os.path.join(path_output,"ana2epi.nii.gz"), 
+                                               os.path.join(path_output,"epi2ana.nii.gz"), 
+                                               overwrite_file=True, 
+                                               save_mask=False)
+    nb.save(epi2ana_cleaned["mask"], os.path.join(path_syn,"mask.nii"))
 
 """
 apply deformation
