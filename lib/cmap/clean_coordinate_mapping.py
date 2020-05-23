@@ -1,8 +1,8 @@
 def clean_coordinate_mapping(cmap_source, cmap_target, overwrite_file=True, save_mask=False):
     """
-    Voxels in the target coordinate mapping are masked out based on the found voxel displacements in
-    the source coordinate mapping. This is done to remove edge interpolations with the background
-    in the case of slab coordinate mappings in a larger image array.
+    Voxels in the target coordinate mapping are masked out based on found voxel displacements in the
+    source coordinate mapping. This is done to remove smeared regions caused by interpolations with
+    background values in the case of deforming a slab within a larger image array.
     Inputs:
         *cmap_source: filename of source coordinate mapping.
         *cmap_target: filename of target coordinate mapping.
@@ -84,11 +84,9 @@ def clean_coordinate_mapping(cmap_source, cmap_target, overwrite_file=True, save
     cmap2_array[:,:,:,0] *= mask_array
     cmap2_array[:,:,:,1] *= mask_array
     cmap2_array[:,:,:,2] *= mask_array
-    
-    # output
-    results = dict()
-    
+       
     # get output
+    results = dict()
     results["cmap"] = nb.Nifti1Image(cmap2_array, cmap2_img.affine, cmap2_img.header)
     results["mask"] = nb.Nifti1Image(mask_array, mask_img.affine, mask_img.header)
     
