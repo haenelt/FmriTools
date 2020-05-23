@@ -213,8 +213,8 @@ os.remove(os.path.join(path_phase, name_phase_temp+ext_phase))
 """
 outlier percentage
 """
-n_outlier = np.sum(np.loadtxt(os.path.join(path_magn,"outlier"),"outlier_regressor_"+name_magn+".txt"))
-outlier_percentage = n_outlier / np.shape(phase_array)[3] * 100
+outlier = np.loadtxt(os.path.join(path_magn,"outlier","outlier_regressor_"+name_magn+".txt"))
+outlier_percentage = np.sum(outlier) / len(outlier) * 100
 
 """
 write summary

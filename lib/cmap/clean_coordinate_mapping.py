@@ -29,11 +29,11 @@ def clean_coordinate_mapping(cmap_source, cmap_target, overwrite_file=True, save
     
     cmap2_img = nb.load(cmap_target)
     cmap2_array = cmap2_img.get_fdata()
-    mask_array = np.zeros_like(cmap2_array.get_fdata()[:,:,:,0])
     
-    mask_img = cmap2_img.copy()
+    mask_img = nb.load(cmap_target)
     mask_img.header["dim"][0] = 3
     mask_img.header["dim"][4] = 1
+    mask_array = np.zeros_like(mask_img.get_fdata()[:,:,:,0])
     
     x_max = cmap2_img.header["dim"][1]
     y_max = cmap2_img.header["dim"][2]
