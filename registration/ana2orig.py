@@ -5,9 +5,12 @@ The purpose of the following script is to compute the deformation field for the 
 between antomy in conformed freesurfer space and native anatomical space. The transformation can be
 computed from the headers of source and target images.
 
+Before running the script, login to queen via ssh and set the freesurfer environment by calling 
+FREESURFER in the terminal.
+
 created by Daniel Haenelt
 Date created: 06-01-2020
-Last modified: 06-01-2020
+Last modified: 24-05-2020
 """
 import os
 import shutil as sh
