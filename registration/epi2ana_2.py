@@ -12,15 +12,15 @@ mask can be applied which must be in orig space. The script consists of the foll
     5. mask epi
     6. antsreg
     7. merge deformations
-    8. clean deformations
-    9. apply deformations
+    8. apply deformations
+    9. clean deformations
 
 Before running the script, login to queen via ssh and set the freesurfer and ANTS environments by 
 calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 31-01-2020
-Last modified: 23-05-2020
+Last modified: 24-05-2020
 """
 import os
 import shutil as sh
@@ -32,6 +32,7 @@ from lib.skullstrip.skullstrip_refined import skullstrip_refined
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
+from lib.utils.multiply_images import multiply_images
 
 # input data
 file_mean_epi_source = "/data/pt_01880/Experiment3_Stripes/p3/colour/GE_EPI1/diagnosis/mean_data.nii"
@@ -185,16 +186,6 @@ os.rename(os.path.join(path_output,"epi2ana_def-img.nii.gz"),
           os.path.join(path_output,"epi2ana.nii.gz"))
 
 """
-clean deformation
-"""
-if clean_cmap:
-    epi2ana_cleaned = clean_coordinate_mapping(os.path.join(path_output,"ana2epi.nii.gz"), 
-                                               os.path.join(path_output,"epi2ana.nii.gz"), 
-                                               overwrite_file=True, 
-                                               save_mask=False)
-    nb.save(epi2ana_cleaned["mask"], os.path.join(path_syn,"mask.nii"))
-
-"""
 apply deformation
 """
 # ana -> epi
@@ -224,6 +215,23 @@ os.rename(os.path.join(path_output,"ana2epi_example_def-img.nii.gz"),
           os.path.join(path_output,"ana2epi_example.nii.gz"))
 os.rename(os.path.join(path_output,"epi2ana_example_def-img.nii.gz"),
           os.path.join(path_output,"epi2ana_example.nii.gz"))
+
+"""
+clean deformation
+"""
+if clean_cmap:
+    epi2ana_cleaned = clean_coordinate_mapping(os.path.join(path_output,"ana2epi.nii.gz"), 
+                                               os.path.join(path_output,"epi2ana.nii.gz"), 
+                                               overwrite_file=True,
+                                               save_mask=False)
+    
+    # write mask
+    nb.save(epi2ana_cleaned["mask"], os.path.join(path_output,"epi2ana_mask.nii.gz"))
+    
+    # mask epi -> ana
+    multiply_images(os.path.join(path_output,"epi2ana_example.nii.gz"), 
+                    os.path.join(path_output,"epi2ana_mask.nii.gz"),
+                    os.path.join(path_output,"epi2ana_example.nii.gz"))
 
 # clean intermediate files
 if cleanup:
