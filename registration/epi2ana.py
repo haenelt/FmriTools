@@ -37,8 +37,8 @@ from lib.utils.multiply_images import multiply_images
 # input data
 file_mean_epi = "/data/pt_01880/Experiment3_Stripes/p3/colour/GE_EPI1/diagnosis/mean_data.nii"
 file_t1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45_gnlcorr.nii"
-file_mask1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/skull/skullstrip_mask.nii"
-file_mask2 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/freesurfer/mri/brain.finalsurfs.mgz"
+file_mask1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/skull/skullstrip_mask.nii" # skullstrip_mask
+file_mask2 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/freesurfer/mri/brain.finalsurfs.mgz" # brain.finalsurfs
 path_output = "/data/pt_01880/Experiment3_Stripes/p3/deformation/colour/GE_EPI1"
 clean_cmap = True
 cleanup = False

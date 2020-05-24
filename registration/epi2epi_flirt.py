@@ -36,7 +36,7 @@ from lib.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 file_mean_epi_source = "/data/pt_01880/Experiment1_ODC/p3/odc/SE_EPI1/diagnosis/mean_data.nii"
 file_mean_epi_target = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
 file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
-file_mask = "/data/pt_01880/Experiment1_ODC/p3/anatomy/skull/skullstrip_mask.nii"
+file_mask = "/data/pt_01880/Experiment1_ODC/p3/anatomy/skull/skullstrip_mask.nii" # skullstrip_mask
 path_output = "/data/pt_01880/odc_temp/deformation/test"
 cleanup = False
 

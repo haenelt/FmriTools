@@ -44,7 +44,7 @@ from lib.utils.multiply_images import multiply_images
 # input data
 file_mean_epi = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/diagnosis/mean_data.nii"
 file_t1 = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
-file_mask = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/mri/brain.finalsurfs.mgz"
+file_mask = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/mri/brain.finalsurfs.mgz" # brain.finalsurfs
 file_orig = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/anatomy/freesurfer/mri/orig.mgz"
 path_output = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/deformation/retinotopy"
 clean_cmap = True
