@@ -166,7 +166,7 @@ clean_ana(os.path.join(path_t1,"T1.nii"), 1000.0, 4095.0, overwrite=True)
 """
 mask t1 and epi
 """
-mask_ana(os.path.join(path_t1,"T1.nii"),os.path.join(path_t1,"mask.nii"), background_bright=True)
+mask_ana(os.path.join(path_t1,"T1.nii"),os.path.join(path_t1,"mask.nii"), background_bright=False)
 for i in range(len(path)):
     mask_epi(os.path.join(path[i],"bepi.nii"), 
              os.path.join(path_t1,"pT1.nii"), 

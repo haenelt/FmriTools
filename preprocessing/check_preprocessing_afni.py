@@ -77,7 +77,7 @@ for i in range(len(input_epi)):
 
     # get mask
     clean_ana(file_t1, 1000.0, 4095.0, overwrite=True) # clean ana
-    mask_ana(file_t1, file_mask, background_bright=True) # mask t1
+    mask_ana(file_t1, file_mask, background_bright=False) # mask t1
     mask_epi(file_epi_mean, os.path.join(path_temp,"pT1"+ext_t1), file_mask, niter_mask, sigma_mask)
     
     # get outlier count within mask
