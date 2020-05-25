@@ -45,8 +45,8 @@ img_bold = ["/data/pt_01880/temp/try2/Run_1/ubold.nii",
 
 # parameters
 TR_old = 5 # effective TR of bold+vaso
-TR_new = 2 # TR of upsampled bold corrected time series
-vaso_shift = 2.838 # start of vaso block (asymmetric TR)
+TR_new = 3 # TR of upsampled bold corrected time series
+vaso_shift = 2.8425 # start of vaso block (asymmetric TR)
 vaso_threshold = 6
 
 """ do not edit below """

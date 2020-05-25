@@ -7,7 +7,7 @@ runs.
 
 created by Daniel Haenelt
 Date created: 01-10-2019             
-Last modified: 01-10-2019  
+Last modified: 25-05-2020  
 """
 import os
 import numpy as np
@@ -36,8 +36,10 @@ rc('text', usetex=True)
 
 for i in range(len(input)):
     
-    # get output path and filename
-    path_output = os.path.dirname(input[i])
+    # get output folder
+    path_output = os.path.join(os.path.dirname(input[i]),"behavior")
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
     
     # get mat-file
     FixationData = loadmat(input[i])["FixationData"]
