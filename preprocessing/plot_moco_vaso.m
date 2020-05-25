@@ -67,7 +67,7 @@ for i = 1:length(rp_bold)
     title(['Translational movement in session ' name_output],'Interpreter','None');
     xlabel('number of volume');
     ylabel('Translation in mm');
-    legend('x (BOLD)','y (BOLD)','z (BOLD)','x (vaso)','y (VASO)','z (VASO)','total translation (BOLD)','total translation (VASO)');
+    legend('x (BOLD)','y (BOLD)','z (BOLD)','x (vaso)','y (VASO)','z (VASO)','total translation (BOLD)','total translation (VASO)','Location','eastoutside');
     saveas(gcf,fullfile(path_output, [name_output '_trans.png']));
     close(transFig);
     
@@ -84,7 +84,7 @@ for i = 1:length(rp_bold)
     title(['Rotational movement in session ' name_output],'Interpreter','None');
     xlabel('number of volume');
     ylabel('Rotation in deg');
-    legend('pitch (BOLD)','roll (BOLD)','yaw (BOLD)','pitch (VASO)','roll (VASO)','yaw (VASO)','total rotation (BOLD)','total rotation (VASO)');
+    legend('pitch (BOLD)','roll (BOLD)','yaw (BOLD)','pitch (VASO)','roll (VASO)','yaw (VASO)','total rotation (BOLD)','total rotation (VASO)','Location','eastoutside');
     saveas(gcf,fullfile(path_output,[name_output '_rot.png']));
     close(radFig);
 
