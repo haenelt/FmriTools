@@ -19,7 +19,7 @@ input.pol.data.pos = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/pol_anti
 input.pol.data.neg = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/pol_clock/udata.nii'; % clock
 input.pol.tr = 2; % repetition time in s
 input.pol.period = 64; % cycle period in s
-input.pol.fix = 12; % pre run baseline block in s (post run baseline did not work)
+input.pol.fix = 12; % pre and post run baseline block in s
 input.pol.freq = 8.25; % number of cycles
 input.pol.cutoff = 192; % cutoff frequency 1/cutoff in Hz
 
