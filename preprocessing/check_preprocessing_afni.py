@@ -24,13 +24,13 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 
 input_epi = [
-    "/data/pt_01880/temp/epi.nii",
+    "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/pol_anticlock/uadata.nii",
     ]
 input_t1 = [
-    "/data/pt_01880/temp/T1.nii",
+    "/data/pt_01880/Experiment1_ODC/p4/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii",
     ]
 input_mask = [
-    "/data/pt_01880/temp/mask.nii",
+    "/data/pt_01880/Experiment1_ODC/p4/anatomy/skull/skullstrip_mask_enhanced.nii",
     ]
 
 # parameters
@@ -71,7 +71,7 @@ for i in range(len(input_epi)):
     get_mean(input_epi[i], path_temp, "epi", type="mean")
 
     # new filenames
-    file_epi_mean = os.path.join(path_temp, "mean_"+name_epi+ext_epi)
+    file_epi_mean = os.path.join(path_temp, "mean_epi"+ext_epi)
     file_t1 = os.path.join(path_temp,"T1"+ext_t1)
     file_mask = os.path.join(path_temp,"mask"+ext_mask)
 

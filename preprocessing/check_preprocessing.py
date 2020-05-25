@@ -18,11 +18,13 @@ from scipy.stats import pearsonr, shapiro
 from lib.io.get_filename import get_filename
 
 input = [
-    "/data/pt_01880/temp/run1/udata.nii",
-    "/data/pt_01880/temp/run2/udata.nii",
+    "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/pol_anticlock/uadata.nii",
+    "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/pol_clock/uadata.nii",
+    "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/ecc_expanding/uadata.nii",
+    "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/ecc_contracting/uadata.nii",
     ]
-input_ref = "/data/pt_01880/temp/input/mean_epi.nii"
-input_mask_ref = "/data/pt_01880/temp/input/mask_def-img3.nii.gz"
+input_ref = "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/diagnosis/mean_uadata.nii"
+input_mask_ref = ""
 r_threshold = 0.95
 
 """ do not edit below """
