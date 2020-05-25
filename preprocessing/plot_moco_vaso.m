@@ -18,10 +18,8 @@ rp_vaso = {
     '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/data.nii',...
     };
 
-% basenames
+% parameters
 path_output = '';
-basename_bold = 'bold';
-basename_vaso = 'vaso';
 
 %%% do not edit below %%%
 
