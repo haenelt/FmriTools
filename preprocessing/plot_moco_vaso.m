@@ -52,7 +52,7 @@ for i = 1:length(rp_bold)
     
     % rotational displacement
     M_bold_rot = sqrt(M_bold(:,4).^2+M_bold(:,5).^2+M_bold(:,6).^2);
-    M_vaso_rot = sqrt(M_vaso(:,4).^2+M_vaso(:,5).^2+M_vaso(:,6).^2);
+    M_vaso_rot = sqrt(M_vaso(:,4).^2+M_vaso(:,5).^2+M_vaso(:,6).^2);    
     
     transFig = figure('visible','off');
     hold on
@@ -67,7 +67,14 @@ for i = 1:length(rp_bold)
     title(['Translational movement in session ' name_output],'Interpreter','None');
     xlabel('number of volume');
     ylabel('Translation in mm');
-    legend('x (BOLD)','y (BOLD)','z (BOLD)','x (vaso)','y (VASO)','z (VASO)','total translation (BOLD)','total translation (VASO)','Location','eastoutside');
+    set(gcf, 'unit', 'inches');
+    figure_size = get(gcf,'position'); % get the original size of figure
+    lgnd = legend('x (BOLD)','y (BOLD)','z (BOLD)','x (vaso)','y (VASO)','z (VASO)','total translation (BOLD)','total translation (VASO)');
+    set(lgnd,'location','eastoutside');
+    set(lgnd,'unit','inches');
+    legend_size = get(lgnd,'position'); % get legend size
+    figure_size(3) = figure_size(3) + legend_size(3); % new figure width
+    set(gcf,'position',figure_size); % set new figure size
     saveas(gcf,fullfile(path_output, [name_output '_trans.png']));
     close(transFig);
     
@@ -84,7 +91,14 @@ for i = 1:length(rp_bold)
     title(['Rotational movement in session ' name_output],'Interpreter','None');
     xlabel('number of volume');
     ylabel('Rotation in deg');
-    legend('pitch (BOLD)','roll (BOLD)','yaw (BOLD)','pitch (VASO)','roll (VASO)','yaw (VASO)','total rotation (BOLD)','total rotation (VASO)','Location','eastoutside');
+    set(gcf,'unit','inches');
+    figure_size = get(gcf,'position'); % get the original size of figure
+    lgnd = legend('pitch (BOLD)','roll (BOLD)','yaw (BOLD)','pitch (VASO)','roll (VASO)','yaw (VASO)','total rotation (BOLD)','total rotation (VASO)');
+    set(lgnd,'location','eastoutside');
+    set(lgnd,'unit','inches');
+    legend_size = get(lgnd,'position'); % get legend size
+    figure_size(3) = figure_size(3) + legend_size(3); % new figure width
+    set(gcf,'position',figure_size); % set new figure size
     saveas(gcf,fullfile(path_output,[name_output '_rot.png']));
     close(radFig);
 
