@@ -12,7 +12,7 @@
 
 % created by Daniel Haenelt
 % Date created: 10-12-2018
-% Last modified: 08-05-2020
+% Last modified: 24-05-2020
 
 % input data
 img_input = {
@@ -50,7 +50,6 @@ TR = 3; % repetition time  in s
 cutoff_highpass = 180; % 1/cutoff_highpass frequency in Hz (odc: 180, localiser: 96)
 microtime_onset = 8; % only change to 1 if reference slice in slice timing is first slice
 hrf_derivative = false; % include hrf derivative in model
-nconds = 3; % only 2-4 are supported
 name_sess = 'GE_EPI2'; % name of session (if multiple sessions exist)
 name_output = ''; % basename of output contrasts
 output_folder = 'contrast'; % name of folder where spm.mat is saved
@@ -119,7 +118,7 @@ for i = 1:length(img_input)
     
     % add condition regressors
     matlabbatch{1}.spm.stats.fmri_spec.sess(i).cond = struct('name', {}, 'onset', {}, 'duration', {}, 'tmod', {}, 'pmod', {}, 'orth', {});
-    matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi = {cond_input{i}};
+    matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi = cond_input(i);
     
     % add scan nulling regressors
     if ~isempty(null_input)
@@ -144,7 +143,7 @@ for i = 1:length(img_input)
     if ~isempty(multi_input)
         outlier = dlmread(multi_input{i});
         n_noise(i) = n_noise(i) + size(outlier,2);
-        matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi_reg = {multi_input{i}};
+        matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi_reg = multi_input(i);
     else
         matlabbatch{1}.spm.stats.fmri_spec.sess(i).multi_reg = {''};
     end
