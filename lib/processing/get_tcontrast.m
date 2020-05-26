@@ -22,7 +22,7 @@ function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_de
     
 % created by Daniel Haenelt
 % Date created: 13-03-2020
-% Last modified: 08-05-2020
+% Last modified: 26-05-2020
 
 if ~exist('name_output', 'var')  
     name_output = '';
@@ -34,6 +34,10 @@ end
 
 if ~exist('hrf_derivative', 'var')  
     hrf_derivative = false;
+end
+
+if ~exist('regressor_nointerest', 'var')
+    regressor_nointerest = zeros(length(cond_input),1);
 end
 
 % add spm to path
@@ -198,7 +202,7 @@ end
 
 % add for multiple runs and scale
 contrast = [];
-for i=1:nruns
+for i = 1:nruns
     contrast = [contrast c/nruns zeros(length(c),regressor_nointerest(i))];
 end
 

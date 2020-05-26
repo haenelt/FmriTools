@@ -1,7 +1,7 @@
 % SPMT contrast transformation
 
-% This script transforms t-maps to p, -log(p), r (correlation coefficient)
-% or d-maps (effect size). 
+% This script transforms t-maps to p, -log(p), r (correlation coefficient),
+% d-maps (effect size) or z-maps. 
 %
 % The following formulas are used:
 % (1) r = sign(t) / sqrt( df / t*t + 1 )
@@ -33,6 +33,7 @@
 %              R    - correlation coefficient
 %              D    - effect size
 %              T    - t-value
+%              Z    - z-value
 %   Contrast:  name used in the contrast manager
 %   Pheight:   p    - uncorrected p-value in % (p<0.05 will coded with "p5")
 %              pFWE - p-value with FWE correction in %
@@ -48,7 +49,7 @@
 
 % created by Daniel Haenelt
 % Date created: 17-04-2020
-% Last modified: 17-04-2020
+% Last modified: 26-05-2020
 
 % input
 spm_mat_in = '/data/pt_01983/func/flicker/GE_EPI2/contrast_diff/SPM.mat'; % SPM.mat
@@ -71,8 +72,8 @@ load(spm_mat_in);
 path_spm_mat = fileparts(spm_mat_in);
 
 % select transformation
-str = '1-p|-log(1-p)|correlation coefficient cc|effect size d|apply thresholds without conversion';
-sel = spm_input('Convert t value to?',1,'m',str,1:5,1);
+str = '1-p|-log(1-p)|correlation coefficient cc|effect size d|z-score|apply thresholds without conversion';
+sel = spm_input('Convert t value to?',1,'m',str,1:6,1);
 
 % select threshold
 str = 'yes|no';
@@ -220,6 +221,8 @@ for Ic = 1:nspmT
             tmp = (df(2)./((Z.*Z)+eps))+1;
             t2x = 2./((1-(1./tmp)).*tmp).^0.5;
         case 5
+            t2x = spm_t2z(Z, df(2));
+        case 6
             t2x = Z;
     end
         
@@ -234,6 +237,8 @@ for Ic = 1:nspmT
         case 4
             t2x_name = 'D';
         case 5
+            t2x_name = 'Z';
+        case 6
             t2x_name = 'T';
     end
 

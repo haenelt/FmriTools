@@ -12,7 +12,7 @@
 
 % created by Daniel Haenelt
 % Date created: 10-12-2018
-% Last modified: 24-05-2020
+% Last modified: 26-05-2020
 
 % input data
 img_input = {
