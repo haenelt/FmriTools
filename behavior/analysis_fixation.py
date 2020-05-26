@@ -37,7 +37,7 @@ rc('text', usetex=True)
 for i in range(len(input)):
     
     # get output folder
-    path_output = os.path.join(os.path.dirname(input[i]),"behavior")
+    path_output = os.path.join(os.path.dirname(os.path.dirname(input[i])),"behavior")
     if not os.path.exists(path_output):
         os.makedirs(path_output)
     
