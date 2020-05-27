@@ -15,7 +15,7 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     
     created by Daniel Haenelt
     Date created: 17-12-2019
-    Last modified: 24-01-2020
+    Last modified: 27-05-2020
     """
     import sys
     import os
@@ -38,7 +38,7 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     
     # get hemi from filename
     hemi = os.path.splitext(os.path.basename(input_white))[0]
-    if not hemi == "lh" or hemi == "rh":
+    if not hemi == "lh" and not hemi == "rh":
         sys.exit("Could not identify hemi from filename!")
     
     # new filenames in output folder
@@ -88,7 +88,6 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     white_label_array[white_label_array != label_number] = 0
     white_label_array[white_label_array > 0] = 1    
     white_label = nb.Nifti1Image(white_label_array, vol.affine, vol.header)
-    nb.save(white_label, os.path.join(path_output,"bla.nii"))    
     
     """
     make csf

@@ -19,7 +19,7 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 15-01-2020
+    Last modified: 27-05-2020
     """
     import sys
     import os
@@ -44,7 +44,7 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
     name_profile = splitext(basename(file_in))[0]+"_profile"
     
     # check hemi
-    if not hemi == "lh" or hemi == "rh":
+    if not hemi == "lh" and not hemi == "rh":
         sys.exit("Could not identify hemi from filename!")
     
     # upsample volume
@@ -62,14 +62,17 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
                                overwrite=write_profile,
                                output_dir=path_output,
                                file_name="profile")
-    
+        
     # rename profile sampling output
     if write_profile:
         os.rename(join(path_output, "profile_lps-data.nii.gz"),
                   join(path_output, name_profile+".nii.gz"))
     
     # load profile
-    data = profile["result"]
+    if write_profile:
+        data = nb.load(join(path_output, name_profile+".nii.gz"))
+    else:
+        data = profile["result"]
     data.header["dim"][0] = 3        
     
     # map single layers
