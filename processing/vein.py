@@ -34,7 +34,7 @@ pathLIB = "/data/hu_haenelt/projects/scripts/lib"
 
 # parameters
 TR = 3 # repetition time in s
-cutoff_highpass = 180 # cutoff in s for baseline correction
+cutoff_highpass = 270 # cutoff in s for baseline correction
 epi_threshold = 800
 tsnr_threshold = 8
 tsnr_max = 200

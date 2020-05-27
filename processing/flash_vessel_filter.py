@@ -21,7 +21,7 @@ file_in = ["/home/daniel/Schreibtisch/temp/S13_3D_GRE_3ech_iso0p5_slab_8.42.nii"
            ]
 
 # parameters
-t2s = False
+t2s = True
 img_res = 0.5
 vessel_threshold = 0.3
 path_output = "/data/pt_01880/"

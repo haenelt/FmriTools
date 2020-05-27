@@ -47,7 +47,7 @@ multi_input = {};
 
 % parameters
 TR = 3; % repetition time  in s
-cutoff_highpass = 180; % 1/cutoff_highpass frequency in Hz (odc: 180, localiser: 96)
+cutoff_highpass = 270; % 1/cutoff_highpass frequency in Hz (odc: 270, localiser: 96)
 microtime_onset = 8; % only change to 1 if reference slice in slice timing is first slice
 hrf_derivative = false; % include hrf derivative in model
 name_sess = 'GE_EPI2'; % name of session (if multiple sessions exist)

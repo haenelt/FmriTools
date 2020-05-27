@@ -35,7 +35,7 @@ path_output = "/data/pt_01880/odc_movie"
 
 # paramteers
 TR = 3
-cutoff_highpass = 180
+cutoff_highpass = 270
 start_vol = 0
 end_vol = 0
 interpolation = "nearest" # can be linear or nearest

@@ -31,7 +31,7 @@ pathLIB = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
 
 # parameters
 TR = 3 # repetition time in s
-cutoff_highpass = 180 # cutoff frequency for baseline correction in 1/Hz
+cutoff_highpass = 270 # cutoff frequency for baseline correction in 1/Hz
 nerode_wm = 1 # number of wm mask eroding iterations
 nerode_csf = 1 # number of csf mask eroding iterations
 hp_freq = 0.01 # highpass cutoff frequency (bandpass filter) in Hz

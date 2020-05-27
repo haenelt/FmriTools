@@ -60,7 +60,7 @@ condition1 = "left" # experimental condition
 TR = 3 # repetition time in s
 skip_vol = 2 # skip number of volumes in each block
 use_highpass = False
-cutoff_highpass = 180 # cutoff in s for baseline correction
+cutoff_highpass = 270 # cutoff in s for baseline correction
 name_sess = "GE_EPI2"
 name_output = "super"
 
