@@ -15,7 +15,7 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     
     created by Daniel Haenelt
     Date created: 17-12-2019
-    Last modified: 27-05-2020
+    Last modified: 28-05-2020
     """
     import sys
     import os
@@ -96,12 +96,13 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     for i in range(np.shape(pial_label_array)[2]):
         pial_label_array[:,:,i] = binary_fill_holes(pial_array[:,:,i])
     pial_label_array = pial_label_array - pial_array
-    pial_label_array = measure.label(pial_label_array, connectivity=1)   
+    pial_label_array = measure.label(pial_label_array, connectivity=1)
     pial_label_flatten = np.ndarray.flatten(pial_label_array)
     pial_label_flatten = pial_label_flatten[pial_label_flatten > 0]
     label_number = Counter(pial_label_flatten).most_common(1)[0][0]
     pial_label_array[pial_label_array != label_number] = 0
     pial_label_array[pial_label_array > 0] = 1    
+    pial_label_array = pial_label_array + pial_array # add csf line again
     pial_label = nb.Nifti1Image(pial_label_array, vol.affine, vol.header)
        
     """
