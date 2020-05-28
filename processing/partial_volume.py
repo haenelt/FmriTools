@@ -2,8 +2,9 @@
 Partial volume estimation
 
 This scripts calculates the partial volume contribution of wm, gm and csf based on the cortical 
-ribbon mask from the freesurfer segmentation. First, the ribbon mask is deformed to native epi space
-using nearest neighbor interpolation. Binary masks for the GM/WM and GM/CSF boundary are created 
+ribbon mask from the freesurfer segmentation. Optionally, WM and CSF masks can be used as input
+directly if no ribbon file is given. First, the ribbon mask is deformed to native epi space using 
+nearest neighbor interpolation. Binary masks for the GM/WM and GM/CSF boundary are created 
 (right WM: 41, right GM: 42, left WM: 2, right WM: 3) and levelset images are computed from those 
 masks (positive outwards and negative inwards). The levelset images are upsampled and the partial
 voluming in the original epi space is computed by counting the tissue compartments in each epi
@@ -14,7 +15,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 02-05-2019             
-Last modified: 02-05-2019  
+Last modified: 28-05-2019  
 """
 import os
 import shutil as sh
@@ -26,7 +27,9 @@ from nipype.interfaces import afni
 from lib.processing import estimate_pv
 
 # input
-file_ribbon = "/data/pt_01880/V2STRIPES/p6/anatomy/freesurfer/mri/ribbon.mgz"
+file_wm = None
+file_csf = None
+file_ribbon = "/data/pt_01880/V2STRIPES/p6/anatomy/freesurfer/mri/ribbon.mgz" # can be used instead of wm and csf
 file_deformation = "/data/pt_01880/V2STRIPES/p6/deformation/resting_state/orig2epi.nii.gz"
 path_output = "/data/pt_01880/V2STRIPES/p6/pve"
 cleanup = False
@@ -59,38 +62,67 @@ if not os.path.exists(path_levelset):
 if not os.path.exists(path_border):
     os.makedirs(path_border)
 
-# deform ribbon
-apply_coordinate_mappings(file_ribbon, # input 
-                          file_deformation, # cmap
-                          interpolation = "nearest", # nearest or linear
-                          padding = "zero", # closest, zero or max
-                          save_data = True, # save output data to file (boolean)
-                          overwrite = True, # overwrite existing results (boolean)
-                          output_dir = path_ribbon, # output directory
-                          file_name = "ribbon" # base name with file extension for output
-                          )
-
-# create masks for binary white matter and csf borders
-data = nb.load(os.path.join(path_ribbon,"ribbon_def-img.nii.gz"))
-data_array = data.get_fdata()
-
-wm_border = data_array.copy()
-wm_border[wm_border == 41] = 1
-wm_border[wm_border == 42] = 0
-wm_border[wm_border == 2] = 1
-wm_border[wm_border == 3] = 0
-
-output = nb.Nifti1Image(wm_border, data.affine, data.header)
-nb.save(output, os.path.join(path_binary,"wm_border.nii"))
-
-csf_border = data_array.copy()
-csf_border[csf_border == 41] = 1
-csf_border[csf_border == 42] = 1
-csf_border[csf_border == 2] = 1
-csf_border[csf_border == 3] = 1
-
-output = nb.Nifti1Image(csf_border, data.affine, data.header)
-nb.save(output, os.path.join(path_binary,"csf_border.nii"))
+if file_ribbon is not None:
+    
+    # deform ribbon
+    ribbon = apply_coordinate_mappings(file_ribbon, # input 
+                                       file_deformation, # cmap
+                                       interpolation = "nearest", # nearest or linear
+                                       padding = "zero", # closest, zero or max
+                                       save_data = False, # save output data to file (boolean)
+                                       overwrite = False, # overwrite existing results (boolean)
+                                       output_dir = None, # output directory
+                                       file_name = None # base name with file extension for output
+                                       )
+    
+    # create masks for binary white matter and csf borders
+    data_array = ribbon["result"].get_fdata()
+    
+    wm_border = data_array.copy()
+    wm_border[wm_border == 41] = 1
+    wm_border[wm_border == 42] = 0
+    wm_border[wm_border == 2] = 1
+    wm_border[wm_border == 3] = 0
+    
+    output = nb.Nifti1Image(wm_border, ribbon["result"].affine, ribbon["result"].header)
+    nb.save(output, os.path.join(path_binary,"wm_border.nii"))
+    
+    csf_border = data_array.copy()
+    csf_border[csf_border == 41] = 1
+    csf_border[csf_border == 42] = 1
+    csf_border[csf_border == 2] = 1
+    csf_border[csf_border == 3] = 1
+    
+    output = nb.Nifti1Image(csf_border, ribbon["result"].affine, ribbon["result"].header)
+    nb.save(output, os.path.join(path_binary,"csf_border.nii"))
+    
+else:
+    
+    # deform wm
+    wm_border = apply_coordinate_mappings(file_wm, # input 
+                                          file_deformation, # cmap
+                                          interpolation = "nearest", # nearest or linear
+                                          padding = "zero", # closest, zero or max
+                                          save_data = False, # save output data to file (boolean)
+                                          overwrite = False, # overwrite existing results (boolean)
+                                          output_dir = None, # output directory
+                                          file_name = None # base name with file extension for output
+                                          )
+    
+    nb.save(wm_border, os.path.join(path_binary,"wm_border.nii"))
+    
+    # deform csf
+    csf_border = apply_coordinate_mappings(file_csf, # input 
+                                           file_deformation, # cmap
+                                           interpolation = "nearest", # nearest or linear
+                                           padding = "zero", # closest, zero or max
+                                           save_data = False, # save output data to file (boolean)
+                                           overwrite = False, # overwrite existing results (boolean)
+                                           output_dir = None, # output directory
+                                           file_name = None # base name with file extension for output
+                                           )
+    
+    nb.save(csf_border, os.path.join(path_binary,"csf_border.nii"))
 
 # probability to levelset
 probability_to_levelset(os.path.join(path_binary,"wm_border.nii"), 
