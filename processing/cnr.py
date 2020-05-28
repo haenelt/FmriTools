@@ -16,7 +16,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 03-05-2019             
-Last modified: 17-03-2020  
+Last modified: 28-05-2020  
 """
 import os
 import datetime
@@ -57,6 +57,7 @@ outlier_input = []
 # parameters
 condition0 = "rest" # baseline condition
 condition1 = "left" # experimental condition
+cnr_threshold = 500 # remove unrealistic high cnr values (if set > 0)
 TR = 3 # repetition time in s
 skip_vol = 2 # skip number of volumes in each block
 use_highpass = False
@@ -137,6 +138,10 @@ for i in range(len(img_input)):
 # divide by number of runs
 mean_cnr /= len(img_input)
 
+# threshold tsnr
+if cnr_threshold:
+    mean_cnr[mean_cnr > cnr_threshold] = cnr_threshold
+
 # name of output files
 if len(name_output) and len(name_sess):
     fileOUT = os.path.join(path_output,"cnr_"+name_output+"_"+condition1+"_"+condition0+"_"+name_sess+".nii")
@@ -158,6 +163,7 @@ fileID.write("session: "+name_sess+"\n")
 fileID.write("basename: "+name_output+"\n")
 fileID.write("condition0: "+condition0+"\n")
 fileID.write("condition1: "+condition1+"\n")
+fileID.write("cnr threshold: "+str(cnr_threshold)+"\n")
 fileID.write("TR: "+str(TR)+"\n")
 fileID.write("skip_vol: "+str(skip_vol)+"\n")
 fileID.write("highpass: "+str(use_highpass)+"\n")

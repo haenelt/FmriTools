@@ -1,45 +1,33 @@
-def get_tsnr(input, path_output, name_output, TR, cutoff_highpass, pathSPM):
+def get_tsnr(input, tsnr_max=200, write_output=False, path_output="", name_output=""):
     """
     This function computes the tsnr of one time series.
     Inputs:
         *input: input time series.
+        *tsnr_max: threshold unrealistic high tsnr values (applied if set > 0).
+        *write output: write output nifti file.
         *path_output: path where to save mean image
         *name_output: basename of output file.
-        *TR: repetition time in s.
-        *cutoff_highpass: cutoff in s for baseline correction.
-        *pathSPM: path to SPM12.
+    Outputs:
+        *data_tsnr_array: tsnr array.
         
     created by Daniel Haenelt
     Date created: 05-02-2019         
-    Last modified: 05-02-2019
+    Last modified: 28-05-2020
     """
     import os
     import numpy as np
     import nibabel as nb
+    from lib.io.get_filename import get_filename
 
     # make subfolders
-    if not os.path.exists(path_output):
+    if write_output and not os.path.exists(path_output):
         os.makedirs(path_output)
-
-    # change to lib folder
-    path_baseline_func = os.path.realpath(__file__)
-    path_baseline_func = os.path.dirname(os.path.dirname(path_baseline_func))
-    path_baseline_func = os.path.join(path_baseline_func,"preprocessing")
-    os.chdir(path_baseline_func)
     
-    # prepare path and filename
-    path = os.path.split(input)[0]
-    file = os.path.split(input)[1]
+    # get filename
+    _, file, ext = get_filename(input)
 
-    # look for baseline corrected time series
-    if not os.path.isfile(os.path.join(path,"b"+file)):
-        os.system("matlab" + \
-                  " -nodisplay -nodesktop -r " + \
-                  "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-                  format(input, TR, cutoff_highpass, pathSPM))
-
-    # load baseline corrected time series
-    data_img = nb.load(os.path.join(path,"b"+file))
+    # load time series
+    data_img = nb.load(input)
     data_array = data_img.get_fdata()
     
     # get mean and std
@@ -51,10 +39,16 @@ def get_tsnr(input, path_output, name_output, TR, cutoff_highpass, pathSPM):
     data_tsnr_array = data_mean_array / data_std_array
     data_tsnr_array[np.isnan(data_tsnr_array)] = 0
     
-    # write output
-    data_img.header["dim"][0] = 3
-    data_img.header["dim"][4] = 1
-    data_img.header["pixdim"][3] = 1
+    # threshold tsnr
+    if tsnr_max:
+        data_tsnr_array[data_tsnr_array > tsnr_max] = tsnr_max
     
-    data_img = nb.Nifti1Image(data_tsnr_array, data_img.affine, data_img.header)
-    nb.save(data_img, os.path.join(path_output,"tsnr_"+name_output+".nii"))
+    # write output    
+    if write_output:
+        data_img.header["dim"][0] = 3
+        data_img.header["dim"][4] = 1
+
+        data_img = nb.Nifti1Image(data_tsnr_array, data_img.affine, data_img.header)
+        nb.save(data_img, os.path.join(path_output,"tsnr_"+file+ext))
+    
+    return data_tsnr_array

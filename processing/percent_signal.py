@@ -15,7 +15,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 06-12-2018         
-Last modified: 17-03-2020
+Last modified: 28-05-2020
 """
 import os
 import datetime
@@ -58,6 +58,7 @@ outlier_input = []
 condition0 = "rest" # baseline condition
 condition1 = "left" # experimental condition 1
 condition2 = "right" # experimental condition 2
+percent_threshold = 50 # remove unrealistic high signal values (if set > 0)
 TR = 3 # repetition time in s
 skip_vol = 2 # skip number of volumes in each block
 use_z_score = False
@@ -169,6 +170,13 @@ for i in range(len(img_input)):
 mean_percent_signal1 /= len(img_input)
 mean_percent_signal2 /= len(img_input)
 
+# threshold tsnr
+if percent_threshold:
+    mean_percent_signal1[mean_percent_signal1 > percent_threshold] = percent_threshold
+    mean_percent_signal1[mean_percent_signal1 < -percent_threshold] = -percent_threshold
+    mean_percent_signal2[mean_percent_signal2 > percent_threshold] = percent_threshold
+    mean_percent_signal2[mean_percent_signal2 < -percent_threshold] = -percent_threshold
+
 # name of output files
 if len(name_output) and len(name_sess):
     fileOUT1 = os.path.join(path_output,"psc_"+name_output+"_"+condition1+"_"+condition2+"_"+name_sess+".nii")
@@ -198,6 +206,7 @@ fileID.write("basename: "+name_output+"\n")
 fileID.write("condition0: "+condition0+"\n")
 fileID.write("condition1: "+condition1+"\n")
 fileID.write("condition2: "+condition2+"\n")
+fileID.write("percent threshold: "+str(percent_threshold)+"\n")
 fileID.write("TR: "+str(TR)+"\n")
 fileID.write("skip_vol: "+str(skip_vol)+"\n")
 fileID.write("z-score: "+str(use_z_score)+"\n")
