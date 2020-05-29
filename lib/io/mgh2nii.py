@@ -8,7 +8,7 @@ def mgh2nii(filename, path_output, out_type="nii"):
     
     created by Daniel Haenelt
     Date created: 06-01-2020             
-    Last modified: 06-01-2020
+    Last modified: 29-05-2020
     """        
     import os
     from lib.io.get_filename import get_filename
@@ -21,6 +21,6 @@ def mgh2nii(filename, path_output, out_type="nii"):
     mc = MRIConvert()
     mc.inputs.in_file = filename
     mc.inputs.out_file = os.path.join(path_output,name+"."+out_type)
-    mc.inputs.in_type = ext[1:]
+    mc.inputs.in_type = ext.replace('.','')
     mc.inputs.out_type = out_type
     mc.run()
