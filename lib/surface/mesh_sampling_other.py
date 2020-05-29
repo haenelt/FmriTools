@@ -1,7 +1,7 @@
-def mesh_sampling_other(surf_in, file_in, target_in, target2source_in, source2target_in, 
-                        boundaries_in, path_output, layer, smooth_iter=2, r=[0.4,0.4,0.4],
-                        interpolation="Cu", average_layer=False, write_profile=False, 
-                        write_upsampled=True, cleanup=True):
+def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, boundaries_in, 
+                        path_output, layer, smooth_iter=2, r=[0.4,0.4,0.4], interpolation="Cu", 
+                        average_layer=False, write_profile=False, write_upsampled=True, 
+                        cleanup=True):
     """
     This function samples data from an image volume to a surface mesh which is located in a 
     different space. Boundaries and surface mesh are first transformed to the space of the image 
@@ -11,7 +11,6 @@ def mesh_sampling_other(surf_in, file_in, target_in, target2source_in, source2ta
     Inputs:
         *surf_in: filename of input surface mesh.
         *file_in: filename of input volume from which data is sampled.
-        *target_in: reference target file.
         *target2source_in: target to source coordinate mapping.
         *source2target_in: source to target coordinate mapping.
         *boundaries_in: filename of 4D levelset image.
@@ -66,19 +65,15 @@ def mesh_sampling_other(surf_in, file_in, target_in, target2source_in, source2ta
     _, name_file, ext_file = get_filename(file_in)
     _, name_t2s, ext_t2s = get_filename(target2source_in)
     _, name_s2t, ext_s2t = get_filename(source2target_in)
-    _, name_target, ext_target = get_filename(target_in)
     
     # copy input files
     sh.copyfile(target2source_in, os.path.join(path_cmap, "t2s"+ext_t2s))
     sh.copyfile(source2target_in, os.path.join(path_cmap, "s2t"+ext_s2t))
     sh.copyfile(file_in, os.path.join(path_data, name_file+ext_file))
-    sh.copyfile(target_in, os.path.join(path_data, "target"+ext_target))
     
     # set filenames
     data = os.path.join(path_data, name_file+ext_file)
     data_upsampled = os.path.join(path_data, name_file+"_upsampled"+ext_file)
-    target = os.path.join(path_data, "target"+ext_target)
-    target_upsampled = os.path.join(path_data, "target_upsampled"+ext_target)
     t2s = os.path.join(path_cmap, "t2s"+ext_t2s)
     t2s_upsampled = os.path.join(path_cmap, "t2s_upsampled"+ext_t2s)
     t2s_rescaled = os.path.join(path_cmap, "t2s_upsampled_rescaled"+ext_t2s)
@@ -93,15 +88,14 @@ def mesh_sampling_other(surf_in, file_in, target_in, target2source_in, source2ta
         upsample_volume(data, data_upsampled, dxyz = r, rmode = interpolation)
         upsample_volume(t2s, t2s_upsampled, dxyz = r, rmode = "Linear")
         upsample_volume(s2t, s2t_upsampled, dxyz = r, rmode = "Linear")
-        upsample_volume(target, target_upsampled, dxyz = r, rmode = "Linear")
     
     """
     rescale cmap
     """
-    dim_target = nb.load(target).header["dim"][1:4] - 1
-    dim_source = nb.load(data).header["dim"][1:4] - 1
-    dim_target_upsampled = nb.load(target_upsampled).header["dim"][1:4] - 1
-    dim_source_upsampled = nb.load(data_upsampled).header["dim"][1:4] - 1
+    dim_target = nb.load(s2t).header["dim"][1:4] - 1
+    dim_source = nb.load(t2s).header["dim"][1:4] - 1
+    dim_target_upsampled = nb.load(s2t_upsampled).header["dim"][1:4] - 1
+    dim_source_upsampled = nb.load(t2s_upsampled).header["dim"][1:4] - 1
     
     cmap_t2s = nb.load(t2s_upsampled)
     cmap_s2t = nb.load(s2t_upsampled)
@@ -134,7 +128,7 @@ def mesh_sampling_other(surf_in, file_in, target_in, target2source_in, source2ta
     deform mesh
     """
     deform_surface(input_surf = surf_in, 
-                   input_orig = target_upsampled, 
+                   input_orig = s2t_upsampled, 
                    input_deform = s2t_rescaled,
                    input_target = data_upsampled, 
                    hemi = hemi,

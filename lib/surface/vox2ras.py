@@ -11,7 +11,7 @@ def vox2ras(file_in):
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 18-12-2019
+    Last modified: 29-05-2020
     """
     import subprocess
     import numpy as np
@@ -19,6 +19,17 @@ def vox2ras(file_in):
 
     # get affine vox2ras-tkr and ras2vox-tkr transformation to reference volume
     transformation = subprocess.check_output(['mri_info', file_in, '--{}'.format("ras2vox-tkr")]).decode()
+    
+    # ignore if warning is stated in first line
+    if transformation[:7] == "WARNING":
+        i = 0
+        while True:
+            if transformation[i] == "\n":
+                transformation = transformation[i+1:]
+                break
+            else:
+                i += 1
+    
     num_transformation = [[float(x) for x in line.split()] for line in transformation.split('\n') if len(line)>0]
     
     # get final transformation matriced as numpy array
