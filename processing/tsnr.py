@@ -31,8 +31,8 @@ img_input = [
 
 # parameters
 tsnr_threshold = 200 # threshold unrealistic high tsnr values
-TR = 3 # repetition time in s
 use_highpass = False
+TR = 3 # repetition time in s
 cutoff_highpass = 270 # cutoff in s for baseline correction
 name_sess = "GE_EPI1"
 name_output = ""
