@@ -26,7 +26,7 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     
     created by Daniel Haenelt
     Date created: 13-01-2020
-    Last modified: 29-05-2020
+    Last modified: 30-05-2020
     """
     import os
     import shutil as sh
@@ -77,7 +77,7 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     t2s = os.path.join(path_cmap, "t2s"+ext_t2s)
     t2s_upsampled = os.path.join(path_cmap, "t2s_upsampled"+ext_t2s)
     t2s_rescaled = os.path.join(path_cmap, "t2s_upsampled_rescaled"+ext_t2s)
-    s2t = os.path.join(path_cmap, "s2t"+ext_t2s)
+    s2t = os.path.join(path_cmap, "s2t"+ext_s2t)
     s2t_upsampled = os.path.join(path_cmap,"s2t_upsampled"+ext_s2t)
     s2t_rescaled = os.path.join(path_cmap, "s2t_upsampled_rescaled"+ext_s2t)
     
