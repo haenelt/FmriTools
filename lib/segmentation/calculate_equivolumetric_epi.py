@@ -17,7 +17,7 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, path_output
     
     created by Daniel Haenelt
     Date created: 17-12-2019
-    Last modified: 13-01-2020
+    Last modified: 31-05-2020
     """
     import sys
     import os
@@ -61,9 +61,9 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol, path_output
     # load volume
     vol = nb.load(res_vol)
     
-    # apply ras2vox to coords
-    vtx_white = apply_affine(ras2vox_tkr, vtx_white).astype(int)
-    vtx_pial = apply_affine(ras2vox_tkr, vtx_pial).astype(int)
+    # apply ras2vox to coords    
+    vtx_white = np.round(apply_affine(ras2vox_tkr, vtx_white)).astype(int)
+    vtx_pial = np.round(apply_affine(ras2vox_tkr, vtx_pial)).astype(int)
     
     # surfaces to lines in volume
     white_array = np.zeros(vol.header["dim"][1:4])

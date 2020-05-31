@@ -8,10 +8,12 @@ def apply_registration(file_in, cmap_in, file_out, r=[0.4,0.4,0.4]):
         *cmap_in: filename of coordinate mapping.
         *file_out: filename of output volume.
         *r: destination voxel size after upsampling (performed if not None).
+    Outputs:
+        *nibabel object instance of transformed input.
     
     created by Daniel Haenelt
     Date created: 30-05-2020
-    Last modified: 30-05-2020
+    Last modified: 31-05-2020
     """
     import os
     import numpy as np
@@ -77,3 +79,5 @@ def apply_registration(file_in, cmap_in, file_out, r=[0.4,0.4,0.4]):
     if r:
         os.remove(file_tmp)
         os.remove(file_tmp2)
+
+    return res["result"]

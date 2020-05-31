@@ -1,4 +1,5 @@
-def calculate_equivolumetric_surfaces(file_white, file_pial, n_surfs, factor, niter, hemi, path_output):
+def calculate_equivolumetric_surfaces(file_white, file_pial, n_surfs, factor, niter, hemi, 
+                                      path_output):
     """
     The script calculates intracortical surfaces based on equi-volumetric layering. It is an 
     adaption of Konrad Wagstyl's function in surface_tools. Here, the io_mesh is not used anymore 

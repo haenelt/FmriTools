@@ -2,6 +2,7 @@ from .alpha_shape import alpha_shape
 from .bias_field_correction import bias_field_correction
 from .calculate_area import calculate_area
 from .calculate_distortion import calculate_distortion
+from .calculate_equidistant_epi import calculate_equidistant_epi
 from .calculate_equivolumetric_epi import calculate_equivolumetric_epi
 from .calculate_equivolumetric_epi2 import calculate_equivolumetric_epi2
 from .calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
