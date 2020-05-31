@@ -145,6 +145,7 @@ def calculate_equidistant_epi(input_white, input_pial, input_vol, path_output, n
     
     layer_array =  nb.load(os.path.join(path_output,"layers.nii")).get_fdata()
     layer_array += 1
+    layer_array[layer_array == 1] = 0
     layer_array[white_label_array == 1] = 1 # fill wm
     
     if debug:
