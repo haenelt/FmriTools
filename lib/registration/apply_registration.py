@@ -1,4 +1,4 @@
-def apply_registration(file_in, cmap_in, file_out, r=[0.4,0.4,0.4]):
+def apply_registration(file_in, cmap_in, file_out, interpolation="linear", r=[0.4,0.4,0.4]):
     """
     This function applies a coordinate mapping to a volume. Optionally, the voxel size of the output
     volume can be changed. This is achieved by adjusting the coordinate mapping to the new voxel 
@@ -7,13 +7,14 @@ def apply_registration(file_in, cmap_in, file_out, r=[0.4,0.4,0.4]):
         *file_in: filename of input volume.
         *cmap_in: filename of coordinate mapping.
         *file_out: filename of output volume.
+        *interpolation: interpolation type (linear or nearest).
         *r: destination voxel size after upsampling (performed if not None).
     Outputs:
         *nibabel object instance of transformed input.
     
     created by Daniel Haenelt
     Date created: 30-05-2020
-    Last modified: 31-05-2020
+    Last modified: 02-06-2020
     """
     import os
     import numpy as np
@@ -64,7 +65,7 @@ def apply_registration(file_in, cmap_in, file_out, r=[0.4,0.4,0.4]):
     # apply coordinate mapping
     res = apply_coordinate_mappings(image = file_in, # input 
                                     mapping1 = cmap, # cmap
-                                    interpolation = "linear", # nearest or linear
+                                    interpolation = interpolation, # nearest or linear
                                     padding = "zero", # closest, zero or max
                                     save_data = False, # save output data to file (boolean)
                                     overwrite = False, # overwrite existing results (boolean)
