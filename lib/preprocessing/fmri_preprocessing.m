@@ -1,5 +1,5 @@
 function fmri_preprocessing(img_input, slice_params, field_params, realign_params, ...
-    range_params, outlier_params, pathSPM)
+    outlier_params, pathSPM)
 % This function performs slice time correction, fieldmap undistortion and
 % motion correction in the SPM12 framework which can be applied to a
 % session consisting of multiple runs. Slice time correction and fieldmap 
@@ -25,13 +25,12 @@ function fmri_preprocessing(img_input, slice_params, field_params, realign_param
     % slice_params: struct of slice time correction parameters.
     % field_params: struct of fieldmap parameters.
     % realign_params: struct of realignment parameters.
-    % range_params: struct of data range parameters.
     % outlier_params: struct of realignment check parameters.
     % pathSPM: path to spm12 folder.
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019
-% Last modified: 23-05-2020
+% Last modified: 03-06-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -305,9 +304,6 @@ fprintf(fileID,['run unwarp: ' mat2str(realign_params.unwarp) '\n']);
 fprintf(fileID,['realign parameter (mask): ' mat2str(realign_params.mask) '\n']);
 fprintf(fileID,['realign parameter (c): ' num2str(realign_params.c) '\n']);
 fprintf(fileID,['realign parameter (r): ' num2str(realign_params.r) '\n']);
-fprintf(fileID,['adjust data range: ' mat2str(range_params.apply) '\n']);
-fprintf(fileID,['data range (min): ' num2str(range_params.data_min) '\n']);
-fprintf(fileID,['data range (max): ' num2str(range_params.data_max) '\n\n']);
 fprintf(fileID,'Percentage of within-run motion and intensity outliers\n');
 fprintf(fileID,['motion threshold (mm, short): ' num2str(outlier_params.moco_out_mm_short) '\n']);
 fprintf(fileID,['motion threshold (mm, long): ' num2str(outlier_params.moco_out_mm_long) '\n']);
@@ -332,29 +328,6 @@ end
 
 % close file
 fclose(fileID);
-
-% set nan and negative values to zero
-if range_params.apply
-    for i = 1:length(img_input)
-
-        [path, file, ext] = fileparts(img_input{i});
-        if slice_params.slice_timing
-            file = ['a' file];
-        end
-
-        data_img = spm_vol(fullfile(path,['u' file ext]));
-        data_array = spm_read_vols(data_img);
-
-        data_array(isnan(data_array)) = 0;
-        data_array(data_array < range_params.data_min) = range_params.data_min;
-        data_array(data_array > range_params.data_max) = range_params.data_max;
-
-        for j = 1:length(data_img)
-            spm_write_vol(data_img(j), data_array(:,:,:,j));
-        end
-
-    end
-end
 
 % get time series of first volumes
 data_img_out = spm_vol(img_input{1});

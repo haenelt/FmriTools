@@ -13,7 +13,7 @@
 
 % created by Daniel Haenelt
 % Date created: 06-08-2019
-% Last modified: 23-05-2020
+% Last modified: 03-06-2020
 
 % array of of input time series
 img_input = {
@@ -40,11 +40,6 @@ realign_params.unwarp = false;
 realign_params.mask = false;
 realign_params.c = [95 130 25];
 realign_params.r = [35 25 20];
-
-% data range parameters
-range_params.apply = true;
-range_params.data_min = 0;
-range_params.data_max = 4095;
 
 % outlier parameters
 outlier_params.moco_out_mm_short = 0.4; % in mm
@@ -73,7 +68,6 @@ if run_separate
             slice_params,...
             field_params,...
             realign_params,...
-            range_params,...
             outlier_params,...
             pathSPM);
     end
@@ -83,7 +77,6 @@ else
         slice_params,...
         field_params,...
         realign_params,...
-        range_params,...
         outlier_params,...
         pathSPM);
 end
