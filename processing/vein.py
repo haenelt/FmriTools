@@ -28,16 +28,16 @@ img_input = ["/data/pt_01880/temp_phase/udata.nii",
 outlier_input = ["/data/pt_01880/temp_phase/logfiles/outlier_regressor_udata.txt",
                  ]
 
-# path to SPM12 folder
-pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/data/hu_haenelt/projects/scripts/lib"
-
 # parameters
 TR = 3 # repetition time in s
 cutoff_highpass = 270 # cutoff in s for baseline correction
 epi_threshold = 800
 tsnr_threshold = 8
 tsnr_max = 200
+
+# path to SPM12 folder
+pathSPM = "/data/pt_01880/source/spm12"
+pathLIB = "/data/hu_haenelt/projects/scripts/lib"
 
 """ do not edit below """
 
