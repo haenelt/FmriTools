@@ -52,10 +52,10 @@
 % Last modified: 26-05-2020
 
 % input
-spm_mat_in = '/data/pt_01880/Experiment3_Stripes/p2/disparity/GE_EPI2/contrast_all/SPM.mat'; % SPM.mat
-path_output = '/data/pt_01880/Experiment3_Stripes/p2/disparity/results/'; % path where output is written
+spm_mat_in = '/data/pt_01880/Experiment3_Stripes/p4/disparity/GE_EPI4/contrast_all/SPM.mat'; % SPM.mat
+path_output = '/data/pt_01880/Experiment3_Stripes/p4/disparity/results/'; % path where output is written
 name_output = 'all'; % basename of output contrasts
-name_sess = 'GE_EPI2'; % name of session (if multiple sessions exist)
+name_sess = 'GE_EPI4'; % name of session (if multiple sessions exist)
 
 % add spm to path
 pathSPM = '/data/pt_01880/source/spm12';
