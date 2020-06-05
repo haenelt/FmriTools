@@ -10,7 +10,7 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 19-02-2020
-Last modified: 12-03-2020
+Last modified: 05-06-2020
 """
 import os
 import numpy as np
@@ -76,6 +76,10 @@ for i in range(len(img_vaso)):
 
     # bold correction
     vaso_array = np.divide(vaso_array, bold_array)
+    
+    # remove nans and infs
+    vaso_array[np.isnan(vaso_array)] = 0
+    vaso_array[np.isinf(vaso_array)] = 0
 
     # clean vaso data that are unrealistic
     vaso_array[vaso_array < 0] = 0
