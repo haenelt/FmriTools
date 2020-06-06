@@ -52,8 +52,8 @@
 % Last modified: 26-05-2020
 
 % input
-spm_mat_in = '/data/pt_01880/Experiment1_ODC/p3/odc/VASO3/contrast_all/SPM.mat'; % SPM.mat
-path_output = '/data/pt_01880/Experiment1_ODC/p3/odc/results/'; % path where output is written
+spm_mat_in = '/data/pt_01880/Experiment1_ODC/p2/odc/VASO3/contrast_all/SPM.mat'; % SPM.mat
+path_output = '/data/pt_01880/Experiment1_ODC/p2/odc/results/'; % path where output is written
 name_output = 'all'; % basename of output contrasts
 name_sess = 'VASO3'; % name of session (if multiple sessions exist)
 
