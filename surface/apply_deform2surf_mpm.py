@@ -9,7 +9,7 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 30-01-2020
-Last modified: 10-03-2020
+Last modified: 10-06-2020
 """
 import os 
 from os.path import join, basename, splitext
@@ -77,42 +77,28 @@ for i in range(len(input_surf)):
                    input_ana, 
                    splitext(basename(input_surf[i]))[0], 
                    path_output, 
-                   interp_method="nearest",
-                   smooth_iter=10, 
+                   interp_method="trilinear",
+                   smooth_iter=0, 
                    sort_faces=False,
                    flip_faces=False,
                    cleanup=True)
 
-    # rename output
-    os.rename(join(path_output, basename(input_surf[i])+"_def"),
-              join(path_output, basename(input_surf[i])+"_def1"))
-    os.rename(join(path_output, basename(input_surf[i])+"_def_smooth"),
-              join(path_output, basename(input_surf[i])+"_def1_smooth")) 
-
     # ana -> epi
-    deform_surface(join(path_output, basename(input_surf[i])+"_def1_smooth"),
+    deform_surface(join(path_output, basename(input_surf[i])+"_def"),
                    input_ana,
-                   input_deform2, 
+                   input_deform2,
                    input_mpm,
                    splitext(basename(input_surf[i]))[0], 
                    path_output, 
-                   interp_method="nearest",
-                   smooth_iter=10, 
+                   interp_method="trilinear",
+                   smooth_iter=0, 
                    sort_faces=False,
                    flip_faces=False,
                    cleanup=True)
 
     # rename output
-    os.rename(join(path_output, basename(input_surf[i])+"_def1_smooth_def"),
-              join(path_output, basename(input_surf[i])+"_def2"))
-    os.rename(join(path_output, basename(input_surf[i])+"_def1_smooth_def_smooth"),
-              join(path_output, basename(input_surf[i])+"_def2_smooth"))
+    os.rename(join(path_output, basename(input_surf[i])+"_def_def"),
+              join(path_output, basename(input_surf[i])+"_mpm"))
     
     # remove all intermediate steps
-    os.remove(join(path_output, basename(input_surf[i])+"_def1"))
-    os.remove(join(path_output, basename(input_surf[i])+"_def1_smooth"))
-    os.remove(join(path_output, basename(input_surf[i])+"_def2"))
-
-    # rename final surface
-    os.rename(join(path_output, basename(input_surf[i])+"_def2_smooth"),
-              join(path_output, basename(input_surf[i])+"_mpm"))
+    os.remove(join(path_output, basename(input_surf[i])+"_def"))
