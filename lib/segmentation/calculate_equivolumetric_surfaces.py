@@ -19,7 +19,7 @@ def calculate_equivolumetric_surfaces(file_white, file_pial, n_surfs, factor, ni
     
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 17-12-2018
+    Last modified: 10-06-2020
     """
     import os
     import numpy as np
@@ -45,7 +45,7 @@ def calculate_equivolumetric_surfaces(file_white, file_pial, n_surfs, factor, ni
 
     # make output folder
     if not os.path.exists(path_output):
-        os.mkdir(path_output)
+        os.makedirs(path_output)
 
     # load geometry and area data
     wm_vtx, wm_fac = read_geometry(file_white)
