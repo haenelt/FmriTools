@@ -6,7 +6,7 @@
 
 % created by Daniel Haenelt
 % Date created: 08-12-2018
-% Last modified: 08-12-2018
+% Last modified: 13-06-2020
 
 % colour peaks
 R = [1 0 0];
@@ -61,6 +61,10 @@ img(:,:,3) = imgB;
 
 % Flip left & right side (only affects pol)
 img = flip(img, 2);
+
+% copy right side and override left side
+img_temp = flip(img, 2);
+img(:,1:radius,:) = img_temp(:,1:radius,:);
 
 % save image
 imwrite(img,'./img/pol_legend.png');
