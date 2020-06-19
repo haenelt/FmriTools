@@ -34,6 +34,7 @@ from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from lib.utils.remove_nans import remove_nans
+from lib.utils.multiply_images import multiply_images
 
 # input
 input_white = ["/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_refined/lh.white_def2_smooth_final",
@@ -48,8 +49,8 @@ input_ind = ["/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_deformed/lh.white_
 input_ana = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 input_mask = "/data/pt_01880/Experiment1_ODC/p4/anatomy/skull/skullstrip_mask.nii"
 input_target = "/data/pt_01880/Experiment1_ODC/p4/resting_state3/mean_udata.nii"
-input_source = "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/diagnosis/mean_uadata.nii"
-path_output = "/data/pt_01880/zimelich_zuegig2"
+input_source = "/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI3/diagnosis/mean_udata.nii"
+path_output = "/data/pt_01880/thisisthefinaltest"
 cleanup = False
 
 # parameters for orig skullstrip
@@ -130,12 +131,9 @@ mask_epi(os.path.join(path_mri,"borig.nii"),
          os.path.join(path_t1,"mask.nii"),
          niter_mask, sigma_mask)
 
-brainmask = nb.load(os.path.join(path_mri, "orig.nii"))
-mask = nb.load(os.path.join(path_t1, "mask_def-img3.nii.gz"))
-arr_brainmask = brainmask.get_fdata() * mask.get_fdata()
-
-brainmask = nb.Nifti1Image(arr_brainmask, brainmask.affine, brainmask.header)
-nb.save(brainmask, os.path.join(path_mri, "brainmask.nii"))
+multiply_images(os.path.join(path_mri, "orig.nii"), 
+                os.path.join(path_t1, "mask_def-img3.nii.gz"), 
+                os.path.join(path_mri, "brainmask.nii"))
 
 # convert orig and brainmask to mgz
 mgh2nii(os.path.join(path_mri,"orig.nii"), path_mri, out_type="mgz")
