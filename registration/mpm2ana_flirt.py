@@ -10,11 +10,12 @@ between MPM and MP2RAGE T1-maps. The script consists of the following steps:
     5. scanner transformation (MPM <-> MP2RAGE)
     6. flirt (MPM <-> MP2RAGE)
     7. merge both transformations
+    8. expand both transformations
     8. apply final transformation to MPM and MP2RAGE
 
 created by Daniel Haenelt
 Date created: 20-01-2020
-Last modified: 22-01-2020
+Last modified: 19-06-2020
 """
 import os
 import shutil as sh
@@ -25,6 +26,7 @@ from nipype.interfaces.fsl import ConvertXFM
 from nipype.interfaces.fsl.preprocess import ApplyXFM
 from nighres.registration import apply_coordinate_mappings
 from lib.cmap.generate_coordinate_mapping import generate_coordinate_mapping
+from lib.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 from lib.registration.get_scanner_transform import get_scanner_transform
 from lib.skullstrip.skullstrip_spm12 import skullstrip_spm12
 
@@ -33,6 +35,7 @@ file_mpm_r1 = "/home/daniel/Schreibtisch/mpm_reg/data/mpm/s122880a-145639-00001-
 file_mpm_pd = "/home/daniel/Schreibtisch/mpm_reg/data/mpm/s122880a-145639-00001-00352-1_PD.nii"
 file_mp2rage_t1 = "/home/daniel/Schreibtisch/mpm_reg/data/mp2rage/S5_mp2rage_whole_brain_T1_Images_2.45.nii"
 file_mp2rage_pd = "/home/daniel/Schreibtisch/mpm_reg/data/mp2rage/S4_mp2rage_whole_brain_INV2_2.45.nii"
+expand_cmap = True
 cleanup = False
 
 # output path
@@ -234,6 +237,20 @@ os.rename(os.path.join(path_output,"mpm_2_mp2rage_def-img.nii.gz"),
           os.path.join(path_output,"mpm_2_mp2rage.nii.gz"))
 os.rename(os.path.join(path_output,"mp2rage_2_mpm_def-img.nii.gz"),
           os.path.join(path_output,"mp2rage_2_mpm.nii.gz"))
+
+"""
+expand deformation
+"""
+if expand_cmap:
+    _ = expand_coordinate_mapping(os.path.join(path_output, "mpm_2_mp2rage.nii.gz"),
+                                  path_output, 
+                                  name_output="mpm_2_mp2rage", 
+                                  write_output=True)
+    
+    _ = expand_coordinate_mapping(os.path.join(path_output, "mp2rage_2_mpm.nii.gz"),
+                                  path_output, 
+                                  name_output="mp2rage_2_mpm",
+                                  write_output=True)
 
 # apply coordinate mapping to data
 apply_coordinate_mappings(file_mpm_r1, # input 
