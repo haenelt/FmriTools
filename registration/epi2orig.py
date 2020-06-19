@@ -41,7 +41,6 @@ from lib.registration.get_scanner_transform import get_scanner_transform
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
-from lib.utils.multiply_images import multiply_images
 
 # input data
 file_mean_epi = "/nobackup/actinium2/haenelt/ForOthers/RetinotopyFakhereh4/26958.af/retinotopy/diagnosis/mean_data.nii"
@@ -262,11 +261,6 @@ if clean_cmap:
     
     # write mask
     nb.save(epi2ana_cleaned["mask"], os.path.join(path_output,"epi2orig_mask.nii.gz"))
-    
-    # mask epi -> orig
-    multiply_images(os.path.join(path_output,"epi2orig_example.nii.gz"), 
-                    os.path.join(path_output,"epi2orig_mask.nii.gz"),
-                    os.path.join(path_output,"epi2orig_example.nii.gz"))
 
 """
 expand deformation

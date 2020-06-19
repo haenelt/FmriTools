@@ -35,7 +35,6 @@ from lib.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
-from lib.utils.multiply_images import multiply_images
 
 # input data
 file_mean_epi_source = "/data/pt_01880/Experiment2_Rivalry/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
@@ -242,11 +241,6 @@ if clean_cmap:
     
     # write mask
     nb.save(epi2ana_cleaned["mask"], os.path.join(path_output,"epi2orig_mask.nii.gz"))
-    
-    # mask epi -> orig
-    multiply_images(os.path.join(path_output,"epi2orig_example.nii.gz"), 
-                    os.path.join(path_output,"epi2orig_mask.nii.gz"),
-                    os.path.join(path_output,"epi2orig_example.nii.gz"))
 
 """
 expand deformation

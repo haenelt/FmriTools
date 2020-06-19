@@ -34,7 +34,6 @@ from lib.skullstrip.skullstrip_refined import skullstrip_refined
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
-from lib.utils.multiply_images import multiply_images
 
 # input data
 file_mean_epi_source = "/data/pt_01880/Experiment3_Stripes/p3/colour/GE_EPI1/diagnosis/mean_data.nii"
@@ -199,11 +198,6 @@ if clean_cmap:
     
     # write mask
     nb.save(epi2ana_cleaned["mask"], os.path.join(path_output,"epi2ana_mask.nii.gz"))
-    
-    # mask epi -> ana
-    multiply_images(os.path.join(path_output,"epi2ana_example.nii.gz"), 
-                    os.path.join(path_output,"epi2ana_mask.nii.gz"),
-                    os.path.join(path_output,"epi2ana_example.nii.gz"))
 
 """
 expand deformation
