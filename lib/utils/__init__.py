@@ -18,3 +18,4 @@ from .check_trigger import check_trigger
 from .upsample_volume import upsample_volume
 from .regrid_time_series import regrid_time_series
 from .regrid_time_series import regrid_time_series_afni
+from .remove_nans import remove_nans
