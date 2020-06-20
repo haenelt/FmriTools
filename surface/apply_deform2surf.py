@@ -9,7 +9,7 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 07-02-2019
-Last modified: 19-06-2020
+Last modified: 20-06-2020
 """
 import os 
 from os.path import join, basename, splitext
@@ -20,6 +20,7 @@ input_surf = ["/data/pt_01880/temp_reg/data/lh.layer10"]
 input_orig = "/data/pt_01880/temp_reg/data/orig.mgz"
 input_ana = "/data/pt_01880/temp_reg/data/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
 input_epi = "/data/pt_01880/temp_reg/data/mean_test2.nii"
+input_mask = "" # epi2ana mask
 input_deform1 = "/data/pt_01880/temp_reg/deformation/header/S22_MP2RAGE_0p7_T1_Images_2.45_2_orig_scanner.nii" # ana2orig
 input_deform2 = "/data/pt_01880/temp_reg/deformation/enhanced/epi2ana.nii.gz" # epi2ana
 path_output = "/data/pt_01880/temp_reg/surf/enhanced"
@@ -34,13 +35,13 @@ for i in range(len(input_surf)):
                    input_deform1, 
                    input_ana, 
                    splitext(basename(input_surf[i]))[0], 
-                   path_output, 
+                   path_output,
+                   input_mask=None,
                    interp_method="trilinear",
                    smooth_iter=0, 
-                   sort_faces=False,
                    flip_faces=True,
                    cleanup=False)
-
+    
     # rename output
     os.rename(join(path_output, basename(input_surf[i])+"_def"),
               join(path_output, basename(input_surf[i])+"_def1"))
@@ -51,10 +52,10 @@ for i in range(len(input_surf)):
                    input_deform2, 
                    input_epi,
                    splitext(basename(input_surf[i]))[0], 
-                   path_output, 
+                   path_output,
+                   input_mask,
                    interp_method="trilinear",
                    smooth_iter=0, 
-                   sort_faces=True,
                    flip_faces=False,
                    cleanup=False)
 

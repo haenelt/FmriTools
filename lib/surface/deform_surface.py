@@ -1,10 +1,10 @@
-def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, path_output, 
-                   interp_method="nearest", smooth_iter=0, sort_faces=False, flip_faces=False, 
+def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, path_output,
+                   input_mask=None, interp_method="nearest", smooth_iter=0, flip_faces=False, 
                    cleanup=True):
     """
     This function deforms a surface mesh in freesurfer convention using a coordinate map containing
     voxel coordinates. The computation takes quite a while because in the case of removed vertices,
-    the remaining faces have to be reindexed.
+    i.e. if a mask is given as input, the remaining faces are reindexed.
     Inputs:
         *input_surf: surface mesh to be transformed.
         *input_orig: freesurfer orig.mgz.
@@ -12,15 +12,15 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         *input_target: target volume.
         *hemi: hemisphere.
         *path_output: path where to save output.
+        *input_mask: mask volume.
         *interp_method: interpolation method (nearest or trilinear).
         *smooth_iter: number of smoothing iterations applied to final image (if set > 0).
-        *sort_faces: get new face array if vertices are cut off during deformation.
         *flip_faces: reverse normal direction of mesh.
         *cleanup: remove intermediate files.
         
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 10-03-2020
+    Last modified: 20-06-2020
     """
     import os
     import numpy as np
@@ -109,23 +109,14 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, pat
         data_img = nb.load(os.path.join(path_surf,hemi+"."+components[i]+"_sampled.mgh"))
         vtx_new[:,i] = np.squeeze(data_img.get_fdata())
     
-    if sort_faces:
-        
-        # get binary mask of slab
-        background_array = np.ones(cmap_img.header["dim"][1:4])
-        background_array[cmap_img.get_fdata()[:,:,:,0] == 0] = 0
-        background_array[cmap_img.get_fdata()[:,:,:,1] == 0] = 0
-        background_array[cmap_img.get_fdata()[:,:,:,2] == 0] = 0
-    
-        background_img = nb.Nifti1Image(background_array, cmap_img.affine, cmap_img.header)
-        nb.save(background_img,os.path.join(path_mri,"background.nii"))
-        
+    if input_mask:
+                
         # mri_vol2surf (background)
         sampler = SampleToSurface()
         sampler.inputs.subject_id = sub
         sampler.inputs.reg_header = True
         sampler.inputs.hemi = hemi
-        sampler.inputs.source_file = os.path.join(path_mri,"background.nii")
+        sampler.inputs.source_file = input_mask
         sampler.inputs.surface = "source"
         sampler.inputs.sampling_method = "point"
         sampler.inputs.sampling_range = 0

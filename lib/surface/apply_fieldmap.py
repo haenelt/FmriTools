@@ -29,7 +29,7 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco, fil
     
     created by Daniel Haenelt
     Date created: 31-01-2020
-    Last modified: 13-05-2020
+    Last modified: 20-06-2020
     """
     import os
     import numpy as np
@@ -178,9 +178,9 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco, fil
                        input_target=os.path.join(path_udata, "median_"+name_udata), 
                        hemi=hemi, 
                        path_output=path_surf, 
-                       interp_method="nearest",
-                       smooth_iter=10, 
-                       sort_faces=False, 
+                       input_mask=None,
+                       interp_method="trilinear",
+                       smooth_iter=0,
                        flip_faces=False, 
                        cleanup=True)
     

@@ -1,5 +1,5 @@
 def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, boundaries_in, 
-                        path_output, layer, smooth_iter=2, r=[0.4,0.4,0.4], interpolation="Cu", 
+                        path_output, layer, smooth_iter=0, r=[0.4,0.4,0.4], interpolation="Cu", 
                         average_layer=False, write_profile=False, write_upsampled=True, 
                         cleanup=True):
     """
@@ -26,7 +26,7 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     
     created by Daniel Haenelt
     Date created: 13-01-2020
-    Last modified: 30-05-2020
+    Last modified: 20-06-2020
     """
     import os
     import shutil as sh
@@ -133,9 +133,9 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
                    input_target = data_upsampled, 
                    hemi = hemi,
                    path_output = path_surf,
-                   interp_method = "nearest",
+                   input_mask = None,
+                   interp_method = "trilinear",
                    smooth_iter = smooth_iter,
-                   sort_faces = False, 
                    flip_faces = False,
                    cleanup = True)
     
