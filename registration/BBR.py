@@ -15,7 +15,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 19-06-2020
-Last modified: 19-06-2020
+Last modified: 22-06-2020
 """
 import os
 import numpy as np
@@ -40,12 +40,12 @@ from lib.utils.multiply_images import multiply_images
 input_white = ["/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_refined/lh.white_def2_smooth_final",
                "/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_refined/rh.white_def2_smooth_final",
                ]
-input_thickness = ["/data/pt_01880/Experiment1_ODC/p4/anatomy/dense/lh.thickness",
-                   "/data/pt_01880/Experiment1_ODC/p4/anatomy/dense/rh.thickness",
-                   ]
-input_ind = ["/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_deformed/lh.white_def2_ind",
-             "/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_deformed/rh.white_def2_ind",
-             ]
+#input_thickness = ["/data/pt_01880/Experiment1_ODC/p4/anatomy/dense/lh.thickness",
+#                   "/data/pt_01880/Experiment1_ODC/p4/anatomy/dense/rh.thickness",
+#                   ]
+#input_ind = ["/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_deformed/lh.white_def2_ind",
+#             "/data/pt_01880/Experiment1_ODC/p4/anatomy/dense_deformed/rh.white_def2_ind",
+#             ]
 input_ana = "/data/pt_01880/Experiment1_ODC/p4/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 input_mask = "/data/pt_01880/Experiment1_ODC/p4/anatomy/skull/skullstrip_mask.nii"
 input_target = "/data/pt_01880/Experiment1_ODC/p4/resting_state3/mean_udata.nii"
@@ -98,9 +98,9 @@ for i in range(len(input_white)):
     sh.copyfile(input_white[i], os.path.join(path_surf,hemi+".white"))
     
     # corresponding thickness file
-    thickness = read_morph_data(input_thickness[i])
-    ind = np.loadtxt(input_ind[i]).astype(int)
-    write_morph_data(os.path.join(path_surf, hemi+".thickness"), thickness[ind])
+    #thickness = read_morph_data(input_thickness[i])
+    #ind = np.loadtxt(input_ind[i]).astype(int)
+    #write_morph_data(os.path.join(path_surf, hemi+".thickness"), thickness[ind])
 
 # copy volumes
 sh.copy(input_target, os.path.join(path_mri,"orig.nii"))
@@ -146,6 +146,7 @@ os.system("bbregister" + \
           " --mov " + os.path.join(path_bbr, "source.nii") + \
           " --bold" + \
           " --reg regheader" + \
+          " --gm-proj-abs 1" + \
           " --wm-proj-abs 1" + \
           " --nmax " + str(nmax) + \
           " --o " + os.path.join(path_bbr, "registered.nii") + \
