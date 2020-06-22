@@ -137,6 +137,7 @@ os.system("bbregister" + \
           " --lta " + os.path.join(path_bbr, "transformation.lta") + \
           " --no-cortex-label" + \
           " --6" + \
+          " --init-header" + \
           " --nocleanup" + \
           " --tmp " + path_bbr)
 
