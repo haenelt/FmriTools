@@ -57,9 +57,7 @@ nmax = 1000
 os.environ["SUBJECTS_DIR"] = path_output
 
 # freesurfer subject
-tmp = np.random.randint(0, 10, 5)
-tmp_string = ''.join(str(i) for i in tmp)
-sub = "tmp_"+tmp_string
+sub = "temp"
 
 # make output folder
 if not os.path.exists(path_output):
