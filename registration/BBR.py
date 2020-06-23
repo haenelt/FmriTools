@@ -14,7 +14,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 19-06-2020
-Last modified: 22-06-2020
+Last modified: 23-06-2020
 """
 import os
 import numpy as np
@@ -42,6 +42,7 @@ input_mask = "/data/pt_01880/Experiment1_ODC/p1/anatomy/skull/skullstrip_mask.ni
 input_target = "/data/pt_01880/Experiment1_ODC/p1/resting_state/mean_udata.nii"
 input_source = "/data/pt_01880/Experiment1_ODC/p1/retinotopy/diagnosis/mean_uadata.nii"
 path_output = "/data/pt_01880/thisisthefinaltest2"
+init_reg = "freesurfer" # header, freesurfer, fsl
 cleanup = False
 
 # parameters for orig skullstrip
@@ -123,6 +124,14 @@ multiply_images(os.path.join(path_mri, "orig.nii"),
 mgh2nii(os.path.join(path_mri,"orig.nii"), path_mri, out_type="mgz")
 mgh2nii(os.path.join(path_mri,"brainmask.nii"), path_mri, out_type="mgz")
 
+# choose initialization method
+if init_reg == "header":
+    bbr_var = "--init-header"
+elif init_reg == "freesurfer":
+    bbr_var = "--init-coreg"
+elif init_reg == "fsl":
+    bbr_var = "--init-fsl"
+
 # run freesurfer bbr
 os.chdir(path_bbr)
 os.system("bbregister" + \
@@ -137,7 +146,7 @@ os.system("bbregister" + \
           " --lta " + os.path.join(path_bbr, "transformation.lta") + \
           " --no-cortex-label" + \
           " --6" + \
-          " --init-header" + \
+          bbr_var + \
           " --nocleanup" + \
           " --tmp " + path_bbr)
 
