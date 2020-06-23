@@ -126,11 +126,11 @@ mgh2nii(os.path.join(path_mri,"brainmask.nii"), path_mri, out_type="mgz")
 
 # choose initialization method
 if init_reg == "header":
-    bbr_var = "--init-header"
+    bbr_var = " --init-header"
 elif init_reg == "freesurfer":
-    bbr_var = "--init-coreg"
+    bbr_var = " --init-coreg"
 elif init_reg == "fsl":
-    bbr_var = "--init-fsl"
+    bbr_var = " --init-fsl"
 
 # run freesurfer bbr
 os.chdir(path_bbr)
