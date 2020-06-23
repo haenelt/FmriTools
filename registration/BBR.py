@@ -170,6 +170,8 @@ arr_cmap_transformed[:,:,:,2] = z_new
 
 # nibabel instance of final cmap
 t2s = nb.Nifti1Image(arr_cmap_transformed, cmap_source.affine, cmap_source.header)
+t2s.update_header()
+t2s.header_class(extensions=())
 
 # apply cmap to target
 t2s_example = apply_coordinate_mappings(input_target, 
@@ -211,6 +213,8 @@ arr_cmap_transformed[:,:,:,2] = z_new
 
 # nibabel instance of final cmap
 s2t = nb.Nifti1Image(arr_cmap_transformed, cmap_target.affine, cmap_target.header)
+s2t.update_header()
+s2t.header_class(extensions=())
 
 # apply cmap to source
 s2t_example = apply_coordinate_mappings(input_source, 
