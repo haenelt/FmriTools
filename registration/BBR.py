@@ -178,9 +178,10 @@ arr_cmap_transformed[:,:,:,1] = y_new
 arr_cmap_transformed[:,:,:,2] = z_new
 
 # nibabel instance of final cmap
-t2s = nb.Nifti1Image(arr_cmap_transformed, cmap_source.affine, cmap_source.header)
-t2s.update_header()
-t2s.header_class(extensions=())
+t2s = nb.Nifti1Image(arr_cmap_transformed, np.eye(4), nb.Nifti1Header())
+#t2s = nb.Nifti1Image(arr_cmap_transformed, cmap_source.affine, cmap_source.header)
+#t2s.update_header()
+#t2s.header_class(extensions=())
 
 # apply cmap to target
 t2s_example = apply_coordinate_mappings(input_target, 
@@ -221,9 +222,10 @@ arr_cmap_transformed[:,:,:,1] = y_new
 arr_cmap_transformed[:,:,:,2] = z_new
 
 # nibabel instance of final cmap
-s2t = nb.Nifti1Image(arr_cmap_transformed, cmap_target.affine, cmap_target.header)
-s2t.update_header()
-s2t.header_class(extensions=())
+s2t = nb.Nifti1Image(arr_cmap_transformed, np.eye(4), nb.Nifti1Header())
+#s2t = nb.Nifti1Image(arr_cmap_transformed, cmap_target.affine, cmap_target.header)
+#s2t.update_header()
+#s2t.header_class(extensions=())
 
 # apply cmap to source
 s2t_example = apply_coordinate_mappings(input_source, 
