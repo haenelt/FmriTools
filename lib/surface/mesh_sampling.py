@@ -19,7 +19,7 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 27-05-2020
+    Last modified: 23-06-2020
     """
     import sys
     import os
@@ -56,16 +56,18 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
             sh.copyfile(file_in, join(path_output, name_file+ext_file))
         
     # get profile sampling            
+    tmp = np.random.randint(0, 10, 5)
+    tmp_string = ''.join(str(i) for i in tmp)
     profile = profile_sampling(boundaries_in, 
                                join(path_output, name_file+ext_file),
                                save_data=write_profile, 
                                overwrite=write_profile,
                                output_dir=path_output,
-                               file_name="profile")
+                               file_name="profile_"+tmp_string)
         
     # rename profile sampling output
     if write_profile:
-        os.rename(join(path_output, "profile_lps-data.nii.gz"),
+        os.rename(join(path_output, "profile_"+tmp_string+"_lps-data.nii.gz"),
                   join(path_output, name_profile+".nii.gz"))
     
     # load profile
@@ -75,17 +77,19 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
         data = profile["result"]
     data.header["dim"][0] = 3        
     
-    # map single layers
+    # do mapping
+    tmp2 = np.random.randint(0, 10, 5)
+    tmp2_string = ''.join(str(i) for i in tmp2)
     if not average_layer:
         
         for i in range(len(layer)):
             data_array = data.get_fdata()[:,:,:,layer[i]]
             out = nb.Nifti1Image(data_array, data.affine, data.header)
-            nb.save(out, join(path_output,"temp.nii"))
+            nb.save(out, join(path_output,"temp_"+tmp2_string+".nii"))
             
             # do the mapping
             map2surface(surf_in, 
-                        join(path_output,"temp.nii"),
+                        join(path_output,"temp_"+tmp2_string+".nii"),
                         hemi, 
                         path_output,
                         input_white=None, 
@@ -93,7 +97,7 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
                         cleanup=True)
 
             # rename mapping file
-            os.rename(join(path_output,hemi+".temp_"+name_surf+"_def.mgh"),
+            os.rename(join(path_output,hemi+".temp_"+tmp2_string+"_"+name_surf+"_def.mgh"),
                       join(path_output,hemi+"."+name_file+"_layer"+str(layer[i])+".mgh"))
 
     else:
@@ -104,11 +108,11 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
         data_array = data.get_fdata()[:,:,:,layer[0]:layer[1]]
         data_array = np.mean(data_array, axis=3)
         out = nb.Nifti1Image(data_array, data.affine, data.header)
-        nb.save(out, join(path_output,"temp.nii"))
+        nb.save(out, join(path_output,"temp_"+tmp2_string+".nii"))
                 
         # do the mapping
         map2surface(surf_in, 
-                    join(path_output,"temp.nii"),
+                    join(path_output,"temp_"+tmp2_string+".nii"),
                     hemi, 
                     path_output,
                     input_white=None, 
@@ -116,11 +120,11 @@ def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.
                     cleanup=True)
 
         # rename mapping file
-        os.rename(join(path_output,hemi+".temp_"+name_surf+"_def.mgh"),
+        os.rename(join(path_output,hemi+".temp_"+tmp2_string+"_"+name_surf+"_def.mgh"),
                   join(path_output,hemi+"."+name_file+"_avg_layer"+str(layer[0])+"_"+str(layer[1])+".mgh"))
         
     # clean temp
-    os.remove(join(path_output,"temp.nii"))
+    os.remove(join(path_output,"temp_"+tmp2_string+".nii"))
     
     # clean file
     if not write_upsampled:

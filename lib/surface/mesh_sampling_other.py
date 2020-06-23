@@ -26,10 +26,11 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     
     created by Daniel Haenelt
     Date created: 13-01-2020
-    Last modified: 20-06-2020
+    Last modified: 23-06-2020
     """
     import os
     import shutil as sh
+    import numpy as np
     import nibabel as nb
     from nighres.registration import apply_coordinate_mappings
     from lib.io.get_filename import get_filename
@@ -40,7 +41,10 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     """
     set folder structure
     """
-    path_temp = os.path.join(path_output,"temp")
+    tmp = np.random.randint(0, 10, 5)
+    tmp_string = ''.join(str(i) for i in tmp)
+    
+    path_temp = os.path.join(path_output,"temp_"+tmp_string)
     path_cmap = os.path.join(path_temp,"cmap")
     path_data = os.path.join(path_temp,"data")
     path_surf = os.path.join(path_temp,"surf")
