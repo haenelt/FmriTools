@@ -26,6 +26,7 @@ from nipype.interfaces.ants import N4BiasFieldCorrection
 from lib.io.get_filename import get_filename
 from lib.io.mgh2nii import mgh2nii
 from lib.io.read_vox2vox import read_vox2vox
+from lib.io.copy_header import copy_header
 from lib.registration.clean_ana import clean_ana
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
@@ -178,9 +179,13 @@ arr_cmap_transformed[:,:,:,1] = y_new
 arr_cmap_transformed[:,:,:,2] = z_new
 
 # nibabel instance of final cmap
-t2s = nb.Nifti1Image(arr_cmap_transformed, cmap_source.affine, cmap_source.header)
-t2s.update_header()
-t2s.header_class(extensions=())
+t2s_header = copy_header(input_source)
+t2s_header["dim"][0] = 4
+t2s_header["dim"][4] = 3
+t2s_header["pixdim"][0] = 1
+t2s_header["pixdim"][4] = 1
+t2s_affine = nb.load(input_source).affine
+t2s = nb.Nifti1Image(arr_cmap_transformed, t2s_affine, t2s_header)
 
 # apply cmap to target
 t2s_example = apply_coordinate_mappings(input_target, 
@@ -221,9 +226,13 @@ arr_cmap_transformed[:,:,:,1] = y_new
 arr_cmap_transformed[:,:,:,2] = z_new
 
 # nibabel instance of final cmap
-s2t = nb.Nifti1Image(arr_cmap_transformed, cmap_target.affine, cmap_target.header)
-s2t.update_header()
-s2t.header_class(extensions=())
+s2t_header = copy_header(input_target)
+s2t_header["dim"][0] = 4
+s2t_header["dim"][4] = 3
+s2t_header["pixdim"][0] = 1
+s2t_header["pixdim"][4] = 1
+s2t_affine = nb.load(input_target).affine
+s2t = nb.Nifti1Image(arr_cmap_transformed, s2t_affine, s2t_header)
 
 # apply cmap to source
 s2t_example = apply_coordinate_mappings(input_source, 
