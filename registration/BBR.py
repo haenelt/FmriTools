@@ -43,7 +43,7 @@ input_mask = "/data/pt_01880/Experiment1_ODC/p1/anatomy/skull/skullstrip_mask.ni
 input_target = "/data/pt_01880/Experiment1_ODC/p1/resting_state/mean_udata.nii"
 input_source = "/data/pt_01880/Experiment1_ODC/p1/retinotopy/diagnosis/mean_uadata.nii"
 path_output = "/data/pt_01880/thisisthefinaltest2"
-init_reg = "freesurfer" # header, freesurfer, fsl
+init_reg = "header" # header, freesurfer, fsl
 cleanup = False
 
 # parameters for orig skullstrip
