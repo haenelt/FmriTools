@@ -19,7 +19,7 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer, r=[
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 23-06-2020
+    Last modified: 24-06-2020
     """
     import sys
     import os
