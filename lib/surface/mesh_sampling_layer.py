@@ -1,6 +1,6 @@
-def mesh_sampling(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.4,0.4], 
-                  interpolation="Cu", average_layer=False, write_profile=True, 
-                  write_upsampled=True):
+def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer, r=[0.4,0.4,0.4], 
+                        interpolation="Cu", average_layer=False, write_profile=True, 
+                        write_upsampled=True):
     """
     This function samples data from an image volume to a surface mesh from specific layers defined 
     by a levelset image. If average_layer is true, the parameter layer should contain only two 

@@ -1,7 +1,7 @@
-def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, boundaries_in, 
-                        path_output, layer, smooth_iter=0, r=[0.4,0.4,0.4], interpolation="Cu", 
-                        average_layer=False, write_profile=False, write_upsampled=True, 
-                        cleanup=True):
+def mesh_sampling_layer_other(surf_in, file_in, target2source_in, source2target_in, boundaries_in,
+                              path_output, layer, smooth_iter=0, r=[0.4,0.4,0.4], 
+                              interpolation="Cu", average_layer=False, write_profile=False, 
+                              write_upsampled=True, cleanup=True):
     """
     This function samples data from an image volume to a surface mesh which is located in a 
     different space. Boundaries and surface mesh are first transformed to the space of the image 
@@ -18,7 +18,7 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
         *layer: which layers to sample (array of integers).
         *smooth_iter: number of smoothing iterations after mesh deformation.
         *r: destination voxel size after upsampling (performed if not None).
-        *interpolation: interpolation method for upsampling of file from whic data is sampled.
+        *interpolation: interpolation method for upsampling of file from which data is sampled.
         *average_layer: average across cortex.
         *write_profile: write sampled profile.
         *write_upsampled: write upsampled file.
@@ -26,7 +26,7 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     
     created by Daniel Haenelt
     Date created: 13-01-2020
-    Last modified: 23-06-2020
+    Last modified: 24-06-2020
     """
     import os
     import shutil as sh
@@ -36,7 +36,7 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     from lib.io.get_filename import get_filename
     from lib.utils.upsample_volume import upsample_volume
     from lib.surface.deform_surface import deform_surface
-    from lib.surface.mesh_sampling import mesh_sampling
+    from lib.surface.mesh_sampling_layer import mesh_sampling_layer
        
     """
     set folder structure
@@ -151,15 +151,15 @@ def mesh_sampling_other(surf_in, file_in, target2source_in, source2target_in, bo
     else:
         surf_in = os.path.join(path_surf, hemi+name_surf+"_def")
     
-    mesh_sampling(surf_in = surf_in, 
-                  file_in = data_upsampled, 
-                  boundaries_in = os.path.join(path_data, "boundaries_def-img.nii.gz"), 
-                  path_output = path_output, 
-                  layer = layer,
-                  r = None, 
-                  average_layer = average_layer, 
-                  write_profile = write_profile,
-                  write_upsampled = write_upsampled)
+    mesh_sampling_layer(surf_in = surf_in, 
+                        file_in = data_upsampled, 
+                        boundaries_in = os.path.join(path_data, "boundaries_def-img.nii.gz"), 
+                        path_output = path_output, 
+                        layer = layer,
+                        r = None, 
+                        average_layer = average_layer, 
+                        write_profile = write_profile,
+                        write_upsampled = write_upsampled)
     
     # delete intermediate files
     if cleanup:

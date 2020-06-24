@@ -10,6 +10,6 @@ from .get_curvature import get_curvature
 from .get_thickness import get_thickness
 from .vox2ras import vox2ras
 from .make_mesh import make_mesh
-from .mesh_sampling import mesh_sampling
-from .mesh_sampling_other import mesh_sampling_other
+from .mesh_sampling_layer import mesh_sampling_layer
+from .mesh_sampling_layer_other import mesh_sampling_layer_other
 from .heat_kernel_smoothing import heat_kernel_smoothing
