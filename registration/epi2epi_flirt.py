@@ -18,7 +18,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 13-01-2020
-Last modified: 25-05-2020
+Last modified: 25-06-2020
 """
 import os
 import shutil as sh
@@ -116,8 +116,8 @@ flirt = FLIRT()
 flirt.inputs.cost_func = "corratio"
 flirt.inputs.dof = 6
 flirt.inputs.interp = "trilinear" # trilinear, nearestneighbour, sinc or spline
-flirt.inputs.in_file = os.path.join(path_epi_target,"bepi.nii")
-flirt.inputs.reference = os.path.join(path_epi_source,"bepi.nii")
+flirt.inputs.in_file = os.path.join(path_epi_target,"pbepi.nii")
+flirt.inputs.reference = os.path.join(path_epi_source,"pbepi.nii")
 flirt.inputs.output_type = "NIFTI"
 flirt.inputs.out_file = os.path.join(path_flirt, "flirt.nii")
 flirt.inputs.out_matrix_file = os.path.join(path_flirt,"flirt_matrix.mat")
@@ -191,7 +191,7 @@ if expand_cmap:
 """
 apply deformation
 """
-# orig -> epi
+# source -> target
 apply_coordinate_mappings(file_mean_epi_source, # input 
                           os.path.join(path_output,"source2target.nii.gz"), # cmap
                           interpolation = "linear", # nearest or linear
@@ -202,7 +202,7 @@ apply_coordinate_mappings(file_mean_epi_source, # input
                           file_name = "source2target_example" # base name with file extension for output
                           )
 
-# epi -> orig
+# target -> source
 apply_coordinate_mappings(file_mean_epi_target, # input 
                           os.path.join(path_output,"target2source.nii.gz"), # cmap
                           interpolation = "linear", # nearest or linear
