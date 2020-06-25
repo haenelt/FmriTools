@@ -17,12 +17,13 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 19-08-2019
-Last modified: 24-05-2020
+Last modified: 25-05-2020
 """
 import os
 import shutil as sh
 from nipype.interfaces.ants import N4BiasFieldCorrection
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
+from lib.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
@@ -33,6 +34,7 @@ file_mean_epi_target = "/data/pt_01880/Experiment2_Rivalry/p3/odc/GE_EPI1/diagno
 file_t1 = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 file_mask = "/data/pt_01880/Experiment2_Rivalry/p3/anatomy/freesurfer/mri/brain.finalsurfs.manedit.mgz" # skullstrip_mask
 path_output = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/localiser"
+expand_cmap = True
 cleanup = True
 
 # parameters for epi skullstrip
@@ -142,6 +144,20 @@ os.rename(os.path.join(path_syn,"syn_ants-map.nii.gz"),
           os.path.join(path_output,"target2source.nii.gz"))
 os.rename(os.path.join(path_syn,"syn_ants-invmap.nii.gz"),
           os.path.join(path_output,"source2target.nii.gz"))
+
+"""
+expand deformation
+"""
+if expand_cmap:
+    _ = expand_coordinate_mapping(os.path.join(path_output, "source2target.nii.gz"),
+                                  path_output, 
+                                  name_output="source2target", 
+                                  write_output=True)
+    
+    _ = expand_coordinate_mapping(os.path.join(path_output, "target2source.nii.gz"),
+                                  path_output, 
+                                  name_output="target2source", 
+                                  write_output=True)
 
 """
 apply deformation

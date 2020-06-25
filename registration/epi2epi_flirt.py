@@ -18,7 +18,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 13-01-2020
-Last modified: 24-05-2020
+Last modified: 25-05-2020
 """
 import os
 import shutil as sh
@@ -27,10 +27,11 @@ from nipype.interfaces.fsl import FLIRT
 from nipype.interfaces.fsl import ConvertXFM
 from nipype.interfaces.fsl.preprocess import ApplyXFM
 from nighres.registration import apply_coordinate_mappings
+from lib.cmap.generate_coordinate_mapping import generate_coordinate_mapping
+from lib.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 from lib.registration.mask_ana import mask_ana
 from lib.registration.mask_epi import mask_epi
 from lib.registration.clean_ana import clean_ana
-from lib.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 
 # input data
 file_mean_epi_source = "/data/pt_01880/Experiment1_ODC/p3/odc/SE_EPI1/diagnosis/mean_data.nii"
@@ -38,6 +39,7 @@ file_mean_epi_target = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/
 file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
 file_mask = "/data/pt_01880/Experiment1_ODC/p3/anatomy/skull/skullstrip_mask.nii" # skullstrip_mask
 path_output = "/data/pt_01880/odc_temp/deformation/test"
+expand_cmap = True
 cleanup = False
 
 # parameters for epi skullstrip
@@ -171,6 +173,20 @@ applyxfm.inputs.output_type = "NIFTI_GZ"
 applyxfm.inputs.out_file = os.path.join(path_output, "source2target.nii.gz")
 applyxfm.inputs.apply_xfm = True
 applyxfm.run() 
+
+"""
+expand deformation
+"""
+if expand_cmap:
+    _ = expand_coordinate_mapping(os.path.join(path_output, "source2target.nii.gz"),
+                                  path_output, 
+                                  name_output="source2target", 
+                                  write_output=True)
+    
+    _ = expand_coordinate_mapping(os.path.join(path_output, "target2source.nii.gz"),
+                                  path_output, 
+                                  name_output="target2source", 
+                                  write_output=True)
 
 """
 apply deformation
