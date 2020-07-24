@@ -38,7 +38,7 @@ fwhm_noise = 0.01 # measurement noise in a.u.
 ~~~
 
 ### White noise input image
-Let $(g_{m,n}$) be a $N_x^{sim}\times N_y^{sim}$ sized Gaussian white noise array of independent samples $\mathcal{N}(0,1)$ representing a cortical patch with field of view $FOV_x\times FOV_y$. We compute the discrete Fourier transform $(G_{p,q})$.
+Let ($`g_{m,n}`$) be a $N_x^{sim}\times N_y^{sim}$ sized Gaussian white noise array of independent samples $\mathcal{N}(0,1)$ representing a cortical patch with field of view $FOV_x\times FOV_y$. We compute the discrete Fourier transform $(G_{p,q})$.
 
 $$G_{p,q}=\mathcal{F}\left[g_{m,n}\right]$$
 
