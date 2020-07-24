@@ -10,10 +10,10 @@ def average_layer(img_input, path_output, basename_output, mode="mean"):
     
     created by Daniel Haenelt
     Date created: 25-10-2019
-    Last modified: 31-03-2020
+    Last modified: 24-07-2020
     """
-    import sys
     import os
+    import sys
     import numpy as np
     import nibabel as nb
     

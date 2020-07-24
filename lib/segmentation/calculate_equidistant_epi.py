@@ -18,10 +18,10 @@ def calculate_equidistant_epi(input_white, input_pial, input_vol, path_output, n
     
     created by Daniel Haenelt
     Date created: 31-05-2020
-    Last modified: 31-05-2020
+    Last modified: 24-07-2020
     """
-    import sys
     import os
+    import sys
     import numpy as np
     import nibabel as nb
     from nibabel.affines import apply_affine

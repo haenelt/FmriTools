@@ -19,11 +19,11 @@ def analyze_alff_between_stripes(input_label, input_contrast, input_rest, min_co
 
     created by Daniel Haenelt
     Date created: 11-03-2019
-    Last modified: 12-03-2019
+    Last modified: 24-07-2020
     """
+    import random
     import numpy as np
     import nibabel as nb
-    import random
     from nibabel.freesurfer.io import read_label
     from scipy.stats import ttest_ind, levene
 

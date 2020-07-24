@@ -15,10 +15,10 @@ def calculate_equivolumetric_epi2(input_white, input_pial, input_vol, path_outpu
     
     created by Daniel Haenelt
     Date created: 17-12-2019
-    Last modified: 28-05-2020
+    Last modified: 24-07-2020
     """
-    import sys
     import os
+    import sys
     import numpy as np
     import nibabel as nb
     from nibabel.affines import apply_affine

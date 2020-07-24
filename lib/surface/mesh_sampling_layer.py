@@ -19,10 +19,10 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer, r=[
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 24-06-2020
+    Last modified: 24-07-2020
     """
-    import sys
     import os
+    import sys
     import shutil as sh
     import numpy as np
     import nibabel as nb

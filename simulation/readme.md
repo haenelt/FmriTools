@@ -42,6 +42,8 @@ Let $(g_{m,n}$) be a $N_x^{sim}\times N_y^{sim}$ sized Gaussian white noise arra
 
 $$G_{p,q}=\mathcal{F}\left[g_{m,n}\right]$$
 
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+
 ### Band-pass filtering
 The anisotropic band-pass filter $\tilde{F}_{p,q}^{ODC}$ is defined as the product of its radial and angular components in spatial frequency space $\boldsymbol k(p,q) = (k_r(p,q),k_{\phi}(p,q))$ which is given in cycles/mm.
 
@@ -96,7 +98,7 @@ $$y_{m,n}=b_{m,n}+\tilde{y}_{m,n}$$
 $b_{m,n}$ is drawn from a normal distribution $\mathcal N(\mu_{noise}>0,\sigma_{noise}^2)$ with a standard deviation corresponding to a specific noise level (see Chaimow et al., 2018b) corresponding to $\sigma_{noise}=fwhm_{noise}/2\sqrt{2\log2}$.
 
 ### Voxel sampling
-MRI sampling is simulated by $k$-space truncation. I.e., there is neither a defined sampling step size nor consideration of relaxation parameters (cf. Chaimow et al., 2016). The truncation is performed by only considering inner $k$-space lines in $N_x^{MRI}\times N_y^{MRI}$ of the signal to be sampled $Y_{p,q}$. 
+MRI sampling is simulated by $k$-space truncation. I.e., there is neither a defined sampling step size nor consideration of relaxation parameters (cf. Chaimow et al., 2016). The truncation is performed by only considering inner $k$-space lines in $N_x^{MRI}\times N_y^{MRI}$ of the signal to be sampled $Y_{p,q}$.
 
 $$y_{m,n}^{MRI}=\mathcal{F}^{-1}\left[Y_{p,q}\right]\quad\text{with}\quad (p,q)\in[0,N_x^{MRI}]\times[0,N_y^{MRI}]$$
 

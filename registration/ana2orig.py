@@ -10,14 +10,14 @@ FREESURFER in the terminal.
 
 created by Daniel Haenelt
 Date created: 06-01-2020
-Last modified: 24-05-2020
+Last modified: 24-07-2020
 """
 import os
 import shutil as sh
+from nighres.registration import apply_coordinate_mappings
 from lib.io.get_filename import get_filename
 from lib.io.mgh2nii import mgh2nii
 from lib.registration.get_scanner_transform import get_scanner_transform
-from nighres.registration import apply_coordinate_mappings
 
 # input data
 file_t1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45_gnlcorr.nii"

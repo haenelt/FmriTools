@@ -18,14 +18,14 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, niter_smo
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 18-05-2020
+    Last modified: 24-07-2020
     """
     import os
     import numpy as np
     import nibabel as nb
     from nibabel.affines import apply_affine
-    from nighres.surface import levelset_to_mesh
     from nibabel.freesurfer.io import write_geometry
+    from nighres.surface import levelset_to_mesh
     from cortex.polyutils import Surface
     from lib.surface.vox2ras import vox2ras
     from lib.surface.smooth_surface import smooth_surface

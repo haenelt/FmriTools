@@ -22,10 +22,10 @@ def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000
         
     created by Daniel Haenelt
     Date created: 14-04-2019
-    Last modified: 22-05-2019
+    Last modified: 24-07-2020
     """
-    import numpy as np
     import copy
+    import numpy as np
     from scipy.signal import find_peaks
     from lib.utils import get_acorr
 

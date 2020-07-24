@@ -11,17 +11,17 @@ def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 18-12-2019
+    Last modified: 24-07-2020
     """
     import os
     import shutil as sh
     import numpy as np
     import nibabel as nb
+    from nibabel.affines import apply_affine
+    from nighres.laminar import profile_sampling
     from lib.cmap.generate_coordinate_mapping import generate_coordinate_mapping
     from lib.utils.upsample_volume import upsample_volume
     from lib.surface.vox2ras import vox2ras
-    from nibabel.affines import apply_affine
-    from nighres.laminar import profile_sampling
        
     # make output folder
     if not os.path.exists(path_output):

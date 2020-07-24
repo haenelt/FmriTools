@@ -8,11 +8,11 @@ def mgh2nii(filename, path_output, out_type="nii"):
     
     created by Daniel Haenelt
     Date created: 06-01-2020             
-    Last modified: 29-05-2020
+    Last modified: 24-07-2020
     """        
     import os
-    from lib.io.get_filename import get_filename
     from nipype.interfaces.freesurfer.preprocess import MRIConvert
+    from lib.io.get_filename import get_filename
 
     # get filename
     path, name, ext = get_filename(filename)

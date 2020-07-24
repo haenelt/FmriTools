@@ -15,10 +15,10 @@ the terminal.
 
 created by Daniel Haenelt
 Date created: 16-09-2019             
-Last modified: 17-03-2020  
+Last modified: 24-07-2020  
 """
-import sys
 import os
+import sys
 import datetime
 import numpy as np
 import nibabel as nb

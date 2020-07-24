@@ -9,10 +9,10 @@ def get_curvature(file_in, path_output, a=10):
         
     created by Daniel Haenelt
     Date created: 13-07-2019
-    Last modified: 29-01-2020
+    Last modified: 24-07-2020
     """
-    import sys
     import os
+    import sys
     from nipype.interfaces.freesurfer import Curvature
     
     # get hemi from filename

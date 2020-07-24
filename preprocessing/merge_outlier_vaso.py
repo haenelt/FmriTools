@@ -6,10 +6,10 @@ single contrasts separtely. Here, outlier lists are merged together.
 
 created by Daniel Haenelt
 Date created: 27-09-2019             
-Last modified: 06-10-2019  
+Last modified: 24-07-2020  
 """
-import sys
 import os
+import sys
 import numpy as np
 
 input_outlier_vaso = [
