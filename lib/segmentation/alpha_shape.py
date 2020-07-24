@@ -18,13 +18,13 @@ def alpha_shape(points, alpha):
         
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 17-12-2018
+    Last modified: 24-07-2020
     """
-    from shapely.ops import cascaded_union, polygonize
+    import math
+    import numpy as np
     import shapely.geometry as geometry
     from scipy.spatial import Delaunay
-    import numpy as np
-    import math
+    from shapely.ops import cascaded_union, polygonize
     
     # when you have one triangle, there is no sense in computing an alpha shape
     if len(points) < 4:
