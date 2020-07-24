@@ -44,7 +44,7 @@ $$G_{p,q}=\mathcal{F}\left[g_{m,n}\right]$$
 
 <img src="https://latex.codecogs.com/svg.latex?\Large&space;G_{p,q}=\mathcal{F}\left[g_{m,n}\right]" title="\Large G_{p,q}=\mathcal{F}\left[g_{m,n}\right]" />
 
-<img src="https://latex.codecogs.com/svg.latex?\Large&space;G=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;G_{p,q}=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
 
 
 h<sub>&theta;</sub>(x) = &theta;<sub>o</sub> x + &theta;<sub>1</sub>x
