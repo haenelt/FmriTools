@@ -42,7 +42,7 @@ Let $(g_{m,n}$) be a $N_x^{sim}\times N_y^{sim}$ sized Gaussian white noise arra
 
 $$G_{p,q}=\mathcal{F}\left[g_{m,n}\right]$$
 
-<img src="https://latex.codecogs.com/svg.latex?\Large&space;G_{p,q}=a+b" />
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;G_{p,q}=\mathcal{F}\left[g_{m,n}\right]" />
 
 
 h<sub>&theta;</sub>(x) = &theta;<sub>o</sub> x + &theta;<sub>1</sub>x
