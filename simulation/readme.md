@@ -38,14 +38,9 @@ fwhm_noise = 0.01 # measurement noise in a.u.
 ~~~
 
 ### White noise input image
-Let ($`g_{m,n}`$) be a $N_x^{sim}\times N_y^{sim}$ sized Gaussian white noise array of independent samples $\mathcal{N}(0,1)$ representing a cortical patch with field of view $FOV_x\times FOV_y$. We compute the discrete Fourier transform $(G_{p,q})$.
+Let ($g_{m,n}$) be a $N_x^{sim}\times N_y^{sim}$ sized Gaussian white noise array of independent samples $\mathcal{N}(0,1)$ representing a cortical patch with field of view $FOV_x\times FOV_y$. We compute the discrete Fourier transform $(G_{p,q})$.
 
 $$G_{p,q}=\mathcal{F}\left[g_{m,n}\right]$$
-
-<img src="https://latex.codecogs.com/svg.latex?\Large&space;G_{p,q}=F\left[g_{m,n}\right]" />
-
-
-h<sub>&theta;</sub>(x) = &theta;<sub>o</sub> x + &theta;<sub>1</sub>x
 
 ### Band-pass filtering
 The anisotropic band-pass filter $\tilde{F}_{p,q}^{ODC}$ is defined as the product of its radial and angular components in spatial frequency space $\boldsymbol k(p,q) = (k_r(p,q),k_{\phi}(p,q))$ which is given in cycles/mm.
