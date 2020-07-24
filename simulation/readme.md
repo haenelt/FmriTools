@@ -42,7 +42,7 @@ Let $(g_{m,n}$) be a $N_x^{sim}\times N_y^{sim}$ sized Gaussian white noise arra
 
 $$G_{p,q}=\mathcal{F}\left[g_{m,n}\right]$$
 
-<img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;G_{p,q}=\mathcal{F}\left[g_{m,n}\right]" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
 
 ### Band-pass filtering
 The anisotropic band-pass filter $\tilde{F}_{p,q}^{ODC}$ is defined as the product of its radial and angular components in spatial frequency space $\boldsymbol k(p,q) = (k_r(p,q),k_{\phi}(p,q))$ which is given in cycles/mm.
