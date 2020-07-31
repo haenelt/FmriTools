@@ -49,6 +49,6 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", name
     
     # write output
     if write_output:
-        write_morph_data("/home/daniel/Schreibtisch/test", theta)
+        write_morph_data(os.path.join(path_output, hemi+"."+name_output), theta)
 
     return theta
