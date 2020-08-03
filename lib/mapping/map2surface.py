@@ -14,7 +14,7 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, inpu
             
     created by Daniel Haenelt
     Date created: 06-02-2019      
-    Last modified: 13-01-2020
+    Last modified: 03-08-2020
     """
     import os
     import numpy as np
@@ -34,7 +34,7 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, inpu
 
     # make output folder
     if not os.path.exists(path_output):
-        os.mkdir(path_output)
+        os.makedirs(path_output)
 
     # mimic freesurfer folder structure (with some additional folder for intermediate files)
     path_sub = os.path.join(path_output,sub)
