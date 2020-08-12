@@ -17,7 +17,7 @@
 %
 % created by Daniel Haenelt
 % Date created: 05-08-2019         
-% Last modified: 25-09-2019  
+% Last modified: 12-08-2020  
 
 % input of condition files
 input = {
@@ -34,6 +34,9 @@ for i = 1:length(input)
 
     % get filename
     [pathfile,name,ext] = fileparts(input{i});
+    
+    % go one folder up
+    pathfile = fullfile(pathfile, '..');
     
     % load mat file
     data = load(input{i});
