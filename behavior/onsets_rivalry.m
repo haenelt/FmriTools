@@ -35,9 +35,13 @@ for i = 1:length(input)
     % get filename
     [pathfile,name,ext] = fileparts(input{i});
     
-    % go one folder up
-    pathfile = fullfile(pathfile, '..');
-    
+    % get output path
+    pathfile = fileparts(pathfile);
+    pathfile = fullfile(pathfile, 'switches');
+    if ~exist(pathfile,'dir') 
+        mkdir(pathfile); 
+    end
+        
     % load mat file
     data = load(input{i});
     
