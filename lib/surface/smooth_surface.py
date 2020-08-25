@@ -11,9 +11,17 @@ def smooth_surface(file_in, file_out, n_iter):
     Last modified: 25-08-2020
     """
     import os
-         
-    # smooth surface   
-    os.system("mris_smooth" + \
-              " -n "+str(n_iter) + \
-              " " + file_in + \
-              " " + file_out)
+    import sys
+    import subprocess
+    from lib.io.get_filename import get_filename
+       
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # smooth surface
+    try:
+        subprocess.run(['mris_smooth', '-n', str(n_iter), '-nw', file_in, file_out], check = True)
+    except subprocess.CalledProcessError:
+        sys.exit("Surface smoothing failed!")
