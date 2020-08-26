@@ -14,3 +14,4 @@ from .mesh_sampling import mesh_sampling
 from .mesh_sampling_layer import mesh_sampling_layer
 from .mesh_sampling_layer_other import mesh_sampling_layer_other
 from .heat_kernel_smoothing import heat_kernel_smoothing
+from .make_sphere import make_sphere

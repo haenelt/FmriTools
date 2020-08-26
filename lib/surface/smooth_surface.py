@@ -22,6 +22,10 @@ def smooth_surface(file_in, file_out, n_iter):
 
     # smooth surface
     try:
-        subprocess.run(['mris_smooth', '-n', str(n_iter), '-nw', file_in, file_out], check = True)
+        subprocess.run(['mris_smooth', 
+                        '-n', str(n_iter), 
+                        '-nw', 
+                        file_in, 
+                        file_out], check = True)
     except subprocess.CalledProcessError:
         sys.exit("Surface smoothing failed!")

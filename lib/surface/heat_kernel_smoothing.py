@@ -22,7 +22,7 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
     http://www.stat.wisc.edu/%7Emchung/papers/sinica.2008.pdf
     
     Inputs:
-        *vtx: vertex points or surface mesh.
+        *vtx: vertex points of surface mesh.
         *fac: faces of surface mesh.
         *data: array of vertex-wise sampled data points.
         *adjm: adjacency matrix.
