@@ -19,7 +19,7 @@ function multipol_phase(input_real, input_imag, freq, pathSPM, name_sess, path_o
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019
-% Last modified: 12-07-2019
+% Last modified: 01-09-2020
 
 % add spm to path
 addpath(pathSPM);
@@ -31,11 +31,42 @@ freq = floor(freq);
 freq_ignored = [];
 %freq_ignored = [0:1 freq-1 freq freq+1];
 
-% define output path
+% define output paths
 [~, name_run, ~] = fileparts(fileparts(input_real));
-path_output = fullfile(path_output,'results','native');
-if ~exist(path_output,'dir') 
-    mkdir(path_output); 
+path_a = fullfile(path_output,'results','a','native');
+path_c = fullfile(path_output,'results','c','native');
+path_f = fullfile(path_output,'results','f','native');
+path_imag = fullfile(path_output,'results','imag','native');
+path_real = fullfile(path_output,'results','real','native');
+path_phase = fullfile(path_output,'results','phase','native');
+path_snr = fullfile(path_output,'results','snr','native');
+
+if ~exist(path_a,'dir') 
+    mkdir(path_a); 
+end
+
+if ~exist(path_c,'dir') 
+    mkdir(path_c); 
+end
+
+if ~exist(path_f,'dir') 
+    mkdir(path_f); 
+end
+
+if ~exist(path_imag,'dir') 
+    mkdir(path_imag); 
+end
+
+if ~exist(path_real,'dir') 
+    mkdir(path_real); 
+end
+
+if ~exist(path_phase,'dir') 
+    mkdir(path_phase); 
+end
+
+if ~exist(path_snr,'dir') 
+    mkdir(path_snr); 
 end
 
 % load input
@@ -83,45 +114,45 @@ coherence_array(isnan(coherence_array)) = 0;
 nhdr = data_img(1);
 
 if isempty(name_sess)
-    nhdr.fname = fullfile(path_output,['real_' name_run '.nii']);
+    nhdr.fname = fullfile(path_real,['real_' name_run '.nii']);
     spm_write_vol(nhdr,data_real_freq_array);
 
-    nhdr.fname = fullfile(path_output,['imag_' name_run '.nii']);
+    nhdr.fname = fullfile(path_imag,['imag_' name_run '.nii']);
     spm_write_vol(nhdr,data_imag_freq_array);
 
-    nhdr.fname = fullfile(path_output,['phase_' name_run '.nii']);
+    nhdr.fname = fullfile(path_phase,['phase_' name_run '.nii']);
     spm_write_vol(nhdr,pha_array);
 
-    nhdr.fname = fullfile(path_output,['a_' name_run '.nii']);
+    nhdr.fname = fullfile(path_a,['a_' name_run '.nii']);
     spm_write_vol(nhdr,A_array);
 
-    nhdr.fname = fullfile(path_output,['f_' name_run '.nii']);
+    nhdr.fname = fullfile(path_f,['f_' name_run '.nii']);
     spm_write_vol(nhdr,F_array);
 
-    nhdr.fname = fullfile(path_output,['snr_' name_run '.nii']);
+    nhdr.fname = fullfile(path_snr,['snr_' name_run '.nii']);
     spm_write_vol(nhdr,snr_array);
 
-    nhdr.fname = fullfile(path_output,['c_' name_run '.nii']);
+    nhdr.fname = fullfile(path_c,['c_' name_run '.nii']);
     spm_write_vol(nhdr,coherence_array);
 else
-    nhdr.fname = fullfile(path_output,['real_' name_sess '_' name_run '.nii']);
+    nhdr.fname = fullfile(path_real,['real_' name_sess '_' name_run '.nii']);
     spm_write_vol(nhdr,data_real_freq_array);
 
-    nhdr.fname = fullfile(path_output,['imag_' name_sess '_' name_run '.nii']);
+    nhdr.fname = fullfile(path_imag,['imag_' name_sess '_' name_run '.nii']);
     spm_write_vol(nhdr,data_imag_freq_array);
 
-    nhdr.fname = fullfile(path_output,['phase_' name_sess '_' name_run '.nii']);
+    nhdr.fname = fullfile(path_phase,['phase_' name_sess '_' name_run '.nii']);
     spm_write_vol(nhdr,pha_array);
 
-    nhdr.fname = fullfile(path_output,['a_' name_sess '_' name_run '.nii']);
+    nhdr.fname = fullfile(path_a,['a_' name_sess '_' name_run '.nii']);
     spm_write_vol(nhdr,A_array);
 
-    nhdr.fname = fullfile(path_output,['f_' name_sess '_' name_run '.nii']);
+    nhdr.fname = fullfile(path_f,['f_' name_sess '_' name_run '.nii']);
     spm_write_vol(nhdr,F_array);
 
-    nhdr.fname = fullfile(path_output,['snr_' name_sess '_' name_run '.nii']);
+    nhdr.fname = fullfile(path_snr,['snr_' name_sess '_' name_run '.nii']);
     spm_write_vol(nhdr,snr_array);
 
-    nhdr.fname = fullfile(path_output,['c_' name_sess '_' name_run '.nii']);
+    nhdr.fname = fullfile(path_c,['c_' name_sess '_' name_run '.nii']);
     spm_write_vol(nhdr,coherence_array);
 end
