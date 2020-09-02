@@ -6,11 +6,12 @@
 % frequency in Fourier domain. If a baseline correction was already done
 % (i.e. if a file with prefix b exists), no baseline correction is
 % performed. If the number of cycles <freq> is not an integer, the first
-% cycle fraction is discarded from analysis.
+% cycle fraction is discarded from analysis. Cleanup will delete all
+% generated time series at the end.
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019
-% Last modified: 12-07-2019
+% Last modified: 02-09-2020
 
 % input data
 input.data = {
@@ -31,6 +32,7 @@ input.cutoff = 144; % cutoff frequency 1/cutoff in Hz
 % output specification
 name_sess = 'SE_EPI2';
 path_output = '/data/pt_01880/Experiment4_PSF/p6/psf';
+cleanup = true;
 
 % add spm and lib to path
 pathSPM = '/data/pt_01880/source/spm12'; 
@@ -74,5 +76,11 @@ for i = 1:length(input.data)
         pathSPM,...
         name_sess,...
         path_output);
+    
+    if cleanup
+        delete(fullfile(path,['b' file ext]));
+        delete(fullfile(path,['rb' file '_real' ext]));
+        delete(fullfile(path,['rb' file '_imag' ext]));
+    end
     
 end
