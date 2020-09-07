@@ -1,4 +1,4 @@
-def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
+def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     """
     This function masks a mean epi image based on a skullstrip mask of the corresponding anatomy.
     The mask is transformed to native epi space via scanner transformation and rigid registration
@@ -6,12 +6,12 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     the mask is dilated and a Gaussian filter is applied. The masked epi is saved in the same 
     folder with the prefix p.
     Inputs:
-        *epi: input mean epi image.
-        *t1: input of corresponding skullstripped anatomy.
-        *mask: input of skullstrip mask of the corresponding anatomy.
+        *file_epi: input mean epi image.
+        *file_t1: input of corresponding skullstripped anatomy.
+        *file_mask: input of skullstrip mask of the corresponding anatomy.
         *niter: number of dilation iterations.
         *sigma: gaussian smoothing kernel.
-        *reg_file: filename of ana -> epi coordinate mapping.
+        *file_reg: filename of ana -> epi coordinate mapping.
         
     created by Daniel Haenelt
     Date created: 13-02-2019
@@ -21,7 +21,6 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     import numpy as np
     import nibabel as nb
     import shutil as sh
-    from sh import gunzip
     from nipype.interfaces.fsl import FLIRT
     from nipype.interfaces.fsl.preprocess import ApplyXFM
     from scipy.ndimage import binary_fill_holes, gaussian_filter
@@ -33,37 +32,46 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     from lib.registration.get_scanner_transform import get_scanner_transform
 
     # get paths and filenames
-    path_t1, name_t1, _ = get_filename(t1)
-    path_epi, name_epi, _ = get_filename(epi)
-    _, name_mask, _ = get_filename(mask)
+    path_t1, name_t1, _ = get_filename(file_t1)
+    path_epi, name_epi, _ = get_filename(file_epi)
+
+    if file_reg:
+        _, _, ext_reg = get_filename(file_reg)
+    else:
+        ext_reg = '.nii.gz'
+
+    # filenames
+    file_cmap = os.path.join(path_t1, "cmap.nii")
+    file_cmap_reg = os.path.join(path_t1, "cmap_reg"+ext_reg)
+    file_cmap_flirt = os.path.join(path_t1, "cmap_flirt.nii.gz")
+    file_cmap_def = os.path.join(path_t1, "cmap_def.nii.gz")
+    file_ana_reg = os.path.join(path_t1, "ana_reg.nii.gz")
+    file_ana_flirt = os.path.join(path_t1, "ana_flirt.nii.gz")
+    file_ana_def = os.path.join(path_t1, "ana_def.nii.gz")
+    file_mask_def = os.path.join(path_t1, "mask_def.nii.gz")
+    file_mask_def2 = os.path.join(path_t1, "mask_def2.nii.gz")
+    file_flirt = os.path.join(path_t1, "flirt_matrix.txt")            
 
     # create new cmap
-    cmap = generate_coordinate_mapping(epi, 
+    cmap = generate_coordinate_mapping(file_epi,
                                        pad=0, 
                                        path_output=None, 
                                        suffix=None, 
                                        time=False, 
                                        write_output=False)
-    nb.save(cmap, os.path.join(path_t1, "cmap.nii"))
+    nb.save(cmap, file_cmap)
 
-    if not reg_file:
-    
-        # get scanner transform
-        get_scanner_transform(t1, epi, path_t1, False)
-    
+    # get initial ana -> epi transformation from existing cmap or header
+    if file_reg:
+        sh.copyfile(file_reg, file_cmap_reg)        
     else:
-        _, _, ext_reg = get_filename(reg_file)
-        if ext_reg == '.nii.gz':
-            sh.copyfile(reg_file, 
-                        os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii.gz"))
-            gunzip(os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii.gz"))
-        else:
-            sh.copyfile(reg_file, 
-                        os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii"))
+        get_scanner_transform(file_t1, file_epi, path_t1, True)
+        os.rename(os.path.join(path_t1, name_t1+"_2_"+name_epi+"_scanner.nii.gz"),
+                  file_cmap_reg)
     
     # scanner transform peeled t1 to epi
-    res = apply_coordinate_mappings(t1, # input 
-                                    os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii"), # cmap
+    res = apply_coordinate_mappings(file_t1, # input 
+                                    file_cmap_reg, # cmap
                                     interpolation="linear", # nearest or linear
                                     padding="zero", # closest, zero or max
                                     save_data=False,
@@ -71,7 +79,7 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
                                     output_dir=None,
                                     file_name=None
                                     )
-    nb.save(res["result"], os.path.join(path_t1, name_t1+"_header.nii.gz"))
+    nb.save(res["result"], file_ana_reg)
 
     # flirt t1 to epi
     os.chdir(path_t1)
@@ -79,27 +87,27 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     flirt.inputs.cost_func = 'corratio'
     flirt.inputs.dof = 6
     flirt.inputs.interp = "trilinear" # trilinear, nearestneighbour, sinc or spline
-    flirt.inputs.in_file = os.path.join(path_t1, name_t1+"_header.nii.gz")
-    flirt.inputs.reference = epi
+    flirt.inputs.in_file = file_ana_reg
+    flirt.inputs.reference = file_epi
     flirt.inputs.output_type = "NIFTI_GZ"
-    flirt.inputs.out_file = os.path.join(path_t1, name_t1+"_header_flirt.nii.gz")
-    flirt.inputs.out_matrix_file = os.path.join(path_t1,"flirt_matrix.txt")
+    flirt.inputs.out_file = file_ana_flirt
+    flirt.inputs.out_matrix_file = file_flirt
     flirt.run()
 
     # apply flirt to generated cmap
     applyxfm = ApplyXFM()
-    applyxfm.inputs.in_file = os.path.join(path_t1,"cmap.nii")
-    applyxfm.inputs.reference = epi
-    applyxfm.inputs.in_matrix_file = os.path.join(path_t1,"flirt_matrix.txt")
+    applyxfm.inputs.in_file = file_cmap
+    applyxfm.inputs.reference = file_epi
+    applyxfm.inputs.in_matrix_file = file_flirt
     applyxfm.inputs.interp = "trilinear"
     applyxfm.inputs.padding_size = 0
     applyxfm.inputs.output_type = "NIFTI_GZ"
-    applyxfm.inputs.out_file = os.path.join(path_t1,"cmap_flirt.nii.gz")
+    applyxfm.inputs.out_file = file_cmap_flirt
     applyxfm.inputs.apply_xfm = True
     applyxfm.run() 
     
     # remove outliers and expand
-    cmap = nb.load(os.path.join(path_t1, "cmap_flirt.nii.gz"))
+    cmap = nb.load(file_cmap_flirt)
     arr_cmap = cmap.get_fdata()
     
     pts_cmap0 = arr_cmap[0,0,0,0]
@@ -112,16 +120,16 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     arr_cmap[arr_cmap == pts_cmap2] = 0
 
     output = nb.Nifti1Image(arr_cmap, cmap.affine, cmap.header)
-    nb.save(output, os.path.join(path_t1, "cmap_flirt.nii.gz"))
+    nb.save(output, file_cmap_flirt)
     
-    expand_coordinate_mapping(cmap_in=os.path.join(path_t1,"cmap_flirt.nii.gz"), 
+    expand_coordinate_mapping(cmap_in=file_cmap_flirt, 
                               path_output=path_t1,
                               name_output="cmap_flirt", 
                               write_output=True)
         
     # apply flirt cmap to header transformation
-    res = apply_coordinate_mappings(os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii"), # input 
-                                    os.path.join(path_t1,"cmap_flirt.nii.gz"),
+    res = apply_coordinate_mappings(file_cmap_reg, # input
+                                    file_cmap_flirt,
                                     interpolation="linear", # nearest or linear
                                     padding="zero", # closest, zero or max
                                     save_data=False,
@@ -129,10 +137,10 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
                                     output_dir=None,
                                     file_name=None
                                     )
-    nb.save(res["result"], os.path.join(path_t1, "cmap_def.nii.gz"))
+    nb.save(res["result"], file_cmap_def)
     
     # remove outliers and expand
-    cmap = nb.load(os.path.join(path_t1, "cmap_def.nii.gz"))
+    cmap = nb.load(file_cmap_def)
     arr_cmap = cmap.get_fdata()
     
     pts_cmap0 = arr_cmap[0,0,0,0]
@@ -145,16 +153,16 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     arr_cmap[arr_cmap == pts_cmap2] = 0
 
     output = nb.Nifti1Image(arr_cmap, cmap.affine, cmap.header)
-    nb.save(output, os.path.join(path_t1, "cmap_def.nii.gz"))
+    nb.save(output, file_cmap_def)
     
-    expand_coordinate_mapping(cmap_in=os.path.join(path_t1,"cmap_def.nii.gz"), 
+    expand_coordinate_mapping(cmap_in=file_cmap_def, 
                               path_output=path_t1,
                               name_output="cmap_def", 
                               write_output=True)
     
     # apply final cmap to t1 and mask
-    res = apply_coordinate_mappings(t1, # input 
-                                    os.path.join(path_t1,"cmap_def.nii.gz"),
+    res = apply_coordinate_mappings(file_t1, # input 
+                                    file_cmap_def,
                                     interpolation="linear", # nearest or linear
                                     padding="zero", # closest, zero or max
                                     save_data=False,
@@ -162,10 +170,10 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
                                     output_dir=None,
                                     file_name=None
                                     )
-    nb.save(res["result"], os.path.join(path_t1,name_t1+"_def.nii"))
+    nb.save(res["result"], file_ana_def)
     
-    res = apply_coordinate_mappings(mask, # input 
-                                    os.path.join(path_t1,"cmap_def.nii.gz"),
+    res = apply_coordinate_mappings(file_mask, # input 
+                                    file_cmap_def,
                                     interpolation="nearest", # nearest or linear
                                     padding="zero", # closest, zero or max
                                     save_data=False,
@@ -173,10 +181,10 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
                                     output_dir=None,
                                     file_name=None
                                     )
-    nb.save(res["result"], os.path.join(path_t1,"mask_def.nii"))
+    nb.save(res["result"], file_mask_def)
     
     # finalise mask
-    mask_img = nb.load(os.path.join(path_t1,"mask_def.nii"))
+    mask_img = nb.load(file_mask_def)
     mask_array = mask_img.get_fdata()
     mask_array = binary_fill_holes(mask_array).astype(int) # fill holes in mask
     mask_array = binary_dilation(mask_array, iterations=niter).astype(np.float) # dilate mask
@@ -184,13 +192,13 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     
     # write final epi mask
     out_img = nb.Nifti1Image(mask_array, mask_img.affine, mask_img.header)
-    nb.save(out_img,os.path.join(path_t1, "mask_def2.nii"))
+    nb.save(out_img, file_mask_def2)
 
     # multiply epi and binary mask
-    epi_img = nb.load(epi)
+    epi_img = nb.load(file_epi)
     epi_array = epi_img.get_fdata()
     epi_array = epi_array * mask_array # multiply epi and mask
     
     # write masked epi
     out_img = nb.Nifti1Image(epi_array, epi_img.affine, epi_img.header)
-    nb.save(out_img,os.path.join(path_epi,"p"+name_epi+".nii"))
+    nb.save(out_img, os.path.join(path_epi,"p"+name_epi+".nii"))
