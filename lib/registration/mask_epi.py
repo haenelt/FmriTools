@@ -1,23 +1,26 @@
-def mask_epi(epi, t1, mask, niter, sigma):
+def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     """
     This function masks a mean epi image based on a skullstrip mask of the corresponding anatomy.
     The mask is transformed to native epi space via scanner transformation and rigid registration
-    of anatomy and epi. Finally, holes in the mask are filled, the mask is dilated and a Gaussian
-    filter is applied. The masked epi is saved in the same folder with the prefix p.
+    of anatomy and epi if no coordinate mapping is given. Finally, holes in the mask are filled, 
+    the mask is dilated and a Gaussian filter is applied. The masked epi is saved in the same 
+    folder with the prefix p.
     Inputs:
         *epi: input mean epi image.
         *t1: input of corresponding skullstripped anatomy.
         *mask: input of skullstrip mask of the corresponding anatomy.
         *niter: number of dilation iterations.
         *sigma: gaussian smoothing kernel.
+        *reg_file: filename of ana -> epi coordinate mapping.
         
     created by Daniel Haenelt
     Date created: 13-02-2019
-    Last modified: 26-06-2020
+    Last modified: 07-09-2020
     """
     import os
     import numpy as np
     import nibabel as nb
+    import shutil as sh
     from nipype.interfaces.fsl import FLIRT
     from nipype.interfaces.fsl.preprocess import ApplyXFM
     from scipy.ndimage import binary_fill_holes, gaussian_filter
@@ -33,18 +36,25 @@ def mask_epi(epi, t1, mask, niter, sigma):
     path_epi, name_epi, _ = get_filename(epi)
     _, name_mask, _ = get_filename(mask)
 
-    # create new cmap
-    cmap = generate_coordinate_mapping(epi, 
-                                       pad=0, 
-                                       path_output=None, 
-                                       suffix=None, 
-                                       time=False, 
-                                       write_output=False)
-    nb.save(cmap, os.path.join(path_t1, "cmap.nii"))
+    if not reg_file:
 
-    # get scanner transform
-    get_scanner_transform(t1, epi, path_t1, False)
-
+        # create new cmap
+        cmap = generate_coordinate_mapping(epi, 
+                                           pad=0, 
+                                           path_output=None, 
+                                           suffix=None, 
+                                           time=False, 
+                                           write_output=False)
+        nb.save(cmap, os.path.join(path_t1, "cmap.nii"))
+    
+        # get scanner transform
+        get_scanner_transform(t1, epi, path_t1, False)
+    
+    else:
+        sh.copyfile(reg_file, 
+                    os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii"))
+        
+    
     # scanner transform peeled t1 to epi
     res = apply_coordinate_mappings(t1, # input 
                                     os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii"), # cmap

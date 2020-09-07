@@ -21,7 +21,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 31-01-2020
-Last modified: 26-06-2020
+Last modified: 07-09-2020
 """
 import os
 import shutil as sh
@@ -43,6 +43,7 @@ file_mask1 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/skull/skullstrip_mas
 file_mask2 = "/data/pt_01880/Experiment3_Stripes/p3/anatomy/freesurfer/mri/brain.finalsurfs.mgz" # brain.finalsurfs
 file_ana2epi = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/odc/GE_EPI1/orig2epi.nii.gz"
 file_epi2ana = "/data/pt_01880/Experiment2_Rivalry/p3/deformation/odc/GE_EPI1/epi2orig.nii.gz"
+file_cmap = "" # ana -> epi cmap
 path_output = "/data/pt_01880/Experiment3_Stripes/p3/deformation/colour/GE_EPI1"
 clean_cmap = True
 expand_cmap = True
@@ -143,7 +144,7 @@ for i in range(len(path_epi)):
     mask_epi(os.path.join(path_epi[i],"bepi.nii"), 
              os.path.join(path_t1[i],"pT1.nii"), 
              os.path.join(path_t1[i],"mask.nii"), 
-             niter_mask, sigma_mask)
+             niter_mask, sigma_mask, file_cmap)
 
 """
 syn

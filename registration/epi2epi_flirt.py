@@ -17,7 +17,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 13-01-2020
-Last modified: 26-06-2020
+Last modified: 07-09-2020
 """
 import os
 import shutil as sh
@@ -37,6 +37,7 @@ file_mean_epi_source = "/data/pt_01880/Experiment1_ODC/p3/odc/SE_EPI1/diagnosis/
 file_mean_epi_target = "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/diagnosis/mean_data.nii"
 file_t1 = "/data/pt_01880/Experiment1_ODC/p3/anatomy/S22_MP2RAGE_0p7_T1_Images_2.45.nii"
 file_mask = "/data/pt_01880/Experiment1_ODC/p3/anatomy/skull/skullstrip_mask.nii" # skullstrip_mask
+file_cmap = "" # ana -> epi cmap
 path_output = "/data/pt_01880/odc_temp/deformation/test"
 expand_cmap = True
 cleanup = False
@@ -118,7 +119,7 @@ for i in range(len(path_epi)):
     mask_epi(os.path.join(path_epi[i],"bepi.nii"), 
              os.path.join(path_t1[i],"pT1.nii"), 
              os.path.join(path_t1[i],"mask.nii"), 
-             niter_mask, sigma_mask)
+             niter_mask, sigma_mask, file_cmap)
 
 """
 flirt

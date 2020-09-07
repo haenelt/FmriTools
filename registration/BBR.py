@@ -14,7 +14,7 @@ calling FREESURFER and ANTSENV in the terminal.
 
 created by Daniel Haenelt
 Date created: 19-06-2020
-Last modified: 23-06-2020
+Last modified: 07-09-2020
 """
 import os
 import numpy as np
@@ -42,6 +42,7 @@ input_ana = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S5_MP2RAGE_0p7_T1_Images_
 input_mask = "/data/pt_01880/Experiment1_ODC/p1/anatomy/skull/skullstrip_mask.nii"
 input_target = "/data/pt_01880/Experiment1_ODC/p1/resting_state/mean_udata.nii"
 input_source = "/data/pt_01880/Experiment1_ODC/p1/retinotopy/diagnosis/mean_uadata.nii"
+input_cmap = "" # ana -> epi cmap
 path_output = "/data/pt_01880/thisisthefinaltest2"
 init_reg = "header" # header, freesurfer, fsl
 cleanup = False
@@ -115,7 +116,7 @@ n4.run()
 mask_epi(os.path.join(path_mri,"borig.nii"),
          os.path.join(path_t1,"pT1.nii"),
          os.path.join(path_t1,"mask.nii"),
-         niter_mask, sigma_mask)
+         niter_mask, sigma_mask, input_cmap)
 
 multiply_images(os.path.join(path_mri, "orig.nii"), 
                 os.path.join(path_t1, "mask_def-img3.nii.gz"), 
