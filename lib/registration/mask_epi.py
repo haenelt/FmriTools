@@ -37,16 +37,16 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     path_epi, name_epi, _ = get_filename(epi)
     _, name_mask, _ = get_filename(mask)
 
-    if not reg_file:
+    # create new cmap
+    cmap = generate_coordinate_mapping(epi, 
+                                       pad=0, 
+                                       path_output=None, 
+                                       suffix=None, 
+                                       time=False, 
+                                       write_output=False)
+    nb.save(cmap, os.path.join(path_t1, "cmap.nii"))
 
-        # create new cmap
-        cmap = generate_coordinate_mapping(epi, 
-                                           pad=0, 
-                                           path_output=None, 
-                                           suffix=None, 
-                                           time=False, 
-                                           write_output=False)
-        nb.save(cmap, os.path.join(path_t1, "cmap.nii"))
+    if not reg_file:
     
         # get scanner transform
         get_scanner_transform(t1, epi, path_t1, False)
