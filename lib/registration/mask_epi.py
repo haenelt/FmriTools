@@ -60,7 +60,7 @@ def mask_epi(epi, t1, mask, niter, sigma):
     # flirt t1 to epi
     os.chdir(path_t1)
     flirt = FLIRT()
-    flirt.inputs.cost_func = "corratio"
+    flirt.inputs.cost_func = 'corratio'
     flirt.inputs.dof = 6
     flirt.inputs.interp = "trilinear" # trilinear, nearestneighbour, sinc or spline
     flirt.inputs.in_file = os.path.join(path_t1, name_t1+"_header.nii.gz")
