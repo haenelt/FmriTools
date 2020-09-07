@@ -21,6 +21,7 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
     import numpy as np
     import nibabel as nb
     import shutil as sh
+    from sh import gunzip
     from nipype.interfaces.fsl import FLIRT
     from nipype.interfaces.fsl.preprocess import ApplyXFM
     from scipy.ndimage import binary_fill_holes, gaussian_filter
@@ -51,9 +52,14 @@ def mask_epi(epi, t1, mask, niter, sigma, reg_file=""):
         get_scanner_transform(t1, epi, path_t1, False)
     
     else:
-        sh.copyfile(reg_file, 
-                    os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii"))
-        
+        _, _, ext_reg = get_filename(reg_file)
+        if ext_reg == '.nii.gz':
+            sh.copyfile(reg_file, 
+                        os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii.gz"))
+            gunzip(os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii.gz"))
+        else:
+            sh.copyfile(reg_file, 
+                        os.path.join(path_t1,name_t1+"_2_"+name_epi+"_scanner.nii"))
     
     # scanner transform peeled t1 to epi
     res = apply_coordinate_mappings(t1, # input 
