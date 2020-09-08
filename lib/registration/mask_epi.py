@@ -97,7 +97,7 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
                             ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
                             save_data = False, # save output data to file
                             overwrite = False, # overwrite existing results 
-                            output_dir = None, # output directory
+                            output_dir = path_t1, # output directory
                             file_name = None, # output basename
                             )
 
