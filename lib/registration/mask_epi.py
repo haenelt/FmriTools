@@ -1,8 +1,8 @@
 def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     """
     This function masks a mean epi image based on a skullstrip mask of the 
-    corresponding anatomy. The mask is transformed to native epi space via a 
-    given coordinate mapping or via scanner coordinates. A rigid registration is
+    corresponding anatomy. The mask is transformed to native epi space via an
+    initial transformation or via scanner coordinates. A rigid registration is
     applied to ensure a match between mask and epi. Finally, holes in the mask 
     are filled, the mask is dilated and a Gaussian filter is applied. The masked 
     epi is saved in the same folder with the prefix p.
@@ -162,42 +162,42 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
                               write_output=True)
     
     # apply final cmap to t1 and mask
-    t1 = apply_coordinate_mappings(file_t1, # input 
-                                   file_cmap_def,
-                                   interpolation="linear", # nearest or linear
-                                   padding="zero", # closest, zero or max
-                                   save_data=False,
-                                   overwrite=False,
-                                   output_dir=None,
-                                   file_name=None
-                                   )
-    nb.save(t1["result"], file_ana_def)
+    ana_def = apply_coordinate_mappings(file_t1, # input 
+                                        file_cmap_def,
+                                        interpolation="linear", # nearest or linear
+                                        padding="zero", # closest, zero or max
+                                        save_data=False,
+                                        overwrite=False,
+                                        output_dir=None,
+                                        file_name=None
+                                        )
+    nb.save(ana_def["result"], file_ana_def)
     
-    mask = apply_coordinate_mappings(file_mask, # input 
-                                     file_cmap_def,
-                                     interpolation="nearest", # nearest or linear
-                                     padding="zero", # closest, zero or max
-                                     save_data=False,
-                                     overwrite=False,
-                                     output_dir=None,
-                                     file_name=None
-                                     )
-    nb.save(mask["result"], file_mask_def)
+    mask_def = apply_coordinate_mappings(file_mask, # input 
+                                         file_cmap_def,
+                                         interpolation="nearest", # nearest or linear
+                                         padding="zero", # closest, zero or max
+                                         save_data=False,
+                                         overwrite=False,
+                                         output_dir=None,
+                                         file_name=None
+                                         )
+    nb.save(mask_def["result"], file_mask_def)
     
     # finalise mask
-    arr_mask = mask["result"].get_fdata()
+    arr_mask = mask_def["result"].get_fdata()
     arr_mask = binary_fill_holes(arr_mask).astype(int) # fill holes in mask
     arr_mask = binary_dilation(arr_mask, iterations=niter).astype(np.float) # dilate mask
     arr_mask = gaussian_filter(arr_mask, sigma=sigma) # apply gaussian filter
     
     # write final epi mask
-    out_img = nb.Nifti1Image(arr_mask, mask["result"].affine, mask["result"].header)
+    out_img = nb.Nifti1Image(arr_mask, mask_def["result"].affine, mask_def["result"].header)
     nb.save(out_img, file_mask_def2)
 
     # multiply epi and binary mask
     epi_img = nb.load(file_epi)
     arr_epi = epi_img.get_fdata()
-    arr_epi = arr_epi * arr_mask # multiply epi and mask
+    arr_epi *= arr_mask # multiply epi and mask
     
     # write masked epi
     out_img = nb.Nifti1Image(arr_epi, epi_img.affine, epi_img.header)
