@@ -80,32 +80,37 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     nb.save(ana_reg["result"], file_ana_reg)
 
     # rigid registration
-    ants = embedded_antsreg(file_ana_reg, # source image
-                            file_epi, # target image 
-                            run_rigid, # whether or not to run a rigid registration first 
-                            rigid_iterations, # number of iterations in the rigid step
-                            run_affine, # whether or not to run an affine registration first
-                            affine_iterations, # number of iterations in the affine step
-                            run_syn, # whether or not to run a SyN registration
-                            coarse_iterations, # number of iterations at the coarse level
-                            medium_iterations, # number of iterations at the medium level
-                            fine_iterations, # number of iterations at the fine level
-                            cost_function, # CrossCorrelation or MutualInformation
-                            interpolation, # interpolation for registration result (NeareastNeighbor or Linear)
-                            convergence = 1e-6, # threshold for convergence (can make algorithm very slow)
-                            ignore_affine = False, # ignore the affine matrix information extracted from the image header 
-                            ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
-                            save_data = False, # save output data to file
-                            overwrite = False, # overwrite existing results 
-                            output_dir = path_t1, # output directory
-                            file_name = None, # output basename
-                            )
+    embedded_antsreg(file_ana_reg, # source image
+                     file_epi, # target image 
+                     run_rigid, # whether or not to run a rigid registration first 
+                     rigid_iterations, # number of iterations in the rigid step
+                     run_affine, # whether or not to run an affine registration first
+                     affine_iterations, # number of iterations in the affine step
+                     run_syn, # whether or not to run a SyN registration
+                     coarse_iterations, # number of iterations at the coarse level
+                     medium_iterations, # number of iterations at the medium level
+                     fine_iterations, # number of iterations at the fine level
+                     cost_function, # CrossCorrelation or MutualInformation
+                     interpolation, # interpolation for registration result (NeareastNeighbor or Linear)
+                     convergence = 1e-6, # threshold for convergence (can make algorithm very slow)
+                     ignore_affine = False, # ignore the affine matrix information extracted from the image header 
+                     ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
+                     save_data = True, # save output data to file
+                     overwrite = True, # overwrite existing results 
+                     output_dir = path_t1, # output directory
+                     file_name = "syn", # output basename
+                     )
 
-    # save cmap
-    nb.save(ants["mapping"], file_cmap_ants)
+    # remove unnecessary files
+    os.remove(os.path.join(path_t1, "syn_ants-def0.nii.gz"))
+    os.remove(os.path.join(path_t1, "syn_ants-invmap.nii.gz"))
+    
+    # rename cmap
+    os.rename(os.path.join(path_t1, "syn_ants-map.nii.gz"), file_cmap_ants)
    
     # remove outliers and expand
-    arr_cmap = ants["mapping"].get_fdata()
+    cmap = nb.load(file_cmap_ants)
+    arr_cmap = cmap.get_fdata()
     
     pts_cmap0 = arr_cmap[0,0,0,0]
     pts_cmap1 = arr_cmap[0,0,0,1]
@@ -116,7 +121,7 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     arr_cmap[arr_cmap == pts_cmap1] = 0
     arr_cmap[arr_cmap == pts_cmap2] = 0
 
-    output = nb.Nifti1Image(arr_cmap, ants["mapping"].affine, ants["mapping"].header)
+    output = nb.Nifti1Image(arr_cmap, cmap.affine, cmap.header)
     nb.save(output, file_cmap_ants)
     
     expand_coordinate_mapping(cmap_in=file_cmap_ants, 
