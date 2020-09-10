@@ -16,7 +16,7 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
         
     created by Daniel Haenelt
     Date created: 13-02-2019
-    Last modified: 08-09-2020
+    Last modified: 10-09-2020
     """
     import os
     import numpy as np
@@ -47,18 +47,6 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     file_mask_def = os.path.join(path_t1, "mask_def.nii.gz")
     file_mask_def2 = os.path.join(path_t1, "mask_def2.nii.gz")           
 
-    # parameters for syn
-    run_rigid = True
-    rigid_iterations = 1000 
-    run_affine = False 
-    affine_iterations = 1000 
-    run_syn = False
-    coarse_iterations = 50
-    medium_iterations = 150
-    fine_iterations = 100
-    cost_function = 'CrossCorrelation' 
-    interpolation = 'Linear'
-
     # get initial ana -> epi transformation from existing cmap or header
     if file_reg:
         sh.copyfile(file_reg, file_cmap_reg)        
@@ -82,19 +70,19 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     # rigid registration
     embedded_antsreg(file_ana_reg, # source image
                      file_epi, # target image 
-                     run_rigid, # whether or not to run a rigid registration first 
-                     rigid_iterations, # number of iterations in the rigid step
-                     run_affine, # whether or not to run an affine registration first
-                     affine_iterations, # number of iterations in the affine step
-                     run_syn, # whether or not to run a SyN registration
-                     coarse_iterations, # number of iterations at the coarse level
-                     medium_iterations, # number of iterations at the medium level
-                     fine_iterations, # number of iterations at the fine level
-                     cost_function, # CrossCorrelation or MutualInformation
-                     interpolation, # interpolation for registration result (NeareastNeighbor or Linear)
+                     run_rigid = True, # whether or not to run a rigid registration first 
+                     rigid_iterations = 1000, # number of iterations in the rigid step
+                     run_affine = False, # whether or not to run an affine registration first
+                     affine_iterations = 0, # number of iterations in the affine step
+                     run_syn = False, # whether or not to run a SyN registration
+                     coarse_iterations = 0, # number of iterations at the coarse level
+                     medium_iterations = 0, # number of iterations at the medium level
+                     fine_iterations = 0, # number of iterations at the fine level
+                     cost_function = "CrossCorrelation", # CrossCorrelation or MutualInformation
+                     interpolation = "Linear", # interpolation for registration result (NeareastNeighbor or Linear)
                      convergence = 1e-6, # threshold for convergence (can make algorithm very slow)
-                     ignore_affine = False, # ignore the affine matrix information extracted from the image header 
-                     ignore_header = False, # ignore the orientation information and affine matrix information extracted from the image header
+                     ignore_affine = True, # ignore the affine matrix information extracted from the image header 
+                     ignore_header = True, # ignore the orientation information and affine matrix information extracted from the image header
                      save_data = True, # save output data to file
                      overwrite = True, # overwrite existing results 
                      output_dir = path_t1, # output directory
