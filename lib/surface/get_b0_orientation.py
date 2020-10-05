@@ -12,7 +12,7 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", name
         
     created by Daniel Haenelt
     Date created: 31-07-2020 
-    Last modified: 31-07-2020
+    Last modified: 05-10-2020
     """
     import os
     import numpy as np
@@ -21,7 +21,7 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", name
     from nibabel.freesurfer.io import read_geometry, write_morph_data
     from lib.io.get_filename import get_filename
     from lib.surface.vox2ras import vox2ras
-    from lib_gbb.normal import get_normal
+    from gbb.normal import get_normal
     
     # make subfolders
     if write_output and not os.path.exists(path_output):

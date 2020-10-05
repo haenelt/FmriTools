@@ -6,13 +6,13 @@ contrast data is filtered by a sigmoid function.
 
 created by Daniel Haenelt
 Date created: 06-03.2020         
-Last modified: 06-03-2020  
+Last modified: 05-10-2020  
 """
 import numpy as np
 import nibabel as nb
 from nibabel.freesurfer.io import read_geometry
 from nibabel.freesurfer.io import write_geometry
-from lib_gbb.normal.get_normal import get_normal
+from gbb.normal.get_normal import get_normal
 
 file_surf = "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.refined_enhanced_inflated"
 file_data = "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.spmT_left_right_GE_EPI2_upsampled_avg_layer4_16.mgh"

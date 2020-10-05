@@ -33,10 +33,10 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
         
     created by Daniel Haenelt
     Date created: 04-03-2020
-    Last modified: 04-03-2020
+    Last modified: 05-10-2020
     """
     import numpy as np
-    from lib_gbb.neighbor.nn_2d import nn_2d
+    from gbb.neighbor.nn_2d import nn_2d
 
     # number of vertices
     n_vertex = len(vtx)
