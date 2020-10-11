@@ -10,11 +10,11 @@ def get_gif(img_file, path_output, name_output, nsteps, duration):
 
     created by Daniel Haenelt
     Date created: 17-11-2018
-    Last modified: 14-02-2019
+    Last modified: 11-10-2020
     """
     import os
-    import imageio
     import numpy as np
+    import imageio as io
 
     # append first list item to the end of the list
     img_file.append(img_file[0])
@@ -23,8 +23,8 @@ def get_gif(img_file, path_output, name_output, nsteps, duration):
     for i in range(len(img_file)-1):
     
         # input
-        img1 = imageio.imread(img_file[i])
-        img2 = imageio.imread(img_file[i+1])
+        img1 = io.imread(img_file[i])
+        img2 = io.imread(img_file[i+1])
     
         # generates a list with transitions from img1 to img2
         for j in range(nsteps):
@@ -33,4 +33,4 @@ def get_gif(img_file, path_output, name_output, nsteps, duration):
             images.append(img)
 
     # save output gif
-    imageio.mimwrite(os.path.join(path_output,name_output+".gif"), images, duration=duration)
+    io.mimwrite(os.path.join(path_output,name_output+".gif"), images, duration=duration)

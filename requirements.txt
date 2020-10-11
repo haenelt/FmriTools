@@ -1,0 +1,12 @@
+numpy
+nibabel
+scipy
+matplotlib
+scikit-image
+imageio
+shapely
+descartes
+pycortex
+nipype
+sh
+gbb

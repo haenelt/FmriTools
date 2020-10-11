@@ -18,7 +18,7 @@ def get_movie(input, path_output, name_output, coord, axis=0, fps = 10, transpos
     import os
     import numpy as np
     import nibabel as nb
-    import imageio
+    import imageio as io
     
     # make subfolders
     if not os.path.exists(path_output):
@@ -62,4 +62,4 @@ def get_movie(input, path_output, name_output, coord, axis=0, fps = 10, transpos
         images = np.transpose(images, axes = (0,2,1))
     
     # generate video file
-    imageio.mimwrite(os.path.join(path_output,name_output+".gif"), images, fps = fps)
+    io.mimwrite(os.path.join(path_output,name_output+".gif"), images, fps = fps)

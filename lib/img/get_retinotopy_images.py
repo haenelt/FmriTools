@@ -12,7 +12,7 @@ def get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr, input_
         *hemi: hemisphere.
         *path_output: path where output is saved.
         *img_res: isotropic image resolution in mm.
-        *theta: rotateion of flat image in deg.
+        *theta: rotation of flat image in deg.
         *alpha: alpha shape value for concave hull computation.
         *buffer: smooth out concave hull.
         *phase_fwhm: smoothing kernel for phase map smoothing in mm.
@@ -21,7 +21,7 @@ def get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr, input_
     
     created by Daniel Haenelt
     Date created: 14-02-2019
-    Last modified: 14-02-2019
+    Last modified: 11-10-2020
     """
     import os
     import numpy as np
