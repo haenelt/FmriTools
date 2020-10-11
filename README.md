@@ -13,6 +13,12 @@ I recommend to use `Anaconda` to create a new python environment with `Python >=
 python setup.py install
 ```
 
+Some scripts need optional (non-default) packages which can be installed with the following command:
+
+```
+python setup.py fmri_tools[addon]
+```
+
 ## Other dependencies
 
 ## References
