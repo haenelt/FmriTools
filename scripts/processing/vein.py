@@ -50,7 +50,7 @@ pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
 # do not edit below
 
-# change to lib folder
+# change to preprocessing folder in fmri_tools
 os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 # prepare path and filename

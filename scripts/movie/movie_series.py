@@ -49,7 +49,7 @@ start_vol = 0
 end_vol = 0
 interpolation = "nearest" # can be linear or nearest
 
-# path to SPM12 folder
+# add spm and fmri_tools to path
 pathSPM = "/data/pt_01880/source/spm12"
 pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
@@ -59,7 +59,7 @@ pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 tmp = np.random.randint(0, 10, 5)
 prefix = ''.join(str(i) for i in tmp)+'_'
 
-# change to lib folder
+# change to preprocessing folder in fmri_tools
 os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 # make output folders
