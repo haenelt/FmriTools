@@ -21,6 +21,23 @@ python setup.py fmri_tools[addon]
 
 ## Other dependencies
 
+- https://github.com/Washington-University/gradunwarp.git
+- OpenFmriAnalysis
+- hmritoolbox
+- physio
+- ants
+- afni
+- freesurfer
+- fsl
+- nighres
+- laynii
+- spm12
+- matlab
+- vasa
+- knkutils (kendrick kay)
+- glmdenoise (kendrick kay)
+- tdm (kendrick kay)
+
 ## References
 
 ## Contact
