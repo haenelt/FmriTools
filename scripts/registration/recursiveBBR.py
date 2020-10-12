@@ -56,7 +56,7 @@ reverse_contrast = True # if inner surface is darker than outer surface
 cost_method = "GreveFischl" # GreveFischl, sum, sumOfSquares
 contrast_method = "gradient" # gradient, average, fixedDistance, relativeDistance, extrema
 
-# path
+# add spm, fmri_tools and OpenFmriAnalysis to path
 pathSPM = "/data/pt_01880/source/spm12"
 pathMOURIK = "/data/hu_haenelt/projects/OpenFmriAnalysis"
 pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"

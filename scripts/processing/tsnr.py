@@ -46,7 +46,7 @@ cutoff_highpass = 270 # cutoff in s for baseline correction
 name_sess = "GE_EPI1"
 name_output = ""
 
-# path to SPM12 folder
+# add spm and fmri_tools to path
 pathSPM = "/data/pt_01880/source/spm12"
 pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 

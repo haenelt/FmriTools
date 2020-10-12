@@ -35,7 +35,7 @@ deformation = "" # deformation ana -> epi
 biopac_input = "" # *.mat file
 path_output = "/data/pt_01983/func/resting_state2/alff/native"
 
-# add path
+# add spm and fmri_tools to path
 pathSPM = "/data/pt_01880/source/spm12"
 pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
@@ -55,9 +55,6 @@ cleanup = True
 
 # do not edit below
 
-# path to preprocessing folder
-pathTOOLS = os.path.join(pathFMRITOOLS, "preprocessing")
-
 # make output folder
 if not os.path.exists(path_output):
     os.makedirs(path_output)
@@ -73,7 +70,7 @@ if nuisance_regression:
     
     # baseline correction
     previous_cwd = os.getcwd()
-    os.chdir(pathTOOLS)
+    os.chdir(os.path.join(pathFMRITOOLS, "preprocessing"))
     os.system("matlab" + \
               " -nodisplay -nodesktop -r " + \
               "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
@@ -84,7 +81,7 @@ if nuisance_regression:
         
         # get biopac regressors
         previous_cwd = os.getcwd()
-        os.chdir(pathTOOLS)
+        os.chdir(os.path.join(pathFMRITOOLS, "preprocessing"))
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"get_biopac_regressor(\'{0}\', \'{1}\', \'{2}\', \'{3}\', {4}); exit;\"". \
@@ -127,7 +124,7 @@ if nuisance_regression:
         clean_glm = 0
 
     previous_cwd = os.getcwd()
-    os.chdir(pathTOOLS)
+    os.chdir(os.path.join(pathFMRITOOLS, "preprocessing"))
     os.system("matlab" + \
               " -nodisplay -nodesktop -r " + \
               "\"regress_physio(\'{0}\', \'{1}\', \'{2}\', {3}, {4}, \'{5}\', {6}); exit;\"". \
