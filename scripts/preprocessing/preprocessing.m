@@ -13,7 +13,7 @@
 
 % created by Daniel Haenelt
 % Date created: 06-08-2019
-% Last modified: 03-06-2020
+% Last modified: 12-10-2020
 
 % array of of input time series
 img_input = {
@@ -51,14 +51,14 @@ outlier_params.int_out_z = 2; % in z-score
 % separate realignment for each time series
 run_separate = false;
 
-% add spm and lib to path
+% add spm and fmri_tools to path
 pathSPM = '/data/pt_01880/source/spm12';
-pathLIB = '/data/hu_haenelt/projects/scripts/lib/preprocessing';
+pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
 
 %%% do not edit below %%%
 
 % add paths to the interpreter's search path
-addpath(pathLIB);
+addpath(fullfile(pathFMRITOOLS, 'preprocessing'));
 
 % start preprocessing
 if run_separate 

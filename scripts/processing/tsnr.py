@@ -48,7 +48,7 @@ name_output = ""
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
+pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
 # do not edit below
 
@@ -78,7 +78,7 @@ for i in range(len(img_input)):
     
     # highpass filter time series
     if use_highpass:
-        os.chdir(pathLIB)
+        os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \

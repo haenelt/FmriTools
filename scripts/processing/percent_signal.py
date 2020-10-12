@@ -81,10 +81,9 @@ order_lowpass = 0
 name_sess = "GE_EPI2"
 name_output = ""
 
-# path to SPM12 folder
+# add spm and fmri_tools to path
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB1 = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
-pathLIB2 = "/data/hu_haenelt/projects/scripts/lib/processing"
+pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
 # do not edit below
 
@@ -124,7 +123,7 @@ for i in range(len(img_input)):
 
     # lowpass filter time series
     if use_lowpass:
-        os.chdir(pathLIB2)
+        os.chdir(os.path.join(pathFMRITOOLS,"processing"))
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"lowpass_filter(\'{0}\', {1}, {2}, {3}, \'{4}\'); exit;\"". \
@@ -136,7 +135,7 @@ for i in range(len(img_input)):
 
     # highpass filter time series
     if use_highpass:
-        os.chdir(pathLIB1)
+        os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
                   "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \

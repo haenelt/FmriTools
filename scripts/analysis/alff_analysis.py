@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # local inputs
-#from lib.analysis.analyze_alff_between_stripes import analyze_alff_between_stripes
+#from fmri_tools.analysis.analyze_alff_between_stripes import analyze_alff_between_stripes
 from fmri_tools.analysis.analyze_alff_between_conditions import analyze_alff_between_conditions
 
 

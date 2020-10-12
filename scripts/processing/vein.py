@@ -44,14 +44,14 @@ epi_threshold = 800
 tsnr_threshold = 8
 tsnr_max = 200
 
-# path to SPM12 folder
+# add spm and fmri_tools to path
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/data/hu_haenelt/projects/scripts/lib"
+pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
 # do not edit below
 
 # change to lib folder
-os.chdir(os.path.join(pathLIB,"preprocessing"))
+os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 # prepare path and filename
 path = []

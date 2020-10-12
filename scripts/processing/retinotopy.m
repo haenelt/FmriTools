@@ -12,7 +12,7 @@
 
 % created by Daniel Haenelt
 % Date created: 07-12-2018
-% Last modified: 18-02-2019
+% Last modified: 12-10-2020
 
 % input data
 input.pol.data.pos = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/pol_anticlock/udata.nii'; % anticlock
@@ -31,19 +31,17 @@ input.ecc.fix = 12;
 input.ecc.freq = 8.25;
 input.ecc.cutoff = 96;
 
-% add spm to path
+% add spm and fmri_tools to path
 pathSPM = '/data/pt_01880/source/spm12'; 
-
-% add library to path
-pathLIB = '/data/hu_haenelt/projects/scripts/lib/';
+pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
 
 %%% do not edit below %%%
 
 % add paths to the interpreter's search path
 addpath(pathSPM);
 cd(fileparts(which(mfilename)));
-addpath(fullfile(pathLIB,'preprocessing'));
-addpath(fullfile(pathLIB,'processing'));
+addpath(fullfile(pathFMRITOOLS,'preprocessing'));
+addpath(fullfile(pathFMRITOOLS,'processing'));
 
 % concatenate all runs into single cell
 all_data = {input.pol.data.pos input.pol.data.neg input.ecc.data.pos input.ecc.data.neg};

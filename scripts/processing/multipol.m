@@ -11,7 +11,7 @@
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019
-% Last modified: 02-09-2020
+% Last modified: 12-10-2020
 
 % input data
 input.data = {
@@ -34,16 +34,16 @@ name_sess = 'SE_EPI2';
 path_output = '/data/pt_01880/Experiment4_PSF/p6/psf';
 cleanup = true;
 
-% add spm and lib to path
+% add spm and fmri_tools to path
 pathSPM = '/data/pt_01880/source/spm12'; 
-pathLIB = '/data/hu_haenelt/projects/scripts/lib';
+pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
 
 %%% do not edit below %%%
 
 % add paths to the interpreter's search path
 addpath(pathSPM);
-addpath(fullfile(pathLIB,'preprocessing'));
-addpath(fullfile(pathLIB,'processing'));
+addpath(fullfile(pathFMRITOOLS,'preprocessing'));
+addpath(fullfile(pathFMRITOOLS,'processing'));
 
 for i = 1:length(input.data)
 

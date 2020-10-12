@@ -51,7 +51,7 @@ interpolation = "nearest" # can be linear or nearest
 
 # path to SPM12 folder
 pathSPM = "/data/pt_01880/source/spm12"
-pathLIB = "/data/hu_haenelt/projects/scripts/lib/preprocessing"
+pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
 # do not edit below
 
@@ -60,7 +60,7 @@ tmp = np.random.randint(0, 10, 5)
 prefix = ''.join(str(i) for i in tmp)+'_'
 
 # change to lib folder
-os.chdir(pathLIB)
+os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 # make output folders
 path_series = os.path.join(path_output,"series")

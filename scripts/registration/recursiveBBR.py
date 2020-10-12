@@ -59,7 +59,7 @@ contrast_method = "gradient" # gradient, average, fixedDistance, relativeDistanc
 # path
 pathSPM = "/data/pt_01880/source/spm12"
 pathMOURIK = "/data/hu_haenelt/projects/OpenFmriAnalysis"
-pathLIB = "/data/hu_haenelt/projects/scripts/lib"
+pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
 
 # do not edit below
 
@@ -102,7 +102,7 @@ vox2ras_tkr, ras2vox_tkr = vox2ras(ref_vol)
 
 # surf2mat
 cwd = os.getcwd()
-os.chdir(join(pathLIB,"io"))
+os.chdir(join(pathFMRITOOLS,"io"))
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
           "\"surf2mat(\'{0}\', \'{1}\', \'{2}\', \'{3}\', \'{4}\'); exit;\"". \
@@ -142,7 +142,7 @@ savemat(input_cfg, cfg)
 
 # run rBBR
 cwd = os.getcwd()
-os.chdir(join(pathLIB,"registration"))
+os.chdir(join(pathFMRITOOLS,"registration"))
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
           "\"run_rBBR(\'{0}\', \'{1}\', \'{2}\'); exit;\"". \

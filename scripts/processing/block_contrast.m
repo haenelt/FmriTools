@@ -12,7 +12,7 @@
 
 % created by Daniel Haenelt
 % Date created: 10-12-2018
-% Last modified: 26-05-2020
+% Last modified: 12-10-2020
 
 % input data
 img_input = {
@@ -59,9 +59,9 @@ lowpass = false;
 cutoff_lowpass = 10;
 order_lowpass = 1;
 
-% add spm and lib to path
+% add spm and fmri_tools to path
 pathSPM = '/data/pt_01880/source/spm12'; 
-pathLIB = '/data/hu_haenelt/projects/scripts/lib/';
+pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
 
 %%% do not edit below %%%
 
@@ -70,7 +70,7 @@ addpath(pathSPM);
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used
 spm_get_defaults('cmdline',true); % no gui
-addpath(fullfile(pathLIB,'processing'));
+addpath(fullfile(pathFMRITOOLS,'processing'));
 
 % lowpass filtering
 if lowpass
