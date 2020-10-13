@@ -31,12 +31,11 @@ contrast. The following steps are executed:
     8. filter mean phase image
     9. weight mean magnitude epi
 
-Before running the script, login to queen via ssh and set the afni environment 
-by calling AFNI in the terminal.
+The script needs an installation of afni.
 
 created by Daniel Haenelt
 Date created: 10-01-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input data

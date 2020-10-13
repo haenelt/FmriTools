@@ -35,9 +35,11 @@ following steps:
     8. expand both transformations
     8. apply final transformation to MPM and MP2RAGE
 
+The script needs an installation of fsl.
+
 created by Daniel Haenelt
 Date created: 20-01-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input files

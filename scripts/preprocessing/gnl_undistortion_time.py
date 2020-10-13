@@ -19,14 +19,13 @@ from fmri_tools.preprocessing.gnl_correction import gnl_correction
 Gradient nonlinearity correction of time series
 
 This scripts calls the HCP toolbox to correct for gradient nonlinearities in the 
-input time series.
+input time series. The corrected time series gets the suffix _gnlcorr.
 
-Before running the script, login to queen via ssh and set the fsl environment by 
-calling FSL in the terminal. The corrected time series gets the suffix _gnlcorr.
+The script needs an installation of fsl.
 
 created by Daniel Haenelt
 Date created: 27-01-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input

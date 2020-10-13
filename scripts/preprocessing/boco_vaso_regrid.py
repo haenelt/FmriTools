@@ -19,12 +19,11 @@ This scripts corrects a vaso time series for bold contamination. First, both
 time series are upsampled to a common time grid. BOLD correction is performed by 
 dividing both time series. In the end, unrealistic vaso values are removed.
 
-Before running the script, login to queen via ssh and set the afni environment 
-by calling AFNI in the terminal.
+The script needs an installation of afni.
 
 created by Daniel Haenelt
 Date created: 19-02-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input data

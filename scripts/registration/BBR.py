@@ -37,12 +37,11 @@ target. The resulting transformation matrix is expressed as coordinate mapping
 and saved as nifti volume. Example files are created by applying the resulting 
 coordinate mappings to source and target images.
 
-Before running the script, login to queen via ssh and set the freesurfer and 
-ANTS environments by calling FREESURFER and ANTSENV in the terminal.
+The script needs an installation of freesufer and ants.
 
 created by Daniel Haenelt
 Date created: 19-06-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input

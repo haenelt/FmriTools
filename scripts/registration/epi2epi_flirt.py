@@ -34,12 +34,11 @@ following steps:
     7. expand coordinate mapping
     8. apply deformations
 
-Before running the script, login to queen via ssh and set the freesurfer and 
-ANTS environments by calling FREESURFER and ANTSENV in the terminal.
+The script needs an installation of freesurfer and ants.
 
 created by Daniel Haenelt
 Date created: 13-01-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input data

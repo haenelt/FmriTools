@@ -13,12 +13,11 @@ Make visual fieldsign map
 The purpose of the following script is to make a visual fieldsign map from 
 sampled phase-encoded retinotopy data.
 
-Before running the script, login to queen via ssh and set the freesurfer 
-environments by calling FREESURFER in the terminal.
+The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 14-02-2019
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input files

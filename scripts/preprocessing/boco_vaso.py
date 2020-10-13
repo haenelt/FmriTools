@@ -16,12 +16,11 @@ time series are upsampled and the vaso time series is shifted by one time step.
 BOLD correction is performed by dividing both time series. In the end, 
 unrealistic vaso values are removed.
 
-Before running the script, login to queen via ssh and set the afni environment 
-by calling AFNI in the terminal.
+The script needs an installation of afni.
 
 created by Daniel Haenelt
 Date created: 02-05-2018
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input data

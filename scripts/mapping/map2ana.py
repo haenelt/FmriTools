@@ -18,12 +18,11 @@ In the following script, source data is transformed using a deformation field
 and the transformed data is mapped onto a surface mesh in the target space. The 
 deformation of the input data is optional.
 
-Before running the script, login to queen via ssh and set the freesurfer 
-environments by calling FREESURFER in the terminal.
+The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 06-03-2019            
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input

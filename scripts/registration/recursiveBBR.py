@@ -28,12 +28,11 @@ modified. For example the combination `rystytz' would optimise for a rotation
 around the y-axis, a scaling in all direction and a translation along the y-axis 
 and along the z-axis. The default is 'rst' for all transformations.
 
-Before running the script, login to queen via ssh and set the freesurfer 
-environment by calling FREESURFER in the terminal.
+The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 12-12-2019             
-Last modified: 12-10-2020  
+Last modified: 13-10-2020  
 """
 
 # input surface

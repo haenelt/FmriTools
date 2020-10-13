@@ -20,12 +20,11 @@ resting-state time series. The time series is baseline corrected and nuisance
 regressors are taken either from mean WM and CSF masks or based on biopac 
 recordings. Optionally, no nuisance regression is performed.
 
-Before running the script, login to queen via ssh and set the freesurfer, ANTS 
-and AFNI environments by calling FREESURFER, ANTSENV and AFNI in the terminal.
+The script needs an installation of freesurfer, ants adn afni.
 
 created by Daniel Haenelt
 Date created: 02-03-2019
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input

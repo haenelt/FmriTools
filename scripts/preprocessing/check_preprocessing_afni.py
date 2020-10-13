@@ -25,12 +25,11 @@ function 3dToutcount. The fraction of outliers found within a volume defined by
 a mask are written out for each time point. Additionally, a graphical 
 visualization, a regressor of no interest and a short summary are written.
 
-Before running the script, login to queen via ssh and set the fsl and afni 
-environments by calling FSL and AFNI in the terminal.
+The script needs an installation of fsl and afni.
 
 created by Daniel Haenelt
 Date created: 19-02-2020 
-Last modified: 12-10-2020  
+Last modified: 13-10-2020  
 """
 
 input_epi = [

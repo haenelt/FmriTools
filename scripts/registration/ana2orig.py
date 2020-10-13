@@ -21,12 +21,11 @@ registration between antomy in conformed freesurfer space and native anatomical
 space. The transformation can be computed from the headers of source and target 
 images.
 
-Before running the script, login to queen via ssh and set the freesurfer 
-environment by calling FREESURFER in the terminal.
+The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 06-01-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input data

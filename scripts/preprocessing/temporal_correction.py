@@ -10,12 +10,11 @@ Temporal correction
 This scripts performs slice timing correction and temporal regridding on a nifti 
 time series.
 
-Before running the script, login to queen via ssh and set the afni environment 
-by calling AFNI in the terminal.
+The script needs an installation of afni.
 
 created by Daniel Haenelt
 Date created: 11-03-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input

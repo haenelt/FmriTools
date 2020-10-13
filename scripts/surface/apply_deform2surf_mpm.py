@@ -14,12 +14,11 @@ Apply deformation to surface mesh
 The purpose of the following script is to apply two deformations in succession 
 (orig -> ana -> mpm) to a surface mesh using generated coordinate mappings.
 
-Before running the script, login to queen via ssh and set the freesurfer 
-environment by calling FREESURFER in the terminal.
+The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 30-01-2020
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input files

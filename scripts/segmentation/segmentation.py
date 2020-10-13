@@ -37,8 +37,7 @@ MP2RAGE data and bring the resulting surface data of the cortical boundaries
 into a regular grid representation. The script is divided into five parts. 
 Single steps of each part are stated below:
     
-Before running the script, login to queen via ssh and set the freesurfer 
-environment by calling FREESURFER in the terminal.
+The script needs an installation of freesurfer.
 
 Part 1 (Run recon-all pipeline)
     *flat image background denoising

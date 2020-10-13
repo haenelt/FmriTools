@@ -24,12 +24,11 @@ the masks can be deformed to an target epi image. Levelset images are computed
 and upsampled. Partial voluming in the target epi space is computed by counting 
 the tissue compartments in each epi voxel using a moving-average like algorithm.
 
-Before running the script, login to queen via ssh and set the afni environment 
-by calling AFNI in the terminal.
+The script needs an installation of afni.
 
 created by Daniel Haenelt
 Date created: 02-05-2019             
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input

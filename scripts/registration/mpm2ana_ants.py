@@ -31,9 +31,11 @@ following steps:
     8. expand both transformations
     9. apply final transformation to MPM and MP2RAGE
 
+The script needs an installation of ants.
+
 created by Daniel Haenelt
 Date created: 31-01-2019
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input files

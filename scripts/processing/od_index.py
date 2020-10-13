@@ -30,12 +30,11 @@ input array is not empty, outlier volumes are discarded from the analysis.
 Optionally, the time series can be filtered by a lowpass and a highpass filter. 
 The input images should be in nifti format.
 
-Before running the script, login to queen via ssh and set the afni environment 
-by calling AFNI in the terminal.
+The script needs an installation of afni.
 
 created by Daniel Haenelt
 Date created: 16-09-2019             
-Last modified: 12-10-2020  
+Last modified: 13-10-2020  
 """
 
 # input data
