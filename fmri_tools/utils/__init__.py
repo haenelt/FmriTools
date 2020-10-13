@@ -22,6 +22,7 @@ from .upsample_volume import upsample_volume
 from .regrid_time_series import *
 from .remove_nans import remove_nans
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 

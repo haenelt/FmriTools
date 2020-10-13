@@ -8,6 +8,7 @@ from .read_patch import read_patch
 from .read_vox2vox import read_vox2vox
 from .write_label import write_label
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 

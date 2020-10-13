@@ -7,6 +7,7 @@ from .remove_edge_cmap import remove_edge_cmap
 from .clean_coordinate_mapping import clean_coordinate_mapping
 from .expand_coordinate_mapping import expand_coordinate_mapping
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 

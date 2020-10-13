@@ -7,6 +7,7 @@ from .analyze_fft import analyze_fft
 from .analyze_acorr import analyze_acorr
 from .get_pca import get_pca
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 

@@ -8,6 +8,7 @@ from .map2stack import map2stack
 from .map2surface import map2surface
 from .morph2dense import morph2dense
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 

@@ -7,6 +7,7 @@ from .gnl_correction import gnl_correction
 from .slice_timing_correction import slice_timing_correction
 from .deweight_mask import deweight_mask
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 

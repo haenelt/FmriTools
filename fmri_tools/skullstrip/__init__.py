@@ -6,6 +6,7 @@ from .skullstrip_spm12 import skullstrip_spm12
 from .skullstrip_flash import skullstrip_flash
 from .skullstrip_refined import skullstrip_refined
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 

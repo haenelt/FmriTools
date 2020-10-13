@@ -12,6 +12,7 @@ from .pattern_corr import pattern_corr
 from .regrid import *
 from .regrid_zero import *
 
+
 """
 Python package for for analysis of high-resolution fMRI data.
 
