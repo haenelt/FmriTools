@@ -9,10 +9,10 @@ import nibabel as nb
 from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import read_geometry, write_morph_data
 from gbb.normal import get_normal
+from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
-from fmri_tools.surface.vox2ras import vox2ras
 
 
 def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", 
@@ -31,7 +31,7 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="",
         
     created by Daniel Haenelt
     Date created: 31-07-2020 
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
     """
     
     # make subfolders

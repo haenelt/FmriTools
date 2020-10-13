@@ -9,13 +9,13 @@ import numpy as np
 import nibabel as nb
 from nibabel.affines import apply_affine
 from nighres.laminar import profile_sampling
+from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from fmri_tools.utils.upsample_volume import upsample_volume
-from fmri_tools.surface.vox2ras import vox2ras
-    
-    
+
+
 def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
     """
     This function computes the cortical thickness as euclidean distances between 
@@ -29,7 +29,7 @@ def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
     """
        
     # make output folder

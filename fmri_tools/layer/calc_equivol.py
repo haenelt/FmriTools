@@ -12,10 +12,10 @@ from nibabel.freesurfer.io import read_geometry
 from skimage import measure
 from nighres.surface import probability_to_levelset
 from nighres.laminar import volumetric_layering
+from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.utils.upsample_volume import upsample_volume
-from fmri_tools.surface.vox2ras import vox2ras
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 
 

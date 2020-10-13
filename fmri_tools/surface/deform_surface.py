@@ -12,11 +12,11 @@ from nibabel.freesurfer.io import write_geometry, read_geometry
 from nibabel.affines import apply_affine
 from nipype.interfaces.freesurfer import SampleToSurface
 from nipype.interfaces.freesurfer import SmoothTessellation
+from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.io.mgh2nii import mgh2nii
-from fmri_tools.surface.vox2ras import vox2ras
     
 
 def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, 
@@ -42,7 +42,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
         
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 11-10-2020
+    Last modified: 13-10-2020
     """
 
     # set freesurfer path environment

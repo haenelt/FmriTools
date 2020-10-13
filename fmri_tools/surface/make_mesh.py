@@ -10,9 +10,9 @@ from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import write_geometry
 from nighres.surface import levelset_to_mesh
 from cortex.polyutils import Surface
+from gbb.utils.vox2ras import vox2ras
 
 # local inputs
-from fmri_tools.surface.vox2ras import vox2ras
 from fmri_tools.surface.smooth_surface import smooth_surface
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 from fmri_tools.surface.get_curvature import get_curvature
@@ -40,7 +40,7 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False,
     
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
     """
     
     # make output folder

@@ -9,9 +9,7 @@ from os.path import join, exists
 from scipy.io import loadmat, savemat
 from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import write_geometry
-
-# local inputs
-from fmri_tools.surface.vox2ras import vox2ras
+from gbb.utils.vox2ras import vox2ras
 
 
 """
