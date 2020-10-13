@@ -11,6 +11,7 @@ from nipype.interfaces.fsl import ExtractROI
 from nipype.interfaces.fsl.preprocess import ApplyWarp
 
 # local inputs
+import fmri_tools
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.preprocessing.gnl_correction import gnl_correction
 
@@ -33,13 +34,17 @@ file_in = [
     "/data/pt_01880/Experiment3_Stripes/p3/colour/GE_EPI1/Run_1/data.nii",
     ]
 
-file_bash = "/data/hu_haenelt/projects/gradunwarp/apply_grad.sh"
 file_coeff = "/data/hu_haenelt/projects/gradunwarp/7t_coeff.grad"
 python3_env = "daniel"
 python2_env = "daniel2"
 cleanup = True
 
 # do not edit below
+
+# get path of bash file
+file_bash = os.path.join(fmri_tools.__path__, 
+                         "preprocessing", 
+                         "apply_grad.sh")
 
 for i in range(len(file_in)):
     
