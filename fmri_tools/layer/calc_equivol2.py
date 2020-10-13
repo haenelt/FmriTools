@@ -12,6 +12,7 @@ from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import read_geometry
 from skimage import measure
 from nighres.surface import probability_to_levelset
+from nighres.laminar import volumetric_layering
 from scipy.ndimage.morphology import binary_fill_holes
 
 # local inputs
@@ -20,28 +21,25 @@ from fmri_tools.surface.vox2ras import vox2ras
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 
 
-def calculate_equidistant_epi(input_white, input_pial, input_vol, path_output, 
-                              n_layers, pathLAYNII, r=[0.4,0.4,0.4], n_iter=2, 
-                              debug=False):
+def calc_equivol2(input_white, input_pial, input_vol, path_output, n_layers, 
+                  r=[0.4,0.4,0.4], n_iter=2):
     """
-    This function computes equidistant layers in volume space from input pial 
-    and white surfaces in freesurfer format using the laynii function 
-    LN_GROW_LAYERS. The input surfaces do not have to cover the whole brain. 
-    Number of vertices and indices do not have to correspond between surfaces.
+    This function computes equivolumetric layers in volume space from input pial 
+    and white surfaces in freesurfer format. The input surfaces do not have to 
+    cover the whole brain. Number of vertices and indices do not have to 
+    correspond between surfaces.
     Inputs:
         *input_white: filename of white surface.
         *input_pial: filename of pial surface.
         *input_vol: filename of reference volume.
         *path_output: path where output is written.
         *n_layers: number of generated layers + 1.
-        *pathLAYNII: path to laynii folder.
         *r: array of new voxel sizes for reference volume upsampling.
         *n_iter: number of surface upsampling iterations.
-        *debug: write out some intermediate files (boolean).
     
     created by Daniel Haenelt
-    Date created: 31-05-2020
-    Last modified: 12-10-2020
+    Date created: 17-12-2019
+    Last modified: 13-10-2020
     """
     
     # make output folder
@@ -67,13 +65,13 @@ def calculate_equidistant_epi(input_white, input_pial, input_vol, path_output,
     _, ras2vox_tkr = vox2ras(res_vol)
     
     # load surface
-    vtx_white, _ = read_geometry(res_white) 
+    vtx_white, fac_white = read_geometry(res_white) 
     vtx_pial, _ = read_geometry(res_pial)
     
     # load volume
     vol = nb.load(res_vol)
     
-    # apply ras2vox to coords
+    # apply ras2vox to coords    
     vtx_white = np.round(apply_affine(ras2vox_tkr, vtx_white)).astype(int)
     vtx_pial = np.round(apply_affine(ras2vox_tkr, vtx_pial)).astype(int)
     
@@ -110,7 +108,7 @@ def calculate_equidistant_epi(input_white, input_pial, input_vol, path_output,
     label_number = Counter(pial_label_flatten).most_common(1)[0][0]
     pial_label_array[pial_label_array != label_number] = 0
     pial_label_array[pial_label_array > 0] = 1    
-    pial_label_array = pial_label_array + pial_array # add csf line again
+    #pial_label_array = pial_label_array + pial_array # add csf line again (worsen layering)
     pial_label = nb.Nifti1Image(pial_label_array, vol.affine, vol.header)
        
     # make gm
@@ -118,65 +116,22 @@ def calculate_equidistant_epi(input_white, input_pial, input_vol, path_output,
     ribbon_label_array[ribbon_label_array != 1] = 0
     ribbon_label = nb.Nifti1Image(ribbon_label_array, vol.affine, vol.header)
     
-    # make rim
-    rim_array = np.zeros_like(ribbon_label_array)
-    rim_array[ribbon_label_array == 1] = 3
-    rim_array[pial_array == 1] = 1
-    rim_array[white_array == 1] = 2
-
-    output = nb.Nifti1Image(rim_array, vol.affine, vol.header)
-    nb.save(output, os.path.join(path_output,"rim.nii"))    
+    # layers
+    csf_level = probability_to_levelset(pial_label)
+    wm_level = probability_to_levelset(white_label)
     
-    # grow layers using laynii
-    os.chdir(pathLAYNII)
-    vinc = 40
-    os.system("./LN_GROW_LAYERS" + \
-              " -rim " + os.path.join(path_output,"rim.nii") + \
-              " -vinc " + str(vinc) + \
-              " -N " + str(n_layers) + \
-              " -threeD" + \
-              " -output " + os.path.join(path_output,"layers.nii"))
-
-    # tranform label to levelset    
-    binary_array = white_label_array + ribbon_label_array + pial_label_array
-    binary_array[binary_array != 0] = 1 
-    
-    layer_array =  nb.load(os.path.join(path_output,"layers.nii")).get_fdata()
-    layer_array += 1
-    layer_array[layer_array == 1] = 0
-    layer_array[white_label_array == 1] = 1 # fill wm
-    
-    if debug:
-        out_debug = nb.Nifti1Image(layer_array, vol.affine, vol.header)
-        nb.save(out_debug, os.path.join(path_output,"layer_plus_white_debug.nii"))
-    
-    level_array = np.zeros(np.append(vol.header["dim"][1:4],n_layers + 1))
-    for i in range(n_layers+1):
-        print("Probabilty to levelset for layer: "+str(i+1))
-        
-        temp_layer_array = binary_array.copy()
-        temp_layer_array[layer_array > i+1] = 0
-        temp_layer = nb.Nifti1Image(temp_layer_array, vol.affine, vol.header)
-    
-        # write control output
-        if debug:
-            nb.save(temp_layer, os.path.join(path_output,"layer_"+str(i)+"_debug.nii"))
-    
-        # transform binary image to levelset image
-        res = probability_to_levelset(temp_layer)
-        
-        # sort levelset image into 4d array
-        level_array[:,:,:,i] = res["result"].get_fdata()
-
-    # levelset image
-    vol.header["dim"][0] = 4
-    vol.header["dim"][4] = n_layers + 1
-    levelset = nb.Nifti1Image(level_array, vol.affine, vol.header)
+    volumetric_layering(wm_level["result"], 
+                        csf_level["result"], 
+                        n_layers=n_layers, 
+                        topology_lut_dir=None,
+                        save_data=True, 
+                        overwrite=True, 
+                        output_dir=path_output, 
+                        file_name="epi")
     
     # write niftis
     nb.save(white, os.path.join(path_output,"wm_line.nii"))
     nb.save(pial, os.path.join(path_output,"csf_line.nii"))
-    nb.save(white_label, os.path.join(path_output,"wm_label.nii"))
-    nb.save(pial_label, os.path.join(path_output,"csf_label.nii"))
+    nb.save(white_label,os.path.join(path_output,"wm_label.nii"))
+    nb.save(pial_label,os.path.join(path_output,"csf_label.nii"))
     nb.save(ribbon_label, os.path.join(path_output,"gm_label.nii"))
-    nb.save(levelset, os.path.join(path_output,"boundaries.nii"))    

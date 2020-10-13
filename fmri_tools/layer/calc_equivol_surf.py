@@ -12,8 +12,8 @@ from cortex.polyutils import Surface
 from fmri_tools.segmentation.calculate_area import calculate_area
 
 
-def calculate_equivolumetric_surfaces(file_white, file_pial, n_surfs, factor, 
-                                      niter, hemi, path_output):
+def calc_equivol_surf(file_white, file_pial, n_surfs, factor, niter, hemi, 
+                      path_output):
     """
     The script calculates intracortical surfaces based on equi-volumetric 
     layering. It is an adaption of Konrad Wagstyl's function in surface_tools. 
@@ -34,7 +34,7 @@ def calculate_equivolumetric_surfaces(file_white, file_pial, n_surfs, factor,
     
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
     """
 
     def beta(alpha, aw, ap):

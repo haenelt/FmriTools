@@ -19,9 +19,8 @@ from fmri_tools.surface.vox2ras import vox2ras
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 
 
-def calculate_equivolumetric_epi(input_white, input_pial, input_vol, 
-                                 path_output, n_start, n_end, n_layers, 
-                                 r=[0.4,0.4,0.4], n_iter=2):
+def calc_equivol(input_white, input_pial, input_vol, path_output, n_start, 
+                 n_end, n_layers, r=[0.4,0.4,0.4], n_iter=2):
     """
     This function computes equivolumetric layers in volume space from input pial 
     and white surfaces in freesurfer format. The input surfaces do not have to 
@@ -40,7 +39,7 @@ def calculate_equivolumetric_epi(input_white, input_pial, input_vol,
     
     created by Daniel Haenelt
     Date created: 17-12-2019
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
     """
     
     # make output folder

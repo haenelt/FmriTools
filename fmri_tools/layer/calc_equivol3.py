@@ -10,7 +10,7 @@ from nighres.surface import probability_to_levelset
 from nighres.laminar import volumetric_layering
 
 
-def calculate_equivolumetric_layer(path, sub, n_layers, path_output):
+def calc_equivol3(path, sub, n_layers, path_output):
     """
     This script computes the volumetric layering from the FreeSurfer ribbon 
     mask.
@@ -22,7 +22,7 @@ def calculate_equivolumetric_layer(path, sub, n_layers, path_output):
     
     created by Daniel Haenelt
     Date created: 20-11-2018
-    Last modified: 12-20-2020
+    Last modified: 13-10-2020
     """
     
     # make output folder

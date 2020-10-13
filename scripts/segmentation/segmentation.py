@@ -16,8 +16,8 @@ from fmri_tools.segmentation.shift_white import shift_white
 from fmri_tools.segmentation.get_thickness_fsurf import get_thickness_fsurf
 from fmri_tools.segmentation.get_ribbon_fsurf import get_ribbon_fsurf
 from fmri_tools.segmentation.include_pial_correction import include_pial_correction
-from fmri_tools.segmentation.calculate_equivolumetric_surfaces import calculate_equivolumetric_surfaces
 from fmri_tools.segmentation.orthographic_projection import orthographic_projection
+from fmri_tools.layer.calc_equivol_surf import calc_equivol_surf
 from fmri_tools.surface.get_curvature import get_curvature
 from fmri_tools.surface.smooth_surface import smooth_surface
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
@@ -66,7 +66,7 @@ Part 5
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 12-10-2020
+Last modified: 13-10-2020
 """
 
 # input data
@@ -284,13 +284,13 @@ elif part == 4:
         for i in range(len(hemi)):
             file_white = os.path.join(path_dense,hemi[i]+".white") 
             file_pial = os.path.join(path_dense,hemi[i]+".pial")
-            calculate_equivolumetric_surfaces(file_white, 
-                                              file_pial, 
-                                              nsurf_layer, 
-                                              factor_layer, 
-                                              niter_layer, 
-                                              hemi[i],
-                                              path_layer)
+            calc_equivol_surf(file_white, 
+                              file_pial, 
+                              nsurf_layer, 
+                              factor_layer, 
+                              niter_layer, 
+                              hemi[i],
+                              path_layer)
         
     # write log
     fileID = open(os.path.join(path,"segmentation_info.txt"),"a")
