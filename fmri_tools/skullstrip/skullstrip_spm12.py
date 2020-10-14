@@ -11,20 +11,33 @@ from nipype.interfaces.matlab import MatlabCommand
 
 
 def skullstrip_spm12(filename, pathSPM12, path_output):
-    """
+    """ Skullstrip SPM12
+
     The computation of the skullstrip mask is done on the PD-weighted INV2 
     image. According to S. Kashyap, this shows the best results. Outputs are 
-    written in a subfolder of the given output path.
-    Inputs:
-        *filename: path of input image.
-        *pathSPM12: path to SPM12 toolbox.
-        *path_output: path where output is saved.
-    
+    written in a subfolder of the given output path.    
+
+    Parameters
+    ----------
+    filename : str
+        Path of input image.
+    pathSPM12 : str
+        Path to SPM12 toolbox.
+    path_output : str
+        Path where output is saved.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
-    """
     
+    """
+       
     # set matlab path to SPM12 folder
     MatlabCommand.set_default_paths(pathSPM12)
     

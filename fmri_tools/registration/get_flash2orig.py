@@ -17,26 +17,41 @@ from fmri_tools.registration.get_scanner_transform import get_scanner_transform
 
 def get_flash2orig(file_flash, file_inv2, file_orig, path_output, 
                    cleanup=False):
-    """
+    """ Get FLASH to orig
+
     This function computes the deformation field for the registration between a 
     partial coverage GRE image and the freesurfer orig file. The following steps 
     are performed: (1) set output folder structure, (2) get scanner transform 
     GRE <-> inv2 and inv2 -> orig, (3) generate flash cmap, (4) apply scanner 
     transform inv2 -> GRE, (5) get flirt registration GRE -> inv2, (6) apply 
     flirt to GRE cmap, (7) apply scanner transform to GRE cmap, (8) apply final 
-    deformation to GRE. The function needs the FSL environment set.
-    Inputs:
-        *file_flash: input path for GRE image.
-        *file_inv2: input path for MP2RAGE INV2 image.
-        *file_orig: input path for freesurfer orig image.
-        *path_output: path where output is saved.
-        *cleanup: delete intermediate files (boolean).
-    
+    deformation to GRE. The function needs the FSL environment set.    
+
+    Parameters
+    ----------
+    file_flash : str
+        Input path for GRE image.
+    file_inv2 : str
+        Input path for MP2RAGE INV2 image.
+    file_orig : str
+        Input path for freesurfer orig image.
+    path_output : str
+        Path where output is saved.
+    cleanup : bool, optional
+        Delete intermediate files. The default is False.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 18-04-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # set folder structure
     path_temp = os.path.join(path_output,"temp")
     

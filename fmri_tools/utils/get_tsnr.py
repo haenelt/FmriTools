@@ -13,22 +13,37 @@ from fmri_tools.io.get_filename import get_filename
 
 def get_tsnr(input, tsnr_max=200, write_output=False, path_output="", 
              name_output=""):
-    """
+    """ Get tSNR
+    
     This function computes the tsnr of one time series.
-    Inputs:
-        *input: input time series.
-        *tsnr_max: threshold unrealistic high tsnr values (applied if set > 0).
-        *write output: write output nifti file.
-        *path_output: path where to save mean image
-        *name_output: basename of output file.
-    Outputs:
-        *data_tsnr_array: tsnr array.
-        
+
+    Parameters
+    ----------
+    input : str
+        Input time series.
+    tsnr_max : TYPE, optional
+        Threshold unrealistic high tsnr values (applied if set > 0). The default 
+        is 200.
+    write_output : bool, optional
+        Write output nifti file. The default is False.
+    path_output : str, optional
+        Path where to save mean image The default is "".
+    name_output : str, optional
+        Basename of output file. The default is "".
+
+    Returns
+    -------
+    data_tsnr_array : ndarray
+        TSNR array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 05-02-2019         
     Last modified: 12-10-2020
+    
     """
-
+    
     # make subfolders
     if write_output and not os.path.exists(path_output):
         os.makedirs(path_output)

@@ -9,19 +9,34 @@ import nibabel as nb
     
 
 def get_laminar_profile(input, path_output, hemi, name_output, mode):
-    """
+    """ Get laminar profile
+    
     This function computes the laminar profile (mean, median, max, min) of data 
-    sampled onto different cortical layers.
-    Inputs:
-        *input: List of sampled data onto different cortical layers (mesh).
-        *path_output: path where to save laminar profile.
-        *hemi: hemisphere.
-        *name_output: output file name without file extension.
-        *mode: mean, median, max, min.
-        
+    sampled onto different cortical layers.    
+
+    Parameters
+    ----------
+    input : str
+        List of sampled data onto different cortical layers (mesh).
+    path_output : str
+        Path where to save laminar profile.
+    hemi : str
+        Hemisphere.
+    name_output : str
+        Output file name without file extension.
+    mode : str
+        mean, median, max, min.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 09-04-2019         
     Last modified: 12-10-2020
+    
     """
 
     # make subfolders

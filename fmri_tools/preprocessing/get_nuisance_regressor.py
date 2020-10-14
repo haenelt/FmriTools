@@ -10,18 +10,32 @@ import matplotlib.pyplot as plt
 
 
 def get_nuisance_regressor(input, wm_mask, csf_mask, path_output):
-    """
+    """ Get nuisance regressor
+    
     This function creates nuisance regressors from a functional time series 
-    using wm and csf masks.
-    Inputs:
-        *inupt: (baseline corrected) time series.
-        *wm_mask: white matter mask registered to the time series.
-        *csf_mask: csf mask registered to the time series.
-        *path_output: path where output is saved.
+    using wm and csf masks.    
 
+    Parameters
+    ----------
+    input : str
+        (Baseline corrected) time series.
+    wm_mask : str
+        White matter mask registered to the time series.
+    csf_mask : str
+        CSF mask registered to the time series.
+    path_output : str
+        Path where output is saved.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 02-03-2019    
     Last modified: 12-10-2020
+    
     """
 
     # make output folder

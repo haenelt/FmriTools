@@ -6,17 +6,29 @@ import nibabel as nb
 
 
 def remove_nans(file_in, file_out):
-    """
-    Reads a nifti volume and sets all nans to zero. 
-    Inputs:
-        *file_in: filename of input volume.
-        *file_out: filename of output volume.
-        
+    """ Remove NANs
+
+    Reads a nifti volume and sets all nans to zero.     
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input volume.
+    file_out : str
+        Filename of output volume.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 19-06-2020             
     Last modified: 12-10-2020
+    
     """
-
+    
     # load data
     data_img = nb.load(file_in)
     data_array = data_img.get_fdata()

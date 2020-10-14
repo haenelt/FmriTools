@@ -10,22 +10,35 @@ import nibabel as nb
 
 def demean_time_series(img_input, path_output="", name_output="", 
                        write_output=False):
-    """
+    """ Demean time series
+
     This function demeans each voxel time series. Input is either a 4d nifti or 
-    compressed nifti file.
-    Inputs:
-        *img_input: 4d nifti volume or string to filename.
-        *path_output: path where output is saved.
-        *name_output: basename of output.
-        *write_output: write nifti volume.
-    Outputs:
-        *output: demeaned 4d nifti volume.
-    
+    compressed nifti file.    
+
+    Parameters
+    ----------
+    img_input : niimg
+        4d nifti volume or string to filename.
+    path_output : str, optional
+        Path where output is saved. The default is "".
+    name_output : str, optional
+        Basename of output. The default is "".
+    write_output : bool, optional
+        Write nifti volume. The default is False.
+
+    Returns
+    -------
+    output : niimg
+        Demeaned 4d nifti volume.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 24-10-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # load data
     if isinstance(img_input, nb.Nifti1Image):
         data_array = img_input.get_fdata()

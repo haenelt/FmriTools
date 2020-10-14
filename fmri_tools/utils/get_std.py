@@ -10,17 +10,31 @@ import nibabel as nb
     
     
 def get_std(input, path_output, name_output, set_outlier=None):
-    """
-    This function computes the standard deviation of one or more time series.
-    Inputs:
-        *input: single file or list of files.
-        *path_output: path where to save mean image
-        *name_output: output file name without file extension.
-        *set_outlier: can be nan, zero or None.
-        
+    """ Get std
+
+    This function computes the standard deviation of one or more time series.    
+
+    Parameters
+    ----------
+    input : str
+        Single file or list of files.
+    path_output : str
+        Path where to save mean image
+    name_output : str
+        Output file name without file extension.
+    set_outlier : float, optional
+        Can be nan, zero or None. The default is None.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 04-02-2019         
     Last modified: 12-10-2020
+
     """
     
     # make subfolders

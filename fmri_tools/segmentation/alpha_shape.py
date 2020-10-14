@@ -10,28 +10,44 @@ from scipy.spatial import Delaunay
 from shapely.ops import cascaded_union, polygonize
 
 
-def alpha_shape(points, alpha):
-    """
+def alpha_shape(points, alpha):    
+    """ Alpha shape
+
     This function computes the alpha shape (concave hull) of a set of points. It 
-    is taken and slightly changed from http://blog.thehumangeo.com/2014/05/12/ 
-    drawing-boundaries-in-python/ (22.10.2018). Delaunay triangles are computed 
+    is taken and slightly changed from [1]. Delaunay triangles are computed 
     which establish a connection between each point and nearby points and then 
     we remove some of the triangles that are too far from their neighbors. This 
     removal part is the key. By identifying candidates for removal we are saying 
     that these points are too far from their connected points so don't use that 
-    connection as part of the boundary.
-    Inputs:
-        *points: iterable container of points.
-        *alpha: alpha value to influence the gooeyness of the border. Smaller 
-        numbers don't fall inward as much as larger numbers. Too large, and you
-        lose everything!
-    Outputs:
-        * cascaded_union: dictionary containing concave hull coordinates.
-        * edge_points: start end end points of all edges.
-        
+    connection as part of the boundary.    
+
+    Parameters
+    ----------
+    points : list
+        Iterable container of points.
+    alpha : float
+        Alpha value to influence the gooeyness of the border. Smaller numbers 
+        don't fall inward as much as larger numbers. Too large, and you lose 
+        everything!
+
+    Returns
+    -------
+    cascaded_union(triangles) : poly
+        Concave hull coordinates.
+    edge_points : list
+        Start and end points of all edges.
+
+    References
+    -------
+    .. [1] http://blog.thehumangeo.com/2014/05/12/drawing-boundaries-in-python/ 
+    (accessed 22-10-2018)
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
+
     """
     
     # when you have one triangle, there is no sense in computing an alpha shape

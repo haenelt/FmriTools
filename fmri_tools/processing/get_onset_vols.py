@@ -9,23 +9,37 @@ from scipy.io import loadmat
 
 
 def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):
-    """
+    """ Get onset vols
+
     This function returns all the volume indices corresponding to an 
-    experimental condition in from a block design.
-    Inputs:
-        *cond_input: block design condition .mat file.
-        *outlier_input: regressor of no interest .txt file.
-        *TR: repetition time in s.
-        *skip_vol: number of skipped time point of each block.
-        *name_condition: name of first condition.
-    Outputs:
-        *onsets: sorted volumes of experimental condition.
-    
+    experimental condition in from a block design.    
+
+    Parameters
+    ----------
+    cond_input : str
+        Block design condition *.mat file.
+    outlier_input : str
+        Regressor of no interest *.txt file.
+    name_condition : str
+        Name of first condition.
+    TR : float
+        Repetition time in s.
+    skip_vol : int
+        Number of skipped time point of each block.
+
+    Returns
+    -------
+    onsets : ndarray
+        sorted volumes of experimental condition.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 16-09-2019
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # load condition file
     cond = loadmat(cond_input)
 

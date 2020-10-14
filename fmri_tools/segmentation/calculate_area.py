@@ -7,10 +7,11 @@ from nibabel.freesurfer.io import write_morph_data, read_geometry
     
     
 def calculate_area(filename_surf, filename_area = ""):
-    """
+    """ Calculate area
+
     The function calculates vertex-wise surface area. The code is taken from the 
     octave code surf2area.m from Anderson Winkler found in his github repository 
-    (https://github.com/andersonwinkler/areal). Consider a triangular face ABC 
+    [1]. Consider a triangular face ABC 
     with corner points
     a = [x_A, y_A, z_A]'
     b = [x_B, y_B, z_B]'
@@ -19,20 +20,34 @@ def calculate_area(filename_surf, filename_area = ""):
     A = |u x v|/2 with u = a - c and v = b - c. This is a face-wise surface area 
     representation. To convert this to a vertex-wise representation, we assign 
     each vertex one third of the sum of the areas of all faces that meet at that 
-    vertex. Cf. Anderson Winkler et al. Measuring and comparing brain cortical 
-    surface area and other areal quantities, Neuroimage 61(4), p. 1428-1443 
-    (2012).
-    Inputs:
-        *file_surf: input file geometry on which surface area is calculated.
-        *file_area: file name of the surface area file.
-    Outputs:
-        *dpv: vertex-wise surface area.
-        
+    vertex, cf. [2].
+
+    Parameters
+    ----------
+    filename_surf : str
+        Input file geometry on which surface area is calculated.
+    filename_area : str, optional
+        File name of the surface area file. The default is "".
+
+    Returns
+    -------
+    dpv : ndarray
+        Vertex-wise surface area.
+
+    References
+    -------
+    .. [1] https://github.com/andersonwinkler/areal
+    .. [2] Winkler, A, et al. Measuring and comparing brain cortical surface 
+    area and other areal quantities, Neuroimage 61(4), 1428--1443 (2012).    
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
+    
     """
-
+    
     # Read the surface file
     vtx, fac = read_geometry(filename_surf);
     nV = len(vtx)

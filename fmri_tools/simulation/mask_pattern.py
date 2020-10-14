@@ -8,24 +8,38 @@ import numpy as np
 
 
 def mask_pattern_2d(nx, ny, a, b, alpha):
-    """
+    """ Mask pattern 2D
+
     This function computes a mask to occlude parts of the columnar pattern. The 
     mask has elliptical shape and can be adjusted by its major and minor axes 
-    and a rotational angle.
-    Inputs:
-        *nx: array size in x-direction.
-        *ny: array size in y-direction.
-        *a: major axis of ellipse.
-        *b: minor axis of ellipse.
-        *alpha: rotation in degrees.
-    Outputs:
-        *mask: binary array containing mask.
-        
+    and a rotational angle.    
+
+    Parameters
+    ----------
+    nx : int
+        Array size in x-direction.
+    ny : int
+        Array size in y-direction.
+    a : float
+        Major axis of ellipse.
+    b : float
+        Minor axis of ellipse.
+    alpha : float
+        Rotation in degrees.
+
+    Returns
+    -------
+    mask : ndarray
+        Binary array containing mask.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 12-04-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # compute meshgrid
     x = np.linspace(-nx/2,nx/2,nx)
     y = np.linspace(-ny/2,ny/2,ny)
@@ -46,20 +60,32 @@ def mask_pattern_2d(nx, ny, a, b, alpha):
 
 
 def mask_pattern_1d(n, a, b):
-    """
+    """ Mask pattern 1D
+    
     This function computes a mask to occlude parts of the columnar pattern.
-    Inputs:
-        *nx: array size.
-        *a: mask left side.
-        *b: mask right side.
-    Outputs:
-        *ellipse: binary array containing mask.
-        
+
+    Parameters
+    ----------
+    n : int
+        Array size.
+    a : float
+        Mask left side.
+    b : float
+        Mask right side.
+
+    Returns
+    -------
+    mask : ndarray
+        Binary array containing mask.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 12-04-2019
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # compute meshgrid
     mask = np.linspace(-n/2,n/2,n)
 

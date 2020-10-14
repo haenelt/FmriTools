@@ -10,18 +10,31 @@ from fmri_tools.io.get_filename import get_filename
 
 
 def inflate_surf_mesh(file_in, file_out, n_iter):
-    """
-    The scripts takes a generated FreeSurfer surfaces and inflates it.
-    Inputs:
-        *file_in: filename of input surface.
-        *file_out: filename of output surface.
-        *n_iter: number of inflating iterations.
+    """ Inflate surf mesh
 
+    The scripts takes a generated FreeSurfer surfaces and inflates it.    
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input surface.
+    file_out : str
+        Filename of output surface.
+    n_iter : int
+        Number of inflating iterations.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 17-12-2019             
     Last modified: 12-10-2020
+    
     """
-
+    
     # make output folder
     path_output, _, _ = get_filename(file_out)
     if not os.path.exists(path_output):

@@ -6,47 +6,55 @@ from gbb.neighbor.nn_2d import nn_2d
 
 
 def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
-    """
+    """ Heat kernel smoothing
+    
     This function performs heat kernel smoothing [1,2,3] on a triangle mesh. The 
-    code is mainly adapted from the matlab code by Chung et al. (http://pages.
-    stat.wisc.edu/~mchung/softwares/hk/hk_smooth.m). The kernel bandwidth 
-    corresponds to diffusion time in the heat equation [3]. The FWHM follows 
-    4*sqrt(log 2*n_smooth*sigma) with the natural log.
+    code is mainly adapted from the matlab code by Chung et al. [4]. The kernel 
+    bandwidth corresponds to diffusion time in the heat equation [3]. The FWHM 
+    follows 4*sqrt(log 2*n_smooth*sigma) with the natural log.
     
     If you use this code, please reference one of the following papers. The 
     details on the mathematical basis of of the algorithm can be found in these 
     papers.
-    
-    [1] Chung MK, Robbins SM, Dalton KM, Davidson RJ, Alexander AL, Evans AC 
-    2005. Cortical thickness analysis in autism via heat kernel smoothing. 
-    NeuroImage 25:1256-1265 
-    http://www.stat.wisc.edu/~mchung/papers/ni_heatkernel.pdf
 
-    [2] Chung MK, Robbins SM, Evans AC 2005. Unified statistical approach to 
-    cortical thickness analysis. Information Processing in Medical Imaging 
-    (IPMI). Lecture Notes in Computer Science (LNCS) 3565:627-638. 
-    Springer-Verlag 
-    http://www.stat.wisc.edu/~mchung/papers/IPMI/hk.IPMI.2005.pdf
+    Parameters
+    ----------
+    vtx : ndarray
+        Vertex points of surface mesh.
+    fac : ndarray
+        Faces of surface mesh.
+    data : ndarray
+        Array of vertex-wise sampled data points.
+    adjm : ndarray
+        Adjacency matrix.
+    sigma : float
+        Kernel bandwidth.
+    n_smooth : int
+        Number of iterations.
 
-    [3] Chung MK, Hartley R, Dalton KM, Davidson RJ 2008. Encoding cortical 
-    surface by spherical harmonics.  Satistica Sinica 18:1269-1291 
-    http://www.stat.wisc.edu/%7Emchung/papers/sinica.2008.pdf
-    
-    Inputs:
-        *vtx: vertex points of surface mesh.
-        *fac: faces of surface mesh.
-        *data: array of vertex-wise sampled data points.
-        *adjm: adjacency matrix.
-        *sigma: kernel bandwidth.
-        *n_smooth: number of iterations.
-    Outputs:
-        *res: array of vertex-wise smoothed data points.
-        
+    Returns
+    -------
+    res : ndarray
+        Array of vertex-wise smoothed data points.
+
+    References
+    -------
+    .. [1] Chung, MK, et al. Cortical thickness analysis in autism via heat 
+    kernel smoothing. Neuroimage 25(1), 1256--1265 (2005).
+    .. [2] Chung, MK, et al. Unified statistical approach to cortical thickness 
+    analysis. Inf Process Med Imaging 19, 627--638 (2005).
+    .. [3] Chung, MK, et al. Encoding cortical surface by spherical harmonics. 
+    Statistica Sinica 18, 1269--1291 (2008).
+    .. [4] http://pages.stat.wisc.edu/~mchung/softwares/hk/hk_smooth.m
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 04-03-2020
     Last modified: 12-10-2020
+    
     """
-
+    
     # number of vertices
     n_vertex = len(vtx)
 

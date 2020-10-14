@@ -14,11 +14,11 @@ from fmri_tools.io.read_patch import read_patch
     
 
 def calculate_distortion(file_patch, file_white, path_output, hemi):
-    """
+    """ Calculate distortion
+
     This script computes two metrics (areal distortion and line distortion) to 
     estimate the amount of distortion in the flattening process. The form of the 
-    metric is similar to http://brainvis.wustl.edu/wiki/index.php/Caret:
-    Operations/Morphing
+    metric is similar to [1].
     
     For vertex-wise areal distortion (VAD), first all faces which lie within the 
     patch are searched. Then, triangle areas before and after flattening are 
@@ -38,21 +38,38 @@ def calculate_distortion(file_patch, file_white, path_output, hemi):
     full faces within the point cloud of the patch corresponding to the original 
     white surface. I.e., a few border points are excluded from the analysis and 
     set to zero in the morphological output file. The number of excluded points 
-    is returned for each metric.   
-    Inputs:
-        *file_patch: filename of flattened patch.
-        *file_white: filename of white surface.
-        *path_output: path where output is written.
-        *hemi: hemisphere.
-    Outputs:
-        *VAD_params: Descriptive parameters of areal distortion.
-        *VLD_paramd: Descriptive parameters of line distortion.
-    
+    is returned for each metric.       
+
+    Parameters
+    ----------
+    file_patch : str
+        Filename of flattened patch.
+    file_white : str
+        Filename of white surface.
+    path_output : str
+        Path where output is written.
+    hemi : str
+        Hemisphere.
+
+    Returns
+    -------
+    VAD_params : list
+        Descriptive parameters of areal distortion.
+    VLD_params : list
+        Descriptive parameters of line distortion.
+
+    References
+    -------
+    .. [1] http://brainvis.wustl.edu/wiki/index.php/Caret:Operations/Morphing
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
+
     """
-    
+       
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

@@ -12,25 +12,41 @@ from scipy.ndimage.filters import gaussian_filter
 
 def map2grid(file_grid, file_input, sigma, path_output="", basename_output="", 
              binary=False, overwrite=True):
-    """
+    """ Map to grid
+
     This script allows you to sample indexed morphological data onto the regular 
-    grid. Optional, a gaussian filter can be applied to the output image.
-    Inputs:
-        *file_grid: filename of grid coordinate mapping.
-        *file_input: filename of morphological data or *.mgh data.
-        *sigma: standard deviation of Gaussian kernel.
-        *path_output: path where output is saved.
-        *basename_output: basename of written output file.
-        *binary: threshold output grid (for curvature file).
-        *overwrite: write output to file.
-    Output:
-        *grid_array: file mapped onto array.
-    
+    grid. Optional, a gaussian filter can be applied to the output image.    
+
+    Parameters
+    ----------
+    file_grid : str
+        Filename of grid coordinate mapping.
+    file_input : str
+        Filename of morphological data or *.mgh data.
+    sigma : float
+        Standard deviation of Gaussian kernel.
+    path_output : str, optional
+        Path where output is saved. The default is "".
+    basename_output : str, optional
+        Basename of written output file. The default is "".
+    binary : bool, optional
+        Threshold output grid (for curvature file). The default is False.
+    overwrite : bool, optional
+        Write output to file. The default is True.
+
+    Returns
+    -------
+    grid_array : ndarray
+        File mapped onto array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # load data
     grid_img = nb.load(file_grid)
     grid_array = grid_img.get_fdata()

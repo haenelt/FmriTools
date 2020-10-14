@@ -12,27 +12,42 @@ from numpy.random import shuffle
     
 def get_fft(input, write_output=False, path_output="", name_output="", 
             normalization=False, N=1000):
-    """
+    """ Get FFT
+
     This function computes the power spectrum of a 2D numpy array. The result is 
     saved as nifti image. Optionally, the FFT spectrum can be normalized. To do 
     so, the input is shuffled N times and the 50th percentile of the power 
     spectrum of the shuffled input array is computed. The mean 50th percentile 
     of all shuffles is subtracted from the initial power spectrum and negative 
     values are set to zero. Additionally, the resulting spectrum is normalized 
-    by its maximum power.
-    Inputs:
-        *input: 2D nifti input array.
-        *write_output: if output is written as nifti file (boolean).
-        *path_output: path where output is saved.
-        *name_output: basename of output image.
-        *normalization: indicate if power spectrum is normalized (boolean).
-        *N: number of shuffled for normalization.
-    Outputs:
-        *array_fft: fourier transformed array.
-        
+    by its maximum power.    
+
+    Parameters
+    ----------
+    input : ndarray
+        2D nifti input array.
+    write_output : bool, optional
+        If output is written as nifti file. The default is False.
+    path_output : str, optional
+        Path where output is saved. The default is "".
+    name_output : str, optional
+        Basename of output image. The default is "".
+    normalization : bool, optional
+        Indicate if power spectrum is normalized. The default is False.
+    N : int, optional
+        Number of shuffled for normalization. The default is 1000.
+
+    Returns
+    -------
+    array_fft : ndarray
+        Fourier transformed array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 11-04-2019
     Last modified: 12-10-2020
+
     """
     
     # copy input data

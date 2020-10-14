@@ -18,7 +18,8 @@ from fmri_tools.surface.deform_surface import deform_surface
 def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco, 
                    file_surf, delta_te=1.02, smooth=2.5, udir="y-", bw=16.304, 
                    nerode=1, cleanup=True):
-    """
+    """ Apply fieldmap
+
     This function computes a deformation field from a fieldmap acquisition and 
     applies the inverse transformation to the undistorted surface. The following 
     steps are performed:
@@ -33,23 +34,43 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
         
     To run the script, FSL and Freesurfer have to be in the PATH environment. 
     The basenames of the surface files should be in freesurfer convention with 
-    the hemisphere indicated as prefix.
-    Inputs:
-        *fiele_fmap_magn: fieldmap magnitude image.
-        *file_fmap_phase: fieldmap phase difference image.
-        *file_epi: filename of raw time series.
-        *file_epi_moco: filname of motion corrected time series.
-        *file_surf: list of surface filnames.
-        *delta_te: echo time difference of fieldmap in ms.
-        *smooth: smoothing kernel for fieldmap unmasking.
-        *udir: direction for fieldmap unmasking.
-        *bw: BandwidthPerPixelPhaseEncode in Hz/px.
-        *nerode: number of skullstrip mask eroding iterations.
-        *cleanup: removes temporary files at the end of the script (boolean).
-    
+    the hemisphere indicated as prefix.    
+
+    Parameters
+    ----------
+    file_fmap_magn : str
+        Fieldmap magnitude image.
+    file_fmap_phase : str
+        Fieldmap phase difference image.
+    file_epi : str
+        Filename of raw time series.
+    file_epi_moco : str
+        Filname of motion corrected time series.
+    file_surf : list
+        List of surface filnames.
+    delta_te : float, optional
+        Echo time difference of fieldmap in ms. The default is 1.02.
+    smooth : float, optional
+        Smoothing kernel for fieldmap unmasking. The default is 2.5.
+    udir : str, optional
+        Direction for fieldmap unmasking. The default is "y-".
+    bw : float, optional
+        BandwidthPerPixelPhaseEncode in Hz/px. The default is 16.304.
+    nerode : int, optional
+        Number of skullstrip mask eroding iterations. The default is 1.
+    cleanup : bool, optional
+        Removes temporary files at the end of the script. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 31-01-2020
     Last modified: 12-10-2020
+    
     """
     
     # prepare path and filename

@@ -13,7 +13,8 @@ from scipy.ndimage.morphology import binary_fill_holes
     
 def skullstrip_flash(input, path_output, name_output, min_val=100, max_val=1000, 
                      flood_fill=False, cleanup=False):
-    """
+    """ Skullstrip FLASH
+
     This function computes a brain mask for a partial coverage T2*-weighted 
     anatomical image. The mask is used to remove the sagittal sinus during 
     segmentation. Thus, the latest echo should be used here to get the largest 
@@ -22,21 +23,37 @@ def skullstrip_flash(input, path_output, name_output, min_val=100, max_val=1000,
     posterior-anterior direction is considered by thresholding all slices 
     independently. The threshold value is computed from the intensity histogram 
     of each slice by getting the minimum of the histogram within a predefined 
-    range.
-    Inputs:
-        *input: input path of T2*-weighted anatomy.
-        *path_output: path where output is saved.
-        *name_output: basename of output file.
-        *min_val: minimum threshold of intensity histogram.
-        *max_val: maximum threshold of intenstiy histogram.
-        *flood_fill: apply flood filling of binary mask (boolean).
-        *cleanup: delete intermediate files (boolean).
-        
+    range.    
+
+    Parameters
+    ----------
+    input : str
+        Input path of T2*-weighted anatomy.
+    path_output : str
+        Path where output is saved.
+    name_output : str
+        Basename of output file.
+    min_val : float, optional
+        Minimum threshold of intensity histogram. The default is 100.
+    max_val : float, optional
+        Maximum threshold of intenstiy histogram. The default is 1000.
+    flood_fill : bool, optional
+        Apply flood filling of binary mask. The default is False.
+    cleanup : bool, optional
+        Delete intermediate files. The default is False.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 05-05-2019          
     Last modified: 12-10-2020
+    
     """
-
+    
     # prepare path and filename
     path = os.path.dirname(input)
     file = os.path.splitext(os.path.basename(input))[0]

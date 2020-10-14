@@ -7,17 +7,28 @@ import matplotlib.pyplot as plt
 
 
 def check_trigger(input_biopac):
-    """
-    This function loads the digital input from a saved biopac mat-file and 
-    checks the number of sent triggers and the time difference between triggers.
-    Inputs:
-        *input_biopac: biopac mat-file.
+    """ Check trigger
     
+    This function loads the digital input from a saved biopac mat-file and 
+    checks the number of sent triggers and the time difference between triggers.    
+
+    Parameters
+    ----------
+    input_biopac : str
+        Biopac *.mat file
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 25-10-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # load digital input from biopac mat-file
     data = sio.loadmat(input_biopac)
     trigger = data["data"][:,3]

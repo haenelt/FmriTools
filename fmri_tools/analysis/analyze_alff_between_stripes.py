@@ -12,27 +12,45 @@ from scipy.stats import ttest_ind, levene
 
 def analyze_alff_between_stripes(input_label, input_contrast, input_rest, 
                                  min_contrast, nvert):
-    """
+    """ Analyze ALFF between stripes
+    
     Comparison of resting-state data within and between V2 stripes. Mask stripes 
     within a ROI from a label with a thresholded contrast and select randomly 
     <nvert> vertices either within or between stripes. An independent samples 
-    t-test is computed (or Welch's test if Levene's test is significant).
-    Inputs:
-        *input_label: input label file to define the region of interest.
-        *input_contrast: input contrast data for masking.
-        *input_rest: input resting-state data (alff or falff).
-        *min_contrast: minimum contrast for masking (t-score).
-        *nvert: number of selected vertices.
-    Outputs:
-        *rest_pos: resting-state data within stripes.
-        *rest_neg: resting-state data between stripes.
-        *t: t-score from independent samples t-test.
-        *p: p-value from independent samples t-test.
-        *p_levene: p-value from Levene's test.
+    t-test is computed (or Welch's test if Levene's test is significant).    
 
+    Parameters
+    ----------
+    input_label : str
+         Input label file to define the region of interest.
+    input_contrast : str
+        Input contrast data for masking.
+    input_rest : str
+        Input resting-state data (alff or falff).
+    min_contrast : float
+        Minimum contrast for masking (t-score).
+    nvert : int
+        Number of selected vertices.
+
+    Returns
+    -------
+    rest_pos : ndarray
+        Resting-state data within stripes.
+    rest_neg : ndarray
+        Resting-state data between stripes.
+    t : float
+        t-score from independent samples t-test.
+    p : float
+        p-value from independent samples t-test.
+    p_levene : float
+        p-value from Levene's test.
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 11-03-2019
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
+    
     """
 
     # load data

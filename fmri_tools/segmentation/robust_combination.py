@@ -10,20 +10,20 @@ import nibabel as nb
 
 def robust_combination(fileUNI, fileINV1, fileINV2, regularisation, 
                        path_output):
-    """
-    This script implements the regularisation proposed in O'Brien, et al, 
-    PLOS ONE, 2014, which allows the creation of MP2RAGE flat images without the 
-    strong background noise in air regions. 
+    """ Robust combination
+
+    This script implements the regularisation proposed in [1], which allows the 
+    creation of MP2RAGE flat images without the strong background noise in air 
+    regions. 
 
     Although in the original paper the method only worked on raw multichannel 
     data, here that constrain has been overcome and the correction can be 
     implemented if both SOS images of the two inversion times exist and a 
     MP2RAGE flat image that has been calculated directly from the multichannel 
-    data as initially proposed in Marques et al, Neuroimage, 2009.
+    data as initially proposed in [2].
     
     This script is a tranlation from Marques Matlab script found on his github 
-    repository https://github.com/JosePMarques/MP2RAGE-related-scripts 
-    (02.10.2018)
+    repository [3].
     
     The output should ideally look like the standard MPRAGE (no noise in the 
     background). If it has too much noise on the background, give it a bigger 
@@ -43,16 +43,40 @@ def robust_combination(fileUNI, fileINV1, fileINV2, regularisation,
     Note: To omit the warnings by running the rootsquares help functions, I set 
     all voxel values with 0 to nan. After running that function, these voxels 
     are set back to 0.
-    Inputs:
-        *fileUNI: path of flate image.
-        *fileINV1: path of corrsponding first inversion recovery.
-        *fileINV2: path of corresponding second inversion recovery.
-        *regularisation: regularisation parameter for background removal.
-        *path_output: path where all output images are saved.
-    
+
+    Parameters
+    ----------
+    fileUNI : str
+        Path of flat image.
+    fileINV1 : str
+        Path of corrsponding first inversion recovery.
+    fileINV2 : str
+        Path of corresponding second inversion recovery.
+    regularisation : float
+        Regularisation parameter for background removal.
+    path_output : str
+        Path where all output images are saved.
+
+    Returns
+    -------
+    None.
+
+    References
+    -------
+    .. [1] O'Brien, KR, et al, Robust T1-weighted structural brain imaging and 
+    morphometry at 7T using MP2RAGE, PLoS ONE 9(6), 1--7 (2014).
+    .. [2] Marques, JP, et al. MP2RAGE, a self bias-field corrected sequence for 
+    improved segmentation and T1-mapping at high field, Neuroimage 49(2), 
+    1271--1281 (2010).
+    .. [3] https://github.com/JosePMarques/MP2RAGE-related-scripts 
+    (accessed 02-10-2018)
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
+    
     """
 
     if not os.path.exists(path_output):

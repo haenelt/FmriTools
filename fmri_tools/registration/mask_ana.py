@@ -9,20 +9,33 @@ import nibabel as nb
     
     
 def mask_ana(t1, mask, background_bright=False):
-    """
+    """ Mask ana
+
     This function masked an image with a corresponding binary mask by 
     multiplication. The masked volume is saved in the same folder as the input 
-    image with the prefix p.
-    Inputs:
-        *t1: input anatomy.
-        *mask: corresponding binary mask.
-        *background_bright: set values outside mask to maximum value (boolean).
-        
+    image with the prefix p.    
+
+    Parameters
+    ----------
+    t1 : str
+        Input anatomy.
+    mask : str
+        Corresponding binary mask.
+    background_bright : bool, optional
+        Set values outside mask to maximum value. The default is False.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-02-2019   
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # get path and filename of anatomy
     path_t1 = os.path.dirname(t1)
     if os.path.splitext(os.path.basename(t1))[1] == '.gz':

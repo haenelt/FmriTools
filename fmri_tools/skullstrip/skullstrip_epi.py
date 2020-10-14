@@ -12,26 +12,44 @@ from scipy.ndimage.morphology import binary_fill_holes
 
 def skullstrip_epi(input, pathFSL=None, roi_size=5, scale=0.75, nerode=2, 
                    ndilate=1, savemask=False, cleanup=True):
-    """
+    """ Skullstrip EPI
+
     Skullstrip input volume by defining an intensity threshold from the inner of 
     the brain volume. From a defined mid-point, a brain mask is grown inside the 
     brain. A binary filling holes algorithm is applied. To reduce remaining 
-    skull within the brain mask, the mask is eroded and dilated several times.    
-    Inputs:
-        *input: input file.
-        *pathFSL: path to FSL environment.
-        *roi_size: size of cubic roi for image intensity threshold
-        *scale: scale image intensity threshold
-        *nerode: number of eroding iterations
-        *ndilate: number of dilating iterations
-        *savemask: save mask time series (boolean).
-        *cleanup: delete intermediate files after running.
-    
+    skull within the brain mask, the mask is eroded and dilated several times.        
+
+    Parameters
+    ----------
+    input : str
+        Input file.
+    pathFSL : str, optional
+        Path to FSL environment. The default is None.
+    roi_size : int, optional
+        Size of cubic roi for image intensity threshold. The default is 5.
+    scale : float, optional
+        Scale image intensity threshold. The default is 0.75.
+    nerode : int, optional
+        Number of eroding iterations. The default is 2.
+    ndilate : int, optional
+        Number of dilating iterations. The default is 1.
+    savemask : bool, optional
+        Save mask time series. The default is False.
+    cleanup : bool, optional
+        Delete intermediate files after running. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 06-11-2018             
     Last modified: 12-10-2020
+    
     """
-
+    
     # prepare path and filename
     path = os.path.split(input)[0]
     file = os.path.split(input)[1]

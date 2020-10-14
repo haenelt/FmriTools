@@ -13,33 +13,54 @@ from fmri_tools.utils import get_acorr
     
 def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, 
                   nsample=1000):
-    """
+    """ Analyze Autocorrelation
+    
     This function computes the normalized autocorrelation (NAC) from a 2D input 
     array and estimates the width of the central peak and the distance to its 
     first neighbor peak along a defined projection lines sampled with nearest 
     neighbor interpolation. The width of the central peak is defined as the 
     width at zero point.
-    Inputs:
-        *input: input array (2D).
-        *fovx: field of view in x-direction (mm).
-        *fovy: field of view in y-firection (mm).
-        *xv: x-coordinate of pca eigenvector.
-        *yv: y-coordinate of pca eigenvector.
-        *p_min: minimum prominence for peak detection.
-        *p_max: maximum prominence for peak detection.
-        *nsample: number of sampling points along projection line.
-    Outputs:
-        *fwhm_central: fwhm of nac central peak in mm along projection axis.
-        *P_neighbor: power of first neighbor peak along projection axis.
-        *d_neighbor: distance to first neighbor peak in mm along projection axis.
-        *d: lag in mm along projection axis.
-        *acorr_line: nac along projection axis.
-        
+
+    Parameters
+    ----------
+    input : ndarray
+        2D input array.
+    fovx : float
+        Field of view in x-direction (mm).
+    fovy : float
+        Field of view in y-firection (mm).
+    xv : float
+        x-coordinate of pca eigenvector.
+    yv : float
+        y-coordinate of pca eigenvector.
+    p_min : float, optional
+        Minimum prominence for peak detection. The default is 0.01.
+    p_max : float, optional
+        Maximum prominence for peak detection. The default is 0.5.
+    nsample : int, optional
+        Number of sampling points along projection line. The default is 1000.
+
+    Returns
+    -------
+    fwhm_central : float
+        FWHM of NAC central peak in mm along projection axis.
+    d_neighbor : float
+        Distance to first neighbor peak in mm along projection axis.
+    P_neighbor : float
+        Power of first neighbor peak along projection axis.
+    d : float
+        Lag in mm along projection axis.
+    acorr_line : ndarray
+        NAC along projection axis.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 14-04-2019
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
+    
     """
-
+    
     # add one if nsample is an odd integer
     if np.mod(nsample,2) > 0:
         nsample += 1

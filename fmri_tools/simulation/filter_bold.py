@@ -6,25 +6,40 @@ from numpy.fft import fftshift
 
     
 def filter_bold_2d(nx, ny, fovx, fovy, fwhm, beta):
-    """
+    """ Filter BOLD 2D
+
     This defines the BOLD blurring in 2D. It is defined as modulation transfer 
     function in spatial frequency space. The filter is the Fourier transform of 
-    a two-dimensional Gaussian kernel in image space.
-    Inputs:
-        *nx: array size in x-direction.
-        *ny: array size in y-direction.
-        *fovx: field of view in x-direction (mm).
-        *fovy: field of view in y-direction (mm).
-        *fwhm: full width at half maximum of the Gaussian kernel.
-        *beta: maximum BOLD response for neural response of 1.
-    Outputs:
-        * F: band-pass filter array in spatial frequency space.
-        
+    a two-dimensional Gaussian kernel in image space.    
+
+    Parameters
+    ----------
+    nx : int
+        Array size in x-direction.
+    ny : int
+        Array size in y-direction.
+    fovx : float
+        Field of view in x-direction (mm).
+    fovy : float
+        Field of view in y-direction (mm).
+    fwhm : float
+        Full width at half maximum of the Gaussian kernel.
+    beta : float
+        Maximum BOLD response for neural response of 1.
+
+    Returns
+    -------
+    F : ndarray
+        Band-pass filter array in spatial frequency space.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 04-01-2019          
     Last modified: 12-10-2020
+    
     """
-
+    
     # get maximum k-space coordinate in x- and y-direction
     kx_max = nx/(2*fovx)
     ky_max = ny/(2*fovy)
@@ -51,23 +66,36 @@ def filter_bold_2d(nx, ny, fovx, fovy, fwhm, beta):
 
 
 def filter_bold_1d(n, fov, fwhm, beta):
-    """
+    """ Filter BOLD 1D
+
     This defines the BOLD blurring in 1D. It is defined as modulation transfer 
     function in spatial frequency space. The filter is the Fourier transform of 
-    a one-dimensional Gaussian kernel in image space.
-    Inputs:
-        *n: array size.
-        *fov: field of view (mm).
-        *fwhm: full width at half maximum of the Gaussian kernel.
-        *beta: maximum BOLD response for neural response of 1.
-    Outputs:
-        * F: band-pass filter array in spatial frequency space.
-        
+    a one-dimensional Gaussian kernel in image space.    
+
+    Parameters
+    ----------
+    n : int
+        Array size.
+    fov : float
+        Field of view (mm).
+    fwhm : float
+        Full width at half maximum of the Gaussian kernel.
+    beta : float
+        Maximum BOLD response for neural response of 1.
+
+    Returns
+    -------
+    F : ndarray
+        Band-pass filter array in spatial frequency space.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 08-01-2019          
     Last modified: 12-10-2020
+    
     """
-
+    
     # get maximum k-space coordinate in x- and y-direction
     k_max = n/(2*fov)
     

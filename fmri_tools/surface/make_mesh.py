@@ -21,26 +21,46 @@ from fmri_tools.surface import inflate_surf_mesh
 
 def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, 
               niter_smooth=2, niter_upsample=0, niter_inflate=15):
-    """
+    """ Make mesh
+
     This function generates a surface mesh from a levelset image. The surface 
     mesh is smoothed and a curvature file is generated. Vertices are in the 
     vertex ras coordinate system. Optionally, the mesh can be upsampled and an 
     inflated version of the mesh can be written out. The hemisphere has to be 
     indicated as prefix in the output file. If nlayer is set to -1, a 3D 
-    levelset image can be used as boundary input file.
-    Inputs:
-        *boundary_in: filename of 4D levelset image.
-        *ref_in: filename of reference volume for getting the coordinate transformation.
-        *file_out: filename of output surface.
-        *nlayer: layer from the 4D boundary input at which the mesh is generated.
-        *flip_faces: reverse normal direction of mesh.
-        *niter_smooth: number of smoothing iterations.
-        *niter_upsample: number of upsampling iterations (is performed if set > 0).
-        *niter_inflate: number of inflating iterations (is performed if set > 0).
-    
+    levelset image can be used as boundary input file.    
+
+    Parameters
+    ----------
+    boundary_in : str
+        Filename of 4D levelset image.
+    ref_in : str
+        Filename of reference volume for getting the coordinate transformation.
+    file_out : str
+        Filename of output surface.
+    nlayer : int
+        Layer from the 4D boundary input at which the mesh is generated.
+    flip_faces : bool, optional
+        Reverse normal direction of mesh. The default is False.
+    niter_smooth : int, optional
+        Number of smoothing iterations. The default is 2.
+    niter_upsample : int, optional
+        Number of upsampling iterations (is performed if set > 0). The default 
+        is 0.
+    niter_inflate : int, optional
+        Number of inflating iterations (is performed if set > 0). The default is 
+        15.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 18-12-2019
     Last modified: 13-10-2020
+
     """
     
     # make output folder

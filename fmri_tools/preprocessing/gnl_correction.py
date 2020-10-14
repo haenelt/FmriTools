@@ -18,24 +18,41 @@ from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapp
 
 def gnl_correction(input, file_bash, file_coeff, python3_env, python2_env, 
                    path_output, cleanup=True):
-    """
+    """ GNL correction
+
     The purpose of the following function is to correct for gradient 
     nonlinearities. A corrected file is written using spline interpolation. The 
-    function needs FSL to be included in the search path.
-    Inputs:
-        *input: filename of input image.
-        *file_bash: filename of bash script which calls the gradient unwarping toolbox.
-        *file_coeff: filename of siemens coefficient file.
-        *python3_env: name of python3 virtual environment.
-        *python2_env: name of python2 virtual environment.
-        *path_output: path where output is written.
-        *cleanup: delete intermediate files.
+    function needs FSL to be included in the search path.    
 
+    Parameters
+    ----------
+    input : str
+        Filename of input image.
+    file_bash : str
+        Filename of bash script which calls the gradient unwarping toolbox.
+    file_coeff : str
+        Filename of siemens coefficient file.
+    python3_env : str
+        Name of python3 virtual environment.
+    python2_env : str
+        Name of python2 virtual environment.
+    path_output : str
+        Path where output is written.
+    cleanup : bool, optional
+        Delete intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 10-01-2020             
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # get fileparts
     path, name, ext = get_filename(input)
     

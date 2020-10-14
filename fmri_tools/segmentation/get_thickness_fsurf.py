@@ -6,19 +6,31 @@ import datetime
     
 
 def get_thickness_fsurf(path, sub):
-    """
+    """ Get thickness fsurf
+
     This function calculates the cortical thickness using freesurfer. Old files 
     are moved to the freesurfer trash folder tagged with a date string as 
-    suffix.
-    Inputs:
-        *path: path to the freesurfer segmentation folder.
-        *sub: name of the freesurfer segmentation folder.
-        
+    suffix.    
+
+    Parameters
+    ----------
+    path : str
+        Path to the freesurfer segmentation folder.
+    sub : str
+        Name of the freesurfer segmentation folder.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 06-12-2018
     Last modified: 12-10-2020
+    
     """
-
+    
     # parameters 
     hemi = ["lh","rh"] # hemisphere prefix
     max_thickness = 10 # maximum thickness cut in mm

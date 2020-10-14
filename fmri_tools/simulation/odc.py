@@ -20,49 +20,92 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100,
            rho=0.5, delta=0.3, epsilon=0.4, theta=0, alpha=4, beta=0.05, 
            fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, b_mask=1000, 
            alpha_mask=0, path_white=False):
-    """
+    """ ODC 2D
+    
     This function generates realistic ocular dominance patterns according to the 
-    model proposed by Rojer and Schwartz (1990) in 2D. Implementation follows 
-    (Chaimow et al., 2011) and most of the default values for the columnar 
-    pattern are taken from this publication. First, a white noise pattern is 
-    defined and an anisotropic band-pass filter and a non-linear sigmoidal 
-    filter are applied. This neural map is converted to a BOLD response map by 
-    applying a Gaussian filter. White noise is added to simulate uncorrelated 
-    measurement noise to the signal. The MRI sampling procedure is considered by 
-    only inner k-space lines of the spatial frequency representation of the BOLD 
-    reseponse map. 
-    Inputs:
-        *Nx_sim: array size of the simulated patch in x-direction (use only even integers).
-        *Ny_sim: array size of the simulated patch in y-direction (use only even integers).
-        *FOVx: field of view in x-direction (mm).
-        *FOVy: field of view in y-direction (mm).
-        *Nx_mri: array size of the MR image in x-direction.
-        *Ny_mri: array size of the MR image in y-direction.
-        *rho: main spatial frequency determining columnar width in cycles/mm.
-        *delta: variations orthogonal to ODC bands in cycles/mm (irregularity).
-        *epsilon: variations parallel to ODC bands in cycles/mm (branchiness).
-        *theta: orientation of the columnar pattern in deg.
-        *alpha: sharpness parameter of the sigmoidal filter.
-        *beta: maximal BOLD response corresponding to neural response of 1.
-        *fwhm_bold: BOLD point-spread width in mm.
-        *fwhm_noise: measurement noise of BOLD response.
-        *a_mask: major axis of elliptical mask.
-        *b_mask: minor axis of elliptical mask.
-        *alpha_mask: rotational angle of elliptical mask.
-        *path_white: path to existing white noise image.
-    Outputs:
-        *white_img: initial white noise pattern.
-        *odc_img: neural map.
-        *y_img: BOLD response with measurement noise.
-        *ymri_img = sampled MRI signal.
-        *F_odc_fft: anisotropic band-pass filter in spatial frequency representation.
-        *F_bold_fft: BOLD filter in spatial frequency representation.
-        
+    model proposed by [1] in 2D. Implementation follows [2] and most of the 
+    default values for the columnar pattern are taken from this publication. 
+    First, a white noise pattern is defined and an anisotropic band-pass filter 
+    and a non-linear sigmoidal filter are applied. This neural map is converted 
+    to a BOLD response map by applying a Gaussian filter. White noise is added 
+    to simulate uncorrelated measurement noise to the signal. The MRI sampling 
+    procedure is considered by only inner k-space lines of the spatial frequency 
+    representation of the BOLD reseponse map. 
+
+    Parameters
+    ----------
+    Nx_sim : int, optional
+        Array size of the simulated patch in x-direction. The default is 1024.
+    Ny_sim : int, optional
+        Array size of the simulated patch in y-direction. The default is 1024.
+    FOVx : float, optional
+        Field of view in x-direction (mm). The default is 20.
+    FOVy : float, optional
+        Field of view in y-direction (mm). The default is 20.
+    Nx_mri : int, optional
+        Array size of the MR image in x-direction. The default is 100.
+    Ny_mri : int, optional
+        Array size of the MR image in y-direction. The default is 100.
+    rho : float, optional
+        Main spatial frequency determining columnar width in cycles/mm. The 
+        default is 0.5.
+    delta : float, optional
+        Variations orthogonal to ODC bands in cycles/mm (irregularity). The 
+        default is 0.3.
+    epsilon : float, optional
+        Variations parallel to ODC bands in cycles/mm (branchiness). The default 
+        is 0.4.
+    theta : float, optional
+        Orientation of the columnar pattern in deg. The default is 0.
+    alpha : float, optional
+        Sharpness parameter of the sigmoidal filter. The default is 4.
+    beta : float, optional
+        Maximal BOLD response corresponding to neural response of 1. The default 
+        is 0.05.
+    fwhm_bold : float, optional
+        BOLD point-spread width in mm. The default is 1.02.
+    fwhm_noise : float, optional
+        Measurement noise of BOLD response. The default is 0.001.
+    a_mask : float, optional
+        Major axis of elliptical mask. The default is 1000.
+    b_mask : float, optional
+        Minor axis of elliptical mask. The default is 1000.
+    alpha_mask : float, optional
+        Rotational angle of elliptical mask. The default is 0.
+    path_white : str, optional
+        Path to existing white noise image. The default is False.
+
+    Returns
+    -------
+    white_img : ndarray
+        Initial white noise pattern.
+    odc_img : ndarray
+        Neural map.
+    y_img : ndarray
+        BOLD response with measurement noise.
+    ymri_img : ndarray
+        Sampled MRI signal.
+    F_odc_fft : ndarray
+        Anisotropic band-pass filter in spatial frequency representation.
+    F_bold_fft : ndarray
+        BOLD filter in spatial frequency representation.
+
+    References
+    -------
+    .. [1] Rojer, AS, et al. Cat and monkey cortical columnar patterns modeled
+    by bandpass-filtered 2D white noise, Biol Cybern 62(5), 381--391 (1990).
+    .. [2] Chaimow, D, et al. Modeling and analysis of mechanisms underlying 
+    fMRI-based decoding of information conveyed in cortical columns, Neuroimage
+    56(2), 627--642 (2011).
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 07-01-2019     
     Last modified: 12-10-2020
-    """    
 
+    """
+    
     # get white noise
     if path_white:
         input = nb.load(path_white)
@@ -112,34 +155,68 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100,
 def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4, 
            beta=0.05, fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, 
            b_mask=1000, path_white=False):
-    """
+    """ ODC 1D
+
     This function generates realistic ocular dominance patterns according to the 
-    model proposed by Rojer and Schwartz (1990) in 1D. The rest follows similar 
-    to the ODC generation in 2D.
-    Inputs:
-        *N_sim: array size of the simulated patch in x-direction (use only even integers).
-        *FOV: field of view in x-direction (mm).
-        *N_mri: array size of the MR image in x-direction.
-        *rho: main spatial frequency determining columnar width in cycles/mm.
-        *delta: variations orthogonal to ODC bands in cycles/mm (irregularity).
-        *alpha: sharpness parameter of the sigmoidal filter.
-        *beta: maximal BOLD response corresponding to neural response of 1.
-        *fwhm_bold: BOLD point-spread width in mm.
-        *fwhm_noise: measurement noise of BOLD response.
-        *a_mask: left side length of mask.
-        *b_mask: right side length of mask.
-        *path_white: path to existing white noise image.
-    Outputs:
-        *white_img: initial white noise pattern.
-        *odc_img: neural map.
-        *y_img: BOLD response with measurement noise.
-        *ymri_img = sampled MRI signal.
-        *F_odc_fft: anisotropic band-pass filter in spatial frequency representation.
-        *F_bold_fft: BOLD filter in spatial frequency representation.
-        
+    model proposed by [1] in 1D. The rest follows similar to the ODC generation 
+    in 2D.    
+
+    Parameters
+    ----------
+    N_sim : int, optional
+        Array size of the simulated patch in x-direction. The default is 1024.
+    FOV : float, optional
+        Field of view in x-direction (mm). The default is 20.
+    N_mri : int, optional
+        Array size of the MR image in x-direction. The default is 100.
+    rho : float, optional
+        Main spatial frequency determining columnar width in cycles/mm. The 
+        default is 0.5.
+    delta : float, optional
+        Variations orthogonal to ODC bands in cycles/mm (irregularity). The 
+        default is 0.3.
+    alpha : float, optional
+        Sharpness parameter of the sigmoidal filter. The default is 4.
+    beta : float, optional
+        Maximal BOLD response corresponding to neural response of 1. The default 
+        is 0.05.
+    fwhm_bold : float, optional
+        BOLD point-spread width in mm. The default is 1.02.
+    fwhm_noise : float, optional
+        Measurement noise of BOLD response. The default is 0.001.
+    a_mask : float, optional
+        Left side length of mask. The default is 1000.
+    b_mask : float, optional
+        Right side length of mask. The default is 1000.
+    path_white : str, optional
+        Path to existing white noise image. The default is False.
+
+    Returns
+    -------
+    white_img : ndarray
+        Initial white noise pattern.
+    odc_img : ndarray
+        Neural map.
+    y_img : ndarray
+        BOLD response with measurement noise.
+    ymri_img : ndarray
+        Sampled MRI signal.
+    F_odc_fft : ndarray
+        Anisotropic band-pass filter in spatial frequency representation.
+    F_bold_fft : ndarray
+        BOLD filter in spatial frequency representation.
+
+    References
+    -------
+    .. [1] Rojer, AS, et al. Cat and monkey cortical columnar patterns modeled
+    by bandpass-filtered 2D white noise, Biol Cybern 62(5), 381--391 (1990).
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 08-01-2019     
     Last modified: 12-10-2020
+
     """
     
     # add path of the executed script to the interpreter's search path

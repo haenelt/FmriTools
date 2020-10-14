@@ -9,19 +9,33 @@ from scipy.interpolate import griddata
 
 
 def morph2dense(source_sphere,target_sphere,input_morph,path_output):
-    """
-    This function maps a morphological file from a source to a target surface.    
-    Inputs:
-        *source_sphere: source surface.
-        *target_sphere: target surface.
-        *input_morph: morphological input file.
-        *path_output: path where output is saved.
-        
+    """ Morph to dense
+    
+    This function maps a morphological file from a source to a target surface.
+
+    Parameters
+    ----------
+    source_sphere : str
+        Source surface.
+    target_sphere : str
+        Target surface.
+    input_morph : str
+        Morphological input file.
+    path_output : str
+        Path where output is saved.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-07-2019
     Last modified: 12-10-2020
-    """  
 
+    """
+    
     # make output folder
     if not os.path.exists(path_output):
         os.mkdir(path_output)

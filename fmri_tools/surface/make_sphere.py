@@ -16,18 +16,32 @@ from fmri_tools.surface.inflate_surf_mesh import inflate_surf_mesh
 
 
 def make_sphere(file_in, file_out, n_inflate=100, radius=None):
-    """
-    The scripts takes a generated FreeSurfer mesh and transformes it into
-    a sphere with defined radius.
-    Inputs:
-        *file_in: filename of input surface.
-        *file_out: filename of output surface.
-        *n_inflated: number of inflating iterations (if > 0).
-        *radius: radius of final sphere in mm (if not None).
+    """ Make sphere
 
+    The scripts takes a generated FreeSurfer mesh and transformes it into
+    a sphere with defined radius.    
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input surface.
+    file_out : str
+        Filename of output surface.
+    n_inflate : int, optional
+        Number of inflating iterations (if > 0). The default is 100.
+    radius : float, optional
+        Radius of final sphere in mm (if not None). The default is None.
+
+    Returns
+    -------
+    None.
+
+    None
+    -------
     created by Daniel Haenelt
     Date created: 26-08-2020       
-    Last modified: 12-10-2020
+    Last modified: 12-10-2020    
+
     """
     
     def cart2pol(x, y, z):

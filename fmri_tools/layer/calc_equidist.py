@@ -22,27 +22,47 @@ from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 
 def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers, 
                   pathLAYNII, r=[0.4,0.4,0.4], n_iter=2, debug=False):
-    """
+    """ Calc equidist
+    
     This function computes equidistant layers in volume space from input pial 
     and white surfaces in freesurfer format using the laynii function 
     LN_GROW_LAYERS. The input surfaces do not have to cover the whole brain. 
     Number of vertices and indices do not have to correspond between surfaces.
-    Inputs:
-        *input_white: filename of white surface.
-        *input_pial: filename of pial surface.
-        *input_vol: filename of reference volume.
-        *path_output: path where output is written.
-        *n_layers: number of generated layers + 1.
-        *pathLAYNII: path to laynii folder.
-        *r: array of new voxel sizes for reference volume upsampling.
-        *n_iter: number of surface upsampling iterations.
-        *debug: write out some intermediate files (boolean).
-    
+
+    Parameters
+    ----------
+    input_white : str
+        Filename of white surface.
+    input_pial : str
+        Filename of pial surface.
+    input_vol : str
+        Filename of reference volume.
+    path_output : str
+        Path where output is written.
+    n_layers : int
+        Number of generated layers + 1.
+    pathLAYNII : str
+        Path to laynii folder.
+    r : list, optional
+        Array of new voxel sizes for reference volume upsampling. The default is 
+        [0.4,0.4,0.4].
+    n_iter : int, optional
+        Number of surface upsampling iterations. The default is 2.
+    debug : bool, optional
+        Write out some intermediate files. The default is False.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 31-05-2020
-    Last modified: 13-10-2020
+    Last modified: 13-10-2020    
+
     """
-    
+       
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

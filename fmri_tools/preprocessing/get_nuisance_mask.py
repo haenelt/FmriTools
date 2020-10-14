@@ -17,25 +17,43 @@ from fmri_tools.skullstrip.skullstrip_spm12 import skullstrip_spm12
 
 def get_nuisance_mask(input, pathSPM, deformation, path_output, nerode_white=1, 
                       nerode_csf=1, segmentation=True, cleanup=True):
-    """
+    """ Get nuisance mask
+    
     This function calculates WM and CSF masks in space of the functional time 
     series. It uses SPM to compute WM and CSF probability maps. These maps are 
-    masked with a skullstrip mask and transformed to native epi space.
-    Inputs:
-        *input: input anatomy (orig.mgz).
-        *pathSPM: path to spm toolbox.
-        *deformation: coordinate mapping for ana to epi transformation.
-        *path_output: path where output is saved.
-        *nerode_white: number of wm mask eroding steps.
-        *nerode_csf: number of csf mask eroding steps.
-        *segmentation: do not calculate new masks to not rerun everything.
-        *cleanup: delete intermediate files.
+    masked with a skullstrip mask and transformed to native epi space.    
 
+    Parameters
+    ----------
+    input : str
+        Input anatomy (orig.mgz).
+    pathSPM : str
+        Path to spm toolbox.
+    deformation : str
+        Coordinate mapping for ana to epi transformation.
+    path_output : str
+        Path where output is saved.
+    nerode_white : int, optional
+        Number of wm mask eroding steps. The default is 1.
+    nerode_csf : int, optional
+        Number of csf mask eroding steps. The default is 1.
+    segmentation : bool, optional
+        Do not calculate new masks to not rerun everything. The default is True.
+    cleanup : bool, optional
+        Delete intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-03-2019
-    Last modified: 12-10-2020
-    """
+    Last modified: 12-10-2020    
 
+    """
+    
     # make output folder
     if not os.path.exists(path_output):
         os.mkdir(path_output)

@@ -14,7 +14,8 @@ from fmri_tools.segmentation.calculate_area import calculate_area
 
 def calc_equivol_surf(file_white, file_pial, n_surfs, factor, niter, hemi, 
                       path_output):
-    """
+    """ Calc equivol surf
+    
     The script calculates intracortical surfaces based on equi-volumetric 
     layering. It is an adaption of Konrad Wagstyl's function in surface_tools. 
     Here, the io_mesh is not used anymore and the call to a freesurfer function 
@@ -22,21 +23,37 @@ def calc_equivol_surf(file_white, file_pial, n_surfs, factor, niter, hemi,
     and we use the nibabel to read the surface geometry. First, vertex-wise area 
     is calculated from both input geometries. Smoothing to the areas is optional 
     and done if factor is set to a non-zero value. Then, based on vertex-wise 
-    area, equi-volumetric surfaces are computed.
-    Inputs:
-        *file_white: input of GM/WM surface.
-        *file_pial: input of GM/CSF surface.
-        *n_surfs: number of output surfaces (returns input surfaces as 0 and 1).
-        *factor: amount of smoothing.
-        *niter: number of smoothing iterations.
-        *hemi: declare hemisphere for output file.
-        *path_output: path where output is saved.
+    area, equi-volumetric surfaces are computed.    
+
+    Parameters
+    ----------
+    file_white : str
+        Input of GM/WM surface.
+    file_pial : str
+        Input of GM/CSF surface.
+    n_surfs : int
+        Number of output surfaces (returns input surfaces as 0 and 1).
+    factor : float
+        Amount of smoothing.
+    niter : int
+        Number of smoothing iterations.
+    hemi : str
+        Declare hemisphere for output file.
+    path_output : str
+        Path where output is saved.
+
+    Returns
+    ------
+    None.
     
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 13-10-2020
-    """
 
+    """
+    
     def beta(alpha, aw, ap):
         """Compute euclidean distance fraction, beta, that will yield the 
         desired volume fraction, alpha, given vertex areas in the white matter 

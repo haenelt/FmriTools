@@ -14,22 +14,37 @@ from fmri_tools.io.get_filename import get_filename
 
     
 def regrid_time_series(input, path_output, TR_old, TR_new, t_start=0):
-    """
+    """ Regrid time series
+
     This function interpolates the time series onto a new time grid using cubic 
     interpolation. Only for writing the new TR in the header of the output time 
-    series, AFNI has to be included in the search path.
-    Inputs:
-        *input: time series filename.
-        *path_output: path where output is written.
-        *TR_old: TR of time series in s.
-        *TR_new: TR of regridded time series in s.
-        *t_start: shift time series in s (t_start >= 0 and <= TR_old).
-        
+    series, AFNI has to be included in the search path.    
+
+    Parameters
+    ----------
+    input : str
+        Time series filename.
+    path_output : str
+        Path where output is written.
+    TR_old : float
+        TR of time series in s.
+    TR_new : float
+        TR of regridded time series in s.
+    t_start : float, optional
+        Shift time series in s (t_start >= 0 and <= TR_old). The default is 0.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 19-02-2020           
     Last modified: 12-10-2020
+    
     """
-
+    
     # get filename
     _, name_input, ext_input = get_filename(input)    
     
@@ -98,17 +113,29 @@ def regrid_time_series(input, path_output, TR_old, TR_new, t_start=0):
 
 
 def regrid_time_series_afni(input, n=2):
-    """
+    """ Regrid time series afni
+
     This function upsamples a time series using the afni function 3dUpsample. 
     Before running the function, set the afni environment by calling AFNI in the 
     terminal. Output is an upsampled nifti time series.
-    Inputs:
-        *input: time series filename.
-        *n: upsampling factor.
-        
+
+    Parameters
+    ----------
+    input : str
+        Time series filename.
+    n : int, optional
+        Upsampling factor. The default is 2.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 20-09-2019           
     Last modified: 12-10-2020
+
     """
     
     clean_unzip = 0

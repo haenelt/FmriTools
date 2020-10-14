@@ -6,21 +6,33 @@ from scipy.interpolate import griddata
 
 
 def regrid_2d(data_array, Nx, Ny):
-    """
+    """ Regrid 2D
+
     This function loads a two-dimensional numpy array and interpolates it to a 
-    new grid array with defined sizes using nearest neighbour interpolation. 
-    Inputs:
-        *data_array: input array.
-        *Nx: resolution of output array in x-direction.
-        *Ny: resolution of output array in y-direction.
-    Outputs:
-        *data_array_new: output array.
-        
+    new grid array with defined sizes using nearest neighbour interpolation.    
+
+    Parameters
+    ----------
+    data_array : ndarray
+        Input array.
+    Nx : int
+        Resolution of output array in x-direction.
+    Ny : int
+        Resolution of output array in y-direction.
+
+    Returns
+    -------
+    data_array_new : ndarray
+        Output array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 07-01-2019      
     Last modified: 12-10-2020
+    
     """
-
+    
     # size of input array
     data_size = np.shape(data_array)
 
@@ -52,20 +64,31 @@ def regrid_2d(data_array, Nx, Ny):
 
 
 def regrid_1d(data_array,N):
-    """
+    """ Regrid 1D
+
     This function loads a one-dimensional numpy array and interpolates it to a 
-    new grid array with defined sizes using nearest neighbour interpolation. 
-    Inputs:
-        *data_array: input array.
-        *N: resolution of output array.
-    Outputs:
-        *data_array_new: array values interpolated to new grid.
-        
+    new grid array with defined sizes using nearest neighbour interpolation.     
+
+    Parameters
+    ----------
+    data_array : ndarray
+        Input array.
+    N : int
+        Resolution of output array.
+
+    Returns
+    -------
+    data_array_new : ndarray
+        Array values interpolated to new grid.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 08-01-2019      
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # size of input array
     data_size = np.shape(data_array)
 

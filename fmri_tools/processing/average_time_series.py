@@ -9,16 +9,29 @@ import nibabel as nb
 
 
 def average_time_series(img_input, path_output, name_output):
-    """
-    This function computes the element-wise average of multiple nifti files.
-    Inputs:
-        *img_input: list of nifti input paths.
-        *path_output: path where output is saved.
-        *name_output: basename of output files.
-    
+    """ Average time series
+
+    This function computes the element-wise average of multiple nifti files.    
+
+    Parameters
+    ----------
+    img_input : str
+        List of nifti input paths.
+    path_output : str
+        Path where output is saved.
+    name_output : str
+        Basename of output files.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 03-05-2019
     Last modified: 12-10-2020
+    
     """
 
     # make output folder

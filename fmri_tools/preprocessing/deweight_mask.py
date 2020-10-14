@@ -12,24 +12,39 @@ from fmri_tools.io.get_filename import get_filename
 
 
 def deweight_mask(file_in, mask_in, mask_max=0.25, sigma_gaussian=10.0, 
-                  write_output=None, path_output=None):
-    """
+                  write_output=False, path_output=None):
+    """ Deweight mask
+
     This function computes a binary mask by pooling all voxels above a given 
     threshold and replaces all image voxels by its gaussian filtered image 
-    voxels within this binary mask.
-    Inputs:
-        *file_in: filename of input image.
-        *mask_in: filename of input mask.
-        *mask_max: cutoff threshold.
-        *sigma_gaussian: sigma for gaussian filter.
-        *write_output: write output image (boolean).
-        *path_output: path where output is written.
-    Outputs:
-        *data_array: image matrix with filtered voxels.
-        
+    voxels within this binary mask.    
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input image.
+    mask_in : str
+        Filename of input mask.
+    mask_max : float, optional
+        Cutoff threshold. The default is 0.25.
+    sigma_gaussian : float, optional
+        Sigma for gaussian filter. The default is 10.0.
+    write_output : bool, optional
+        Write output image The default is None.
+    path_output : str, optional
+        Path where output is written. The default is None.
+
+    Returns
+    -------
+    data_array : TYPE
+        Image matrix with filtered voxels.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 20-04-2020 
     Last modified: 12-10-2020
+
     """
     
     # get basename of phase file

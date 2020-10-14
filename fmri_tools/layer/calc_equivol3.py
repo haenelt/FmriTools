@@ -11,18 +11,32 @@ from nighres.laminar import volumetric_layering
 
 
 def calc_equivol3(path, sub, n_layers, path_output):
-    """
-    This script computes the volumetric layering from the FreeSurfer ribbon 
-    mask.
-    Inputs:
-        *path: path to the freesurfer segmentation folder.
-        *sub: name of the freesurfer segmentation folder.
-        *n_layers: number of layers.
-        *path_output: path where output is saved.
+    """ Calc equivol 3
     
+    This script computes the volumetric layering from the FreeSurfer ribbon 
+    mask.    
+
+    Parameters
+    ----------
+    path : str
+        Path to the freesurfer segmentation folder.
+    sub : str
+        Name of the freesurfer segmentation folder.
+    n_layers : int
+        Number of layers.
+    path_output : str
+        Path where output is saved.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 20-11-2018
     Last modified: 13-10-2020
+    
     """
     
     # make output folder

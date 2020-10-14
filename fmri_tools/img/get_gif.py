@@ -9,21 +9,36 @@ import imageio as io
 
 
 def get_gif(img_file, path_output, name_output, nsteps, duration):
-    """
-    Create gif movie from n input images with fading from one image to the next 
-    image.
-    Inputs:
-        *img_file: list of input images.
-        *path_output: path where output is saved.
-        *name_output: base name of output file.
-        *nsteps: number of generated transition images.
-        *duration: duration for each frame in seconds.
+    """ Get GIF
 
+    Create gif movie from n input images with fading from one image to the next 
+    image.    
+
+    Parameters
+    ----------
+    img_file : list
+        List of input images.
+    path_output : str
+        Path where output is saved.
+    name_output : str
+        Base name of output file.
+    nsteps : int
+        Number of generated transition images.
+    duration : float
+        Duration for each frame in seconds.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 17-11-2018
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # append first list item to the end of the list
     img_file.append(img_file[0])
 

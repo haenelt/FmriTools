@@ -11,7 +11,8 @@ import shutil as sh
 def get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real, 
             ecc_imag, pol_real, pol_imag, path_output, fwhm_ecc=4.0, 
             fwhm_pol=2.0, fwhm_vfs=8.0, cleanup=True):
-    """
+    """ Get VFS
+    
     The purpose of the following function is to calculate the visual field sign 
     (vfs) map from retinotopy data. The FREESURFER environment has to be set. 
     The function was only tested with an annotation file not converted to the 
@@ -20,25 +21,48 @@ def get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real,
     eccentricity and polar angle. Eccentricity is much smoother and higher 
     filters can be applied. The final visual fieldsign map is saved as 
     <hemi>.fieldsign in the output folder.
-    Inputs:
-        *input_sphere: input freesurfer sphere.
-        *input_white: input white matter surface.
-        *input_patch: flattened patch.
-        *input_aparc: input annotation file <hemi>.aparc.annot
-        *hemi: hemisphere.
-        *ecc_real: real eccentricity values sampled on the surface.
-        *ecc_imag: imaginary eccentricity values sampled on the surface.
-        *pol_real: real polar angle values sampled on the surface.
-        *pol_imag: imaginary polar angle values sampled on the surface.
-        *path_output: path where output is saved.
-        *fwhm_ecc: smoothing kernel for eccentricity input in mm.
-        *fwhm_pol: smoothing kernel for polar angle input in mm.
-        *fwhm_vfs: smoothing kernel for vfs calculation input in mm.
-        *cleanup: delete intermediate files.
 
+    Parameters
+    ----------
+    input_sphere : str
+        Input freesurfer sphere.
+    input_white : str
+        Input white matter surface.
+    input_patch : str
+        Flattened patch.
+    input_aparc : str
+        Input annotation file <hemi>.aparc.annot
+    hemi : str
+        Hemisphere.
+    ecc_real : str
+        Real eccentricity values sampled on the surface.
+    ecc_imag : str
+        Imaginary eccentricity values sampled on the surface.
+    pol_real : str
+        Real polar angle values sampled on the surface.
+    pol_imag : str
+        Imaginary polar angle values sampled on the surface.
+    path_output : str
+        Path where output is saved.
+    fwhm_ecc : float, optional
+        Smoothing kernel for eccentricity input in mm. The default is 4.0.
+    fwhm_pol : float, optional
+        Smoothing kernel for polar angle input in mm. The default is 2.0.
+    fwhm_vfs : float, optional
+        Smoothing kernel for vfs calculation input in mm. The default is 8.0.
+    cleanup : bool, optional
+        Delete intermediate files.  The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 11-12-2018           
-    Last modified: 12-10-2020  
+    Last modified: 12-10-2020 
+
     """
 
     # set freesurfer path environment

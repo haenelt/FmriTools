@@ -9,18 +9,32 @@ import nibabel as nb
 
 
 def get_weighted_vfs(input_vfs, input_snr, hemi, path_output):
-    """
+    """ Get weighted VFS
+
     This function scales the visual fieldsign assignments using a given snr 
-    estimate.
-    Inputs:
-        *input_vfs: input file with visual fieldsign assignments.
-        *input_snr: input file with snr estimates.
-        *hemi: hemisphere.
-        *path_output: output folder where output is saved.
-    
+    estimate.    
+
+    Parameters
+    ----------
+    input_vfs : str
+        Input file with visual fieldsign assignments.
+    input_snr : str
+        Input file with snr estimates.
+    hemi : str
+        Hemisphere.
+    path_output : str
+        Output folder where output is saved.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-02-2019
     Last modified: 12-10-2020
+    
     """
 
     # load visual fieldsign map

@@ -17,39 +17,70 @@ def pattern_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100,
                Ny_mri=100, omega_x=0.5, omega_y=0.5, phi_x=0, phi_y=0, theta=0, 
                rect_shape=True, beta=0.05, fwhm_bold=1.02, fwhm_noise=0.001, 
                a_mask=1000, b_mask=1000, alpha_mask=0):
-    """
+    """ Pattern 2D
+
     This function geometrical stripe pattern in 2D. The rest is similar to the 
-    ODC pattern generation.
-    Inputs:
-        *Nx_sim: array size of the simulated patch in x-direction (use only even integers).
-        *Ny_sim: array size of the simulated patch in y-direction (use only even integers).
-        *FOVx: field of view in x-direction (mm).
-        *FOVy: field of view in y-direction (mm).
-        *Nx_mri: array size of the MR image in x-direction.
-        *Ny_mri: array size of the MR image in y-direction.
-        *omega_x: frequency in x-direction in cycles/mm.
-        *omega_y: frequency in y-direction inc cycles/mm.
-        *phi_x: phase in x-direction in deg.
-        *phi_y: phase in y-direction in deg.
-        *theta: rotation angle in deg.
-        *rect_shape (boolean): rectangular or sine pattern.
-        *beta: maximal BOLD response corresponding to neural response of 1.
-        *fwhm_bold: BOLD point-spread width in mm.
-        *fwhm_noise: measurement noise of BOLD response.
-        *a_mask: major axis of elliptical mask.
-        *b_mask: minor axis of elliptical mask.
-        *alpha_mask: rotational angle of elliptical mask.
-    Outputs:
-        *pattern_img: neural map.
-        *y_img: BOLD response with measurement noise.
-        *ymri_img: sampled MRI signal.
-        *F_bold_fft: BOLD filter in spatial frequency representation.
-        
+    ODC pattern generation.    
+
+    Parameters
+    ----------
+    Nx_sim : int, optional
+        Array size of the simulated patch in x-direction. The default is 1024.
+    Ny_sim : int, optional
+        Array size of the simulated patch in y-direction. The default is 1024.
+    FOVx : float, optional
+        Field of view in x-direction (mm). The default is 20.
+    FOVy : float, optional
+        Field of view in y-direction (mm). The default is 20.
+    Nx_mri : int, optional
+        Array size of the MR image in x-direction. The default is 100.
+    Ny_mri : int, optional
+        Array size of the MR image in y-direction. The default is 100.
+    omega_x : float, optional
+        Frequency in x-direction in cycles/mm. The default is 0.5.
+    omega_y : float, optional
+        Frequency in y-direction in cycles/mm. The default is 0.5.
+    phi_x : float, optional
+        Phase in x-direction in deg. The default is 0.
+    phi_y : float, optional
+        Phase in y-direction in deg. The default is 0.
+    theta : float, optional
+        Rotation angle in deg. The default is 0.
+    rect_shape : bool, optional
+        Rectangular or sine pattern. The default is True.
+    beta : float, optional
+        Maximal BOLD response corresponding to neural response of 1. The default 
+        is 0.05.
+    fwhm_bold : float, optional
+        BOLD point-spread width in mm. The default is 1.02.
+    fwhm_noise : float, optional
+        Measurement noise of BOLD response. The default is 0.001.
+    a_mask : float, optional
+        Major axis of elliptical mask. The default is 1000.
+    b_mask : float, optional
+        Minor axis of elliptical mask. The default is 1000.
+    alpha_mask : float, optional
+        Rotational angle of elliptical mask. The default is 0.
+
+    Returns
+    -------
+    pattern_img : ndarray
+        Neural map.
+    y_img : ndarray
+        BOLD response with measurement noise.
+    ymri_img : ndarray
+        Sampled MRI signal.
+    F_bold_fft : ndarray
+        BOLD filter in spatial frequency representation.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 07-01-2019     
-    Last modified: 12-10-2020
-    """    
+    Last modified: 12-10-2020    
 
+    """
+    
     # generate geometrical pattern
     x = np.linspace(0,FOVx,Nx_sim)
     y = np.linspace(0,FOVy,Ny_sim)
@@ -112,32 +143,56 @@ def pattern_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100,
 def pattern_1d(N_sim=1024, FOV=20, N_mri=100, omega=0.5, phi=0, rect_shape=True, 
                beta=0.05, fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, 
                b_mask=1000):
-    """
+    """ Pattern 1D
+    
     This function geometrical stripe pattern in 1D. The rest is similar to the 
     stripe pattern generation in 2D.
-    Inputs:
-        *N_sim: array size of the simulated patch (use only even integers).
-        *FOV: field of view (mm).
-        *N_mri: array size of the MR image.
-        *omega: frequency in cycles/mm.
-        *phi: phase in deg.
-        *theta: rotation angle in deg.
-        *rect_shape (boolean): rectangular or sine pattern.
-        *beta: maximal BOLD response corresponding to neural response of 1.
-        *fwhm_bold: BOLD point-spread width in mm.
-        *fwhm_noise: measurement noise of BOLD response.
-        *a_mask: left side length of mask.
-        *b_mask: right side length of mask.
-    Outputs:
-        *pattern_img: neural map.
-        *y_img: BOLD response with measurement noise.
-        *ymri_img: sampled MRI signal.
-        *F_bold_fft: BOLD filter in spatial frequency representation.
-        
+
+    Parameters
+    ----------
+    N_sim : int, optional
+        Array size of the simulated patch. The default is 1024.
+    FOV : float, optional
+        Field of view (mm). The default is 20.
+    N_mri : int, optional
+        Array size of the MR image. The default is 100.
+    omega : float, optional
+        Frequency in cycles/mm. The default is 0.5.
+    phi : float, optional
+        Phase in deg. The default is 0.
+    rect_shape : bool, optional
+        Rectangular or sine pattern. The default is True.
+    beta : float, optional
+        Maximal BOLD response corresponding to neural response of 1. The default 
+        is 0.05.
+    fwhm_bold : float, optional
+        BOLD point-spread width in mm. The default is 1.02.
+    fwhm_noise : float, optional
+        Measurement noise of BOLD response. The default is 0.001.
+    a_mask : float, optional
+        Left side length of mask. The default is 1000.
+    b_mask : float, optional
+        Right side length of mask. The default is 1000.
+
+    Returns
+    -------
+    pattern_img : ndarray
+        Neural map.
+    y_img : ndarray
+        BOLD response with measurement noise.
+    ymri_img : ndarray
+        Sampled MRI signal.
+    F_bold_fft : ndarray
+        BOLD filter in spatial frequency representation.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 07-01-2019     
     Last modified: 12-10-2020
-    """   
+    
+    """
+    
     # add path of the executed script to the interpreter's search path
     sys.path.append(sys.argv[0])
 

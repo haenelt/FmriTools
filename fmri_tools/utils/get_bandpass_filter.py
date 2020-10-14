@@ -8,29 +8,52 @@ from numpy.fft import fftshift
 def get_bandpass_filter(nx, ny, fovx, fovy, kcut_low=0, kcut_high=1, 
                         apply_fftshift=False, k_fwhm=0, theta_fwhm=0, theta1=0, 
                         theta2=180):
-    """
+    """ Get bandpass filter
+    
     This function generates a bandpass filter for an input image defined by 
     lower and upper cutoff frequencies. Additionally, Gaussian attenuation of 
     border can be appled and the filter can be only defined to a specific 
     k-space region defined by lower and upper angle thresholds. 
-    Inputs:
-        *nx: matrix size of input array in x-direction.
-        *ny: matrix size of input array in x-direction.
-        *fovx: field of view of input array in x-direction in mm.
-        *fovy: field of view of input array in y-direction in mm.
-        *kcut_low: lower spatial cutoff frequency in cycles/mm.
-        *kcut_high: upper spatial cutoff frequency in cycles/mm.
-        *apply_fftshift: fftshift to stay in the convention of spatial frequencies in numpy arrays.
-        *k_fwhm: full-width at half maximum of gaussian filter in frequency direction.
-        *theta_fwhm: full-width at half maximum of gaussian filter in angle direction.
-        *theta1: lower cutoff angle in deg [0,180].
-        *theta2: higher cutoff angle in deg [0,180].
-    Outputs:
-        *B: spatial frequency filter.
-        
+
+    Parameters
+    ----------
+    nx : int
+        Matrix size of input array in x-direction.
+    ny : int
+        Matrix size of input array in y-direction.
+    fovx : float
+        Field of view of input array in x-direction in mm.
+    fovy : float
+        Field of view of input array in y-direction in mm.
+    kcut_low : float, optional
+        Lower spatial cutoff frequency in cycles/mm. The default is 0.
+    kcut_high : föpat, optional
+        Upper spatial cutoff frequency in cycles/mm. The default is 1.
+    apply_fftshift : bool, optional
+        FFTshift to stay in the convention of spatial frequencies in numpy 
+        arrays. The default is False.
+    k_fwhm : float, optional
+        Full-width at half maximum of gaussian filter in frequency direction. 
+        The default is 0.
+    theta_fwhm : float, optional
+        Full-width at half maximum of gaussian filter in angle direction. The 
+        default is 0.
+    theta1 : float, optional
+        Lower cutoff angle in deg [0,180]. The default is 0.
+    theta2 : float, optional
+        Higher cutoff angle in deg [0,180]. The default is 180.
+
+    Returns
+    -------
+    B : ndarray
+        Spatial frequency filter.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 31-07-2019         
     Last modified: 12-10-2020
+
     """
 
     # parameters of gaussian

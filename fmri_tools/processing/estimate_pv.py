@@ -9,23 +9,37 @@ import nibabel as nb
 
 
 def estimate_pv(input_target, input_border, path_output, name_output):
-    """
+    """ Estimate PV
+
     This function estimates the partial volume contribution in each image voxel 
     of a target image from an upsampled binary image depicting the GM/WM or 
     GM/CSF border. Partial voluming is estimated by downsampling the binary 
     image using a moving-average like algorithm and calculating the ratio of 
-    both binary elements within each target voxel.
-    Inputs:
-        *input_target: target space for which partial voluming is estimated.
-        *input_border: upsampled binary border depicting the high-resolution tissue border.
-        *path_output: path where output is saved.
-        *name_output: basename of output image.
-        
+    both binary elements within each target voxel.    
+
+    Parameters
+    ----------
+    input_target : str
+        Target space for which partial voluming is estimated.
+    input_border : str
+        Upsampled binary border depicting the high-resolution tissue border.
+    path_output : str
+        Path where output is saved.
+    name_output : str
+        Basename of output image.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 27-04-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # load data
     target = nb.load(input_target)
     border = nb.load(input_border)

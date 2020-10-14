@@ -10,31 +10,53 @@ from fmri_tools.utils import get_fft
     
 def analyze_fft(input, fovx, fovy, xv, yv, f_cut=0.05, p_min=None, p_max=None, 
                 nsample=1000):
-    """
+    """ Analyze FFT
+    
     This function computes the peak frequency and its corresponding power from a 
     one-sided power spectrum sampled on a projection lines of a 2d array using 
     nearest neighbor interpolation.
-    Inputs:
-        *input: input array (2D).
-        *fovx: field of view in x-direction (mm).
-        *fovy: field of view in y-firection (mm).
-        *xv: x-coordinate of pca eigenvector.
-        *yv: y-coordinate of pca eigenvector.
-        *f_cut: cut off central spatial frequencies for peak detection.
-        *p_min: minimum prominence for peak detection.
-        *p_max: maximum prominence for peak detection.
-        *nsample: number of sampling point along projection line.
-    Outputs:
-        *P_max: maximum peak power relative to central frequency along projection axis.
-        *k_max: corresponding spatial frequency.
-        *k_line: spatial frequencies along projection axis.
-        *fft_line: corresponding spectral power along projection axis.
-        
+
+    Parameters
+    ----------
+    input : ndarray
+        2D input array.
+    fovx : TYPE
+        Field of view in x-direction (mm).
+    fovy : float
+        Field of view in y-firection (mm).
+    xv : float
+        x-coordinate of pca eigenvector.
+    yv : float
+        y-coordinate of pca eigenvector.
+    f_cut : float, optional
+        Cut off central spatial frequencies for peak detection. The default is 
+        0.05.
+    p_min : float, optional
+        Minimum prominence for peak detection. The default is None.
+    p_max : float, optional
+        Maximum prominence for peak detection. The default is None.
+    nsample : int, optional
+        Number of sampling point along projection line. The default is 1000.
+
+    Returns
+    -------
+    k_max : float
+        Spatial frequency with maximum peak power P_max.
+    P_max : float
+        Maximum peak power relative to central frequency along projection axis.
+    k_line : ndarray
+        Spatial frequencies along projection axis.
+    fft_line : ndarray
+        Corresponding spectral power along projection axis.
+
+    Returns
+    -------
     created by Daniel Haenelt
     Date created: 14-04-2019
-    Last modified: 12-10-2020
-    """
+    Last modified: 13-10-2020
 
+    """
+    
     # add one if nsample is an odd integer
     if np.mod(nsample,2) > 0:
         nsample += 1

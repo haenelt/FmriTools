@@ -10,7 +10,8 @@ from nipype.interfaces.freesurfer import MRIsExpand, MRIsInflate, Curvature
 
 
 def shift_white(path, sub, w_shift=-0.5):
-    """
+    """ Shift white
+
     This function shifts the white matter surface inwards (if negative values 
     are applied). This step is included since the white matter surface is biased 
     and lies somewhat within grey matter for MP2RAGE segmentations. A shift of 
@@ -18,17 +19,29 @@ def shift_white(path, sub, w_shift=-0.5):
     measurements are updated including hemi.inflated, hemi.sulc and hemi.curv. 
     Old files are moved to the freesurfer trash folder tagged with a date string 
     as suffix. The curvature file is computed as mean curvature (not Gaussian 
-    curvature).
-    Inputs:
-        *path: path to the freesurfer segmentation folder.
-        *sub: name of the freesurfer segmentation folder.
-        *w_shift: inward shift (negative) of white surface in mm
-        
+    curvature).    
+
+    Parameters
+    ----------
+    path : str
+        Path to the freesurfer segmentation folder.
+    sub : str
+        Name of the freesurfer segmentation folder.
+    w_shift : float, optional
+        Inward shift (negative) of white surface in mm. The default is -0.5.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 04-12-2018
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # parameters 
     hemi = ["lh","rh"] # hemisphere prefix
     n_inflate = 50 # number of iterations for surface inflation

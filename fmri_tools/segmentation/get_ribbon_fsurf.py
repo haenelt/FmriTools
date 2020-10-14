@@ -9,19 +9,31 @@ from nipype.interfaces.freesurfer import VolumeMask
 
 
 def get_ribbon_fsurf(path, sub):
-    """
+    """ Get ribbon fsurf
+
     This function calculates the grey matter ribbon mask using a wrapped 
     freesurfer function. Old files are moved to the freesurfer trash folder 
-    tagged with a date string as suffix.
-    Inputs:
-        *path: path to the freesurfer segmentation folder.
-        *sub: name of the freesurfer segmentation folder.
-        
+    tagged with a date string as suffix.    
+
+    Parameters
+    ----------
+    path : str
+        Path to the freesurfer segmentation folder.
+    sub : str
+        Name of the freesurfer segmentation folder.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 06-12-2018
     Last modified: 12-10-2020
+    
     """
-
+    
     # parameters
     hemi = ["lh","rh"]
 

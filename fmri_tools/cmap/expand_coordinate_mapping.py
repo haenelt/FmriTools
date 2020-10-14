@@ -16,7 +16,8 @@ from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapp
 
 def expand_coordinate_mapping(cmap_in, path_output=None, name_output=None, 
                               write_output=False):
-    """
+    """ Expand coordinate mapping
+    
     This function removes black background in a coordinate mapping to omit 
     interpolation problems at the edges of a coordinate slab within a larger 
     volume. Based on the cmap, a transformation matrix is computed from randomly 
@@ -26,21 +27,38 @@ def expand_coordinate_mapping(cmap_in, path_output=None, name_output=None,
     function can also be applied to nonlinear coordinate mappings since the 
     preliminary goal is to avoid problems at the slab edges. Therefore, the 
     actual data sampling should not be affected. The code snippet for computing 
-    the transformation matrix is taken from https://stackoverflow.com/questions/
-    56220626/how-to-compute-conformal-affine-transformation.
-    Inputs:
-        *cmap_in: filename of coordinate mapping.
-        *path_output: path where output is written.
-        *name_output: basename of output volume.
-        *write_output: write nifti volume.
-    Outputs:
-        *nibabel object instance containing corrected cmap.
+    the transformation matrix is taken from [1].    
     
+
+    Parameters
+    ----------
+    cmap_in : str
+        Filename of coordinate mapping.
+    path_output : str, optional
+        Path where output is written. The default is None.
+    name_output : str, optional
+        Basename of output volume. The default is None.
+    write_output : bool, optional
+        Write nifti volume. The default is False.
+
+    Returns
+    -------
+    output : niimg
+        Corrected coordinate mapping.
+
+    References
+    -------
+    .. [1] https://stackoverflow.com/questions/56220626/how-to-compute-
+    conformal-affine-transformation
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 18-06-2020
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
+    
     """
-
+    
     # get file extension of cmap
     _, _, ext_cmap = get_filename(cmap_in)
     

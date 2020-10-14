@@ -12,7 +12,8 @@ from fmri_tools.io import get_filename
     
 
 def remove_edge_cmap(input_cmap, edge_threshold=5, min_threshold=5):
-    """
+    """ Remove edge cmap
+    
     This function removes smeared edges from a coordinate mapping. Depending on 
     the interpolation method, coordinate mapping slabs within a larger volume 
     can have blurred edges where voxels are interpolated with the neighbouring 
@@ -21,17 +22,30 @@ def remove_edge_cmap(input_cmap, edge_threshold=5, min_threshold=5):
     assumed to be filled by zeroes and identified edge voxels are set to the 
     background value. A voxels is classified as edge outlier if its difference 
     to one local neighbour is larger than edge_threshold or if its cmap value is 
-    below min_threshold in all dimensions.
-    Inputs:
-        *input_cmap: filename of 4d coordinate mapping.
-        *edge_threshold: maximum difference to neighbouring voxel (in voxel units).
-        *min_threshold: minimum cmap value in all dimensions (in voxel units).
+    below min_threshold in all dimensions.    
+
+    Parameters
+    ----------
+    input_cmap : str
+        Filename of 4d coordinate mapping.
+    edge_threshold : float, optional
+        Maximum difference to neighbouring voxel (in voxel units). The default 
+        is 5.
+    min_threshold : float, optional
+        Minimum cmap value in all dimensions (in voxel units). The default is 5.
+
+    Returns
+    -------
+    None.
     
+    Notes
+    -------    
     created by Daniel Haenelt
     Date created: 26-10-2019
-    Last modified: 12-10-2020
-    """
+    Last modified: 13-10-2020
 
+    """
+    
     # load input
     cmap = nb.load(input_cmap)
     cmap_array = cmap.get_fdata()

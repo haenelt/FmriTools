@@ -9,21 +9,32 @@ from nipype.interfaces.matlab import MatlabCommand
 
 
 def bias_field_correction(filename, pathSPM12):
-    """
+    """ Bias field correction
+
     Renzo recommended to perform a bias field correction using SPM12 before 
     doing the segmentation with FreeSurfer. FreeSurfer recommends Bias FWHM = 18 
     and Sampling distance = 2 for MEMPRAGE at 7 T, which is also set here. 
-    Outputs are saved in the input folder.
-    Inputs:
-        *filename: path of input image.
-        *prefix: Defined prefix for the output image.
-        *pathSPM12: path to SPM12 toolbox.
-        
+    Outputs are saved in the input folder.    
+
+    Parameters
+    ----------
+    filename : str
+        Path of input image.
+    pathSPM12 : str
+        Path to SPM12 toolbox.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
-    """
     
+    """
+       
     # set matlab path to SPM12 folder
     MatlabCommand.set_default_paths(pathSPM12)
 

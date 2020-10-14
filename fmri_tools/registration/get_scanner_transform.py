@@ -13,24 +13,38 @@ from numpy.matlib import repmat
 
 def get_scanner_transform(input_source, input_target, path_output, 
                           compress_file=False):
-    """
+    """ Get scanner transform
+
     This function uses the scanner coordinates to create a coordinate map 
     between two images in the same scanner coordinate system. The orientation 
     matrices written in the header of both files are taken to get the 
     trasformation between both images. The output contains a 4d coordinate map 
     describing the transformation from source to target image. Input files 
-    should be in nifti format.
-    Inputs:
-        *input_source: absolute path of source file.
-        *target_source: absolute path of target file.
-        *path_output: path where output is saved.
-        *compress_file: gzip output.
+    should be in nifti format.    
 
+    Parameters
+    ----------
+    input_source : str
+        Absolute path of source file.
+    input_target : str
+        Absolute path of target file.
+    path_output : str
+        Path where output is saved.
+    compress_file : bool, optional
+        GZIP output. The default is False.
+
+    Returns
+    -------
+    None.
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-11-2018       
     Last modified: 12-10-2020
+    
     """
-       
+    
     # make output folder
     if not os.path.exists(path_output):
         os.mkdir(path_output)

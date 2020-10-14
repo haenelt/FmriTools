@@ -13,31 +13,49 @@ from scipy.stats import ttest_ind, levene
 def analyze_alff_between_conditions(input_label, input_contrast1, 
                                     input_contrast2, input_rest, min_contrast, 
                                     nvert):
-    """
+    """ Analyze ALFF between conditions
+    
     Comparison of resting-state between different stripes populations. Mask 
     stripes from an input contrast within a label ROI and randomly select 
     <nvert> vertices within the final mask. An independent samples t-test is 
     computed (or Welch's test if Levene's test is significant).
-    Inputs:
-        *input_label: input label file to define the region of interest.
-        *input_contrast1: first input contrast data for masking.
-        *input_contrast2: second input contrast data for masking.
-        *input_rest: input resting-state data (alff or falff).
-        *min_contrast: minimum contrast for masking (t-score).
-        *min_rest: minimum resting-state fluctuation within the mask.
-        *nvert: number of selected vertices.
-    Outputs:
-        *rest1: resting-state data within condition1.
-        *rest2: resting-state data within condition2.
-        *t: t-score from independent samples t-test.
-        *p: p-value from independent samples t-test.
-        *p_levene: p-value from Levene's test.
 
+    Parameters
+    ----------
+    input_label : str
+        Input label file to define the region of interest.
+    input_contrast1 : str
+        First input contrast data for masking.
+    input_contrast2 : str
+         Second input contrast data for masking.
+    input_rest : str
+        Input resting-state data (alff or falff).
+    min_contrast : float
+        Minimum resting-state fluctuation within the mask.
+    nvert : int
+        Number of selected vertices.
+
+    Returns
+    -------
+    rest1 : ndarray
+        Resting-state data within condition1.
+    rest2 : ndarray
+        Resting-state data within condition2.
+    t : float
+        t-score from independent samples t-test.
+    p : float
+        p-value from independent samples t-test.
+    p_levene : float
+        p-value from Levene's test.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 11-03-2019
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020
+    
     """
-
+    
     # load data
     label = read_label(input_label)
     contrast1 = np.squeeze(nb.load(input_contrast1).get_fdata())

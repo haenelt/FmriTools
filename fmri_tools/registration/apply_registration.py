@@ -15,24 +15,39 @@ from fmri_tools.utils.upsample_volume import upsample_volume
 
 def apply_registration(file_in, cmap_in, file_out, interpolation="linear", 
                        r=[0.4,0.4,0.4]):
-    """
+    """ Apply registration
+
     This function applies a coordinate mapping to a volume. Optionally, the 
     voxel size of the output volume can be changed. This is achieved by 
-    adjusting the coordinate mapping to the new voxel size before application.
-    Inputs:
-        *file_in: filename of input volume.
-        *cmap_in: filename of coordinate mapping.
-        *file_out: filename of output volume.
-        *interpolation: interpolation type (linear or nearest).
-        *r: destination voxel size after upsampling (performed if not None).
-    Outputs:
-        *nibabel object instance of transformed input.
-    
+    adjusting the coordinate mapping to the new voxel size before application.    
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input volume.
+    cmap_in : str
+        Filename of coordinate mapping.
+    file_out : str
+        Filename of output volume.
+    interpolation : str, optional
+        Interpolation type (linear or nearest). The default is "linear".
+    r : list, optional
+        Destination voxel size after upsampling (performed if not None). The 
+        default is [0.4,0.4,0.4].
+
+    Returns
+    -------
+    niimg
+        Transformed volume.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 30-05-2020
     Last modified: 12-10-2020
+    
     """
-       
+          
     # make output folder     
     path_output = os.path.dirname(file_out)
     if not os.path.exists(path_output):

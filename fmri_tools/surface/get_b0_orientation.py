@@ -17,21 +17,35 @@ from fmri_tools.io.get_filename import get_filename
 
 def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", 
                        name_output=""):
-    """
+    """ Get B0 orientation
+    
     This function computes the angle between surface normals and B0-direction 
-    per vertex.
-    Inputs:
-        *surf_in: input of surface mesh.
-        *vol_in: input of corresponding nifti volume.
-        *write output: write out to disk (boolean).
-        *path_output: path where to save output.
-        *name_output: basename of output file.
-    Outputs:
-        *theta: angle in radians.
-        
+    per vertex.    
+
+    Parameters
+    ----------
+    surf_in : str
+        Input of surface mesh.
+    vol_in : str
+        Input of corresponding nifti volume.
+    write_output : bool, optional
+        Write out to disk (boolean). The default is False.
+    path_output : str, optional
+        Path where to save output. The default is "".
+    name_output : str, optional
+        Basename of output file. The default is "".
+
+    Returns
+    -------
+    theta : ndarray
+        Angle in radians.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 31-07-2020 
     Last modified: 13-10-2020
+    
     """
     
     # make subfolders

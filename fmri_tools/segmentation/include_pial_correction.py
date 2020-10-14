@@ -8,21 +8,33 @@ import nibabel as nb
     
 
 def include_pial_correction(path, sub):
-    """
+    """ Include pial correction
+
     This function takes manual corrections from the file pial_edit.mgz which 
     shall be located in the freesurfer mri folder and includes them in the 
     brainmask. The manual corrected brainmask is saved as 
     brain.finalsurfs.manedit.mgz. Note that the corrections in the pial_edit.mgz 
-    are done with brush value 256 and eraser value -1.
-    Inputs:
-        *path: path to SUBJECTS_ID.
-        *sub: freesurfer subject name.
-    
+    are done with brush value 256 and eraser value -1.    
+
+    Parameters
+    ----------
+    path : str
+        Path to SUBJECTS_ID.
+    sub : str
+        Freesurfer subject name.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 28-02-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # open pial edit
     edit_img = nb.load(os.path.join(path,sub,"mri","pial_edit.mgz"))
     edit_array = edit_img.get_fdata()

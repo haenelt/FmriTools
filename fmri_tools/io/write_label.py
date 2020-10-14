@@ -2,18 +2,30 @@
 
 
 def write_label(arr_label, file_out):
-    """
+    """ Write label
+    
     This function writes a textfile which can be read as label file in 
-    freesurfer.
-    Inputs:
-        *arr_label: list with label indices.
-        *file_out: filename of label file.
+    freesurfer.    
 
+    Parameters
+    ----------
+    arr_label : list
+        List of label indices.
+    file_out : str
+        Filename of label file.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 03-09-2020
     Last modified: 12-10-2020
+
     """
-    
+        
     # number of labels
     n_label = len(arr_label)
     

@@ -22,29 +22,51 @@ from fmri_tools.io.mgh2nii import mgh2nii
 def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, 
                    path_output, input_mask=None, interp_method="nearest", 
                    smooth_iter=0, flip_faces=False, cleanup=True):
-    """
+    """ Deform surface
+
     This function deforms a surface mesh in freesurfer convention using a 
     coordinate map containing voxel coordinates. The computation takes quite a 
     while because in the case of removed vertices, i.e. if a mask is given as 
-    input, the remaining faces are reindexed.
-    Inputs:
-        *input_surf: surface mesh to be transformed.
-        *input_orig: freesurfer orig.mgz.
-        *input_deform: deformation (coordinate mapping).
-        *input_target: target volume.
-        *hemi: hemisphere.
-        *path_output: path where to save output.
-        *input_mask: mask volume.
-        *interp_method: interpolation method (nearest or trilinear).
-        *smooth_iter: number of smoothing iterations applied to final image (if set > 0).
-        *flip_faces: reverse normal direction of mesh.
-        *cleanup: remove intermediate files.
-        
+    input, the remaining faces are reindexed.    
+
+    Parameters
+    ----------
+    input_surf : str
+        Surface mesh to be transformed.
+    input_orig : str
+        Freesurfer orig.mgz.
+    input_deform : str
+        Deformation (coordinate mapping).
+    input_target : str
+        Target volume.
+    hemi : str
+        Hemisphere.
+    path_output : str
+        Path where to save output.
+    input_mask : str, optional
+        Mask volume. The default is None.
+    interp_method : str, optional
+        Interpolation method (nearest or trilinear). The default is "nearest".
+    smooth_iter : int, optional
+        Number of smoothing iterations applied to final image (if set > 0). The 
+        default is 0.
+    flip_faces : bool, optional
+        Reverse normal direction of mesh. The default is False.
+    cleanup : bool, optional
+        Remove intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 06-02-2019          
     Last modified: 13-10-2020
+    
     """
-
+    
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
 

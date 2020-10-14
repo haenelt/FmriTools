@@ -11,26 +11,41 @@ from numpy.matlib import repmat
 
 def generate_coordinate_mapping(input, pad, path_output=None, suffix=None, 
                                 time=False, write_output=False):
-    """
+    """ Generate coordinate mapping
+    
     Generates coordinate mapping for an input volume. Either one or multiple 
     coordinate maps are saved in the output folder depending on the 
     dimensionality (3d or 4d) of the input image. Image padding can be applied 
-    which expands the image matrix of each axis in both directions.
-    Inputs:
-        *input: input file.
-        *pad: image padding size.
-        *path_output: path where output is saved.
-        *suffix: add suffix to file name.
-        *time: compute coordinate map for each time step.
-        *write_output: *write nifti volume.
-    Outputs:
-        *output: coordinate mapping.
+    which expands the image matrix of each axis in both directions.    
 
+    Parameters
+    ----------
+    input : str
+        Input file.
+    pad : int
+        Image padding size.
+    path_output : str, optional
+        Path where output is saved. The default is None.
+    suffix : str, optional
+        Add suffix to file name. The default is None.
+    time : bool, optional
+        Compute coordinate map for each time step. The default is False.
+    write_output : bool, optional
+        Write nifti volume. The default is False.
+
+    Returns
+    -------
+    output : niimg
+        Coordinate mapping.
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 21-11-2018             
     Last modified: 12-10-2020
-    """
     
+    """
+      
     # create output folder
     if path_output:
         if not os.path.exists(path_output):

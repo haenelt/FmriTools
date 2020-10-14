@@ -10,16 +10,29 @@ from fmri_tools.io.get_filename import get_filename
 
 
 def smooth_surface(file_in, file_out, n_iter):
-    """
-    This function smoothes a surface mesh using freesurfer.
-    Inputs:
-        *file_in: filename of input surface.
-        *file_out: filename of output surface.
-        *n_iter: number of smoothing iterations.
-        
+    """ Smooth surface
+    
+    This function smoothes a surface mesh using freesurfer.    
+    
+    Parameters
+    ----------
+    file_in : str
+        Filename of input surface.
+    file_out : str
+        Filename of output surface.
+    n_iter : int
+        Number of smoothing iterations.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-07-2019
     Last modified: 12-10-2020
+
     """
        
     # make output folder

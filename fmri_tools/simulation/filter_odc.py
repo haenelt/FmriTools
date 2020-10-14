@@ -6,28 +6,51 @@ from numpy.fft import fftshift
     
     
 def filter_odc_2d(nx, ny, fovx, fovy, rho, delta, epsilon, theta):
-    """
+    """ Filter ODC 2D
+    
     This function defines the 2D ocular dominance column filter (anisotropic 
-    band-pass filter) in spatial frequency space which is taken from Chaimow et 
-    al. (2016a). The filter is normalised in order to have the same variance as 
-    the white noise source image.
-    Input:
-        *nx: array size in x-direction.
-        *ny: array size in y-direction.
-        *fovx: field of view in x-direction (mm).
-        *fovy: field of view in y-direction (mm).
-        *rho: main spatial frequency determining columnar width in cycles/mm.
-        *delta: variations orthogonal to ODC bands (irregularity).
-        *epsilon: variations parallel to ODC bands (branchiness).
-        *theta: rotation angle in deg.
-    Outputs:
-        * F: band-pass filter array in spatial frequency space.
-        
+    band-pass filter) in spatial frequency space which is taken from [1]. The 
+    filter is normalised in order to have the same variance as the white noise 
+    source image.    
+
+    Parameters
+    ----------
+    nx : int
+        Array size in x-direction.
+    ny : int
+        Array size in y-direction.
+    fovx : float
+        Field of view in x-direction (mm).
+    fovy : float
+        Field of view in y-direction (mm).
+    rho : float
+        Main spatial frequency determining columnar width in cycles/mm.
+    delta : float
+        Variations orthogonal to ODC bands (irregularity).
+    epsilon : float
+        Variations parallel to ODC bands (branchiness).
+    theta : float
+        Rotation angle in deg.
+
+    Returns
+    -------
+    F : ndarray
+        Band-pass filter array in spatial frequency space.
+
+    References
+    -------
+    .. [1] Chaimow, D, et al. Spatial specificity of the functional MRI blood 
+    oxygenation response relative to neuronal activity, Neuroimage 164, 32--47
+    (2018).
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 07-01-2019
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # get maximum k-space coordinate in x- and y-direction
     kx_max = nx/(2*fovx)
     ky_max = ny/(2*fovy)
@@ -67,24 +90,43 @@ def filter_odc_2d(nx, ny, fovx, fovy, rho, delta, epsilon, theta):
 
 
 def filter_odc_1d(n, fov, rho, delta):
-    """
+    """ Filter ODC 1D
+    
     This function defines the 1D ocular dominance column filter (anisotropic 
-    band-pass filter) in spatial frequency space which is taken from Chaimow et 
-    al. (2016a). The filter is normalised in order to have the same variance as 
-    the white noise source image.
-    Input:
-        *n: array size.
-        *fov: field of view (mm).
-        *rho: main spatial frequency determining columnar width in cycles/mm.
-        *delta: variations orthogonal to ODC bands (irregularity).
-    Outputs:
-        * F: band-pass filter array in spatial frequency space.
-        
+    band-pass filter) in spatial frequency space which is taken from [1]. The 
+    filter is normalised in order to have the same variance as the white noise 
+    source image.
+
+    Parameters
+    ----------
+    n : int
+        Array size.
+    fov : float
+        Field of view (mm).
+    rho : float
+        Main spatial frequency determining columnar width in cycles/mm.
+    delta : float
+        Variations orthogonal to ODC bands (irregularity).
+
+    Returns
+    -------
+    F : ndarray
+        Band-pass filter array in spatial frequency space.
+
+    References
+    -------
+    .. [1] Chaimow, D, et al. Spatial specificity of the functional MRI blood 
+    oxygenation response relative to neuronal activity, Neuroimage 164, 32--47
+    (2018).
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 08-01-2019
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # get maximum k-space coordinate in x- and y-direction
     k_max = n/(2*fov)
     

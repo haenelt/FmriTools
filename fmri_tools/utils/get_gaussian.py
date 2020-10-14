@@ -9,19 +9,33 @@ import nibabel as nb
 
 
 def get_gaussian(input_file, path_output, mu=0, sigma=1):
-    """
+    """ Get gaussian
+
     Creates a NIfTI volume with Gaussian noise as voxel intensities and saves a 
     nifti volume with matrix size and header information taken from the input 
-    image.
-    Inputs:
-        *file: input image.
-        *mu: mean of Gaussian noise.
-        *sigma: standard deviation of Gaussian noise.
-        *path_output: path where output file is written.
-    
+    image.    
+
+    Parameters
+    ----------
+    input_file : str
+        Input image.
+    path_output : str
+        Path where output file is written.
+    mu : float, optional
+        Mean of Gaussian noise. The default is 0.
+    sigma : float, optional
+        Standard deviation of Gaussian noise. The default is 1.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 20-11-2018
     Last modified: 12-10-2020
+    
     """
     
     # load img

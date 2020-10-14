@@ -23,25 +23,43 @@ from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 
 def calc_equivol2(input_white, input_pial, input_vol, path_output, n_layers, 
                   r=[0.4,0.4,0.4], n_iter=2):
-    """
+    """ Calc equivol 2
+
     This function computes equivolumetric layers in volume space from input pial 
     and white surfaces in freesurfer format. The input surfaces do not have to 
     cover the whole brain. Number of vertices and indices do not have to 
-    correspond between surfaces.
-    Inputs:
-        *input_white: filename of white surface.
-        *input_pial: filename of pial surface.
-        *input_vol: filename of reference volume.
-        *path_output: path where output is written.
-        *n_layers: number of generated layers + 1.
-        *r: array of new voxel sizes for reference volume upsampling.
-        *n_iter: number of surface upsampling iterations.
-    
+    correspond between surfaces.    
+
+    Parameters
+    ----------
+    input_white : str
+        Filename of white surface.
+    input_pial : str
+        Filename of pial surface.
+    input_vol : str
+        Filename of reference volume.
+    path_output : str
+        Path where output is written.
+    n_layers : int
+        Number of generated layers + 1.
+    r : list, optional
+        Array of new voxel sizes for reference volume upsampling. The default is 
+        [0.4,0.4,0.4].
+    n_iter : int, optional
+        Number of surface upsampling iterations. The default is 2.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 17-12-2019
     Last modified: 13-10-2020
+
     """
-    
+   
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

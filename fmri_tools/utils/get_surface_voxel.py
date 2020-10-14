@@ -9,18 +9,35 @@ import nibabel as nb
 
 
 def get_surface_voxel(input_file, path_output):
-    """
-    Compute surface voxels for to illustrate curvature dependence in surface 
-    representations as introduced in Kay et al. (2018).
-    Inputs:
-        *input_file: input image.
-        *path_output: path where to write output image.
+    """ Get surface voxel
     
+    Compute surface voxels for to illustrate curvature dependence in surface 
+    representations as introduced in [1].
+
+    Parameters
+    ----------
+    input_file : str
+        Input image.
+    path_output : str
+        Path where to write output image.
+
+    Returns
+    -------
+    None.
+
+    References
+    -------
+    .. [1] Kay, K, et al. A critical assessment of data quality and venous 
+    effects in ultra-high-resolution fMRI, bioRxiv, 1--45 (2018).
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 19-11-2018
     Last modified: 12-10-2020
+    
     """
-
+    
     # parameters
     x_calc = 1
     y_calc = 1

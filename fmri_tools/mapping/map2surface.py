@@ -14,23 +14,42 @@ from nipype.interfaces.freesurfer.preprocess import MRIConvert
 
 def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, 
                 input_ind=None, cleanup=True):
-    """
+    """ Map to surface
+
     This function samples data from the input volume to the input surface and 
-    optionally maps those values to a target surface if an index file is given.
-    Inputs:
-        *input_surf: surface mesh onto which volume data is sampled.
-        *input_vol: volume from which data is sampled.
-        *hemi: hemisphere.
-        *path_output: path where to save output.
-        *input_white: white surface in target surface space (only necessary if index file is given).
-        *input_ind: textfile with mapping of vertex indices to target space.
-        *cleanup: remove intermediate files.
-            
+    optionally maps those values to a target surface if an index file is given.    
+
+    Parameters
+    ----------
+    input_surf : str
+        Surface mesh onto which volume data is sampled.
+    input_vol : str
+        Volume from which data is sampled.
+    hemi : str
+        Hemisphere.
+    path_output : str
+        Path where to save output.
+    input_white : str, optional
+        White surface in target surface space (only necessary if index file is 
+                                               given). The default is None.
+    input_ind : str, optional
+        Textfile with mapping of vertex indices to target space. The default is 
+        None.
+    cleanup : bool, optional
+        Remove intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 06-02-2019      
     Last modified: 12-10-2020
+    
     """
-
+    
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
 

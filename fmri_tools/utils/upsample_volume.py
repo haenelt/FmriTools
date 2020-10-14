@@ -13,19 +13,34 @@ from fmri_tools.io.get_filename import get_filename
 
     
 def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
-    """
+    """ Upsample volume
+
     This function upsamples a nifti volume using the afni function 3dresample. 
     Before running the function, set the afni environment by calling AFNI in the 
-    terminal. Output is an upsampled nifti volume.
-    Inputs:
-        *file_in: nifti input filename.
-        *file_out: nifti output filename.
-        *dxyz: array of target resolution in single dimensions.
-        *rmode: interpolation methods (Linear, NN, Cu, Bk).
-        
+    terminal. Output is an upsampled nifti volume.    
+
+    Parameters
+    ----------
+    file_in : str
+        Nifti input filename.
+    file_out : str
+        Nifti output filename.
+    dxyz : list, optional
+        Array of target resolution in single dimensions. The default is 
+        [0.4, 0.4, 0.4].
+    rmode : str, optional
+        Interpolation methods (Linear, NN, Cu, Bk). The default is "Cu".
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 16-12-2019        
     Last modified: 12-10-2020
+    
     """
     
     # get path and file extension of input file

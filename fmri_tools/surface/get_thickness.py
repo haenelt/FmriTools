@@ -17,21 +17,37 @@ from fmri_tools.utils.upsample_volume import upsample_volume
 
 
 def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
-    """
+    """ Get thickness
+
     This function computes the cortical thickness as euclidean distances between 
-    vertex ras coordinates from outer levelset boundaries.
-    Inputs:
-        *boundaries_in: filename of 4D levelset image.
-        *ref_in: filename of reference volume for coordinate transformation.
-        *hemi: hemisphere.
-        *path_output: path where output is written.
-        *r: destination voxel size after upsampling (performed if not None).
-    
+    vertex ras coordinates from outer levelset boundaries.    
+
+    Parameters
+    ----------
+    boundaries_in : str
+        Filename of 4D levelset image.
+    ref_in : str
+        Filename of reference volume for coordinate transformation.
+    hemi : str
+        Hemisphere.
+    path_output : str
+        Path where output is written.
+    r : list, optional
+        Destination voxel size after upsampling (performed if not None). The 
+        default is [0.4,0.4,0.4].
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 18-12-2019
     Last modified: 13-10-2020
+    
     """
-       
+    
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

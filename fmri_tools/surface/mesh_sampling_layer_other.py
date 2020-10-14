@@ -22,35 +22,61 @@ def mesh_sampling_layer_other(surf_in, file_in, target2source_in,
                               interpolation="Cu", average_layer=False, 
                               write_profile=False, write_upsampled=True, 
                               cleanup=True):
-    """
+    """ Mesh sampling layer other
+
     This function samples data from an image volume to a surface mesh which is 
     located in a different space. Boundaries and surface mesh are first 
     transformed to the space of the image volume using coordinate mappings 
     before data sampling. If average_layer is true, the parameter layer should 
     contain only two integers which denote the start and ending layer. The 
     basename of the surface file should have no file extension and the 
-    hemisphere should be stated as prefix.
-    Inputs:
-        *surf_in: filename of input surface mesh.
-        *file_in: filename of input volume from which data is sampled.
-        *target2source_in: target to source coordinate mapping.
-        *source2target_in: source to target coordinate mapping.
-        *boundaries_in: filename of 4D levelset image.
-        *path_output: path where output is written.
-        *layer: which layers to sample (array of integers).
-        *smooth_iter: number of smoothing iterations after mesh deformation.
-        *r: destination voxel size after upsampling (performed if not None).
-        *interpolation: interpolation method for upsampling of file from which data is sampled.
-        *average_layer: average across cortex.
-        *write_profile: write sampled profile.
-        *write_upsampled: write upsampled file.
-        *cleanup: remove intermediate files.
-    
+    hemisphere should be stated as prefix.    
+
+    Parameters
+    ----------
+    surf_in : str
+        Filename of input surface mesh.
+    file_in : str
+        Filename of input volume from which data is sampled.
+    target2source_in : str
+        Target to source coordinate mapping.
+    source2target_in : str
+        Source to target coordinate mapping.
+    boundaries_in : str
+        Filename of 4D levelset image.
+    path_output : str
+        Path where output is written.
+    layer : list
+        Which layers to sample (array of integers).
+    smooth_iter : int, optional
+        Number of smoothing iterations after mesh deformation. The default is 0.
+    r : list, optional
+        Destination voxel size after upsampling (performed if not None). The 
+        default is [0.4,0.4,0.4].
+    interpolation : str, optional
+        Interpolation method for upsampling of file from which data is sampled. 
+        The default is "Cu".
+    average_layer : bool, optional
+        Average across cortex. The default is False.
+    write_profile : bool, optional
+        Write sampled profile. The default is False.
+    write_upsampled : bool, optional
+        Write upsampled file. The default is True.
+    cleanup : bool, optional
+        Remove intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-01-2020
     Last modified: 12-10-2020
+    
     """
-       
+    
     # set folder structure
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(i) for i in tmp)

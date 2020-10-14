@@ -9,22 +9,36 @@ import numpy as np
 
 
 def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
-    """
+    """ Surface flattening
+    
     Uses the FreeSurfer mris_flatten function to flatten a dense patch of 
     manually defined cortex. The manually cutted patch should have the following 
     file name <hemi>.<namePATCH>.patch.3d. Instead of smoothwm, we use white for 
-    surface flattening.
-    Inputs:
-        *fileREF: reference surface file for flattening.
-        *filePATCH: path to be flattened saved as <hemi>.<namePATCH>.patch.3d.
-        *path_output: path where output is saved.
-        *cleanup: delete intermediate files.
+    surface flattening.    
 
+    Parameters
+    ----------
+    fileREF : str
+        Reference surface file for flattening.
+    filePATCH : str
+        Path to be flattened saved as <hemi>.<namePATCH>.patch.3d.
+    path_output : str
+        Path where output is saved.
+    cleanup : bool, optional
+        Delete intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
+    
     """
-  
+    
     # create temporary folder
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(i) for i in tmp)

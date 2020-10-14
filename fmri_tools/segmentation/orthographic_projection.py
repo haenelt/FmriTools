@@ -20,7 +20,8 @@ from fmri_tools.segmentation.alpha_shape import alpha_shape
 
 def orthographic_projection(file_patch, hemi, img_res, theta, alpha, buffer, 
                             path_output):
-    """
+    """ Orthographic projection
+
     This script computes a regular grid representation of a flattened patch. It 
     is similar to the approach by Kendrick Kay (cvnlookupimages). First, a patch 
     is read and the patch coordinates are transformed in relation to its 
@@ -29,22 +30,38 @@ def orthographic_projection(file_patch, hemi, img_res, theta, alpha, buffer,
     chosen image resolution. The x-axis of the regular grid is flipped to be 
     consistent with the RAS coordinate system. Each vertex index is interpolated 
     onto the regular grid using nearest neighbours interpolation. A concave hull 
-    is computed to mask the patch on the regular grid.    
-    Inputs:
-        *file_patch: filename of flattened patch.
-        *hemi: hemisphere.
-        *img_res: isotropic image resolution in mm.
-        *theta: rotation of flat image in deg.
-        *alpha: alpha shape value for concave hull computation.
-        *buffer: smooth out concave hull.
-        *path_output: path where output is saved.
-    Outputs:
-        *n_voxel: number of voxels representing the patch on the regular grid.
-        *ind_ratio: ratio of unique indices on the patch.
-        
+    is computed to mask the patch on the regular grid.     
+
+    Parameters
+    ----------
+    file_patch : str
+        Filename of flattened patch.
+    hemi : str
+        Hemisphere.
+    img_res : float
+        Isotropic image resolution in mm.
+    theta : float
+        Rotation of flat image in deg.
+    alpha : float
+        Alpha shape value for concave hull computation.
+    buffer : float
+        Smooth out concave hull.
+    path_output : str
+        Path where output is saved.
+
+    Returns
+    -------
+    n_voxel : int
+        Number of voxels representing the patch on the regular grid.
+    ind_ratio : float
+        Ratio of unique indices on the patch.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
+
     """
     
     # make output folder

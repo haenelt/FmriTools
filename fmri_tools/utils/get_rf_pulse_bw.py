@@ -10,27 +10,43 @@ from numpy.fft import fft, fftshift
     
     
 def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
-    """
+    """ Get RF pulse BW
+
     This function computes the bandwidth in Hz of an RF pulse. The RF pulse
     shape has to be exported from the POET simulation. This can be done by 
     clicking on the wanted pulse in the pulse sequence diagram and saving the 
     event block as textfile. The bandwidth is calculated as the width at the 
-    threshold value of the normalized frequency magnitude.
-    Inputs:
-        *input: textfile of one event block.
-        *npad: pad zeros before and after pulse.
-        *ninterp: number of frequency steps for spline interpolation.
-        *threshold: value at which bw is estimated.
-    Outputs:
-        *rf: pulse shape in time domain (microseconds).
-        *rf_fft: pulse shape in frequency domain (cycles/second).
-        *bw: bandwidth (Hz).
-        
+    threshold value of the normalized frequency magnitude.    
+
+    Parameters
+    ----------
+    input : str
+        Textfile of one event block.
+    npad : int, optional
+        Pad zeros before and after pulse. The default is 1000.
+    ninterp : int, optional
+        Number of frequency steps for spline interpolation. The default is 
+        1000000.
+    threshold : float, optional
+        Value at which bw is estimated. The default is 0.1.
+
+    Returns
+    -------
+    rf : float
+        Pulse shape in time domain (microseconds).
+    rf_fft : float
+        Pulse shape in frequency domain (cycles/second).
+    bw : float
+        Bandwidth (Hz).
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 15-05-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # read file
     file=[]
     with open(input) as fp:  

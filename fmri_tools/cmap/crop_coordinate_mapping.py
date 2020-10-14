@@ -12,21 +12,37 @@ from fmri_tools.io.get_filename import get_filename
 
 
 def crop_coordinate_mapping(input, pad=0, overwrite_file=True, path_output=""):
-    """
+    """ Crop coordinate mapping
+    
     Crops a padded coordinate mapping. The output file can either overwrite the 
     input file or a new file is created with a suffix in a defined output 
-    directory.
-    Inputs:
-        *input: input file.
-        *pad: image padding size.
-        *overwrite_file: output file overwrites input file.
-        *path_output: path where output is saved if input file is not overwritten.
+    directory.    
+    
 
+    Parameters
+    ----------
+    input : str
+        Input file.
+    pad : int, optional
+        Image padding size.. The default is 0.
+    overwrite_file : bool, optional
+        Output file overwrites input file.. The default is True.
+    path_output : str, optional
+        Path where output is saved if input file is not overwritten. The 
+        default is "".
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 21-11-2018             
-    Last modified: 12-10-2020
-    """
+    Last modified: 13-10-2020
 
+    """
+    
     # define output folder
     if path_output is not None:
         if not os.path.exists(path_output):

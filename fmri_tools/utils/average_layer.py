@@ -10,18 +10,32 @@ import nibabel as nb
 
 
 def average_layer(img_input, path_output, basename_output, mode="mean"):
-    """
-    This averages data across different layers or sessions. Input arrays should 
-    be in mgh format. The output gets the suffix of the chosen mode.
-    Inputs:
-        *img_input: list of input layers.
-        *path_output: path where output is saved.
-        *basename_output: basename of written output file.
-        *mode: average mode (mean or median).
+    """ Average layer
     
+    This averages data across different layers or sessions. Input arrays should 
+    be in mgh format. The output gets the suffix of the chosen mode.    
+
+    Parameters
+    ----------
+    img_input : list
+        List of input layers.
+    path_output : str
+        Path where output is saved.
+    basename_output : str
+        Basename of written output file.
+    mode : str, optional
+        Average mode (mean or median). The default is "mean".
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 25-10-2019
     Last modified: 12-10-2020
+    
     """
     
     # make output folder

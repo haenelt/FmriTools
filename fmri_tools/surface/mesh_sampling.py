@@ -18,24 +18,43 @@ from fmri_tools.mapping import map2surface
 
 def mesh_sampling(surf_in, vol_in, source2target_in, path_output, 
                   r=[0.4,0.4,0.4], interpolation="Cu", cleanup=True):
-    """
+    """ Mesh sampling
+    
     This function samples data onto a surface mesh. Optionally, the volume can 
     be upsampled and a coordinate mapping can be applied to transform the 
-    surface mesh to the space of the input volume.
-    Inputs:
-        *surf_in: filename of input surface mesh.
-        *vol_in: filename of input volume from which data is sampled.
-        *source2target_in: source to target coordinate mapping.
-        *path_output: path where output is written.
-        *r: destination voxel size after upsampling (performed if not None).
-        *interpolation: interpolation method for upsampling of file from which data is sampled.
-        *cleanup: remove intermediate files.
-       
+    surface mesh to the space of the input volume.    
+
+    Parameters
+    ----------
+    surf_in : str
+        Filename of input surface mesh.
+    vol_in : str
+        Filename of input volume from which data is sampled.
+    source2target_in : str
+        Source to target coordinate mapping.
+    path_output : str
+        Path where output is written.
+    r : list, optional
+        Destination voxel size after upsampling (performed if not None). The 
+        default is [0.4,0.4,0.4].
+    interpolation : str, optional
+        Interpolation method for upsampling of file from which data is sampled. 
+        The default is "Cu".
+    cleanup : bool, optional
+        Remove intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 24-06-2020        
     Last modified: 12-10-2020
+    
     """
-
+    
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

@@ -13,24 +13,37 @@ from fmri_tools.io.get_filename import get_filename
 
 def clean_coordinate_mapping(cmap_source, cmap_target, overwrite_file=True, 
                              save_mask=False):
-    """
+    """ Clean coordinate mapping
+
     Voxels in the target coordinate mapping are masked out based on found voxel 
     displacements in the source coordinate mapping. This is done to remove 
     smeared regions caused by interpolations with background values in the case 
-    of deforming a slab within a larger image array.
-    Inputs:
-        *cmap_source: filename of source coordinate mapping.
-        *cmap_target: filename of target coordinate mapping.
-        *overwrite_file: overwrite target coordinate mapping (boolean).
-        *save_mask: write out mask (boolean).
-    Outputs:
-        *results: nibabel instances of cleaned cmap and mask (dict).
+    of deforming a slab within a larger image array.    
 
+    Parameters
+    ----------
+    cmap_source : str
+        Filename of source coordinate mapping.
+    cmap_target : str
+        Filename of target coordinate mapping.
+    overwrite_file : bool, optional
+        Overwrite target coordinate mapping. The default is True.
+    save_mask : bool, optional
+        Write out mask. The default is False.
+
+    Returns
+    -------
+    results : dict
+        Cleaned cmap and mask.
+        
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 23-05-2020             
-    Last modified: 12-10-2020
+    Last modified: 13-10-2020    
+
     """
-    
+      
     # get filename    
     path_file, _, _ = get_filename(cmap_target)
     

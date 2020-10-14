@@ -11,20 +11,36 @@ import nibabel as nb
 
 def get_mip(input_file, slice_dir, slice_start, slice_end, path_output, 
             name_output):
-    """
+    """ Get MIP
+    
     Create minimum intensity projection between between slices of a nifti 
     volume.
-    Inputs:
-        *input_file: input image.
-        *slice_dir: projection direction (0,1,2).
-        *slice_start: starting slice index for minimum intensity projection.
-        *slice_end: ending slice index for minimum intensity projection.
-        *name_output: basename of output file.
-        *path_output: path where to write output image.
-        
+
+    Parameters
+    ----------
+    input_file : str
+        Input image.
+    slice_dir : int
+        Projection direction (0,1,2).
+    slice_start : int
+        Starting slice index for minimum intensity projection.
+    slice_end : int
+        Ending slice index for minimum intensity projection.
+    path_output : str
+        Path where to write output image.
+    name_output : str
+        Basename of output file.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 16-11-2018
     Last modified: 12-10-2020
+
     """
     
     # make subfolders

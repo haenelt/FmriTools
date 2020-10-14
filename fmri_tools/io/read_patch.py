@@ -8,23 +8,36 @@ import numpy as np
 
 
 def read_patch(filename):
-    """
+    """ Read patch
+
     This function reads an freesurfer patch saved in binary format. It is an 
     equivalent to the matlab function read_patch in the ./freesurfer/matlab 
-    folder. Data is read in big endian order.
-    Inputs:
-        *filename: full path of the input file.
-    Outputs:
-        *x: x-coordinates of patch.
-        *y: y-coordinates of patch.
-        *z: z-coordinates of patch (if flattened, there should be only zeros).
-        *ind: index of easch node.
-    
+    folder. Data is read in big endian order.    
+
+    Parameters
+    ----------
+    filename : str
+        Full path of the input file.
+
+    Returns
+    -------
+    x : ndarray
+        x-coordinates of patch.
+    y : ndarray
+        y-coordinates of patch.
+    z : ndarray
+        z-coordinates of patch (if flattened, there should be only zeros).
+    ind : ndarray
+        index of each node.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
+    
     """
-
+    
     # load data
     data_array_int = np.fromfile(filename, np.dtype(">i"))
     data_array_float = np.fromfile(filename, np.dtype(">f"))

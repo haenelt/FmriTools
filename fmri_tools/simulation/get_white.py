@@ -5,21 +5,34 @@ import numpy as np
 
 
 def get_white_2d(nx, ny, mu, sigma):
-    """
-    Creates a 2D array with Gaussian noise.
-    Input:
-        *nx: array size in x-direction.
-        *ny: array size in y-direction.
-        *mu: mean of the Gaussian distribution.
-        *sigma: standard deviation of the Gaussian distribution.
-    Output:
-        *img: white noise array.
+    """ Get white 2D
 
+    Creates a 2D array with Gaussian noise.    
+
+    Parameters
+    ----------
+    nx : int
+        Array size in x-direction.
+    ny : int
+        Array size in x-direction.
+    mu : float
+        Mean of the Gaussian distribution.
+    sigma : float
+        Standard deviation of the Gaussian distribution.
+
+    Returns
+    -------
+    img : ndarray
+        White noise array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 04-01-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     img = np.random.normal(mu,sigma,nx*ny)
     img = np.reshape(img,(nx,ny))
     
@@ -27,20 +40,32 @@ def get_white_2d(nx, ny, mu, sigma):
 
 
 def get_white_1d(n, mu, sigma):
-    """
+    """ Get white 1D
+    
     Creates a 1D array with Gaussian noise.
-    Input:
-        *n: array size.
-        *mu: mean of the Gaussian distribution.
-        *sigma: standard deviation of the Gaussian distribution.
-    Output:
-        *img: white noise array.
 
+    Parameters
+    ----------
+    n : int
+        Array size.
+    mu : float
+        Mean of the Gaussian distribution.
+    sigma : float
+        Standard deviation of the Gaussian distribution.
+
+    Returns
+    -------
+    img : ndarray
+        White noise array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 08-01-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     img = np.random.normal(mu,sigma,n)
     
     return img

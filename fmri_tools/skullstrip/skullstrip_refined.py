@@ -12,22 +12,33 @@ from fmri_tools.io.get_filename import get_filename
     
     
 def skullstrip_refined(file_mask1, file_mask2):
-    """
+    """ Skullstrip refined
+
     The purpose of the following function is to enhance the skullstrip mask in 
     native space. It uses a second mask which was manually corrected during the 
     freesurfer segmentation. This corrected brainmask is converted to native 
-    space and multiplied with the initial brainmask.
-    Inputs:
-        *file_mask1: brainmask in original space.
-        *file_mask2: manually corrected brainmask in freesurfer space (brain.finalsurfs.mgz).
-    Outputs:
-        *file_out: filename of enhanced brainmask.
-        
+    space and multiplied with the initial brainmask.    
+
+    Parameters
+    ----------
+    file_mask1 : str
+        Brainmask in original space.
+    file_mask2 : str
+        Manually corrected brainmask in freesurfer space (brain.finalsurfs.mgz).
+
+    Returns
+    -------
+    file_out : str
+        Filename of enhanced brainmask.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 31-01-2020            
     Last modified: 12-10-2020
+    
     """
-
+    
     # get output path and basename
     path_output, name_output, _ = get_filename(file_mask1)
     

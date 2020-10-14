@@ -8,28 +8,50 @@ from fmri_tools.utils import get_fft
 
 
 def get_pca(input, n_iter=10, fft_threshold=0.25):
-    """
+    """ Get  PCA
+    
     This function computes the principal axes from the thresholded fourier 
     spectrum of an input array. They are found by estimating the eigenvectors of 
     the moments of inertia matrix I wich is defined by I = sum_i=0^N ( y_i^2 & 
     -x_iy_i \\ -x_iy_i & x_i^2 ). x_i and y_i are the coordinates of the 
     remaining points of the thresholded Fourier spectrum. This procedure mainly 
-    follows Borri et al. (2016).
-    Inputs:
-        *input: input array.
-        *n_iter: numer of iterations for fft normalization.
-        *fft_threshold: thresholded for getting the coordinates of the central part.
-    Outputs:
-        *x_v1: x-coordinate of the major axis.
-        *y_v1: y-coordinate of the major axis.
-        *x_v2: x-coordinate of the minor axis.
-        *y_v2: y-coordinate of the minor axis.
-        
+    follows [1].
+
+    Parameters
+    ----------
+    input : ndarray
+        Input array.
+    n_iter : int, optional
+        Number of iterations for fft normalization.. The default is 10.
+    fft_threshold : float, optional
+        Thresholded for getting the coordinates of the central part. The 
+        default is 0.25.
+
+    Returns
+    -------
+    x_v1 : float
+        x-coordinate of the major axis.
+    y_v1 : float
+        y-coordinate of the major axis.
+    x_v2 : float
+        x-coordinate of the minor axis.
+    y_v2 : float
+        y-coordinate of the minor axis.
+    
+    References
+    -------
+    .. [1] Borri, Marco, et al. A novel approach to evaluate spatial resolution 
+    of MRI clinical images for optimization and standardization of breast 
+    screening protocols, Med Phys 43(12), 6354--6363 (2016).
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 12-04-2019
-    Last modified: 12-10-2020
-    """
+    Last modified: 13-10-2020
     
+    """
+        
     # compute normalized fourier spectrum of input array
     data_fft = get_fft(input, write_output = False, normalization = True, N = 10)
     

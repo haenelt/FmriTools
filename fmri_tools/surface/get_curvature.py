@@ -9,18 +9,31 @@ from nipype.interfaces.freesurfer import Curvature
     
 
 def get_curvature(file_in, path_output, a=10):
-    """
+    """ Get curvature
+    
     This function calculates a curvature file for an input surface mesh using 
     freesurfer. The input file needs to have a prefix which indicates the 
-    hemisphere of the surface mesh.
-    Inputs:
-        *path: filename of input surface.
-        *path_output: path where output is written.
-        *a: number of smoothing iterations.
-        
+    hemisphere of the surface mesh.    
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input surface.
+    path_output : str
+        Path where output is written.
+    a : int, optional
+        Number of smoothing iterations. The default is 10.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-07-2019
     Last modified: 12-10-2020
+    
     """
     
     # get hemi from filename

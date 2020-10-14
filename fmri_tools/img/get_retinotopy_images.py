@@ -16,32 +16,59 @@ from fmri_tools.segmentation.orthographic_projection import orthographic_project
 def get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr, 
                           input_white, hemi, path_output, img_res=0.2, theta=0, 
                           alpha=2, buffer=0, phase_fwhm=4, sigma=50, 
-                          cleanup=True):   
-    """
+                          cleanup=True):
+    """ Get retinotopy images
+    
     This function generates images for each step of a given retinotopy phase map 
     from which animations of the temporal phase shift on the flattened surface 
     can be made.
-    Inputs:
-        *input_patch: filename of flattened patch.
-        *input_vfs: filename of visual fieldsign map.
-        *input_phase: filename of phase map.
-        *input_white: filename of white surface.
-        *hemi: hemisphere.
-        *path_output: path where output is saved.
-        *img_res: isotropic image resolution in mm.
-        *theta: rotation of flat image in deg.
-        *alpha: alpha shape value for concave hull computation.
-        *buffer: smooth out concave hull.
-        *phase_fwhm: smoothing kernel for phase map smoothing in mm.
-        *sigma: gaussian kernel size for weighting towards single phase values.
-        *cleanup: delete intermediate files.            
-    
+
+    Parameters
+    ----------
+    input_patch : str
+        Filename of flattened patch.
+    input_vfs : str
+        Filename of visual fieldsign map.
+    input_phase : str
+        Filename of phase map.
+    input_snr : str
+        Filename of SNR map.
+    input_white : str
+        Filename of white surface.
+    hemi : str
+        Hemisphere.
+    path_output : str
+        Path where output is saved.
+    img_res : float, optional
+        Isotropic image resolution in mm. The default is 0.2.
+    theta : float, optional
+        Rotation of flat image in deg. The default is 0.
+    alpha : float, optional
+        Alpha shape value for concave hull computation. The default is 2.
+    buffer : float, optional
+        Smooth out concave hull.. The default is 0.
+    phase_fwhm : float, optional
+        Smoothing kernel for phase map smoothing in mm.. The default is 4.
+    sigma : float, optional
+        Gaussian kernel size for weighting towards single phase values.. The 
+        default is 50.
+    cleanup : bool, optional
+        Delete intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 14-02-2019
-    Last modified: 12-10-2020
-    """
+    Last modified: 12-10-2020    
 
+    """
+    
     def gaussian_filter(x, x0, sigma):
+        # return gaussian filter
         g = 1/(sigma*np.sqrt(2*np.pi)) * np.exp( -(x-x0)**2 / (2*sigma**2) )
         g = g / np.max(g)
     

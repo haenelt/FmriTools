@@ -9,19 +9,32 @@ import nibabel as nb
 
    
 def get_mean4d(input, path_output="", name_output="", write_output=False):
-    """
-    This function computes the mean time series of one or more time series.
-    Inputs:
-        *input: list of 4d nifti files.
-        *path_output: path where to save mean image
-        *name_output: output file name without file extension.
-        *write_output: write nifti volume.
-    Outputs:
-        *output: mean time series.
-        
+    """ Get mean 4D
+
+    This function computes the mean time series of one or more time series.    
+
+    Parameters
+    ----------
+    input : list
+        List of 4d nifti files.
+    path_output : str, optional
+        Path where to save mean image The default is "".
+    name_output : str, optional
+        Output file name without file extension. The default is "".
+    write_output : bool, optional
+        Write nifti volume. The default is False.
+
+    Returns
+    -------
+    output : niimg
+        Mean time series.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 31-10-2019         
     Last modified: 12-10-2020
+    
     """
     
     # make subfolders

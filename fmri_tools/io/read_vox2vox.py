@@ -5,20 +5,31 @@ import numpy as np
 
 
 def read_vox2vox(input_lta):
-    """
+    """ Read vox2vox
+
     This function reads a freesurfer lta file and extracts the vox2vox 
-    transformation matrix as numpy array.
-    Inputs:
-        *input_lta: freesurfer lta file.
-    Outputs:
-        *M: forwards affine transformation matrix.
-        *Minv: inverse of M.
-            
+    transformation matrix as numpy array.    
+
+    Parameters
+    ----------
+    input_lta : str
+        Freesurfer lta file.
+
+    Returns
+    -------
+    M : ndarray
+        forwards affine transformation matrix.
+    Minv : ndarray
+        inverse of M.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 19-06-2020
     Last modified: 12-10-2020
+    
     """
-
+    
     with open(input_lta, "r") as f:
         x = f.readlines()
 

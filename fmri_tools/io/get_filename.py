@@ -5,22 +5,34 @@ import os
 
 
 def get_filename(input):
-    """
+    """ Get filename
+    
     This function gets path, file name and file extension for an input filename. 
     The loop checks for some given extension names. Otherwise it stops after the 
-    last found dot in the string.
-    Inputs:
-        *input: filename.
-    Outputs:
-        *path: path of filename.
-        *name_file: basename of filename.
-        *ext_file: file extension of filename.
-        
+    last found dot in the string.    
+
+    Parameters
+    ----------
+    input : str
+        Filename.
+
+    Returns
+    -------
+    path : str
+        Path of filename.
+    name_file : str
+        Basename of filename.
+    ext_file : str
+        File extension of filename.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 09-12-2019   
     Last modified: 12-10-2020
+    
     """
-
+    
     # get path of input
     path = os.path.dirname(input)
 

@@ -9,7 +9,8 @@ from nibabel.freesurfer.io import read_geometry, write_geometry
     
 
 def remove_vertex_outliers(input_surf, input_ind, n=5, overwrite=True):
-    """
+    """ Remove vertex outliers
+    
     This function removes outlier vertices from a deformed surface mesh. Due
     to interpolation of the deformation fields, edge effects can move some 
     vertices to the edge of the image volume. These are removed by comparing 
@@ -17,17 +18,30 @@ def remove_vertex_outliers(input_surf, input_ind, n=5, overwrite=True):
     threshold. The threshold is defined as multiple (n) of the standard 
     deviation of the distance distribution. This is a very crude method to 
     delete outlier vertices.
-    Inputs:
-        *input_surf: path to the input surface mesh.
-        *input_ind: path to the corresponding index list (with .txt extension)
-        *n: distance threshold parameter.
-        *overwrite: overwrite input surface.
-        
+
+    Parameters
+    ----------
+    input_surf : str
+        Path to the input surface mesh.
+    input_ind : str
+        Path to the corresponding index list (with .txt extension).
+    n : TYPE, float
+        Threshold parameter. The default is 5.
+    overwrite : bool, optional
+        Overwrite input surface. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 08-12-2019 
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # load geometry
     vtx, fac = read_geometry(input_surf)
     

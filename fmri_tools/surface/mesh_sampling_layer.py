@@ -21,28 +21,50 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer,
                         r=[0.4,0.4,0.4], interpolation="Cu", 
                         average_layer=False, write_profile=True, 
                         write_upsampled=True):
-    """
+    """ Mesh sampling layer
+
     This function samples data from an image volume to a surface mesh from 
     specific layers defined by a levelset image. If average_layer is true, the 
     parameter layer should contain only two integers which denote the start and 
-    ending layer.
-    Inputs:
-        *surf_in: filename of input surface mesh.
-        *file_in: filename of input volume from which data is sampled.
-        *boundaries_in: filename of 4D levelset image.
-        *path_output: path where output is written.
-        *layer: which layers to sample (array of integers).
-        *r: destination voxel size after upsampling (performed if not None).
-        *interpolation: interpolation method for upsampling of file from whic data is sampled.
-        *average_layer: average across cortex.
-        *write_profile: write sampled profile.
-        *write_upsampled: write upsampled file.
-    
+    ending layer.    
+
+    Parameters
+    ----------
+    surf_in : str
+        Filename of input surface mesh.
+    file_in : str
+        Filename of input volume from which data is sampled.
+    boundaries_in : str
+        Filename of 4D levelset image.
+    path_output : str
+        Path where output is written.
+    layer : list
+        Which layers to sample (array of integers).
+    r : list, optional
+        Destination voxel size after upsampling (performed if not None). The 
+        default is [0.4,0.4,0.4].
+    interpolation : str, optional
+        Interpolation method for upsampling of file from which data is sampled. 
+        The default is "Cu".
+    average_layer : bool, optional
+        Average across cortex. The default is False.
+    write_profile : bool, optional
+        Write sampled profile. The default is True.
+    write_upsampled : bool, optional
+        Write upsampled file. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 18-12-2019
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # make output folder
     if not exists(path_output):
         os.makedirs(path_output)

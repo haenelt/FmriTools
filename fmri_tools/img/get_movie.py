@@ -7,27 +7,44 @@ import os
 import numpy as np
 import nibabel as nb
 import imageio as io
-    
+
 
 def get_movie(input, path_output, name_output, coord, axis=0, fps = 10, 
               transpose=True):
-    """
+    """ Get Movie
+
     This function generates gif of a specific slice over a time series. It has 
     the purpose to easily check preprocessing performance.
-    Inputs:
-        *input: input file.
-        *path_output: path where output is saved.
-        *name_output: output file name without file extension.
-        *coord: selected slice.
-        *axis: axis along which slice is selected.
-        *fps: frames per second.
-        *transpose: rotate image.
-        
+
+    Parameters
+    ----------
+    input : str
+        Input file.
+    path_output : str
+        Path where output is saved.
+    name_output : str
+        Output file name without file extension.
+    coord : int
+        Selected slice.
+    axis : int, optional
+        Axis along which slice is selected. The default is 0.
+    fps : float, optional
+        Frames per second. The default is 10.
+    transpose : bool, optional
+        Rotate image. The default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 04-02-2019
     Last modified: 12-10-2020
-    """
     
+    """
+       
     # make subfolders
     if not os.path.exists(path_output):
         os.makedirs(path_output)

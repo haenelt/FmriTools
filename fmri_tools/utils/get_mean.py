@@ -10,17 +10,31 @@ import nibabel as nb
 
     
 def get_mean(input, path_output, name_output, type="mean"):
-    """
+    """ Get mean
+
     This function computes the mean image of one or more time series.
-    Inputs:
-        *input: single file or list of files.
-        *path_output: path where to save mean image
-        *name_output: output file name without file extension.
-        *type: can be either mean or median.
-        
+
+    Parameters
+    ----------
+    input : str or list
+        Single file or list of files.
+    path_output : str
+        Path where to save mean image
+    name_output : str
+        Output file name without file extension.
+    type : str, optional
+        Can be either mean or median. The default is "mean".
+
+    Returns
+    -------
+    None.
+    
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 04-02-2019         
     Last modified: 12-10-2020
+
     """
     
     # make subfolders

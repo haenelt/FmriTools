@@ -9,22 +9,37 @@ import nibabel as nb
 
 
 def clean_ana(input, min_value, new_range, overwrite=True):
-    """
+    """ Clean ana
+
     This function removes ceiling values from a computed T1 map of an mp2rage 
     acquisition. Low intensity values are removed and the data range is 
     normalised to a defined new range. The input file should be either a nifti 
-    or a compressed nifti file.
-    Inputs:
-        *input: filename of input image.
-        *min_value: threshold of low intensity values.
-        *new_range: arbitrary new data range.
-        *overwrite: if set, the input image is overwritten with the cleaned data set.
-        
+    or a compressed nifti file.    
+
+    Parameters
+    ----------
+    input : str
+        Filename of input image.
+    min_value : float
+        Threshold of low intensity values.
+    new_range : float
+        Arbitrary new data range.
+    overwrite : bool, optional
+        If set, the input image is overwritten with the cleaned data set. The 
+        default is True.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 20-10-2019        
     Last modified: 12-10-2020
+    
     """
-
+    
     # load data
     data = nb.load(input)
     data_array = data.get_fdata()

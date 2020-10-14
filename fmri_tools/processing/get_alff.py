@@ -14,27 +14,47 @@ from fmri_tools.io.get_filename import get_filename
 
 
 def get_alff(input, TR, path_output, hp_freq=0.01, lp_freq=0.08, cleanup=True):
-    """
+    """ Get ALFF
+
     This function calculates ALFF and fALFF from a preprocessed (motion 
     correction, nuisance regression, etc.) resting-state time series. ALFF is 
     computed by bandpass filtering the time series and computing the voxel-wise 
     standard deviation of the filtered time series. fALFF is computed by 
     dividing ALFF by the voxel-wise standard deviation of the unfiltered time 
     series. Additionally, ALFF and fALFF are expressed in z-score. This function 
-    follows the script found in https://github.com/FCP-INDI/C-PAC/blob/master/
-    CPAC/alff/alff.py
-    Inputs:
-        *input: input time series.
-        *TR: repetition time in s.
-        *hp_freq: highpass cutoff frequency in Hz.
-        *lp_freq: lowpass cutoff frequency in Hz.
-        *cleanup: delete intermediate files.
+    follows the script found in [1].
 
+    Parameters
+    ----------
+    input : str
+        Input time series.
+    TR : float
+        Repetition time in s.
+    path_output : str
+        Path where output is written.
+    hp_freq : float, optional
+        Highpass cutoff frequency in Hz. The default is 0.01.
+    lp_freq : float, optional
+        Lowpass cutoff frequency in Hz. The default is 0.08.
+    cleanup : bool, optional
+        Delete intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    References
+    -------
+    .. [1] https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/alff/alff.py    
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 27-02-2019        
     Last modified: 12-10-2020
+    
     """
-
+    
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

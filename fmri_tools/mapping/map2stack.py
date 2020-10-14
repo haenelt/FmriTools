@@ -10,21 +10,35 @@ from scipy.ndimage.filters import gaussian_filter
 
 
 def map2stack(file_data, file_grid, sigma, path_output):
-    """
+    """ Map to stack
+
     This function allows you to sample surface data to a patch defined on a 
     regular grid. If multiple data files are given in a list, all grids are 
-    stacked together.
-    Inputs:
-        *file_data: filename list of data.
-        *file_grid: filename of grid coordinate mapping.
-        *sigma: standard deviation of Gaussian kernel.
-        *path_output: path where output is saved.
+    stacked together.    
 
+    Parameters
+    ----------
+    file_data : str
+        Filename list of data.
+    file_grid : str
+        Filename of grid coordinate mapping.
+    sigma : float
+        Standard deviation of Gaussian kernel.
+    path_output : str
+        Path where output is saved.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # make output folder
     if not os.path.exists(path_output):
         os.mkdir(path_output)

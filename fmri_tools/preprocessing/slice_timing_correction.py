@@ -13,8 +13,9 @@ from scipy.interpolate import InterpolatedUnivariateSpline as Interp
 from fmri_tools.io.get_filename import get_filename
 
 
-def slice_timing_correction(input, TR_old, TR_new, order, prefix="a"):    
-    """
+def slice_timing_correction(input, TR_old, TR_new, order, prefix="a"):
+    """ Slice timing correction
+
     This function performs slice timing correction of a nifti time series. For 
     interleaved slice ordering, interleaved ascending is assumed. The correction 
     is done by temporal interpolation of single voxel time series using cubic 
@@ -24,19 +25,33 @@ def slice_timing_correction(input, TR_old, TR_new, order, prefix="a"):
     step. The interpolated time series is sampled onto a regular grid with a 
     defined new TR. Therefore, the reference slice is always the first slice 
     acquired at t = 0. Only for writing the new TR in the header of the output 
-    time series, AFNI has to be included in the search path.
-    Inputs:
-        *input: filename of nifti time series.
-        *TR_old: TR of time series in seconds.
-        *TR_new: TR of slice timing corrected time series in s.
-        *order: slice ordering (ascending, descending, interleaved).
-        *prefix: prefix of output time series basename.
-            
+    time series, AFNI has to be included in the search path.    
+
+    Parameters
+    ----------
+    input : str
+        Filename of nifti time series.
+    TR_old : float
+        TR of time series in seconds.
+    TR_new : float
+        TR of slice timing corrected time series in s.
+    order : str
+        Slice ordering (ascending, descending, interleaved).
+    prefix : str, optional
+        Prefix of output time series basename. The default is "a".
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 11-03-2019
     Last modified: 12-10-2020
+    
     """
-
+    
     # get filename
     path_file, name_file, ext_file = get_filename(input)
 

@@ -9,18 +9,31 @@ import nibabel as nb
 
 
 def get_series(input, path_out, name_output):
-    """
+    """ Get series
+    
     This function creates a 4D nifti time series from a set of 3D nifti files.
-    Inputs:
-        *input: array of filenames containing single 3D nifti volumes.
-        *path_output: path where output is saved.
-        *name_output: basename of output 4D nifti file.
-        
+
+    Parameters
+    ----------
+    input : list
+        Array of filenames containing single 3D nifti volumes.
+    path_out : str
+        Path where output is saved.
+    name_output : str
+        Basename of output 4D nifti file.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 28-06-2020       
     Last modified: 12-10-2020
+    
     """
-
+    
     # load 3D nifti to get array size
     data = nb.load(os.path.join(input[0]))
     data.header["dim"][0] = 4

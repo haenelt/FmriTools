@@ -1,1 +1,9 @@
+# compiled bytecode
 *.pyc
+
+# packaging
+build/
+dist/
+.eggs/
+*.egg-info/
+

@@ -6,24 +6,36 @@ from numpy.fft import fft, ifft, fft2, ifft2, fftshift
 
 
 def regrid_zero_2d(data_array,Nx_new,Ny_new):
-    """
+    """ Regrid zero 2D
+
     This function loads a two-dimensional numpy array and performs spatial 
     interpolation using zero padding in spatial frequency space. If the input 
     array has an odd array size, the padding size on the right size is decreased 
     by one to match the output array size and leave the k-space center line at 
-    the same place as for even array sizes.
-    Inputs:
-        *data_array: input array.
-        *Nx_new: resolution of output array in x-direction (only put even array size).
-        *Ny_new: resolution of output array in y-direction (only put even array size).
-    Outputs:
-        *data_array_new: spatial interpolation of input array.
-        
+    the same place as for even array sizes.    
+
+    Parameters
+    ----------
+    data_array : ndarray
+        Input array.
+    Nx_new : int
+        Resolution of output array in x-direction (even number).
+    Ny_new : int
+        Resolution of output array in y-direction (even number).
+
+    Returns
+    -------
+    data_array_new : ndarray
+        Spatial interpolation of input array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 07-01-2019      
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # size of input array
     data_size = np.shape(data_array)
     
@@ -62,23 +74,34 @@ def regrid_zero_2d(data_array,Nx_new,Ny_new):
 
 
 def regrid_zero_1d(data_array,N_new):
-    """
+    """ Regrid zero 1D
+
     This function loads a one-dimensional numpy array and performs spatial 
     interpolation using zero padding spatial frequency space. If the input array 
     has an odd array size, the padding size on the right size is decreased by 
     one to match the output array size and leave the k-space center line at the 
-    same place as for even array sizes.
-    Inputs:
-        *data_array: input array.
-        *N_new: resolution of output array (only put even array size).
-    Outputs:
-        *data_array_new: spatial interpolation of input array.
-        
+    same place as for even array sizes.    
+
+    Parameters
+    ----------
+    data_array : ndarray
+        Input array.
+    N_new : int
+        Resolution of output array (even number).
+
+    Returns
+    -------
+    data_array_new : ndarray
+        Spatial interpolation of input array.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 08-01-2019      
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # size of input array
     data_size = np.shape(data_array)
     

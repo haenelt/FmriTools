@@ -10,23 +10,38 @@ from nibabel.freesurfer.io import read_geometry, write_geometry
     
 def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind, 
                         input_pial_ind, path_output):
-    """
+    """ Match vertex number
+    
     This function takes a white and a pial surface as input and matches the 
     vertex numbers of both surfaces. Removed vertices (not found in the 
     corresponding other surface) are removed and faces are updated. The index 
-    files are updated as well.
-    Inputs:
-        *input_white_surf: filename of white surface.
-        *input_pial_surf: filename of pial surface.
-        *input_white_ind: corresponding index file of white surface.
-        *input_pial_ind: corresponding index file of pial surface.
-        *path_output: path where output is written.
-        
+    files are updated as well.    
+
+    Parameters
+    ----------
+    input_white_surf : str
+        Filename of white surface.
+    input_pial_surf : str
+        Filename of pial surface.
+    input_white_ind : str
+        Corresponding index file of white surface.
+    input_pial_ind : str
+        Corresponding index file of pial surface.
+    path_output : str
+        Path where output is written.
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 10-12-2019
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

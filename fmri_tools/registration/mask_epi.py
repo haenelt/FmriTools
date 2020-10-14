@@ -18,26 +18,42 @@ from fmri_tools.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 
 
 def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
-    """
+    """ Mask epi
+    
     This function masks a mean epi image based on a skullstrip mask of the 
     corresponding anatomy. The mask is transformed to native epi space via an
     initial transformation or via scanner coordinates. A rigid registration is
     applied to ensure a match between mask and epi. Finally, holes in the mask 
     are filled, the mask is dilated and a Gaussian filter is applied. The masked 
-    epi is saved in the same folder with the prefix p.
-    Inputs:
-        *file_epi: input mean epi image.
-        *file_t1: input of corresponding skullstripped anatomy.
-        *file_mask: input of skullstrip mask of the corresponding anatomy.
-        *niter: number of dilation iterations.
-        *sigma: gaussian smoothing kernel.
-        *file_reg: filename of ana -> epi coordinate mapping.
-        
+    epi is saved in the same folder with the prefix p.    
+
+    Parameters
+    ----------
+    file_epi : str
+        Input mean epi image.
+    file_t1 : str
+        Input of corresponding skullstripped anatomy.
+    file_mask : str
+        Input of skullstrip mask of the corresponding anatomy.
+    niter : int
+        Number of dilation iterations.
+    sigma : float
+        Gaussian smoothing kernel.
+    file_reg : str, optional
+        Filename of ana -> epi coordinate mapping. The default is "".
+
+    Returns
+    -------
+    None.
+
+    Notes
+    -------
     created by Daniel Haenelt
     Date created: 13-02-2019
     Last modified: 12-10-2020
-    """
 
+    """
+    
     # get paths and filenames
     path_t1, name_t1, _ = get_filename(file_t1)
     path_epi, name_epi, _ = get_filename(file_epi)
