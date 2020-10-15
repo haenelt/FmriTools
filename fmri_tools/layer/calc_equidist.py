@@ -16,18 +16,19 @@ from scipy.ndimage.morphology import binary_fill_holes
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
+from fmri_tools.io.get_filename import get_filename
 from fmri_tools.utils.upsample_volume import upsample_volume
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 
 
-def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers, 
+def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
                   pathLAYNII, r=[0.4,0.4,0.4], n_iter=2, debug=False):
     """ Calc equidist
     
     This function computes equidistant layers in volume space from input pial 
     and white surfaces in freesurfer format using the laynii function 
     LN_GROW_LAYERS. The input surfaces do not have to cover the whole brain. 
-    Number of vertices and indices do not have to correspond between surfaces.
+    Number of vertices and indices do not have to correspond between surfaces.    
 
     Parameters
     ----------
@@ -37,19 +38,19 @@ def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers,
         Filename of pial surface.
     input_vol : str
         Filename of reference volume.
+    n_layers : int
+        Number of generated layers.
     path_output : str
         Path where output is written.
-    n_layers : int
-        Number of generated layers + 1.
     pathLAYNII : str
         Path to laynii folder.
     r : list, optional
-        Array of new voxel sizes for reference volume upsampling. The default is 
-        [0.4,0.4,0.4].
+        Array of new voxel sizes for reference volume upsampling (if not None). 
+        The default is [0.4,0.4,0.4].
     n_iter : int, optional
         Number of surface upsampling iterations. The default is 2.
     debug : bool, optional
-        Write out some intermediate files. The default is False.
+        Write out some intermediate files. The default is False. 
 
     Returns
     -------
@@ -59,17 +60,20 @@ def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers,
     -------
     created by Daniel Haenelt
     Date created: 31-05-2020
-    Last modified: 13-10-2020    
+    Last modified: 15-10-2020   
 
     """
-       
+    
+    # add laynii to search path
+    sys.path.append(pathLAYNII)
+    
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)
     
     # get hemi from filename
-    hemi = os.path.splitext(os.path.basename(input_white))[0]
-    if not hemi == "lh" and not hemi == "rh":
+    _, hemi, _ = get_filename(input_white)
+    if not hemi[:2] == "lh" and not hemi[:2] == "rh":
         sys.exit("Could not identify hemi from filename!")
     
     # new filenames in output folder
@@ -144,30 +148,30 @@ def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers,
     rim_array[white_array == 1] = 2
 
     output = nb.Nifti1Image(rim_array, vol.affine, vol.header)
-    nb.save(output, os.path.join(path_output,"rim.nii"))    
+    nb.save(output, os.path.join(path_output, "rim.nii"))    
     
     # grow layers using laynii
-    os.chdir(pathLAYNII)
     vinc = 40
     os.system("./LN_GROW_LAYERS" + \
-              " -rim " + os.path.join(path_output,"rim.nii") + \
+              " -rim " + os.path.join(path_output, "rim.nii") + \
               " -vinc " + str(vinc) + \
               " -N " + str(n_layers) + \
               " -threeD" + \
-              " -output " + os.path.join(path_output,"layers.nii"))
+              " -output " + os.path.join(path_output, "layers.nii"))
 
     # tranform label to levelset    
     binary_array = white_label_array + ribbon_label_array + pial_label_array
     binary_array[binary_array != 0] = 1 
     
-    layer_array =  nb.load(os.path.join(path_output,"layers.nii")).get_fdata()
+    layer_array =  nb.load(os.path.join(path_output, "layers.nii")).get_fdata()
     layer_array += 1
     layer_array[layer_array == 1] = 0
     layer_array[white_label_array == 1] = 1 # fill wm
     
     if debug:
         out_debug = nb.Nifti1Image(layer_array, vol.affine, vol.header)
-        nb.save(out_debug, os.path.join(path_output,"layers_plus_white_debug.nii"))
+        nb.save(out_debug, 
+                os.path.join(path_output, "layers_plus_white_debug.nii"))
     
     level_array = np.zeros(np.append(vol.header["dim"][1:4],n_layers))
     for i in range(n_layers):
@@ -179,7 +183,8 @@ def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers,
     
         # write control output
         if debug:
-            nb.save(temp_layer, os.path.join(path_output,"layer_"+str(i)+"_debug.nii"))
+            nb.save(temp_layer, 
+                    os.path.join(path_output, "layer_"+str(i)+"_debug.nii"))
     
         # transform binary image to levelset image
         res = probability_to_levelset(temp_layer)
@@ -193,9 +198,9 @@ def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers,
     levelset = nb.Nifti1Image(level_array, vol.affine, vol.header)
     
     # write niftis
-    nb.save(white, os.path.join(path_output,"wm_line.nii"))
-    nb.save(pial, os.path.join(path_output,"csf_line.nii"))
-    nb.save(white_label, os.path.join(path_output,"wm_label.nii"))
-    nb.save(pial_label, os.path.join(path_output,"csf_label.nii"))
-    nb.save(ribbon_label, os.path.join(path_output,"gm_label.nii"))
-    nb.save(levelset, os.path.join(path_output,"boundaries.nii"))    
+    nb.save(white, os.path.join(path_output, "wm_line.nii"))
+    nb.save(pial, os.path.join(path_output, "csf_line.nii"))
+    nb.save(white_label, os.path.join(path_output, "wm_label.nii"))
+    nb.save(pial_label, os.path.join(path_output, "csf_label.nii"))
+    nb.save(ribbon_label, os.path.join(path_output, "gm_label.nii"))
+    nb.save(levelset, os.path.join(path_output, "boundaries.nii"))    
