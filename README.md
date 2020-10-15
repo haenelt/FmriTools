@@ -19,7 +19,7 @@ Some scripts need optional (non-default) packages which can be installed with th
 pip install fmri_tools[addon]
 ```
 
-Another option is to install the package in development mode by creating a `conda.pth` (which includes the path of the cloned repository) in the site-packages folder of your conda environment. Necessary external python packages can be installed by running `pip install requirements.txt`. With `pip install requirements_extra.txt`, optional (non-default) packages are installed which are only needed for single scripts.
+Another option is to install the package in development mode by creating a `conda.pth` (which includes the path of the cloned repository) in the site-packages folder of your conda environment. Necessary external python packages can be installed by running `pip install -r requirements.txt`. With `pip install -r requirements_extra.txt`, optional (non-default) packages are installed which are only needed for single scripts.
 
 ## Other dependencies
 The package cannot be import without the installation of two further modules:
