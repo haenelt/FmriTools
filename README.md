@@ -27,7 +27,7 @@ The package cannot be import without the installation of two further modules:
 `pip install pycortex`<br>
 `pip install nighres`
 
-Additionally, the installation of FreeSurfer [[1]](#1), FSL [[2]](#1), AFNI [[3]](#1), ANTS [[4]](#1), LAYNII [[5]](#1) and SPM12 [[6]](#6) is needed in some functions. 
+Additionally, the installation of FreeSurfer [[1]](#1), FSL [[2]](#1), AFNI [[3]](#1), ANTS [[4]](#1), LAYNII [[5]](#1) and SPM12 [[6]](#6) is needed for some functions. 
 
 Furthermore, these scripts call additional toolboxes:
 
