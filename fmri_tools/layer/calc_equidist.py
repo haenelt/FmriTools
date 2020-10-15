@@ -167,10 +167,10 @@ def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers,
     
     if debug:
         out_debug = nb.Nifti1Image(layer_array, vol.affine, vol.header)
-        nb.save(out_debug, os.path.join(path_output,"layer_plus_white_debug.nii"))
+        nb.save(out_debug, os.path.join(path_output,"layers_plus_white_debug.nii"))
     
-    level_array = np.zeros(np.append(vol.header["dim"][1:4],n_layers + 1))
-    for i in range(n_layers+1):
+    level_array = np.zeros(np.append(vol.header["dim"][1:4],n_layers))
+    for i in range(n_layers):
         print("Probabilty to levelset for layer: "+str(i+1))
         
         temp_layer_array = binary_array.copy()
@@ -189,7 +189,7 @@ def calc_equidist(input_white, input_pial, input_vol, path_output, n_layers,
 
     # levelset image
     vol.header["dim"][0] = 4
-    vol.header["dim"][4] = n_layers + 1
+    vol.header["dim"][4] = n_layers
     levelset = nb.Nifti1Image(level_array, vol.affine, vol.header)
     
     # write niftis
