@@ -22,7 +22,7 @@ from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 
 
 def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
-                  pathLAYNII, r=[0.4,0.4,0.4], n_iter=2, debug=False):
+                  r=[0.4,0.4,0.4], n_iter=2, pathLAYNII="", debug=False):    
     """ Calc equidist
     
     This function computes equidistant layers in volume space from input pial 
@@ -42,13 +42,13 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
         Number of generated layers.
     path_output : str
         Path where output is written.
-    pathLAYNII : str
-        Path to laynii folder.
     r : list, optional
         Array of new voxel sizes for reference volume upsampling (if not None). 
         The default is [0.4,0.4,0.4].
     n_iter : int, optional
-        Number of surface upsampling iterations. The default is 2.
+        Number of surface upsampling iterations. The default is 2.    
+    pathLAYNII : str, optional
+        Path to laynii folder. The default is "".
     debug : bool, optional
         Write out some intermediate files. The default is False. 
 
@@ -60,12 +60,13 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
     -------
     created by Daniel Haenelt
     Date created: 31-05-2020
-    Last modified: 15-10-2020   
+    Last modified: 16-10-2020   
 
     """
     
     # add laynii to search path
-    sys.path.append(pathLAYNII)
+    if len(pathLAYNII):
+        os.environ["PATH"] += os.path.pathsep + pathLAYNII
     
     # make output folder
     if not os.path.exists(path_output):
@@ -152,7 +153,7 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
     
     # grow layers using laynii
     vinc = 40
-    os.system("./LN_GROW_LAYERS" + \
+    os.system("LN_GROW_LAYERS" + \
               " -rim " + os.path.join(path_output, "rim.nii") + \
               " -vinc " + str(vinc) + \
               " -N " + str(n_layers) + \
