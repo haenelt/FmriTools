@@ -194,7 +194,7 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
         level_array[:,:,:,i] = res["result"].get_fdata()
 
     # move border to voxel center
-    level_array += 0.5
+    level_array -= 0.5
 
     # levelset image
     vol.header["dim"][0] = 4
