@@ -147,7 +147,16 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
     rim_array[ribbon_label_array == 1] = 3
     rim_array[pial_array == 1] = 1
     rim_array[white_array == 1] = 2
-
+    
+    # test
+    rim_array[:,:,0] = 1
+    rim_array[:,0,:] = 1
+    rim_array[0,:,:] = 1
+    
+    rim_array[:,:,-1] = 1
+    rim_array[:,-1,:] = 1
+    rim_array[-1,:,:] = 1
+    
     output = nb.Nifti1Image(rim_array, vol.affine, vol.header)
     nb.save(output, os.path.join(path_output, "rim.nii"))    
     
@@ -192,6 +201,9 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
         
         # sort levelset image into 4d array
         level_array[:,:,:,i] = res["result"].get_fdata()
+
+    # test
+    level_array += 0.5
 
     # levelset image
     vol.header["dim"][0] = 4
