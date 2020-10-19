@@ -4,7 +4,7 @@
 import os
 
 # local inputs
-from fmri_tools.mapping.map2surface import map2surface
+from fmri_tools.mapping import map2surface
 
 
 """
@@ -15,7 +15,7 @@ space and map those data to the surface in conformed freesurfer space.
 
 created by Daniel Haenelt
 Date created: 07-02-2019
-Last modified: 12-10-2020
+Last modified: 19-10-2020
 """
 
 # input files
@@ -24,6 +24,7 @@ path_output = "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/surf"
 input_vol = "/data/pt_01880/Experiment1_ODC/p3/odc/results/spmT/native/spmT_left_right_GE_EPI1.nii"
 input_white = "/data/pt_01880/Experiment1_ODC/p3/anatomy/layer/lh.layer10"
 n_layer = 11
+interpolation = "nearest"
 cleanup = True
 
 # do not edit below
@@ -37,4 +38,11 @@ for i in range(n_layer):
         input_ind = os.path.join(path_input,hemi[j]+".layer"+str(i)+"_ind.txt")
  
         # deform surface
-        map2surface(input_surf, input_vol, hemi[j], path_output, input_white, input_ind, cleanup)
+        map2surface(input_surf, 
+                    input_vol, 
+                    hemi[j], 
+                    path_output, 
+                    interpolation,
+                    input_white, 
+                    input_ind, 
+                    cleanup)

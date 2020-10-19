@@ -51,7 +51,7 @@ def mesh_sampling(surf_in, vol_in, source2target_in, path_output,
     -------
     created by Daniel Haenelt
     Date created: 24-06-2020        
-    Last modified: 12-10-2020
+    Last modified: 19-10-2020
     
     """
     
@@ -119,6 +119,7 @@ def mesh_sampling(surf_in, vol_in, source2target_in, path_output,
                 input_vol=vol_upsampled,
                 hemi=hemi, 
                 path_output=path_temp,
+                interp_method="nearest",
                 input_white=None, 
                 input_ind=None, 
                 cleanup=True)

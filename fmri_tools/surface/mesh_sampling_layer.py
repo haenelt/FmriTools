@@ -61,7 +61,7 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer,
     -------
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 12-10-2020
+    Last modified: 19-10-2020
 
     """
     
@@ -125,6 +125,7 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer,
                         join(path_output,"temp_"+tmp2_string+".nii"),
                         hemi, 
                         path_output,
+                        interp_method="nearest",
                         input_white=None, 
                         input_ind=None, 
                         cleanup=True)
@@ -148,6 +149,7 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer,
                     join(path_output,"temp_"+tmp2_string+".nii"),
                     hemi, 
                     path_output,
+                    interp_method="nearest",
                     input_white=None, 
                     input_ind=None, 
                     cleanup=True)

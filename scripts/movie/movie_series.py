@@ -23,7 +23,7 @@ the demeaned time series on the cortical surface.
 
 created by Daniel Haenelt
 Date created: 12-11-2019
-Last modified: 12-10-2020
+Last modified: 19-10-2020
 """
 
 input_series = ["/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/udata.nii",
@@ -140,6 +140,7 @@ for i in range(np.shape(data_array)[3]):
                     os.path.join(path_def,str(i+1)+"_def-img.nii.gz"), 
                     hemi, 
                     path_surf, 
+                    interp_method="nearest",
                     input_white=None, 
                     input_ind=None, 
                     cleanup=True)

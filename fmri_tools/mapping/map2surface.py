@@ -12,12 +12,13 @@ from nipype.interfaces.freesurfer import SampleToSurface
 from nipype.interfaces.freesurfer.preprocess import MRIConvert
     
 
-def map2surface(input_surf, input_vol, hemi, path_output, input_white=None, 
-                input_ind=None, cleanup=True):
+def map2surface(input_surf, input_vol, hemi, path_output, 
+                interp_method="nearest", input_white=None, input_ind=None, 
+                cleanup=True):
     """ Map to surface
 
     This function samples data from the input volume to the input surface and 
-    optionally maps those values to a target surface if an index file is given.    
+    optionally maps those values to a target surface if an index file is given.      
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None,
         Hemisphere.
     path_output : str
         Path where to save output.
+    interp_method : str, optional
+        Interpolation method (nearest or trilinear). The default is "nearest".
     input_white : str, optional
         White surface in target surface space (only necessary if index file is 
                                                given). The default is None.
@@ -46,8 +49,8 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None,
     -------
     created by Daniel Haenelt
     Date created: 06-02-2019      
-    Last modified: 12-10-2020
-    
+    Last modified: 19-10-2020
+
     """
     
     # set freesurfer path environment
@@ -101,7 +104,7 @@ def map2surface(input_surf, input_vol, hemi, path_output, input_white=None,
     sampler.inputs.sampling_method = "point"
     sampler.inputs.sampling_range = 0
     sampler.inputs.sampling_units = "mm"
-    sampler.inputs.interp_method = "nearest" # or trilinear
+    sampler.inputs.interp_method = interp_method # nearest or trilinear
     sampler.inputs.out_type = "mgh"
     sampler.inputs.out_file = os.path.join(path_surf,hemi+"."+"sampled.mgh")
     sampler.run()

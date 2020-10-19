@@ -22,7 +22,7 @@ The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 06-03-2019            
-Last modified: 13-10-2020
+Last modified: 19-10-2020
 """
 
 # input
@@ -78,6 +78,7 @@ for i in range(len(file_in)):
                     filename_def, 
                     hemi, 
                     path_surf, 
+                    interp_method="nearest",
                     input_white=None, 
                     input_ind=None, 
                     cleanup=True)
