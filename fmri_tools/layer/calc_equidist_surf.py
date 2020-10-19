@@ -37,7 +37,7 @@ def _get_meshlines(vp, vw):
         v_res.extend(v_new)
         f_res.extend(f_new)
     
-        f_new += 2
+        f_new[0] = [x+2 for x in f_new[0]]
     
     # vertices and faces as array
     v_res = np.array(v_res)
