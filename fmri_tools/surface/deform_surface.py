@@ -13,7 +13,6 @@ from nibabel.freesurfer.io import write_geometry, read_geometry
 from nibabel.affines import apply_affine
 from nipype.interfaces.freesurfer import SampleToSurface
 from nipype.interfaces.freesurfer import SmoothTessellation
-from gbb.utils.remove_vertex import remove_vertex
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
@@ -176,19 +175,61 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
         # only keep vertex indices within the slab
         ind_keep = np.arange(len(vtx))
         ind_keep = ind_keep[background_list != 0]
-    
-        vtx_new, fac_new = remove_vertex(vtx_new, fac, ind_keep)
-    
-        # get indices which were cleaned
+
+        # get indices which will be removed
+        ind_tmp = np.arange(len(vtx))
+        ind_remove = list(set(ind_tmp) - set(ind_keep))
+        ind_remove = sorted(ind_remove, reverse=True)
+
+        # get new vertices
+        vtx_new = vtx_new[ind_keep,:]
+
+        # get new faces
+        fac_keep = np.zeros(len(fac))
+        fac_keep += np.in1d(fac[:,0], ind_keep)
+        fac_keep += np.in1d(fac[:,1], ind_keep)
+        fac_keep += np.in1d(fac[:,2], ind_keep)
+        fac_new = fac[fac_keep == 3,:]
+
+        # reindex faces
+        loop_status = 0
+        loop_length = len(ind_remove)
+        for i in range(loop_length):
+                
+            # print status
+            counter = np.floor(i / loop_length * 100)
+            if counter != loop_status:
+                print("sort faces: "+str(counter)+" %")
+                loop_status = counter
+                
+            tmp = fac_new[fac_new >= ind_remove[i]] - 1
+            fac_new[fac_new >= ind_remove[i]] = tmp
+
+        # get indices which will be cleaned
         ind_vtx_new = np.arange(len(vtx_new))
         ind_fac_new = list(itertools.chain(*fac_new))
         ind_fac_new = list(set(ind_fac_new))
         ind_remove = list(set(ind_vtx_new) - set(ind_fac_new))
         ind_remove = sorted(ind_remove, reverse=True)
-    
-        # update index file
-        for i in range(len(ind_remove)):        
-            ind_keep = np.delete(ind_keep, ind_remove[i], 0)
+        
+        # remove singularities (vertices without faces)
+        loop_status = 0
+        loop_length = len(ind_remove)
+        for i in range(loop_length):
+            
+            # print status
+            counter = np.floor(i / loop_length * 100)
+            if counter != loop_status:
+                print("clean faces: "+str(counter)+" %")
+                loop_status = counter
+                       
+            # remove vertex and index
+            vtx_new = np.delete(vtx_new, ind_remove[i], 0)
+            ind_keep = np.delete(ind_keep, ind_remove[i], 0)                
+
+            # sort faces
+            tmp = fac_new[fac_new >= ind_remove[i]] - 1
+            fac_new[fac_new >= ind_remove[i]] = tmp
         
         # save index mapping between original and transformed surface
         np.savetxt(os.path.join(path_output, hemi+"."+name_surf+"_ind.txt"), ind_keep, fmt='%d')
