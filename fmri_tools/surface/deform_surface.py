@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+import sys
 import itertools
 import shutil as sh
 
@@ -20,7 +21,7 @@ from fmri_tools.io.get_filename import get_filename
 from fmri_tools.io.mgh2nii import mgh2nii
 
 
-def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, 
+def deform_surface(input_surf, input_orig, input_deform, input_target, 
                    path_output, input_mask=None, interp_method="nearest", 
                    smooth_iter=0, flip_faces=False, cleanup=True):
     """ Deform surface
@@ -40,8 +41,6 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
         Deformation (coordinate mapping).
     input_target : str
         Target volume.
-    hemi : str
-        Hemisphere.
     path_output : str
         Path where to save output.
     input_mask : str, optional
@@ -80,7 +79,8 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
     if not os.path.exists(path_output):
         os.makedirs(path_output)
 
-    # mimic freesurfer folder structure (with some additional folder for intermediate files)
+    # mimic freesurfer folder structure (with some additional folder for 
+    # intermediate files)
     path_sub = os.path.join(path_output,sub)
     path_mri = os.path.join(path_sub,"mri")
     path_surf = os.path.join(path_sub,"surf")
@@ -89,11 +89,14 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
     os.makedirs(path_mri)
     os.makedirs(path_surf)
 
-    # get file extension of orig
+    # get filenames
     _, name_orig, ext_orig = get_filename(input_orig)
-
-    # name of surface file
-    name_surf = os.path.basename(input_surf)
+    _, hemi, name_surf = get_filename(input_surf)
+    name_surf = name_surf.replace(".","")
+    
+    # check filename
+    if not hemi == "lh" and not hemi == "rh":
+        sys.exit("Could not identify hemi from filename!")
 
     # copy orig, cmap and input surface to mimicked freesurfer folders
     sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
@@ -122,29 +125,34 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
     components = ["x", "y", "z"]
     vtx_new = np.zeros([len(vtx),3])
     for i in range(len(components)):
+        file_temp = os.path.join(path_mri,components[i]+"_deform.nii")
+        file_sampled = os.path.join(path_surf,hemi+"."+components[i]+"_sampled.mgh")
+        
+        # get target volume
         temp_array = cmap_array[:,:,:,i]
         temp_img = nb.Nifti1Image(temp_array, cmap_img.affine, cmap_img.header)
-        nb.save(temp_img,os.path.join(path_mri,components[i]+"_deform.nii"))
+        nb.save(temp_img, file_temp)
 
         # mri_vol2surf
         sampler = SampleToSurface()
         sampler.inputs.subject_id = sub
         sampler.inputs.reg_header = True
         sampler.inputs.hemi = hemi
-        sampler.inputs.source_file = os.path.join(path_mri,components[i]+"_deform.nii")
+        sampler.inputs.source_file = file_temp
         sampler.inputs.surface = "source"
         sampler.inputs.sampling_method = "point"
         sampler.inputs.sampling_range = 0
         sampler.inputs.sampling_units = "mm"
         sampler.inputs.interp_method = interp_method
         sampler.inputs.out_type = "mgh"
-        sampler.inputs.out_file = os.path.join(path_surf,hemi+"."+components[i]+"_sampled.mgh")
+        sampler.inputs.out_file = file_sampled
         sampler.run()
            
-        data_img = nb.load(os.path.join(path_surf,hemi+"."+components[i]+"_sampled.mgh"))
+        data_img = nb.load(file_sampled)
         vtx_new[:,i] = np.squeeze(data_img.get_fdata())
     
     if input_mask:
+        file_background = os.path.join(path_surf,hemi+".background.mgh")
                 
         # mri_vol2surf (background)
         sampler = SampleToSurface()
@@ -158,11 +166,11 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
         sampler.inputs.sampling_units = "mm"
         sampler.inputs.interp_method = "nearest"
         sampler.inputs.out_type = "mgh"
-        sampler.inputs.out_file = os.path.join(path_surf,hemi+".background.mgh")
+        sampler.inputs.out_file = file_background
         sampler.run()
         
         # get new indices
-        background_list = nb.load(os.path.join(path_surf,hemi+".background.mgh")).get_fdata()
+        background_list = nb.load(file_background).get_fdata()
         background_list = np.squeeze(background_list).astype(int)
         
         # only keep vertex indices within the slab
@@ -179,7 +187,6 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
         ind_remove = sorted(ind_remove, reverse=True)
     
         # update index file
-        print("update index list")
         for i in range(len(ind_remove)):        
             ind_keep = np.delete(ind_keep, ind_remove[i], 0)
         

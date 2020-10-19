@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+import sys
 import shutil as sh
 
 # external inputs
@@ -10,11 +11,13 @@ import nibabel as nb
 from nibabel.freesurfer.io import read_geometry
 from nipype.interfaces.freesurfer import SampleToSurface
 from nipype.interfaces.freesurfer.preprocess import MRIConvert
-    
 
-def map2surface(input_surf, input_vol, hemi, path_output, 
-                interp_method="nearest", input_white=None, input_ind=None, 
-                cleanup=True):
+# local inputs
+from fmri_tools.io import get_filename
+
+
+def map2surface(input_surf, input_vol, path_output, interp_method="nearest", 
+                input_white=None, input_ind=None, cleanup=True):
     """ Map to surface
 
     This function samples data from the input volume to the input surface and 
@@ -26,15 +29,13 @@ def map2surface(input_surf, input_vol, hemi, path_output,
         Surface mesh onto which volume data is sampled.
     input_vol : str
         Volume from which data is sampled.
-    hemi : str
-        Hemisphere.
     path_output : str
         Path where to save output.
     interp_method : str, optional
         Interpolation method (nearest or trilinear). The default is "nearest".
     input_white : str, optional
         White surface in target surface space (only necessary if index file is 
-                                               given). The default is None.
+        given). The default is None.
     input_ind : str, optional
         Textfile with mapping of vertex indices to target space. The default is 
         None.
@@ -65,7 +66,8 @@ def map2surface(input_surf, input_vol, hemi, path_output,
     if not os.path.exists(path_output):
         os.makedirs(path_output)
 
-    # mimic freesurfer folder structure (with some additional folder for intermediate files)
+    # mimic freesurfer folder structure (with some additional folder for 
+    # intermediate files)
     path_sub = os.path.join(path_output,sub)
     path_mri = os.path.join(path_sub,"mri")
     path_surf = os.path.join(path_sub,"surf")
@@ -73,26 +75,28 @@ def map2surface(input_surf, input_vol, hemi, path_output,
     os.makedirs(path_sub)
     os.makedirs(path_mri)
     os.makedirs(path_surf)
-
+    
+    # get filenames
+    _, name_vol, ext_vol = get_filename(input_vol)
+    _, hemi, name_surf = get_filename(input_surf)
+    name_surf = name_surf.replace(".","")
+    
+    # check filename
+    if not hemi == "lh" and not hemi == "rh":
+        sys.exit("Could not identify hemi from filename!")
+    
     # copy input volume as orig.mgz to mimicked freesurfer folder
-    if os.path.splitext(os.path.basename(input_vol))[1] != ".mgz":
+    if ext_vol != ".mgz":
         mc = MRIConvert()
         mc.inputs.in_file = input_vol
-        mc.inputs.out_file = os.path.join(path_mri,"orig.mgz")
-        mc.inputs.out_type = 'mgz'
+        mc.inputs.out_file = os.path.join(path_mri, "orig.mgz")
+        mc.inputs.out_type = "mgz"
         mc.run()
     else:
-        sh.copyfile(input_vol,os.path.join(path_mri,"orig.mgz"))
+        sh.copyfile(input_vol,os.path.join(path_mri, "orig.mgz"))
 
     # copy input surface to mimicked freesurfer folder
-    sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
-
-    # input volume file name
-    if os.path.splitext(os.path.basename(input_vol))[1] == ".gz":
-        name_vol = os.path.splitext(os.path.splitext(os.path.basename(input_vol))[0])[0]
-    else:
-        name_vol = os.path.splitext(os.path.basename(input_vol))[0]
-    name_surf = os.path.basename(input_surf).split('.')[1]
+    sh.copyfile(input_surf, os.path.join(path_surf, hemi+".source"))
 
     # mri_vol2surf
     sampler = SampleToSurface()

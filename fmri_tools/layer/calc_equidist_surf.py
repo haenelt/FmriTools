@@ -82,7 +82,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     -------
     created by Daniel Haenelt
     Date created: 17-10-2020
-    Last modified: 18-10-2020
+    Last modified: 19-10-2020
 
     """
     
@@ -92,6 +92,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     
     # get hemisphere and basename of freesurfer surface
     _, hemi, name = get_filename(input_mesh)
+    name = name.replace(".","")
 
     # check filename
     if not hemi[:2] == "lh" and not hemi[:2] == "rh":
