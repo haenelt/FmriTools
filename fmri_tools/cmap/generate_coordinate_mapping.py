@@ -42,7 +42,7 @@ def generate_coordinate_mapping(input, pad, path_output=None, suffix=None,
     -------
     created by Daniel Haenelt
     Date created: 21-11-2018             
-    Last modified: 12-10-2020
+    Last modified: 19-10-2020
     
     """
       
@@ -87,8 +87,7 @@ def generate_coordinate_mapping(input, pad, path_output=None, suffix=None,
     coordinate_mapping[:,:,:,2] = Z
 
     # write coordinate mapping
-    output = nb.Nifti1Image(coordinate_mapping, data_img.affine, data_img.header)
-    output.set_data_dtype(np.float)
+    output = nb.Nifti1Image(coordinate_mapping, data_img.affine, nb.Nifti1Header())
 
     # write coordinate mapping for each time point   
     if t_size == 1:

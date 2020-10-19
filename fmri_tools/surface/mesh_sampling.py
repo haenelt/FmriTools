@@ -2,7 +2,6 @@
 
 # python standard library inputs
 import os
-import sys
 import shutil as sh
 
 # external inputs
@@ -90,13 +89,8 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
         os.makedirs(path_tmp)
 
     # get filenames
-    _, hemi, name_mesh = get_filename(surf_in)
-    name_mesh = name_mesh.replace(".","")
+    name_mesh = os.path.basename(surf_in)
     _, name_vol, ext_vol = get_filename(vol_in)
-    
-    # check filename
-    if not hemi == "lh" and not hemi == "rh":
-        sys.exit("Could not identify hemi from filename!")
     
     # get temporary vol
     file_vol = os.path.join(path_tmp, name_vol+ext_vol)
@@ -113,13 +107,15 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
         file_s2t = os.path.join(path_tmp, name_s2t+ext_s2t)
         sh.copy(source2target_in, file_s2t)
     else:
+        name_s2t = "cmap_t2t"
+        ext_s2t = ".nii"
         generate_coordinate_mapping(vol_in,
                                     pad=0,
                                     path_output=path_tmp, 
-                                    suffix="s2s", 
+                                    suffix="t2t", 
                                     time=False,
                                     write_output=True)
-        file_s2t = os.path.join(path_tmp, "cmap_t2t.nii")
+        file_s2t = os.path.join(path_tmp, name_s2t+ext_s2t)
     
     if file_s2t[-3:] == ".gz":
         gunzip(file_s2t)
@@ -159,10 +155,14 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
                    flip_faces=False,
                    cleanup=True)
     
+    # remove suffix 
+    os.rename(os.path.join(path_tmp, name_mesh+"_def"),
+              os.path.join(path_tmp, name_mesh))
+    
     # do mapping
-    map2surface(input_surf=os.path.join(path_tmp, hemi+"."+name_mesh+"_def"),
+    map2surface(input_surf=os.path.join(path_tmp, name_mesh),
                 input_vol=file_vol,
-                path_output=path_tmp,
+                path_output=path_output,
                 interp_method=interp_method,
                 input_white=None, 
                 input_ind=None, 
@@ -171,4 +171,3 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
     # delete intermediate files
     if cleanup:
         sh.rmtree(path_tmp, ignore_errors=True)
-        

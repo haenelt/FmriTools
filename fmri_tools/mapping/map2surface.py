@@ -134,11 +134,11 @@ def map2surface(input_surf, input_vol, path_output, interp_method="nearest",
         vals_img.header["dims"][0] = len(vals_orig[:,0])
         vals_img.header["Mdc"] = np.eye(3)
         res_img = nb.Nifti1Image(vals_orig,vals_img.affine,vals_img.header)
-        nb.save(res_img,os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_def_trans.mgh"))
+        nb.save(res_img,os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_trans.mgh"))
     else:
         # write sampled data in epi space
         sh.copyfile(os.path.join(path_surf,hemi+"."+"sampled.mgh"),
-                    os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_def.mgh"))
+                    os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+".mgh"))
     
     # delete intermediate files
     if cleanup:

@@ -130,7 +130,7 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer,
                         cleanup=True)
 
             # rename mapping file
-            os.rename(join(path_output,hemi+".temp_"+tmp2_string+"_"+name_surf+"_def.mgh"),
+            os.rename(join(path_output,hemi+".temp_"+tmp2_string+"_"+name_surf+".mgh"),
                       join(path_output,hemi+"."+name_file+"_layer"+str(layer[i])+".mgh"))
 
     else:
@@ -153,7 +153,7 @@ def mesh_sampling_layer(surf_in, file_in, boundaries_in, path_output, layer,
                     cleanup=True)
 
         # rename mapping file
-        os.rename(join(path_output,hemi+".temp_"+tmp2_string+"_"+name_surf+"_def.mgh"),
+        os.rename(join(path_output,hemi+".temp_"+tmp2_string+"_"+name_surf+".mgh"),
                   join(path_output,hemi+"."+name_file+"_avg_layer"+str(layer[0])+"_"+str(layer[1])+".mgh"))
         
     # clean temp

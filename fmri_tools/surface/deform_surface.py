@@ -191,7 +191,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
             ind_keep = np.delete(ind_keep, ind_remove[i], 0)
         
         # save index mapping between original and transformed surface
-        np.savetxt(os.path.join(path_output, name_surf+"_ind.txt"), ind_keep, fmt='%d')
+        np.savetxt(os.path.join(path_output, hemi+"."+name_surf+"_ind.txt"), ind_keep, fmt='%d')
     else:
         fac_new = fac
  
@@ -200,13 +200,14 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
         fac_new = np.flip(fac_new, axis=1)
     
     # write new surface
-    write_geometry(os.path.join(path_output, name_surf+"_def"), vtx_new, fac_new)
+    write_geometry(os.path.join(path_output, hemi+"."+name_surf+"_def"), 
+                   vtx_new, fac_new)
 
     # smooth surface
     if smooth_iter:
         smooth = SmoothTessellation()
-        smooth.inputs.in_file = os.path.join(path_output, name_surf+"_def")
-        smooth.inputs.out_file = os.path.join(path_output, name_surf+"_def_smooth")
+        smooth.inputs.in_file = os.path.join(path_output, hemi+"."+name_surf+"_def")
+        smooth.inputs.out_file = os.path.join(path_output, hemi+"."+name_surf+"_def_smooth")
         smooth.inputs.smoothing_iterations = smooth_iter
         smooth.inputs.disable_estimates = True
         smooth.run()
