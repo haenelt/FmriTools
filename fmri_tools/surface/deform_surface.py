@@ -12,12 +12,13 @@ from nibabel.freesurfer.io import write_geometry, read_geometry
 from nibabel.affines import apply_affine
 from nipype.interfaces.freesurfer import SampleToSurface
 from nipype.interfaces.freesurfer import SmoothTessellation
+from gbb.utils.remove_vertex import remove_vertex
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.io.mgh2nii import mgh2nii
-    
+
 
 def deform_surface(input_surf, input_orig, input_deform, input_target, hemi, 
                    path_output, input_mask=None, interp_method="nearest", 
@@ -63,7 +64,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
     -------
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 13-10-2020
+    Last modified: 19-10-2020
     
     """
     
@@ -98,7 +99,8 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
     sh.copyfile(input_surf, os.path.join(path_surf,hemi+".source"))
     if ext_orig != ".mgz":
         mgh2nii(input_orig, path_mri, "mgz")
-        os.rename(os.path.join(path_mri,name_orig+".mgz"),os.path.join(path_mri,"orig.mgz"))
+        os.rename(os.path.join(path_mri,name_orig+".mgz"),
+                  os.path.join(path_mri,"orig.mgz"))
     else:
         sh.copyfile(input_orig, os.path.join(path_mri,"orig.mgz"))
 
@@ -165,63 +167,21 @@ def deform_surface(input_surf, input_orig, input_deform, input_target, hemi,
         
         # only keep vertex indices within the slab
         ind_keep = np.arange(len(vtx))
-        ind_keep[background_list == 0] = -1
-        ind_keep = ind_keep[ind_keep != -1]
+        ind_keep = ind_keep[background_list != 0]
     
-        # get indices which will be removed
-        ind_tmp = np.arange(len(vtx))
-        ind_remove = list(set(ind_tmp) - set(ind_keep))
-        ind_remove = sorted(ind_remove, reverse=True)
+        vtx_new, fac_new = remove_vertex(vtx_new, fac, ind_keep)
     
-        # get new vertices
-        vtx_new = vtx_new[ind_keep,:]
-
-        # get new faces
-        fac_keep = np.zeros(len(fac))
-        fac_keep += np.in1d(fac[:,0], ind_keep)
-        fac_keep += np.in1d(fac[:,1], ind_keep)
-        fac_keep += np.in1d(fac[:,2], ind_keep)
-        fac_new = fac[fac_keep == 3,:]            
-    
-        # reindex faces
-        loop_status = 0
-        loop_length = len(ind_remove)
-        for i in range(loop_length):
-            
-            # print status
-            counter = np.floor(i / loop_length * 100)
-            if counter != loop_status:
-                print("sort faces: "+str(counter)+" %")
-                loop_status = counter
-            
-            tmp = fac_new[fac_new >= ind_remove[i]] - 1
-            fac_new[fac_new >= ind_remove[i]] = tmp
-
-        # get indices which will be cleaned
+        # get indices which were cleaned
         ind_vtx_new = np.arange(len(vtx_new))
         ind_fac_new = list(itertools.chain(*fac_new))
         ind_fac_new = list(set(ind_fac_new))
         ind_remove = list(set(ind_vtx_new) - set(ind_fac_new))
         ind_remove = sorted(ind_remove, reverse=True)
-        
-        # remove singularities (vertices without faces)
-        loop_status = 0
-        loop_length = len(ind_remove)
-        for i in range(loop_length):
-        
-            # print status
-            counter = np.floor(i / loop_length * 100)
-            if counter != loop_status:
-                print("clean faces: "+str(counter)+" %")
-                loop_status = counter
-                   
-            # remove vertex and index
-            vtx_new = np.delete(vtx_new, ind_remove[i], 0)
+    
+        # update index file
+        print("update index list")
+        for i in range(len(ind_remove)):        
             ind_keep = np.delete(ind_keep, ind_remove[i], 0)
-            
-            # sort faces
-            tmp = fac_new[fac_new >= ind_remove[i]] - 1
-            fac_new[fac_new >= ind_remove[i]] = tmp
         
         # save index mapping between original and transformed surface
         np.savetxt(os.path.join(path_output, name_surf+"_ind.txt"), ind_keep, fmt='%d')
