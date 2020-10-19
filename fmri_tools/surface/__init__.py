@@ -12,8 +12,7 @@ from .make_mesh import make_mesh
 from .make_sphere import make_sphere
 from .match_vertex_number import match_vertex_number
 from .mesh_sampling import mesh_sampling
-from .mesh_sampling_layer import mesh_sampling_layer
-from .mesh_sampling_layer_other import mesh_sampling_layer_other
+from .mesh_sampling_profile import mesh_sampling_profile
 from .remove_vertex_outliers import remove_vertex_outliers
 from .smooth_surface import smooth_surface
 from .surface_flattening import surface_flattening
