@@ -2,7 +2,7 @@
 
 # python standard library inputs
 import os 
-from os.path import join, basename, splitext
+from os.path import join, basename
 
 # local inputs
 from fmri_tools.surface import deform_surface
@@ -18,7 +18,7 @@ The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 30-01-2020
-Last modified: 13-10-2020
+Last modified: 19-10-2020
 """
 
 # input files
@@ -81,7 +81,6 @@ for i in range(len(input_surf)):
                    input_orig, 
                    input_deform1, 
                    input_ana, 
-                   splitext(basename(input_surf[i]))[0], 
                    path_output, 
                    input_mask=None,
                    interp_method="trilinear",
@@ -94,7 +93,6 @@ for i in range(len(input_surf)):
                    input_ana,
                    input_deform2,
                    input_mpm,
-                   splitext(basename(input_surf[i]))[0], 
                    path_output, 
                    input_mask=None,
                    interp_method="trilinear",

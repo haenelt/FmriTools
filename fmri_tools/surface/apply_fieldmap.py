@@ -69,7 +69,7 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
     -------
     created by Daniel Haenelt
     Date created: 31-01-2020
-    Last modified: 12-10-2020
+    Last modified: 19-10-2020
     
     """
     
@@ -204,12 +204,11 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
     
     # apply cmap to surface
     for i in range(len(file_surf)): 
-        path_surf, hemi, name_surf = get_filename(file_surf[i])
+        path_surf, _, _ = get_filename(file_surf[i])
         deform_surface(input_surf=file_surf[i], 
                        input_orig=os.path.join(path_udata, "median_"+name_udata), 
                        input_deform=os.path.join(path_fmap0, "cmap_fmap_unwarped.nii"), 
                        input_target=os.path.join(path_udata, "median_"+name_udata), 
-                       hemi=hemi, 
                        path_output=path_surf, 
                        input_mask=None,
                        interp_method="trilinear",

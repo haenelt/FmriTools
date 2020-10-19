@@ -73,7 +73,7 @@ def mesh_sampling_layer_other(surf_in, file_in, target2source_in,
     -------
     created by Daniel Haenelt
     Date created: 13-01-2020
-    Last modified: 12-10-2020
+    Last modified: 19-10-2020
     
     """
     
@@ -164,7 +164,6 @@ def mesh_sampling_layer_other(surf_in, file_in, target2source_in,
                    input_orig = s2t_upsampled, 
                    input_deform = s2t_rescaled,
                    input_target = data_upsampled, 
-                   hemi = hemi,
                    path_output = path_surf,
                    input_mask = None,
                    interp_method = "trilinear",

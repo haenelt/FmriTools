@@ -69,14 +69,10 @@ for i in range(len(file_in)):
         
     # map to ana
     for j in range(len(surf_in)):
-        
-        # hemisphere
-        hemi = os.path.splitext(os.path.basename(surf_in[j]))[0]
     
         # sample on surface
         map2surface(surf_in[j], 
                     filename_def, 
-                    hemi, 
                     path_surf, 
                     interp_method="nearest",
                     input_white=None, 

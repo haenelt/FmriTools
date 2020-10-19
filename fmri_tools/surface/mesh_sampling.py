@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+import sys
 import shutil as sh
 
 # external inputs
@@ -93,6 +94,10 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
     name_mesh = name_mesh.replace(".","")
     _, name_vol, ext_vol = get_filename(vol_in)
     
+    # check filename
+    if not hemi == "lh" and not hemi == "rh":
+        sys.exit("Could not identify hemi from filename!")
+    
     # get temporary vol
     file_vol = os.path.join(path_tmp, name_vol+ext_vol)
     sh.copy(vol_in, file_vol)
@@ -147,7 +152,6 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
                    input_orig=file_s2t,
                    input_deform=file_s2t,
                    input_target=file_vol,
-                   hemi=hemi,
                    path_output=path_tmp,
                    input_mask=None,
                    interp_method="trilinear",
@@ -158,7 +162,6 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
     # do mapping
     map2surface(input_surf=os.path.join(path_tmp, hemi+"."+name_mesh+"_def"),
                 input_vol=file_vol,
-                hemi=hemi,
                 path_output=path_tmp,
                 interp_method=interp_method,
                 input_white=None, 

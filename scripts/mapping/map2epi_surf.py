@@ -40,7 +40,6 @@ for i in range(n_layer):
         # deform surface
         map2surface(input_surf, 
                     input_vol, 
-                    hemi[j], 
                     path_output, 
                     interpolation,
                     input_white, 

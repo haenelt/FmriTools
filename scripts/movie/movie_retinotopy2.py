@@ -137,14 +137,10 @@ for i in range(np.shape(retinotopy_array)[3]):
 # map to ana
 for i in range(np.shape(retinotopy_array)[3]):
     for j in range(len(input_surf)):
-
-        # hemisphere
-        hemi = os.path.splitext(os.path.basename(input_surf[j]))[0]
         
         # sample on surface
         map2surface(input_surf[j], 
                     os.path.join(path_def,str(i+1)+"_def-img.nii.gz"), 
-                    hemi, 
                     path_surf,
                     interp_method="nearest",
                     input_white=None,
