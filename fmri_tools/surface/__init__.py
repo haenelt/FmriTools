@@ -12,7 +12,6 @@ from .make_mesh import make_mesh
 from .make_sphere import make_sphere
 from .match_vertex_number import match_vertex_number
 from .mesh_sampling import mesh_sampling
-from .mesh_sampling_profile import mesh_sampling_profile
 from .remove_vertex_outliers import remove_vertex_outliers
 from .smooth_surface import smooth_surface
 from .surface_flattening import surface_flattening
@@ -24,5 +23,5 @@ Python package for for analysis of high-resolution fMRI data.
 
 created by Daniel Haenelt
 Date created: 12-10-2020
-Last modified: 13-10-2020
+Last modified: 20-10-2020
 """

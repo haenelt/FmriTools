@@ -7,21 +7,25 @@ import shutil as sh
 
 # external inputs
 import numpy as np
-import nibabel as nb
 from nibabel.freesurfer.io import read_geometry
 from nipype.interfaces.freesurfer import SampleToSurface
-from nipype.interfaces.freesurfer.preprocess import MRIConvert
 
 # local inputs
-from fmri_tools.io import get_filename
+from fmri_tools.io import (
+    get_filename,
+    read_mgh,
+    write_mgh,
+    mgh2nii
+    )
 
 
-def map2surface(input_surf, input_vol, path_output, interp_method="nearest", 
-                input_white=None, input_ind=None, cleanup=True):
+def map2surface(input_surf, input_vol, write_output=False, path_output="", 
+                interp_method="nearest", input_surf_target=None, input_ind=None, 
+                cleanup=True):
     """ Map to surface
 
     This function samples data from the input volume to the input surface and 
-    optionally maps those values to a target surface if an index file is given.      
+    optionally maps those values to a target surface if an index file is given.    
 
     Parameters
     ----------
@@ -29,13 +33,15 @@ def map2surface(input_surf, input_vol, path_output, interp_method="nearest",
         Surface mesh onto which volume data is sampled.
     input_vol : str
         Volume from which data is sampled.
-    path_output : str
-        Path where to save output.
+    write_output : bool, optional
+        Write sampled data as MGH file. The default is False.
+    path_output : str, optional
+        Path where to save output. The default is "".
     interp_method : str, optional
         Interpolation method (nearest or trilinear). The default is "nearest".
-    input_white : str, optional
-        White surface in target surface space (only necessary if index file is 
-        given). The default is None.
+    input_surf_target : str, optional
+        Target surface (only necessary if index file is given). The default is 
+        None.
     input_ind : str, optional
         Textfile with mapping of vertex indices to target space. The default is 
         None.
@@ -44,15 +50,24 @@ def map2surface(input_surf, input_vol, path_output, interp_method="nearest",
 
     Returns
     -------
-    None.
+    arr_sampled : ndarray
+        Image array.
+    affine_sampled : ndarray
+        Affine transformation matrix.
+    header_sampled : MGHHeader
+        Image header.
 
     Notes
     -------
     created by Daniel Haenelt
     Date created: 06-02-2019      
-    Last modified: 19-10-2020
+    Last modified: 20-10-2020
 
     """
+    
+    # clean everything if no output is written
+    if write_output:
+        cleanup=True
     
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
@@ -85,18 +100,20 @@ def map2surface(input_surf, input_vol, path_output, interp_method="nearest",
     if not hemi == "lh" and not hemi == "rh":
         sys.exit("Could not identify hemi from filename!")
     
-    # copy input volume as orig.mgz to mimicked freesurfer folder
+    # copy input volume as orig.mgz to mimic freesurfer folder
     if ext_vol != ".mgz":
-        mc = MRIConvert()
-        mc.inputs.in_file = input_vol
-        mc.inputs.out_file = os.path.join(path_mri, "orig.mgz")
-        mc.inputs.out_type = "mgz"
-        mc.run()
+        mgh2nii(input_vol, path_mri, "mgz")
+        os.rename(os.path.join(path_mri, name_vol+".mgz"),
+                  os.path.join(path_mri, "orig.mgz"))
     else:
-        sh.copyfile(input_vol,os.path.join(path_mri, "orig.mgz"))
+        sh.copyfile(input_vol, 
+                    os.path.join(path_mri, "orig.mgz"))
 
-    # copy input surface to mimicked freesurfer folder
+    # copy input surface to mimic freesurfer folder
     sh.copyfile(input_surf, os.path.join(path_surf, hemi+".source"))
+
+    # filename of sampled data
+    file_sampled = os.path.join(path_surf, hemi+"."+"sampled.mgh")
 
     # mri_vol2surf
     sampler = SampleToSurface()
@@ -110,36 +127,45 @@ def map2surface(input_surf, input_vol, path_output, interp_method="nearest",
     sampler.inputs.sampling_units = "mm"
     sampler.inputs.interp_method = interp_method # nearest or trilinear
     sampler.inputs.out_type = "mgh"
-    sampler.inputs.out_file = os.path.join(path_surf,hemi+"."+"sampled.mgh")
+    sampler.inputs.out_file = file_sampled
     sampler.run()
 
+    # load data
+    arr_sampled, affine_sampled, header_sampled = read_mgh(file_sampled)
+
+    # map on separate mesh
     if input_ind:
-        # read ind
-        ind_orig = np.loadtxt(input_ind, dtype=int)
-    
-        # read white
-        vtx_orig, _ = read_geometry(input_white)
+
+        # load data
+        ind_target = np.loadtxt(input_ind, dtype=int)
+        vtx_target, _ = read_geometry(input_surf_target)
     
         # read sampled morph data
-        vals_img = nb.load(os.path.join(path_surf,hemi+"."+"sampled.mgh"))
-        vals_array = vals_img.get_fdata()
-    
-        # get anzahl der vertices als Nullen in white
-        vals_orig = np.zeros([len(vtx_orig[:,0]),1,1])
-    
-        # setze sampled data da rein
-        vals_orig[ind_orig] = vals_array
-    
-        # write sampled data in anatomical space      
-        vals_img.header["dims"][0] = len(vals_orig[:,0])
-        vals_img.header["Mdc"] = np.eye(3)
-        res_img = nb.Nifti1Image(vals_orig,vals_img.affine,vals_img.header)
-        nb.save(res_img,os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+"_trans.mgh"))
-    else:
-        # write sampled data in epi space
-        sh.copyfile(os.path.join(path_surf,hemi+"."+"sampled.mgh"),
-                    os.path.join(path_output,hemi+"."+name_vol+"_"+name_surf+".mgh"))
+        arr_tmp = arr_sampled.copy()
+        
+        # update header
+        header_sampled["dims"][0] = len(vtx_target)
+        header_sampled["Mdc"] = np.eye(3)
+        
+        # sample array in target space
+        arr_sampled = np.zeros(len(vtx_target))
+        arr_sampled[ind_target] = arr_tmp
+        
+    if write_output:
+        file_out = os.path.join(path_output, hemi+"."+name_vol+"_"+name_surf)
+        
+        if input_ind:
+            file_out += "_trans.mgh"
+        else:
+            file_out += ".mgh"
+
+        write_mgh(arr_sampled, 
+                  affine_sampled, 
+                  header_sampled, 
+                  file_out) 
     
     # delete intermediate files
     if cleanup:
         sh.rmtree(path_sub, ignore_errors=True)
+    
+    return arr_sampled, affine_sampled, header_sampled

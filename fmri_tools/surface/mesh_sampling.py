@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+import sys
 import shutil as sh
 
 # external inputs
@@ -11,6 +12,7 @@ from sh import gunzip
 
 # local inputs
 from fmri_tools.io import get_filename
+from fmri_tools.io import write_mgh
 from fmri_tools.cmap import generate_coordinate_mapping
 from fmri_tools.utils import upsample_volume
 from fmri_tools.surface import deform_surface
@@ -35,8 +37,8 @@ def _rescale_cmap(file_cmap, dim, dim_upsampled):
     nb.save(cmap, file_cmap)
 
 
-def mesh_sampling(surf_in, vol_in, path_output, source2target_in="", 
-                  interp_method="nearest", r=[0.4,0.4,0.4], 
+def mesh_sampling(surf_in, vol_in, write_output=False, path_output="", 
+                  source2target_in="", interp_method="nearest", r=[0.4,0.4,0.4], 
                   interp_upsample="Cu", cleanup=True):
     """ Mesh sampling
 
@@ -50,14 +52,16 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
         Filename of input surface mesh.
     vol_in : str
         Filename of input volume from which data is sampled.
-    path_output : str
-        Path where output is written.
+    write_output : bool, optional
+        Write sampled data as MGH file. The default is False.
+    path_output : str, optional
+        Path where output is written. The default is "".
     source2target_in : str, optional
-        Source to target coordinate mapping.
+        Source to target coordinate mapping. The default is "".
     interp_method : str, optional
         Interpolation method for surface sampling. Possible arguments are 
         nearest and trilinear. The default is "nearest".
-    r : list, optional
+    r :list, optional
         Destination voxel size after upsampling (performed if not None). The 
         default is [0.4,0.4,0.4].
     interp_upsample : str, optional
@@ -68,15 +72,24 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
 
     Returns
     -------
-    None.
+    arr : ndarray
+        Image array.
+    affine : ndarray
+        Affine transformation matrix.
+    header : MGHHeader
+        Image header.
 
     Notes
     -------
     created by Daniel Haenelt
     Date created: 24-06-2020        
-    Last modified: 19-10-2020
+    Last modified: 20-10-2020
 
     """
+    
+    # clean everything if no output is written
+    if write_output:
+        cleanup=True
     
     # make output folder
     if not os.path.exists(path_output):
@@ -89,8 +102,13 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
         os.makedirs(path_tmp)
 
     # get filenames
-    name_mesh = os.path.basename(surf_in)
+    _, hemi, name_mesh = get_filename(surf_in)
+    name_mesh = name_mesh.replace(".","")
     _, name_vol, ext_vol = get_filename(vol_in)
+
+    # check filename
+    if not hemi == "lh" and not hemi == "rh":
+        sys.exit("Could not identify hemi from filename!")
     
     # get temporary vol
     file_vol = os.path.join(path_tmp, name_vol+ext_vol)
@@ -154,20 +172,25 @@ def mesh_sampling(surf_in, vol_in, path_output, source2target_in="",
                    smooth_iter=0,
                    flip_faces=False,
                    cleanup=True)
-    
-    # remove suffix 
-    os.rename(os.path.join(path_tmp, name_mesh+"_def"),
-              os.path.join(path_tmp, name_mesh))
-    
+       
     # do mapping
-    map2surface(input_surf=os.path.join(path_tmp, name_mesh),
-                input_vol=file_vol,
-                path_output=path_output,
-                interp_method=interp_method,
-                input_white=None, 
-                input_ind=None, 
-                cleanup=True)
+    file_def = os.path.join(path_tmp, hemi+"."+name_mesh+"_def")
+    arr, affine, header = map2surface(input_surf=file_def,
+                                      input_vol=file_vol,
+                                      write_output=False,
+                                      path_output="",
+                                      interp_method=interp_method,
+                                      input_white=None, 
+                                      input_ind=None, 
+                                      cleanup=True)
+    
+    if write_output:
+        _, name_vol, _ = get_filename(file_vol)
+        file_out = os.path.join(path_output, hemi+"."+name_vol+"_"+name_mesh+".mgh")
+        write_mgh(arr, affine, header, file_out)
     
     # delete intermediate files
     if cleanup:
         sh.rmtree(path_tmp, ignore_errors=True)
+
+    return arr, affine, header
