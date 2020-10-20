@@ -13,9 +13,9 @@ from fmri_tools.io import get_filename
 
 def write_mgh(arr, affine, header, file_out):
     """ Write MGH
-    
+
     This function adds two empty dimensions to an array and saves it as a
-    freesurfer mgh surface file.    
+    freesurfer mgh surface file.        
 
     Parameters
     ----------
@@ -28,6 +28,12 @@ def write_mgh(arr, affine, header, file_out):
     file_out : str
         Filename of output file.
 
+    Raises
+    ------
+    ValueError
+        If `file_out` is not a string or has a file extension which is not 
+        supported.
+
     Returns
     -------
     None.
@@ -39,6 +45,13 @@ def write_mgh(arr, affine, header, file_out):
     Last modified: 20-10-2020
 
     """
+
+    # check filename
+    if isinstance(file_out, str):
+        if not file_out.endswith("mgh"):
+            raise ValueError("Currently supported file formats is mgh.")
+    else:
+        raise ValueError("Filename must be a string!")
     
     # make output folder
     path_output, _, _ = get_filename(file_out)

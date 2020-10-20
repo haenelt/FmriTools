@@ -3,9 +3,9 @@
 
 def write_label(arr_label, file_out):
     """ Write label
-    
+
     This function writes a textfile which can be read as label file in 
-    freesurfer.    
+    freesurfer.        
 
     Parameters
     ----------
@@ -13,6 +13,12 @@ def write_label(arr_label, file_out):
         List of label indices.
     file_out : str
         Filename of label file.
+
+    Raises
+    ------
+    ValueError
+        If `file_out` is not a string or has a file extension which is not 
+        supported.
 
     Returns
     -------
@@ -22,10 +28,17 @@ def write_label(arr_label, file_out):
     -------
     created by Daniel Haenelt
     Date created: 03-09-2020
-    Last modified: 12-10-2020
+    Last modified: 20-10-2020
 
     """
-        
+    
+    # check filename
+    if isinstance(file_out, str):
+        if not file_out.endswith("txt"):            
+            raise ValueError("Currently supported file formats is txt.")
+    else:
+        raise ValueError("Filename must be a string!")
+    
     # number of labels
     n_label = len(arr_label)
     
