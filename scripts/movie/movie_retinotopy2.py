@@ -25,7 +25,7 @@ the data will be additionally sampled  on a regular grid.
 
 created by Daniel Haenelt
 Date created: 11-11-2019
-Last modified: 19-10-2020
+Last modified: 20-10-2020
 """
 
 input_series = "/nobackup/actinium2/haenelt/V2STRIPES/p6/psf/multipol_14/udata.nii"
@@ -138,13 +138,14 @@ for i in range(np.shape(retinotopy_array)[3]):
 for i in range(np.shape(retinotopy_array)[3]):
     for j in range(len(input_surf)):
         
-        # sample on surface
+        # sample on surface                
         map2surface(input_surf[j], 
                     os.path.join(path_def,str(i+1)+"_def-img.nii.gz"), 
-                    path_surf,
+                    True, 
+                    path_surf, 
                     interp_method="nearest",
-                    input_white=None,
-                    input_ind=None,
+                    input_surf_target=None, 
+                    input_ind=None, 
                     cleanup=True)
 
 # sample on grid (optional)

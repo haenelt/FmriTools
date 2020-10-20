@@ -174,13 +174,13 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
                    cleanup=True)
        
     # do mapping
-    file_def = os.path.join(path_tmp, hemi+"."+name_mesh+"_def")
-    arr, affine, header = map2surface(input_surf=file_def,
-                                      input_vol=file_vol,
-                                      write_output=False,
-                                      path_output="",
+    file_def = os.path.join(path_tmp, hemi+"."+name_mesh+"_def")    
+    arr, affine, header = map2surface(input_surf=file_def, 
+                                      input_vol=file_vol, 
+                                      write_output=write_output, 
+                                      path_output=path_output, 
                                       interp_method=interp_method,
-                                      input_white=None, 
+                                      input_surf_target=None, 
                                       input_ind=None, 
                                       cleanup=True)
     
