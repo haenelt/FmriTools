@@ -63,10 +63,10 @@ def write_mgh(file_out, arr, affine=None, header=None):
     arr = np.expand_dims(arr, axis=1)
     arr = np.expand_dims(arr, axis=1)
     
-    if affine is None or not len(affine):
+    if affine is None:
         affine = np.eye(4)
     
-    if header is None or not len(header):
+    if header is None:
         header = MGHHeader()
 
     # write output

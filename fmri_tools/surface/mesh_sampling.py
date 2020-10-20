@@ -89,6 +89,7 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     
     # clean everything if no output is written
     if not write_output:
+        path_output, _, _ = get_filename(vol_in)
         cleanup = True
     
     # make output folder
@@ -177,8 +178,8 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     file_def = os.path.join(path_tmp, hemi+"."+name_mesh+"_def")    
     arr, affine, header = map2surface(input_surf=file_def, 
                                       input_vol=file_vol, 
-                                      write_output=write_output, 
-                                      path_output=path_output, 
+                                      write_output=False,
+                                      path_output=path_tmp, 
                                       interp_method=interp_method,
                                       input_surf_target=None, 
                                       input_ind=None, 

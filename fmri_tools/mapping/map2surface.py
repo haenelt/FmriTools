@@ -67,6 +67,7 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     
     # clean everything if no output is written
     if not write_output:
+        path_output, _, _ = get_filename(input_vol)
         cleanup = True
     
     # set freesurfer path environment
@@ -76,7 +77,7 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(i) for i in tmp)
     sub = "tmp_"+tmp_string
-
+    
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)

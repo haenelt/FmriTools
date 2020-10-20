@@ -59,7 +59,7 @@ def read_hdf5(file_in):
         if "affine" in hf.keys():
             affine = hf["affine"][:]
         else:
-            affine = []
+            affine = None
 
         # read header
         if "header" in hf.keys():
@@ -68,6 +68,6 @@ def read_hdf5(file_in):
             header["Mdc"] = hf["header"]["Mdc"][:]
             header["Pxyz_c"] = hf["header"]["Pxyz_c"][:]
         else:
-            header = []
+            header = None
 
     return data, affine, header
