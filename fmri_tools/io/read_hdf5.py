@@ -40,12 +40,9 @@ def read_hdf5(file_in):
     
     # check filename
     if isinstance(file_in, str):
-        if not (file_in.endswith("hdf") or file_in.endswith("h4") or
-                file_in.endswith("hdf4") or file_in.endswith("he2") or 
-                file_in.endswith("h5") or file_in.endswith("hdf5") or 
-                file_in.endswith("he5")):            
+        if not (file_in.endswith("h5") or file_in.endswith("hdf5")):            
             raise ValueError("Currently supported file formats are " + \
-                             "hdf, h4, hdf4, he2, h5, hdf5 and he5.")
+                             "h5 and hdf5.")
     else:
         raise ValueError("Filename must be a string!")
 
