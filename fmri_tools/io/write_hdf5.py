@@ -14,11 +14,8 @@ from fmri_tools.io import get_filename
 def write_hdf5(file_out, arr, affine=None, header=None):
     """ Write HDF5
     
-    This function write an arra    # make output folder
-    path_output, _, _ = get_filename(file_out)
-    if not os.path.exists(path_output):
-        os.makedirs(path_output)y to an hdf5 file. Optionally, an affine 
-    transformation matrix and parts of the MGHHeader will be stored as well.
+    This function writes a numpy array to an hdf5 file. Optionally, an affine 
+    transformation matrix and parts of an MGHHeader are stored.
 
     Parameters
     ----------

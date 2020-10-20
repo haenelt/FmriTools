@@ -13,8 +13,8 @@ def extract_mgh_from_hdf5(file_in, file_out, t=0, n=0):
     """ Extract MGH from HDF5
     
     This function reads an hdf5 file which is expected to contain a 3D array 
-    containing data points vertex x time point x layer and extract data for
-    one time point and one layer. The extracted data is saved as mgh file.
+    with dimensions vertex x time point x layer. Data from one time point and 
+    one layer are extracted and saved as mgh file.
 
     Parameters
     ----------

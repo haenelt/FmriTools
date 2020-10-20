@@ -50,7 +50,7 @@ def write_mgh(file_out, arr, affine=None, header=None):
     # check filename
     if isinstance(file_out, str):
         if not file_out.endswith("mgh"):
-            raise ValueError("Currently supported file formats is mgh.")
+            raise ValueError("Currently supported file format is mgh.")
     else:
         raise ValueError("Filename must be a string!")
     

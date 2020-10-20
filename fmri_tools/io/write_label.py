@@ -41,7 +41,7 @@ def write_label(file_out, arr_label):
     # check filename
     if isinstance(file_out, str):
         if not file_out.endswith("txt"):            
-            raise ValueError("Currently supported file formats is txt.")
+            raise ValueError("Currently supported file format is txt.")
     else:
         raise ValueError("Filename must be a string!")
     

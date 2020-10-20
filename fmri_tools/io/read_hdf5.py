@@ -8,7 +8,8 @@ from nibabel.freesurfer.mghformat import MGHHeader
 def read_hdf5(file_in):
     """ Read HDF5
     
-    This function    
+    This function reads an hdf5 file which is expected to contain the datasets
+    array, affine and header.
 
     Parameters
     ----------
@@ -26,9 +27,9 @@ def read_hdf5(file_in):
     arr : ndarray
         Image array.
     affine : ndarray
-        Affine transformation matrix. The default is None.
+        Affine transformation matrix.
     header : MGHHeader
-        Image header. The default is None.
+        Image header.
 
     Notes
     -------
@@ -52,7 +53,7 @@ def read_hdf5(file_in):
         if "array" in hf.keys():
             data = hf["array"][:]
         else:
-            raise ValueError("No dataset with name array found!")
+            raise ValueError("No dataset found with name array!")
         
         # read affine matrix
         if "affine" in hf.keys():
@@ -63,9 +64,9 @@ def read_hdf5(file_in):
         # read header
         if "header" in hf.keys():
             header = MGHHeader()
-            header["dims"] = hf["header"]["dims"]
-            header["Mdc"] = hf["header"]["Mdc"]
-            header["Pxyz_c"] = hf["header"]["Pxyz_c"]
+            header["dims"] = hf["header"]["dims"][:]
+            header["Mdc"] = hf["header"]["Mdc"][:]
+            header["Pxyz_c"] = hf["header"]["Pxyz_c"][:]
         else:
             header = []
 
