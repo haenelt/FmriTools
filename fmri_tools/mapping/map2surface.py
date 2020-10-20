@@ -159,10 +159,10 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
         else:
             file_out += ".mgh"
 
-        write_mgh(arr_sampled, 
+        write_mgh(file_out,
+                  arr_sampled, 
                   affine_sampled, 
-                  header_sampled, 
-                  file_out) 
+                  header_sampled) 
     
     # delete intermediate files
     if cleanup:

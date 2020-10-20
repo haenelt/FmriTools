@@ -88,11 +88,7 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     """
     
     # clean everything if no output is written
-<<<<<<< HEAD
     if not write_output:
-=======
-    if write_output:
->>>>>>> d68f47ee34846752f911461362b44e5f15b7ae0a
         cleanup = True
     
     # make output folder
@@ -191,7 +187,7 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     if write_output:
         _, name_vol, _ = get_filename(file_vol)
         file_out = os.path.join(path_output, hemi+"."+name_vol+"_"+name_mesh+".mgh")
-        write_mgh(arr, affine, header, file_out)
+        write_mgh(file_out, arr, affine, header)
     
     # delete intermediate files
     if cleanup:

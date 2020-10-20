@@ -65,4 +65,4 @@ def extract_mgh_from_hdf5(file_in, file_out, t=0, n=0):
         header = MGHHeader()
     
     # write MGH file
-    write_mgh(data, affine, header, file_out)
+    write_mgh(file_out, data, affine, header)
