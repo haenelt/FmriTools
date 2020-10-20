@@ -88,8 +88,8 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     """
     
     # clean everything if no output is written
-    if write_output:
-        cleanup=True
+    if not write_output:
+        cleanup = True
     
     # make output folder
     if not os.path.exists(path_output):
@@ -192,5 +192,7 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     # delete intermediate files
     if cleanup:
         sh.rmtree(path_tmp, ignore_errors=True)
+        if not len(os.listdir(path_output)):
+            sh.rmtree(path_output)
 
     return arr, affine, header

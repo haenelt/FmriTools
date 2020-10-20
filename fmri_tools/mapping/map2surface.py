@@ -66,8 +66,8 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     """
     
     # clean everything if no output is written
-    if write_output:
-        cleanup=True
+    if not write_output:
+        cleanup = True
     
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
@@ -167,5 +167,7 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     # delete intermediate files
     if cleanup:
         sh.rmtree(path_sub, ignore_errors=True)
+        if not len(os.listdir(path_output)):
+            sh.rmtree(path_output)
     
     return arr_sampled, affine_sampled, header_sampled
