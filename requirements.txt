@@ -8,4 +8,5 @@ shapely
 descartes
 nipype
 sh
+h5py
 gbb

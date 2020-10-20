@@ -33,8 +33,8 @@ def read_vox2vox(input_lta):
     with open(input_lta, "r") as f:
         x = f.readlines()
 
-        # it is assumed that the vox2vox transformation matrix is found at specific lines in the 
-        # lta file
+        # it is assumed that the vox2vox transformation matrix is found at 
+        # specific lines in the lta file
         transformation = x[8:12]
 
     # convert matrix to numpy array

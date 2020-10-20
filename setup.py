@@ -14,6 +14,7 @@ INSTALL_REQUIREMENTS = ['numpy',
                         'descartes',
                         'nipype',
                         'sh',
+                        'h5py',
                         'gbb',
                         ]
 

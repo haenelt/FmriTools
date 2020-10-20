@@ -1,14 +1,23 @@
 # -*- coding: utf-8 -*-
 
+# python standard library inputs
+import os
+
 # external inputs
 import h5py
 from nibabel.freesurfer.mghformat import MGHHeader
+
+# local input
+from fmri_tools.io import get_filename
 
 
 def write_hdf5(file_out, arr, affine=None, header=None):
     """ Write HDF5
     
-    This function write an array to an hdf5 file. Optionally, an affine 
+    This function write an arra    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)y to an hdf5 file. Optionally, an affine 
     transformation matrix and parts of the MGHHeader will be stored as well.
 
     Parameters
@@ -51,8 +60,13 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     else:
         raise ValueError("Filename must be a string!")
 
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
     # create new MGH header
-    if header:
+    if header is not None:
         header_new = MGHHeader()
         header_new["dims"][0] = len(arr)
         header_new["Mdc"] = header["Mdc"]

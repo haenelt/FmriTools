@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 
+# python standard library inputs
+import os
 
-def write_label(arr_label, file_out):
+# local inputs
+from fmri_tools.io import get_filename
+
+
+def write_label(file_out, arr_label):
     """ Write label
 
     This function writes a textfile which can be read as label file in 
@@ -9,10 +15,10 @@ def write_label(arr_label, file_out):
 
     Parameters
     ----------
-    arr_label : list
-        List of label indices.
     file_out : str
         Filename of label file.
+    arr_label : list
+        List of label indices.
 
     Raises
     ------
@@ -38,6 +44,11 @@ def write_label(arr_label, file_out):
             raise ValueError("Currently supported file formats is txt.")
     else:
         raise ValueError("Filename must be a string!")
+    
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
     
     # number of labels
     n_label = len(arr_label)
