@@ -88,7 +88,11 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     """
     
     # clean everything if no output is written
+<<<<<<< HEAD
     if not write_output:
+=======
+    if write_output:
+>>>>>>> d68f47ee34846752f911461362b44e5f15b7ae0a
         cleanup = True
     
     # make output folder
@@ -110,7 +114,7 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     if not hemi == "lh" and not hemi == "rh":
         sys.exit("Could not identify hemi from filename!")
     
-    # get temporary vol
+    # copy temporary vol
     file_vol = os.path.join(path_tmp, name_vol+ext_vol)
     sh.copy(vol_in, file_vol)
 
