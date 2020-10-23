@@ -9,6 +9,7 @@ import glob
 import numpy as np
 import nibabel as nb
 from nibabel.freesurfer.io import read_geometry
+from joblib import Parallel, delayed
 
 # local inputs
 from fmri_tools.io import get_filename
@@ -58,6 +59,49 @@ def natural_keys(text):
     with-a-number-inside
     """
     return [ atoi(c) for c in re.split(r'(\d+)', text) ]
+
+def do_mapping(vol_in, path_output, affine_tmp, header_tmp, file_def,
+               interp_method, arr_res,t):
+    """
+    map on surface
+    
+    path_output
+    vol_in
+    affine_tmp
+    header_tmp
+    file_surf
+    interp_method
+    arr_res
+    
+    """
+    
+    # temporary filename
+    tmp = np.random.randint(0, 10, 5)
+    tmp_string = ''.join(str(x) for x in tmp)
+    file_tmp = os.path.join(path_output, "tmp_"+tmp_string+".nii")
+
+    output = nb.Nifti1Image(nb.load(vol_in[i]).get_fdata()[:,:,:,t], 
+                            affine_tmp,
+                            header_tmp)
+    nb.save(output, file_tmp)   
+
+    # do mapping                
+    arr, affine, header = map2surface(input_surf=file_def, 
+                                      input_vol=file_tmp, 
+                                      write_output=False,
+                                      path_output="", 
+                                      interp_method=interp_method,
+                                      input_surf_target=None, 
+                                      input_ind=None, 
+                                      cleanup=True)  
+    
+    # fill resulting array
+    arr_res[:,t,l] = arr
+
+    # remove temporary volume
+    os.remove(file_tmp)
+    
+    return arr_res, affine, header
 
 # sort surface filenames
 tmp = []
@@ -118,37 +162,17 @@ for i in range(len(vol_in)):
                            flip_faces=False,
                            cleanup=True)
 
-            for t in range(n_time):
+            #for t in range(n_time):
 
-                # temporary filename
-                tmp = np.random.randint(0, 10, 5)
-                tmp_string = ''.join(str(x) for x in tmp)
-                file_tmp = os.path.join(path_output, "tmp_"+tmp_string+".nii")
+            # temporary surface
+            file_def = os.path.join(path_output, 
+                                    os.path.basename(file_surf[j][l])+"_def")    
 
-                output = nb.Nifti1Image(nb.load(vol_in[i]).get_fdata()[:,:,:,t], 
-                                        affine_tmp,
-                                        header_tmp)
-                nb.save(output, file_tmp)   
 
-                # temporary surface
-                file_def = os.path.join(path_output, 
-                                        os.path.basename(file_surf[j][l])+"_def")    
 
-                # do mapping                
-                arr, affine, header = map2surface(input_surf=file_def, 
-                                                  input_vol=file_tmp, 
-                                                  write_output=False,
-                                                  path_output="", 
-                                                  interp_method=interp_method,
-                                                  input_surf_target=None, 
-                                                  input_ind=None, 
-                                                  cleanup=True)
-                
-                # fill resulting array
-                arr_res[:,t,l] = arr
+            num_cores=4
+            arr_res, affine, header = Parallel(n_jobs=num_cores)(delayed(do_mapping)(vol_in, path_output, affine_tmp, header_tmp, file_def, interp_method, arr_res, t) for t in range(n_time))
 
-                # remove temporary volume
-                os.remove(file_tmp)
             
             # remove deformed surface
             os.remove(file_def)
