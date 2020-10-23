@@ -4,6 +4,7 @@
 import os
 import re
 import glob
+import multiprocessing
 
 # external inputs
 import numpy as np
@@ -60,51 +61,42 @@ def natural_keys(text):
     """
     return [ atoi(c) for c in re.split(r'(\d+)', text) ]
 
-def do_mapping(vol_in, path_output, affine_tmp, header_tmp, file_def,
-               interp_method, arr_res,t):
+def do_mapping(i, file_vol, file_surf, path_output, interp_method):
     """
-    map on surface
-    
-    path_output
-    vol_in
-    affine_tmp
-    header_tmp
-    file_surf
-    interp_method
-    arr_res
-    
+    map on surface    
     """
-    print("hallo-1")
+
+    # get volume information
+    aff = nb.load(file_vol).affine
+    head = nb.load(file_vol).header
+    head["dim"][0] = 3
+    head["dim"][4] = 1
+
     # temporary filename
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(x) for x in tmp)
     file_tmp = os.path.join(path_output, "tmp_"+tmp_string+".nii")
 
-    output = nb.Nifti1Image(nb.load(vol_in[i]).get_fdata()[:,:,:,t], 
-                            affine_tmp,
-                            header_tmp)
+    output = nb.Nifti1Image(nb.load(file_vol).get_fdata()[:,:,:,i], aff, head)
     nb.save(output, file_tmp)   
 
     # do mapping                
-    print("hallo0")
-    arr, affine, header = map2surface(input_surf=file_def, 
-                                      input_vol=file_tmp, 
-                                      write_output=False,
-                                      path_output="", 
-                                      interp_method=interp_method,
-                                      input_surf_target=None, 
-                                      input_ind=None, 
-                                      cleanup=True)  
+    arr_map, aff_map, head_map = map2surface(input_surf=file_surf, 
+                                             input_vol=file_tmp, 
+                                             write_output=False,
+                                             path_output="", 
+                                             interp_method=interp_method,
+                                             input_surf_target=None, 
+                                             input_ind=None, 
+                                             cleanup=True)  
     
-    # fill resulting array
-    print("hallo")
-    #arr_res[:,t,l] = arr
-
     # remove temporary volume
-    print("hallo2")
     os.remove(file_tmp)
     
-    return arr, affine, header
+    return arr_map, aff_map, head_map
+
+# number of cores
+num_cores = multiprocessing.cpu_count()
 
 # sort surface filenames
 tmp = []
@@ -127,7 +119,7 @@ file_surf = []
 file_surf.append(surf_left)
 file_surf.append(surf_right)
 
-#%% start mapping
+# start mapping
 for i in range(len(vol_in)):
     
     # get filename
@@ -140,10 +132,6 @@ for i in range(len(vol_in)):
 
     # get volume information
     n_time = nb.load(vol_in[i]).header["dim"][4]
-    affine_tmp = nb.load(vol_in[i]).affine
-    header_tmp = nb.load(vol_in[i]).header
-    header_tmp["dim"][0] = 3
-    header_tmp["dim"][4] = 1
     
     for j in range(len(file_surf)):
 
@@ -165,20 +153,23 @@ for i in range(len(vol_in)):
                            flip_faces=False,
                            cleanup=True)
 
-            #for t in range(n_time):
-
             # temporary surface
             file_def = os.path.join(path_output, 
                                     os.path.basename(file_surf[j][l])+"_def")    
 
+            tmp = Parallel(n_jobs=num_cores)(
+                delayed(do_mapping)(
+                    t,
+                    vol_in[i],
+                    file_def, 
+                    path_output, 
+                    interp_method) for t in range(n_time)
+                )
 
-
-            num_cores=4
-            #arr_res, affine, header = Parallel(n_jobs=num_cores)(delayed(do_mapping)(vol_in, path_output, affine_tmp, header_tmp, file_def, interp_method, arr_res, t) for t in range(n_time))
-
-            A = Parallel(n_jobs=num_cores)(delayed(do_mapping)(vol_in, path_output, affine_tmp, header_tmp, file_def, interp_method, arr_res, t) for t in range(20))
-
-
+            for t in range(n_time):
+                arr_res[:,t,l] = tmp[t][0]
+                affine = tmp[t][1]
+                header = tmp[t][2]
             
             # remove deformed surface
             os.remove(file_def)

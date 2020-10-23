@@ -42,7 +42,7 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     -------
     created by Daniel Haenelt
     Date created: 20-10-2020
-    Last modified: 20-10-2020
+    Last modified: 23-10-2020
 
     """
 
@@ -67,13 +67,28 @@ def write_hdf5(file_out, arr, affine=None, header=None):
         header_new["Pxyz_c"] = header["Pxyz_c"]
 
     with h5py.File(file_out, "w") as hf:
-        hf.create_dataset("array",  data=arr)
+        hf.create_dataset("array",  
+                          data=arr, 
+                          compression="gzip", 
+                          compression_opts=9)
         
         if affine is not None:
-            hf.create_dataset("affine", data=affine)
+            hf.create_dataset("affine", 
+                              data=affine, 
+                              compression="gzip", 
+                              compression_opts=9)
 
         if header is not None:
             grp = hf.create_group("header")
-            grp.create_dataset("dims", data=header_new["dims"])
-            grp.create_dataset("Mdc", data=header_new["Mdc"])
-            grp.create_dataset("Pxyz_c", data=header_new["Pxyz_c"])
+            grp.create_dataset("dims", 
+                               data=header_new["dims"], 
+                               compression="gzip", 
+                               compression_opts=9)
+            grp.create_dataset("Mdc", 
+                               data=header_new["Mdc"], 
+                               compression="gzip", 
+                               compression_opts=9)
+            grp.create_dataset("Pxyz_c", 
+                               data=header_new["Pxyz_c"], 
+                               compression="gzip", 
+                               compression_opts=9)

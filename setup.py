@@ -15,11 +15,10 @@ INSTALL_REQUIREMENTS = ['numpy',
                         'nipype',
                         'sh',
                         'h5py',
-                        'joblib',
                         'gbb',
                         ]
 
-EXTRA_REQUIREMENTS = {"addon": ["pydicom", "natsort"]}
+EXTRA_REQUIREMENTS = {"addon": ['pydicom', 'natsort', 'joblib']}
 
 CLASSIFIERS = ["Programming Language :: Python :: 3",
                "Programming Language :: Python :: 3.6",
