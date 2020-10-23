@@ -74,7 +74,7 @@ def do_mapping(vol_in, path_output, affine_tmp, header_tmp, file_def,
     arr_res
     
     """
-    
+    print("hallo-1")
     # temporary filename
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(x) for x in tmp)
@@ -86,6 +86,7 @@ def do_mapping(vol_in, path_output, affine_tmp, header_tmp, file_def,
     nb.save(output, file_tmp)   
 
     # do mapping                
+    print("hallo0")
     arr, affine, header = map2surface(input_surf=file_def, 
                                       input_vol=file_tmp, 
                                       write_output=False,
@@ -96,12 +97,14 @@ def do_mapping(vol_in, path_output, affine_tmp, header_tmp, file_def,
                                       cleanup=True)  
     
     # fill resulting array
-    arr_res[:,t,l] = arr
+    print("hallo")
+    #arr_res[:,t,l] = arr
 
     # remove temporary volume
+    print("hallo2")
     os.remove(file_tmp)
     
-    return arr_res, affine, header
+    return arr, affine, header
 
 # sort surface filenames
 tmp = []
@@ -124,7 +127,7 @@ file_surf = []
 file_surf.append(surf_left)
 file_surf.append(surf_right)
 
-# start mapping
+#%% start mapping
 for i in range(len(vol_in)):
     
     # get filename
@@ -171,7 +174,10 @@ for i in range(len(vol_in)):
 
 
             num_cores=4
-            arr_res, affine, header = Parallel(n_jobs=num_cores)(delayed(do_mapping)(vol_in, path_output, affine_tmp, header_tmp, file_def, interp_method, arr_res, t) for t in range(n_time))
+            #arr_res, affine, header = Parallel(n_jobs=num_cores)(delayed(do_mapping)(vol_in, path_output, affine_tmp, header_tmp, file_def, interp_method, arr_res, t) for t in range(n_time))
+
+            A = Parallel(n_jobs=num_cores)(delayed(do_mapping)(vol_in, path_output, affine_tmp, header_tmp, file_def, interp_method, arr_res, t) for t in range(20))
+
 
             
             # remove deformed surface

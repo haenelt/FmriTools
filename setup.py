@@ -15,6 +15,7 @@ INSTALL_REQUIREMENTS = ['numpy',
                         'nipype',
                         'sh',
                         'h5py',
+                        'joblib',
                         'gbb',
                         ]
 
