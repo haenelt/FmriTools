@@ -44,7 +44,7 @@ def apply_registration(file_in, cmap_in, file_out, interpolation="linear",
     -------
     created by Daniel Haenelt
     Date created: 30-05-2020
-    Last modified: 12-10-2020
+    Last modified: 23-10-2020
     
     """
           
@@ -59,6 +59,9 @@ def apply_registration(file_in, cmap_in, file_out, interpolation="linear",
     tmp_string = ''.join(str(i) for i in tmp)
     file_tmp = os.path.join(path_output,"tmp_"+tmp_string+ext_cmap)
     file_tmp2 = os.path.join(path_output,"tmp2_"+tmp_string+ext_cmap)
+    
+    if os.path.exists(file_tmp) or os.path.exists(file_tmp2):
+        raise FileExistsError("Temporary file already exists!")
     
     # adjust coordinate mapping
     if r:

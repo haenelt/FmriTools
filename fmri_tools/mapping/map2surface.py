@@ -61,7 +61,7 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     -------
     created by Daniel Haenelt
     Date created: 06-02-2019      
-    Last modified: 20-10-2020
+    Last modified: 23-10-2020
 
     """
     
@@ -88,7 +88,11 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     path_mri = os.path.join(path_sub,"mri")
     path_surf = os.path.join(path_sub,"surf")
 
-    os.makedirs(path_sub)
+    if not os.path.exists(path_sub):
+        os.makedirs(path_sub)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
+
     os.makedirs(path_mri)
     os.makedirs(path_surf)
     

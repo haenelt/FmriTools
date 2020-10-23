@@ -62,7 +62,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     -------
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 19-10-2020
+    Last modified: 23-10-2020
     
     """
     
@@ -84,7 +84,11 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     path_mri = os.path.join(path_sub,"mri")
     path_surf = os.path.join(path_sub,"surf")
 
-    os.makedirs(path_sub)
+    if not os.path.exists(path_sub):
+        os.makedirs(path_sub)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
+
     os.makedirs(path_mri)
     os.makedirs(path_surf)
 

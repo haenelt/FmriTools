@@ -76,6 +76,9 @@ def do_mapping(i, file_vol, file_surf, path_output, interp_method):
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(x) for x in tmp)
     file_tmp = os.path.join(path_output, "tmp_"+tmp_string+".nii")
+    
+    if os.path.exists(file_tmp):
+        raise FileExistsError("Temporary file already exists!")
 
     output = nb.Nifti1Image(nb.load(file_vol).get_fdata()[:,:,:,i], aff, head)
     nb.save(output, file_tmp)   

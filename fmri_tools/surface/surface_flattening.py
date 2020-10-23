@@ -35,7 +35,7 @@ def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
     -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 12-10-2020
+    Last modified: 23-10-2020
     
     """
     
@@ -47,6 +47,8 @@ def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
     # make temporary folder
     if not os.path.exists(path_temp):
         os.mkdir(path_temp)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
 
     # change to temporary folder
     cwd = os.getcwd()
@@ -71,8 +73,10 @@ def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
               " " + hemi + namePATCH + ".patch.flat")
        
     # copy output
-    sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat"),os.path.join(path_output,hemi+namePATCH+".patch.flat"))
-    sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat.out"),os.path.join(path_output,hemi+namePATCH+".patch.flat.out"))
+    sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat"),
+             os.path.join(path_output,hemi+namePATCH+".patch.flat"))
+    sh.copy2(os.path.join(path_temp,hemi+namePATCH+".patch.flat.out"),
+             os.path.join(path_output,hemi+namePATCH+".patch.flat.out"))
     
     # change to old folder
     os.chdir(cwd)

@@ -63,7 +63,7 @@ def get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr,
     -------
     created by Daniel Haenelt
     Date created: 14-02-2019
-    Last modified: 12-10-2020    
+    Last modified: 23-10-2020    
 
     """
     
@@ -95,7 +95,11 @@ def get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr,
     path_surf = os.path.join(path_sub,"surf")
     path_ortho = os.path.join(path_sub,"ortho")
 
-    os.makedirs(path_sub)
+    if not os.path.exists(path_sub):
+        os.makedirs(path_sub)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
+
     os.makedirs(path_surf)
     os.makedirs(path_ortho)
     os.makedirs(path_img)

@@ -83,7 +83,7 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     -------
     created by Daniel Haenelt
     Date created: 24-06-2020        
-    Last modified: 20-10-2020
+    Last modified: 23-10-2020
 
     """
     
@@ -101,6 +101,8 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     path_tmp = os.path.join(path_output, "tmp_"+tmp_string)
     if not os.path.exists(path_tmp):
         os.makedirs(path_tmp)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
 
     # get filenames
     _, hemi, name_mesh = get_filename(surf_in)

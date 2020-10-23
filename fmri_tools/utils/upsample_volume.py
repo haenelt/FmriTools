@@ -39,7 +39,7 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
     -------
     created by Daniel Haenelt
     Date created: 16-12-2019        
-    Last modified: 12-10-2020
+    Last modified: 23-10-2020
     
     """
     
@@ -50,7 +50,11 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(i) for i in tmp)
     file_tmp = os.path.join(path_in,"tmp_"+tmp_string+ext_in)
-    copyfile(file_in, file_tmp)
+    
+    if not os.path.exists(file_tmp) and not os.path.exists(file_tmp[:-3]):
+        copyfile(file_in, file_tmp)
+    else:
+        raise FileExistsError("Temporary file already exists!")
     
     if os.path.splitext(file_tmp)[1] == ".gz":
         gunzip(file_tmp)

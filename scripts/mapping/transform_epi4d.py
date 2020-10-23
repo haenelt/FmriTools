@@ -21,7 +21,7 @@ deformation is applied separately to each volume.
 
 created by Daniel Haenelt
 Date created: 07-08-2019            
-Last modified: 12-10-2020  
+Last modified: 23-10-2020  
 """
 
 # input
@@ -47,8 +47,11 @@ if len(input_epi) == len(input_reg):
         tmp = np.random.randint(0, 10, 5)
         tmp_string = ''.join(str(i) for i in tmp)
         path_tmp = os.path.join(os.path.dirname(input_epi[i]),"tmp_"+tmp_string)
+        
         if not os.path.exists(path_tmp):
             os.mkdir(path_tmp)
+        else:
+            raise FileExistsError("Temporary folder already exists!")
         
         # get length of time series
         data = nb.load(input_epi[i])

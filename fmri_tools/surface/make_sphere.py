@@ -40,7 +40,7 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
     -------
     created by Daniel Haenelt
     Date created: 26-08-2020       
-    Last modified: 12-10-2020    
+    Last modified: 23-10-2020    
 
     """
     
@@ -65,6 +65,9 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(i) for i in tmp)
     file_tmp = os.path.join(path_output, tmp_string)
+    
+    if os.path.exists(file_tmp):
+        raise FileExistsError("Temporary file already exists!")
 
     # inflate surface mesh
     if n_inflate:

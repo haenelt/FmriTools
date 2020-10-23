@@ -82,7 +82,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     -------
     created by Daniel Haenelt
     Date created: 17-10-2020
-    Last modified: 19-10-2020
+    Last modified: 23-10-2020
 
     """
     
@@ -145,6 +145,9 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     
     tmp_white = os.path.join(path_output, "tmp_white_"+tmp_string)
     tmp_pial = os.path.join(path_output, "tmp_pial_"+tmp_string)
+    
+    if os.path.exists(tmp_white) or os.path.exists(tmp_pial):
+        raise FileExistsError("Temporary file already exists!")
     
     write_geometry(tmp_white, vtx_white, fac)
     write_geometry(tmp_pial, vtx_pial, fac)

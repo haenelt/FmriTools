@@ -61,7 +61,7 @@ def get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real,
     -------
     created by Daniel Haenelt
     Date created: 11-12-2018           
-    Last modified: 12-10-2020 
+    Last modified: 23-10-2020 
 
     """
 
@@ -82,7 +82,11 @@ def get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real,
     path_surf = os.path.join(path_sub,"surf")
     path_label = os.path.join(path_sub,"label")
 
-    os.makedirs(path_sub)
+    if not os.path.exists(path_sub):
+        os.makedirs(path_sub)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
+
     os.makedirs(path_surf)
     os.makedirs(path_label)
 

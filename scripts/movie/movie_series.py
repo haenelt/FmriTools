@@ -23,7 +23,7 @@ the demeaned time series on the cortical surface.
 
 created by Daniel Haenelt
 Date created: 12-11-2019
-Last modified: 20-10-2020
+Last modified: 23-10-2020
 """
 
 input_series = ["/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/udata.nii",
@@ -85,13 +85,19 @@ if not os.path.exists(path_surf):
 
 # look for baseline corrected time series
 for i in range(len(input_series)):
+
+    path_tmp = os.path.dirname(input_series[i])
+    basename_tmp = prefix+os.path.basename(input_series[i])
+    if os.path.exists(os.path.join(path_tmp, basename_tmp)):
+        raise FileExistsError("Temporary file already exists!")
+
     os.system("matlab" + \
               " -nodisplay -nodesktop -r " + \
               "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\', \'{4}\'); exit;\"". \
               format(input_series[i], TR, cutoff_highpass, pathSPM, prefix))
     
     # move baseline corrected time series to output folder
-    sh.move(os.path.join(os.path.dirname(input_series[i]),prefix+os.path.basename(input_series[i])),
+    sh.move(os.path.join(path_tmp, basename_tmp),
             os.path.join(path_series,str(i+1)+".nii"))
     
     # rename input images

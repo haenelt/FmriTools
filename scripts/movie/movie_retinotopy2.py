@@ -25,7 +25,7 @@ the data will be additionally sampled  on a regular grid.
 
 created by Daniel Haenelt
 Date created: 11-11-2019
-Last modified: 20-10-2020
+Last modified: 23-10-2020
 """
 
 input_series = "/nobackup/actinium2/haenelt/V2STRIPES/p6/psf/multipol_14/udata.nii"
@@ -87,6 +87,11 @@ if not os.path.exists(path_surf):
 if not os.path.exists(path_grid):
     os.mkdir(path_grid)
 
+path_tmp = os.path.dirname(input_series)
+basename_tmp = prefix+os.path.basename(input_series)
+if os.path.exists(os.path.join(path_tmp, basename_tmp)):
+    raise FileExistsError("Temporary file already exists!")
+
 # look for baseline corrected time series
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
@@ -94,7 +99,7 @@ os.system("matlab" + \
           format(input_series, TR, cutoff_highpass, pathSPM, prefix))
 
 # move baseline corrected time series to output folder
-sh.move(os.path.join(os.path.dirname(input_series),prefix+os.path.basename(input_series)),
+sh.move(os.path.join(path_tmp, basename_tmp),
         os.path.join(path_native,"temp.nii"))
 
 # demean time series
