@@ -38,7 +38,7 @@ def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind,
     -------
     created by Daniel Haenelt
     Date created: 10-12-2019
-    Last modified: 12-10-2020
+    Last modified: 23-10-2020
 
     """
     
