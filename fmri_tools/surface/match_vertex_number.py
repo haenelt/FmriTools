@@ -81,9 +81,10 @@ def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind,
     fac_old = fac_white.copy()
     fac_new = fac_white.copy()
     fac_outlier = np.zeros_like(fac_white)
-    c_step = 0
-    n_step = [10,20,30,40,50,60,70,80,90,100]
-    for i in range(len(ind_remove)):
+    
+    loop_status = 0
+    loop_length = len(ind_remove)
+    for i in range(loop_length):
         check_remove = np.where(ind_remove[i] == white_ind)[0]
         if len(check_remove):
             row, col = np.where(fac_old == check_remove)
@@ -96,10 +97,10 @@ def match_vertex_number(input_white_surf, input_pial_surf, input_white_ind,
         i += 1
         
         # print status
-        counter = np.floor(i / len(ind_remove) * 100).astype(int)
-        if counter == n_step[c_step]:
+        counter = np.floor(i / loop_length * 100)
+        if counter != loop_status:
             print("sort faces: "+str(counter)+" %")
-            c_step += 1
+            loop_status = counter
 
     # remove outlier faces
     fac_outlier = np.sum(fac_outlier,1)
