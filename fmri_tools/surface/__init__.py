@@ -16,6 +16,7 @@ from .remove_vertex_outliers import remove_vertex_outliers
 from .smooth_surface import smooth_surface
 from .surface_flattening import surface_flattening
 from .upsample_surf_mesh import upsample_surf_mesh
+from .extract_main_component import extract_main_component
 
 
 """
@@ -23,5 +24,5 @@ Python package for for analysis of high-resolution fMRI data.
 
 created by Daniel Haenelt
 Date created: 12-10-2020
-Last modified: 20-10-2020
+Last modified: 24-10-2020
 """

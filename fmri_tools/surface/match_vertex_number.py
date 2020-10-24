@@ -16,24 +16,24 @@ def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
     Parameters
     ----------
     vtx_white : ndarray
-        vertex array of white surface.
+        Vertex array of white surface.
     vtx_pial : ndarray
-        vertex array of pial surface.
+        Vertex array of pial surface.
     fac : ndarray
-        corresponding face array.
+        Corresponding face array.
     ind_white : list
-        index list of white surface.
+        Index list of white surface.
     ind_pial : list
-        index list of pial surface.
+        Index list of pial surface.
 
     Returns
     -------
     vtx_white : ndarray
-        updated vertex array of white surface.
+        Updated vertex array of white surface.
     vtx_pial : ndarray
-        updated vertex array of pial surface.
+        Updated vertex array of pial surface.
     fac_new : ndarray
-        updated face array.
+        Updated face array.
     ind_white : list
         updated index list.
 

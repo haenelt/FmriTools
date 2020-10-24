@@ -15,36 +15,8 @@ from gbb.io import get_filename
 
 # local inputs
 from fmri_tools.surface import smooth_surface
+from fmri_tools.layer import get_meshlines
 
-
-def _get_meshlines(vp, vw):
-    """
-    Get mesh to visualize point-to-point connections between white and pial 
-    surface.
-    """
-    
-    # face of line
-    f_new = [[0,1,0]]
-
-    v_res = []
-    f_res = []
-    for i in range(len(vw)):
-    
-        # add vertices
-        v_new = [list(vw[i]),list(vp[i])]
-        
-        # update resulting vertex and face list
-        v_res.extend(v_new)
-        f_res.extend(f_new)
-    
-        f_new[0] = [x+2 for x in f_new[0]]
-    
-    # vertices and faces as array
-    v_res = np.array(v_res)
-    f_res = np.array(f_res)
-    
-    return v_res, f_res
-  
 
 def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer, 
                        n_smooth=2, n_crop=2):
@@ -161,7 +133,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
         vtx_pial, fac_pial = read_geometry(tmp_pial)
     
     # mesh lines
-    vtx_lines, fac_lines = _get_meshlines(vtx_pial, vtx_white)
+    vtx_lines, fac_lines = get_meshlines(vtx_pial, vtx_white)
     write_geometry(os.path.join(path_output,"mesh_line"), vtx_lines, fac_lines)
     
     # get final layers
