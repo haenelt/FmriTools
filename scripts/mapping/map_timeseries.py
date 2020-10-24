@@ -43,7 +43,7 @@ vol_in = ["/data/pt_01880/Experiment2_Rivalry/p1/odc/GE_EPI1/Run_1/uadata.nii",
           "/data/pt_01880/Experiment2_Rivalry/p1/odc/GE_EPI1/Run_2/uadata.nii",
           ]
 source2target_in = "/data/pt_01880/Experiment2_Rivalry/p1/deformation/odc/GE_EPI1/source2target.nii.gz"
-path_surf = ""
+path_surf = "/data/pt_01880/test/blablabla2/layer"
 interp_method = "trilinear"
 
 # do not edit below
