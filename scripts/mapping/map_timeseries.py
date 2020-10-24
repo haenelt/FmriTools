@@ -25,27 +25,25 @@ Sample time series
 The following script applies a transformation to a set of surface files and maps
 timeseries data onto each surface. The resulting array vertex x timepoint x
 surface (layer) is saved as hdf5 file. First, all surfaces which are found in 
-the given list of folders `path_surf` are sorted. It is expected that all 
-surfaces have the prefix lh or rh to indicate the hemisphere. Furthermore, it is 
-expected that surfaces have a number in the basename and can therefore be 
-numerically sorted by that number (e.g. numbers can indicate separate cortical 
-layers). Each surface is transformed to the source space of the epi time series. 
-Then, data from each time point is sampled. If a list of timeseries is given, 
-each time series array will be saved in a separate hdf5 file.
+`path_surf` are sorted. It is expected that all surfaces have the prefix lh or 
+rh to indicate the hemisphere. Furthermore, it is expected that surfaces have a 
+number in the basename and can therefore be numerically sorted by that number 
+(e.g. numbers can indicate separate cortical layers). Each surface is 
+transformed to the source space of the epi time series. Then, data from each 
+time point is sampled. If a list of timeseries is given, each time series array 
+will be saved in a separate hdf5 file.
 
 created by Daniel Haenelt
 Date created: 23-10-2020
-Last modified: 23-10-2020
+Last modified: 24-10-2020
 """
 
 # input
 vol_in = ["/data/pt_01880/Experiment2_Rivalry/p1/odc/GE_EPI1/Run_1/uadata.nii",
           "/data/pt_01880/Experiment2_Rivalry/p1/odc/GE_EPI1/Run_2/uadata.nii",
           ]
-path_surf = ["/data/pt_01880/Experiment2_Rivalry/p1/anatomy/surf/lh/layer",
-             "/data/pt_01880/Experiment2_Rivalry/p1/anatomy/surf/rh/layer",
-             ]
 source2target_in = "/data/pt_01880/Experiment2_Rivalry/p1/deformation/odc/GE_EPI1/source2target.nii.gz"
+path_surf = ""
 interp_method = "trilinear"
 
 # do not edit below
@@ -61,7 +59,7 @@ def natural_keys(text):
     """
     return [ atoi(c) for c in re.split(r'(\d+)', text) ]
 
-def do_mapping(i, file_vol, file_surf, path_output, interp_method):
+def do_mapping(i, file_vol, file_mesh, path_out, interpolation):
     """
     map on surface    
     """
@@ -75,7 +73,7 @@ def do_mapping(i, file_vol, file_surf, path_output, interp_method):
     # temporary filename
     tmp = np.random.randint(0, 10, 5)
     tmp_string = ''.join(str(x) for x in tmp)
-    file_tmp = os.path.join(path_output, "tmp_"+tmp_string+".nii")
+    file_tmp = os.path.join(path_out, "tmp_"+tmp_string+".nii")
     
     if os.path.exists(file_tmp):
         raise FileExistsError("Temporary file already exists!")
@@ -84,11 +82,11 @@ def do_mapping(i, file_vol, file_surf, path_output, interp_method):
     nb.save(output, file_tmp)   
 
     # do mapping                
-    arr_map, aff_map, head_map = map2surface(input_surf=file_surf, 
+    arr_map, aff_map, head_map = map2surface(input_surf=file_mesh, 
                                              input_vol=file_tmp, 
                                              write_output=False,
                                              path_output="", 
-                                             interp_method=interp_method,
+                                             interp_method=interpolation,
                                              input_surf_target=None, 
                                              input_ind=None, 
                                              cleanup=True)  
@@ -102,13 +100,11 @@ def do_mapping(i, file_vol, file_surf, path_output, interp_method):
 num_cores = multiprocessing.cpu_count()
 
 # sort surface filenames
-tmp = []
-for i in range(len(path_surf)):
-    tmp.extend(glob.glob(os.path.join(path_surf[i],"*")))
+file_list = glob.glob(os.path.join(path_surf,"*"))
 
 surf_left = []
 surf_right = []
-for i in tmp[:]:
+for i in file_list[:]:
     basename = os.path.basename(i)
     if basename.startswith("lh"):
         surf_left.append(i)
