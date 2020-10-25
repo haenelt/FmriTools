@@ -5,6 +5,7 @@ import os
 
 # external inputs
 import h5py
+import numpy as np
 from nibabel.freesurfer.mghformat import MGHHeader
 
 # local input
@@ -42,7 +43,7 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     -------
     created by Daniel Haenelt
     Date created: 20-10-2020
-    Last modified: 23-10-2020
+    Last modified: 25-10-2020
 
     """
 
@@ -69,14 +70,19 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     with h5py.File(file_out, "w") as hf:
         hf.create_dataset("array",  
                           data=arr, 
+                          shape=np.shape(arr),
+                          chunks=True,
                           compression="gzip", 
-                          compression_opts=9)
+                          compression_opts=9,
+                          dtype=np.float16)
         
         if affine is not None:
             hf.create_dataset("affine", 
-                              data=affine, 
+                              data=affine,
+                              shape=np.shape(affine),
                               compression="gzip", 
-                              compression_opts=9)
+                              compression_opts=9,
+                              dtype=np.float16)
 
         if header is not None:
             grp = hf.create_group("header")
