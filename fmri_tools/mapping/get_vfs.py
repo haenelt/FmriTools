@@ -2,12 +2,12 @@
 
 # python standard library inputs
 import os
-import numpy as np
+import datetime
 
 # external inputs
 import shutil as sh
-    
-    
+
+
 def get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real, 
             ecc_imag, pol_real, pol_imag, path_output, fwhm_ecc=4.0, 
             fwhm_pol=2.0, fwhm_vfs=8.0, cleanup=True):
@@ -61,7 +61,7 @@ def get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real,
     -------
     created by Daniel Haenelt
     Date created: 11-12-2018           
-    Last modified: 23-10-2020 
+    Last modified: 25-10-2020 
 
     """
 
@@ -69,8 +69,7 @@ def get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real,
     os.environ["SUBJECTS_DIR"] = path_output
 
     # freesurfer subject
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     sub = "tmp_"+tmp_string
 
     # make output folder

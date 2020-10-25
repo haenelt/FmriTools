@@ -3,6 +3,7 @@
 # python standard library inputs
 import os
 import sys
+import datetime
 import subprocess
 from shutil import copyfile
 
@@ -40,7 +41,7 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
     -------
     created by Daniel Haenelt
     Date created: 26-08-2020       
-    Last modified: 23-10-2020    
+    Last modified: 25-10-2020    
 
     """
     
@@ -62,8 +63,7 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
         os.makedirs(path_output)
     
     # temporary file
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     file_tmp = os.path.join(path_output, tmp_string)
     
     if os.path.exists(file_tmp):

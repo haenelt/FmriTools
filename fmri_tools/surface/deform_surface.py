@@ -3,6 +3,7 @@
 # python standard library inputs
 import os
 import sys
+import datetime
 import shutil as sh
 
 # external inputs
@@ -62,7 +63,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     -------
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 23-10-2020
+    Last modified: 25-10-2020
     
     """
     
@@ -70,8 +71,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     os.environ["SUBJECTS_DIR"] = path_output
 
     # freesurfer subject
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     sub = "tmp_"+tmp_string
 
     # make output folder

@@ -2,10 +2,8 @@
 
 # python standard library inputs
 import os
+import datetime
 import shutil as sh
-
-# external inputs
-import numpy as np
 
 
 def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
@@ -35,13 +33,12 @@ def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
     -------
     created by Daniel Haenelt
     Date created: 01-11-2018             
-    Last modified: 23-10-2020
+    Last modified: 25-10-2020
     
     """
     
     # create temporary folder
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     path_temp = os.path.join(os.path.dirname(fileREF),"tmp_"+tmp_string)
     
     # make temporary folder

@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+import datetime
 
 # external inputs
 import numpy as np
@@ -44,7 +45,7 @@ def apply_registration(file_in, cmap_in, file_out, interpolation="linear",
     -------
     created by Daniel Haenelt
     Date created: 30-05-2020
-    Last modified: 23-10-2020
+    Last modified: 25-10-2020
     
     """
           
@@ -55,8 +56,7 @@ def apply_registration(file_in, cmap_in, file_out, interpolation="linear",
       
     # filename for temporary cmap copy
     _, _, ext_cmap = get_filename(cmap_in)  
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     file_tmp = os.path.join(path_output,"tmp_"+tmp_string+ext_cmap)
     file_tmp2 = os.path.join(path_output,"tmp2_"+tmp_string+ext_cmap)
     

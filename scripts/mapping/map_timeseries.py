@@ -4,6 +4,7 @@
 import os
 import re
 import glob
+import datetime
 import multiprocessing
 
 # external inputs
@@ -35,7 +36,7 @@ will be saved in a separate hdf5 file.
 
 created by Daniel Haenelt
 Date created: 23-10-2020
-Last modified: 24-10-2020
+Last modified: 25-10-2020
 """
 
 # input
@@ -71,8 +72,7 @@ def do_mapping(i, file_vol, file_mesh, path_out, interpolation):
     head["dim"][4] = 1
 
     # temporary filename
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(x) for x in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     file_tmp = os.path.join(path_out, "tmp_"+tmp_string+".nii")
     
     if os.path.exists(file_tmp):

@@ -74,7 +74,7 @@ def write_hdf5(file_out, arr, affine=None, header=None):
                           chunks=True,
                           compression="gzip", 
                           compression_opts=9,
-                          dtype=np.float16)
+                          dtype=np.float32)
         
         if affine is not None:
             hf.create_dataset("affine", 
@@ -82,7 +82,7 @@ def write_hdf5(file_out, arr, affine=None, header=None):
                               shape=np.shape(affine),
                               compression="gzip", 
                               compression_opts=9,
-                              dtype=np.float16)
+                              dtype=np.float32)
 
         if header is not None:
             grp = hf.create_group("header")

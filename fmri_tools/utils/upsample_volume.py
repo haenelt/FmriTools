@@ -2,10 +2,10 @@
 
 # python standard library inputs
 import os
+import datetime
 from shutil import copyfile
 
 # external inputs
-import numpy as np
 from sh import gunzip
 
 # local inputs
@@ -39,7 +39,7 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
     -------
     created by Daniel Haenelt
     Date created: 16-12-2019        
-    Last modified: 23-10-2020
+    Last modified: 25-10-2020
     
     """
     
@@ -47,8 +47,7 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
     path_in, _, ext_in = get_filename(file_in)
     
     # make temporary copy of input file
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     file_tmp = os.path.join(path_in,"tmp_"+tmp_string+ext_in)
     
     if not os.path.exists(file_tmp) and not os.path.exists(file_tmp[:-3]):

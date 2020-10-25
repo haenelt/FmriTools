@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+import datetime
 
 # external inputs
 import numpy as np
@@ -63,7 +64,7 @@ def get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr,
     -------
     created by Daniel Haenelt
     Date created: 14-02-2019
-    Last modified: 23-10-2020    
+    Last modified: 25-10-2020    
 
     """
     
@@ -81,8 +82,7 @@ def get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr,
     os.environ["SUBJECTS_DIR"] = path_output
 
     # freesurfer subject
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     sub = "tmp_"+tmp_string
 
     # make output folder

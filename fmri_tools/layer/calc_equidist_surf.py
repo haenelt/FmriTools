@@ -3,9 +3,9 @@
 # python standard library inputs
 import os
 import sys
+import datetime
 
 # external inputs
-import numpy as np
 import nibabel as nb
 from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import read_geometry, write_geometry
@@ -54,7 +54,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     -------
     created by Daniel Haenelt
     Date created: 17-10-2020
-    Last modified: 23-10-2020
+    Last modified: 25-10-2020
 
     """
     
@@ -112,8 +112,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     vtx_pial = apply_affine(vox2ras_tkr, vtx_pial)
     
     # write temporary output
-    tmp = np.random.randint(0, 10, 5)
-    tmp_string = ''.join(str(i) for i in tmp)
+    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
     
     tmp_white = os.path.join(path_output, "tmp_white_"+tmp_string)
     tmp_pial = os.path.join(path_output, "tmp_pial_"+tmp_string)
