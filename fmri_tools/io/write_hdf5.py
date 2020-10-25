@@ -16,7 +16,8 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     """ Write HDF5
     
     This function writes a numpy array to an hdf5 file. Optionally, an affine 
-    transformation matrix and parts of an MGHHeader are stored.
+    transformation matrix and parts of an MGHHeader are stored. The array is 
+    stored in half-precision floating-point format.
 
     Parameters
     ----------
@@ -74,7 +75,7 @@ def write_hdf5(file_out, arr, affine=None, header=None):
                           chunks=True,
                           compression="gzip", 
                           compression_opts=9,
-                          dtype=np.float32)
+                          dtype=np.float16)
         
         if affine is not None:
             hf.create_dataset("affine", 
