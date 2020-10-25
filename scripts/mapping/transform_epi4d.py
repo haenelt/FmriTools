@@ -45,7 +45,10 @@ if len(input_epi) == len(input_reg):
     for i in range(len(input_epi)):
         
         # make temporary output folder
-        tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+        tmp1 = np.random.randint(0, 10, 5)
+        tmp1 = ''.join(str(i) for i in tmp1)
+        tmp2 = datetime.datetime.now().strftime("%S%f")
+        tmp_string = tmp1 + tmp2
         path_tmp = os.path.join(os.path.dirname(input_epi[i]),"tmp_"+tmp_string)
         
         if not os.path.exists(path_tmp):

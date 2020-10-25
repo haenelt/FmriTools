@@ -6,6 +6,7 @@ import datetime
 from shutil import copyfile
 
 # external inputs
+import numpy as np
 from sh import gunzip
 
 # local inputs
@@ -47,7 +48,10 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
     path_in, _, ext_in = get_filename(file_in)
     
     # make temporary copy of input file
-    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
     file_tmp = os.path.join(path_in,"tmp_"+tmp_string+ext_in)
     
     if not os.path.exists(file_tmp) and not os.path.exists(file_tmp[:-3]):

@@ -75,7 +75,10 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     os.environ["SUBJECTS_DIR"] = path_output
 
     # freesurfer subject
-    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
     sub = "tmp_"+tmp_string
     
     # make output folder

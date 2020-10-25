@@ -41,10 +41,9 @@ Last modified: 25-10-2020
 
 # input
 vol_in = ["/data/pt_01880/Experiment2_Rivalry/p1/odc/GE_EPI1/Run_1/uadata.nii",
-          "/data/pt_01880/Experiment2_Rivalry/p1/odc/GE_EPI1/Run_2/uadata.nii",
           ]
 source2target_in = "/data/pt_01880/Experiment2_Rivalry/p1/deformation/odc/GE_EPI1/source2target.nii.gz"
-path_surf = "/data/pt_01880/test/blablabla2/layer"
+path_surf = "/data/pt_01880/Experiment2_Rivalry/p1/anatomy/layer"
 interp_method = "trilinear"
 
 # do not edit below
@@ -72,7 +71,10 @@ def do_mapping(i, file_vol, file_mesh, path_out, interpolation):
     head["dim"][4] = 1
 
     # temporary filename
-    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
     file_tmp = os.path.join(path_out, "tmp_"+tmp_string+".nii")
     
     if os.path.exists(file_tmp):

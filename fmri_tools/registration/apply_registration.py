@@ -55,8 +55,11 @@ def apply_registration(file_in, cmap_in, file_out, interpolation="linear",
         os.makedirs(path_output)
       
     # filename for temporary cmap copy
-    _, _, ext_cmap = get_filename(cmap_in)  
-    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    _, _, ext_cmap = get_filename(cmap_in)      
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
     file_tmp = os.path.join(path_output,"tmp_"+tmp_string+ext_cmap)
     file_tmp2 = os.path.join(path_output,"tmp2_"+tmp_string+ext_cmap)
     

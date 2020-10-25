@@ -5,6 +5,9 @@ import os
 import datetime
 import shutil as sh
 
+# external inputs
+import numpy as np
+
 
 def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
     """ Surface flattening
@@ -38,7 +41,10 @@ def surface_flattening(fileREF, filePATCH, path_output, cleanup=True):
     """
     
     # create temporary folder
-    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
     path_temp = os.path.join(os.path.dirname(fileREF),"tmp_"+tmp_string)
     
     # make temporary folder

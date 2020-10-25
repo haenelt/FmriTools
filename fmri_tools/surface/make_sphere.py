@@ -63,7 +63,10 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
         os.makedirs(path_output)
     
     # temporary file
-    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
     file_tmp = os.path.join(path_output, tmp_string)
     
     if os.path.exists(file_tmp):

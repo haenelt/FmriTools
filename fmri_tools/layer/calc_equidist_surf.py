@@ -6,6 +6,7 @@ import sys
 import datetime
 
 # external inputs
+import numpy as np
 import nibabel as nb
 from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import read_geometry, write_geometry
@@ -112,7 +113,10 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     vtx_pial = apply_affine(vox2ras_tkr, vtx_pial)
     
     # write temporary output
-    tmp_string = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f")
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
     
     tmp_white = os.path.join(path_output, "tmp_white_"+tmp_string)
     tmp_pial = os.path.join(path_output, "tmp_pial_"+tmp_string)
