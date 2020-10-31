@@ -9,12 +9,15 @@ from fmri_tools.io import read_hdf5
 from fmri_tools.io import write_mgh
 
 
-def extract_mgh_from_hdf5(file_in, file_out, t=0, n=0):
+def extract_mgh_from_hdf5(file_in, file_out, t, n):
     """ Extract MGH from HDF5
     
     This function reads an hdf5 file which is expected to contain a 3D array 
-    with dimensions vertex x time point x layer. Data from one time point and 
-    one layer are extracted and saved as mgh file.
+    with dimensions vertex x time point x layer and optionally some header
+    information and an affine transformation matrix from the original mgh file. 
+    Data from one time point and one layer are extracted and saved again as mgh 
+    file. If no affine matrix or header information exist, an identity matrix 
+    and an empty header are set, respectively.
 
     Parameters
     ----------
@@ -22,12 +25,10 @@ def extract_mgh_from_hdf5(file_in, file_out, t=0, n=0):
         Filename of hdf5 input file.
     file_out : str
         Filename of mgh output file.
-    t : int, optional
-        Time point which is assumed to be stored along the second dimension. The 
-        default is 0.
-    n : int, optional
-        Layer which is assumed to be stored along the third dimension. The 
-        default is 0.
+    t : int
+        Time point which is assumed to be stored along the second dimension.
+    n : int
+        Layer which is assumed to be stored along the third dimension.
 
     Raises
     ------
@@ -42,7 +43,7 @@ def extract_mgh_from_hdf5(file_in, file_out, t=0, n=0):
     -------
     created by Daniel Haenelt
     Date created: 20-10-2020
-    Last modified: 20-10-2020
+    Last modified: 31-10-2020
 
     """    
     
@@ -57,11 +58,11 @@ def extract_mgh_from_hdf5(file_in, file_out, t=0, n=0):
     data = data[:,t,n]
         
     # check affine
-    if not affine:
+    if affine is None:
         affine = np.eye(4)
     
     # check header
-    if not header:
+    if header is None:
         header = MGHHeader()
     
     # write MGH file
