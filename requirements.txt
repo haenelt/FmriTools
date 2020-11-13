@@ -7,6 +7,7 @@ imageio
 shapely
 descartes
 nipype
+surfdist
 sh
 h5py
 gbb
