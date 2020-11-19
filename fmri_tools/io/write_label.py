@@ -34,13 +34,13 @@ def write_label(file_out, arr_label):
     -------
     created by Daniel Haenelt
     Date created: 03-09-2020
-    Last modified: 20-10-2020
+    Last modified: 19-11-2020
 
     """
     
     # check filename
     if isinstance(file_out, str):
-        if not file_out.endswith("txt"):            
+        if not file_out.endswith("label"):            
             raise ValueError("Currently supported file format is txt.")
     else:
         raise ValueError("Filename must be a string!")
