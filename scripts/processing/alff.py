@@ -34,10 +34,6 @@ deformation = "" # deformation ana -> epi
 biopac_input = "" # *.mat file
 path_output = "/data/pt_01983/func/resting_state2/alff/native"
 
-# add spm and fmri_tools to path
-pathSPM = "/data/pt_01880/source/spm12"
-pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
-
 # parameters
 TR = 3 # repetition time in s
 cutoff_highpass = 270 # cutoff frequency for baseline correction in 1/Hz
@@ -69,29 +65,24 @@ if nuisance_regression:
     
     # baseline correction
     previous_cwd = os.getcwd()
-    os.chdir(os.path.join(pathFMRITOOLS, "preprocessing"))
     os.system("matlab" + \
               " -nodisplay -nodesktop -r " + \
-              "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-              format(function, TR, cutoff_highpass, pathSPM))
-    os.chdir(previous_cwd)
+              "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"". \
+              format(function, TR, cutoff_highpass))
 
     if biopac:
         
         # get biopac regressors
-        previous_cwd = os.getcwd()
-        os.chdir(os.path.join(pathFMRITOOLS, "preprocessing"))
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
-                  "\"get_biopac_regressor(\'{0}\', \'{1}\', \'{2}\', \'{3}\', {4}); exit;\"". \
-                  format(os.path.join(path,bfile), biopac_input, pathSPM, path_output, TR))
-        os.chdir(previous_cwd)
+                  "\"get_biopac_regressor(\'{0}\', \'{1}\', \'{2}\', {3}); exit;\"". \
+                  format(os.path.join(path,bfile), biopac_input, path_output, TR))
     
     else:
 
         # get wm and csf mask
-        get_nuisance_mask(anatomy, pathSPM, deformation, path_output, 
-                          nerode_wm, nerode_csf, segmentation, cleanup)
+        get_nuisance_mask(anatomy, deformation, path_output, nerode_wm, 
+                          nerode_csf, segmentation, cleanup)
     
         # set mask to zero where function is equal to zero
         func_array = nb.load(function).get_fdata()
@@ -122,15 +113,12 @@ if nuisance_regression:
     else:
         clean_glm = 0
 
-    previous_cwd = os.getcwd()
-    os.chdir(os.path.join(pathFMRITOOLS, "preprocessing"))
     os.system("matlab" + \
               " -nodisplay -nodesktop -r " + \
-              "\"regress_physio(\'{0}\', \'{1}\', \'{2}\', {3}, {4}, \'{5}\', {6}); exit;\"". \
+              "\"regress_physio(\'{0}\', \'{1}\', {2}, {3}, \'{4}\', {5}); exit;\"". \
               format(function, 
                      os.path.join(path_output,"nuisance_regressor.txt"), 
-                     pathSPM, TR, cutoff_highpass, path_output, clean_glm))
-    os.chdir(previous_cwd)
+                     TR, cutoff_highpass, path_output, clean_glm))
 
     # get alff    
     get_alff(os.path.join(path_output,rfile), TR, path_output, hp_freq, lp_freq, cleanup)

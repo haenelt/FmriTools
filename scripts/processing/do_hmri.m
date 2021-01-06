@@ -73,15 +73,10 @@ file_b1 = {
     };
 
 % path to spm12 toolbox and hMRI configuration files.
-pathSPM = '/data/p_gr_weiskopf_software/spm12';
 pathHMRI_defaults = '/data/p_gr_weiskopf_software/spm12/toolbox/hMRI-cbs/config/local/hmri_CBS_7T_defaults.m';
 pathHMRI_b1_defaults = '/data/p_gr_weiskopf_software/spm12/toolbox/hMRI-cbs/config/local/hmri_b1_CBS_7T_defaults.m';
 
-
 %%% do not edit below %%%
-
-% add spm to matlab search path
-addpath(pathSPM);
 
 % change current working directory. The working directoy is the parent
 % folder of the pdw images.

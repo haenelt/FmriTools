@@ -5,7 +5,7 @@ import numpy as np
 from scipy.stats import pearsonr
 
 
-def pattern_corr(data_array1,data_array2):
+def pattern_corr(data_array1, data_array2):
     """ Pattern corr
 
     This function calculates the pearson correlation between two arrays of the 

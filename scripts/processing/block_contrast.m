@@ -59,18 +59,12 @@ lowpass = false;
 cutoff_lowpass = 10;
 order_lowpass = 1;
 
-% add spm and fmri_tools to path
-pathSPM = '/data/pt_01880/source/spm12'; 
-pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
-
 %%% do not edit below %%%
 
 % add paths to the interpreter's search path
-addpath(pathSPM);
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used
 spm_get_defaults('cmdline',true); % no gui
-addpath(fullfile(pathFMRITOOLS,'processing'));
 
 % lowpass filtering
 if lowpass

@@ -1,10 +1,9 @@
-function get_biopac_regressor(input, biopac_input, pathSPM, path_output, TR)
+function get_biopac_regressor(input, biopac_input, path_output, TR)
 % This function computes nuisance regressors from peripheral cardiac and
 % respiratory data (biopac).
 % Inputs:
     % input: input time series
     % biopac_input: biopac *.mat file.
-    % pathSPM: path to spm toolbox.
     % path_output: path where output is saved.
     % TR: repetition time in s.
 
@@ -13,7 +12,6 @@ function get_biopac_regressor(input, biopac_input, pathSPM, path_output, TR)
 % Last modified: 02-03-2019
 
 % add paths to the interpreter's search path
-addpath(pathSPM);
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used
 spm_get_defaults('cmdline',true); % no gui
@@ -24,7 +22,6 @@ if ~exist(path_output,'dir')
 end
 
 % get paths and filenames
-path_img = fileparts(input);
 path_biopac = fileparts(biopac_input);
 
 % convert biopac file to a textfile

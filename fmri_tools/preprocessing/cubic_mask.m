@@ -1,4 +1,4 @@
-function cubic_mask(input, path_output, name_output, c, r, pathSPM)
+function cubic_mask(input, path_output, name_output, c, r)
 % This function computes a 3D cubic mask within and input array. The array
 % dimensions are taken from the input nifti file. A binary mask is written.
 % Inputs:
@@ -7,14 +7,10 @@ function cubic_mask(input, path_output, name_output, c, r, pathSPM)
     % name_output: basename of output file.
     % c: array of center coordinates (x,y,z)
     % r: array of radius along coordinate axes (rx,ry,rz).
-    % pathSPM: path to spm12 folder.
 
 % created by Daniel Haenelt
 % Date created: 19-02-2020
 % Last modified: 19-02-2020
-
-% add spm to path
-addpath(pathSPM);
 
 % make output folder
 if ~exist(path_output,'dir') 

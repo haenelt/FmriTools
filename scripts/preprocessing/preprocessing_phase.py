@@ -48,14 +48,7 @@ std_max = 0.25 # threshold for mask generation before phase filtering
 sigma_gaussian = 10.0 # sigma for gaussian filter
 outlier_params = [0.4, 0.8, 0.5, 1.0, 2.0] # mm short, mm long, deg short, deg long, z
 
-# add spm and fmri_tools to path
-pathSPM = "/data/pt_01880/source/spm12"
-pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
-
 # do not edit below
-
-# change to preprocessing folder in fmri_tools
-os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 path_magn, name_magn, ext_magn = get_filename(input_magn)
 path_phase, name_phase, ext_phase = get_filename(input_phase)
@@ -87,12 +80,11 @@ os.system("matlab" + \
 # sum motion outliers
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
-          "\"get_outlier(\'{0}\', \'{1}\', \'{2}\', \'afni\', \'{3}\', \'{4}\'); exit;\"". \
+          "\"get_outlier(\'{0}\', \'{1}\', \'{2}\', \'afni\', \'{3}\'); exit;\"". \
           format(os.path.join(path_moco,"moco_params.1D"), 
                  os.path.join(path_magn,'u'+name_magn+ext_magn), 
                  outlier_params, 
-                 os.path.join(path_magn,"outlier"),
-                 pathSPM))
+                 os.path.join(path_magn,"outlier")))
     
 # unwrap phase data
 magn_img = nb.load(input_magn)

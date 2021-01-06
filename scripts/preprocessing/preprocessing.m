@@ -51,14 +51,7 @@ outlier_params.int_out_z = 2; % in z-score
 % separate realignment for each time series
 run_separate = false;
 
-% add spm and fmri_tools to path
-pathSPM = '/data/pt_01880/source/spm12';
-pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
-
 %%% do not edit below %%%
-
-% add paths to the interpreter's search path
-addpath(fullfile(pathFMRITOOLS, 'preprocessing'));
 
 % start preprocessing
 if run_separate 

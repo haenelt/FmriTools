@@ -1,4 +1,4 @@
-function average_phase(pos_real, pos_imag, neg_real, neg_imag, name_sess, freq, pathSPM)
+function average_phase(pos_real, pos_imag, neg_real, neg_imag, name_sess, freq)
 
 % This function takes the real and imaginary parts from the time series fft
 % of stimuli pairs in positive and negative directions. Both directions are
@@ -11,14 +11,10 @@ function average_phase(pos_real, pos_imag, neg_real, neg_imag, name_sess, freq, 
     % neg_imag: imaginary part of fft in negative direction.
     % name_sess: name of session.
     % freq: number of cycles.
-    % pathSPM: path to spm toolbox.
 
 % created by Daniel Haenelt
 % Date created: 08-12-2018
 % Last modified: 10-12-2018
-
-% add spm to path
-addpath(pathSPM);
 
 % parameters
 % freq_ignored is a vector containing the frequencies that should be

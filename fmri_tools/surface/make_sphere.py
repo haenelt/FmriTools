@@ -16,6 +16,28 @@ from fmri_tools.io.get_filename import get_filename
 from fmri_tools.surface.inflate_surf_mesh import inflate_surf_mesh
 
 
+def _cart2pol(x, y, z):
+    """
+    Helper function for transformation cartesian to polar coordinates.
+    """
+    
+    r = np.sqrt(x**2+y**2+z**2)
+    phi = np.arctan2(y, x)
+    theta = np.arccos(z/r)
+    return r, phi, theta
+
+    
+def _pol2cart(r, phi, theta):
+    """
+    Helper function for transformation from polar to cartesian coordinates.
+    """
+    
+    x = r*np.sin(theta)*np.cos(phi)
+    y = r*np.sin(theta)*np.sin(phi)
+    z = r*np.cos(theta)
+    return x, y, z
+
+
 def make_sphere(file_in, file_out, n_inflate=100, radius=None):
     """ Make sphere
 
@@ -45,18 +67,6 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
 
     """
     
-    def cart2pol(x, y, z):
-        r = np.sqrt(x**2+y**2+z**2)
-        phi = np.arctan2(y, x)
-        theta = np.arccos(z/r)
-        return r, phi, theta
-    
-    def pol2cart(r, phi, theta):
-        x = r*np.sin(theta)*np.cos(phi)
-        y = r*np.sin(theta)*np.sin(phi)
-        z = r*np.cos(theta)
-        return x, y, z
-
     # make output folder
     path_output, _, _ = get_filename(file_out)
     if not os.path.exists(path_output):
@@ -94,9 +104,9 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
     # change radius      
     if radius:
         vtx, fac = read_geometry(file_out)
-        r, phi, theta = cart2pol(vtx[:,0], vtx[:,1], vtx[:,2])
+        r, phi, theta = _cart2pol(vtx[:,0], vtx[:,1], vtx[:,2])
         r[:] = radius
-        vtx[:,0], vtx[:,1], vtx[:,2] = pol2cart(r, phi, theta)
+        vtx[:,0], vtx[:,1], vtx[:,2] = _pol2cart(r, phi, theta)
         write_geometry(file_out, vtx, fac)
     
     # remove temporary file

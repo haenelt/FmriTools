@@ -25,7 +25,7 @@ the data will be additionally sampled  on a regular grid.
 
 created by Daniel Haenelt
 Date created: 11-11-2019
-Last modified: 23-10-2020
+Last modified: 06-01-2021
 """
 
 input_series = "/nobackup/actinium2/haenelt/V2STRIPES/p6/psf/multipol_14/udata.nii"
@@ -53,18 +53,11 @@ end_vol = 4
 interpolation = "linear" # can be linear or nearest
 sigma_grid = 0.5
 
-# add spm and fmri_tools to path
-pathSPM = "/data/pt_01880/source/spm12"
-pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
-
 # do not edit below
 
 # prefix
 tmp = np.random.randint(0, 10, 5)
 prefix = ''.join(str(i) for i in tmp)+'_'
-
-# change to preprocessing folder in fmri_tools
-os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 # make output folders
 path_native = os.path.join(path_output,"native")
@@ -95,8 +88,8 @@ if os.path.exists(os.path.join(path_tmp, basename_tmp)):
 # look for baseline corrected time series
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
-          "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\', \'{4}\'); exit;\"". \
-          format(input_series, TR, cutoff_highpass, pathSPM, prefix))
+          "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
+          format(input_series, TR, cutoff_highpass, prefix))
 
 # move baseline corrected time series to output folder
 sh.move(os.path.join(path_tmp, basename_tmp),

@@ -1,4 +1,4 @@
-function retino_fourier(input, freq, fix, period, TR, pathSPM)
+function retino_fourier(input, freq, fix, period, TR)
 
 % This function computes a fourier analysis for retinotopical data. Two
 % time series are saved, namely the real and imaginary part of the Fourier
@@ -11,14 +11,10 @@ function retino_fourier(input, freq, fix, period, TR, pathSPM)
     % fix: pre and post run baseline block in s.
     % period: cycle period in s
     % TR: repetition time in s.
-    % pathSPM: path to the SPM12 source folder.
 
 % created by Daniel Haenelt
 % Date created: 08-12-2018
 % Last modified: 10-12-2018
-
-% add spm to path
-addpath(pathSPM);
 
 % prepare path and file name
 [path, file, ext] = fileparts(input);

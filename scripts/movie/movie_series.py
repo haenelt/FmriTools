@@ -49,18 +49,11 @@ start_vol = 0
 end_vol = 0
 interpolation = "nearest" # can be linear or nearest
 
-# add spm and fmri_tools to path
-pathSPM = "/data/pt_01880/source/spm12"
-pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
-
 # do not edit below
 
 # prefix
 tmp = np.random.randint(0, 10, 5)
 prefix = ''.join(str(i) for i in tmp)+'_'
-
-# change to preprocessing folder in fmri_tools
-os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 # make output folders
 path_series = os.path.join(path_output,"series")
@@ -93,8 +86,8 @@ for i in range(len(input_series)):
 
     os.system("matlab" + \
               " -nodisplay -nodesktop -r " + \
-              "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\', \'{4}\'); exit;\"". \
-              format(input_series[i], TR, cutoff_highpass, pathSPM, prefix))
+              "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
+              format(input_series[i], TR, cutoff_highpass, prefix))
     
     # move baseline corrected time series to output folder
     sh.move(os.path.join(path_tmp, basename_tmp),

@@ -1,11 +1,10 @@
-function baseline_correction(input, TR, cutoff_highpass, pathSPM, prefix)
+function baseline_correction(input, TR, cutoff_highpass, prefix)
 % This function computes a baseline correction of a functional time series.
 % The output time series gets a prefix b to the file name.
 % Inputs:
     % input: file name of time series.
     % TR: repetition time in s.
     % cutoff_highpass: highpass 1/cutoff frequency in Hz.
-    % pathSPM: path to spm12 folder.
 
 % created by Daniel Haenelt
 % Date created: 07-12-2018
@@ -14,9 +13,6 @@ function baseline_correction(input, TR, cutoff_highpass, pathSPM, prefix)
 if ~exist('prefix','var')  
     prefix = 'b';
 end
-
-% add spm to path
-addpath(pathSPM);
 
 % get fileparts of input
 [path, file, ext] = fileparts(input);

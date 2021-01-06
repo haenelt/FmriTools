@@ -63,7 +63,7 @@ def regrid_2d(data_array, Nx, Ny):
     return data_array_new
 
 
-def regrid_1d(data_array,N):
+def regrid_1d(data_array, N):
     """ Regrid 1D
 
     This function loads a one-dimensional numpy array and interpolates it to a 

@@ -1,4 +1,4 @@
-function lowpass_filter(input, TR, cutoff_lowpass, order, pathSPM)
+function lowpass_filter(input, TR, cutoff_lowpass, order)
 
 % This function computes a buterworth lowpass filter and applied it to a
 % functional time series. The output gets a prefix l to the file name.
@@ -7,14 +7,10 @@ function lowpass_filter(input, TR, cutoff_lowpass, order, pathSPM)
     % TR: repetition time in s.
     % cutoff_lowpass: lowpass 1/cutoff frequency in Hz.
     % order: order of butterworth filter.
-    % pathSPM: path to spm12 folder.
 
 % created by Daniel Haenelt
 % Date created: 05-08-2019
 % Last modified: 05-08-2019
-
-% add spm to path
-addpath(pathSPM);
 
 % get fileparts of input
 [path, file, ext] = fileparts(input);

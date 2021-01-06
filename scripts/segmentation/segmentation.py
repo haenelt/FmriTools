@@ -72,7 +72,6 @@ Last modified: 13-10-2020
 fileUNI = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S6_MP2RAGE_0p7_UNI_Images_2.45.nii"
 fileINV1 = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S3_MP2RAGE_0p7_INV1_2.45.nii"
 fileINV2 = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S4_MP2RAGE_0p7_INV2_2.45.nii"
-pathSPM12 = "/data/pt_01880/source/spm12"
 pathEXPERT = "/data/hu_haenelt/projects/scripts/segmentation"
 namePATCH = "occip"
 sub = "freesurfer"
@@ -123,7 +122,7 @@ if part == 1:
      
     # bias field correction
     print("Bias field correction")
-    bias_field_correction(os.path.join(path_bias,"n"+file), pathSPM12)
+    bias_field_correction(os.path.join(path_bias,"n"+file))
     
     # volume threshold
     print("Volume threshold")
@@ -142,7 +141,7 @@ if part == 1:
     
     # skullstrip anatomy
     print("Skullstrip INV2")
-    skullstrip_spm12(fileINV2, pathSPM12, path)
+    skullstrip_spm12(fileINV2, path)
     
     # bring skullstrip_mask in conformed space (mri_vol2vol, NN)
     transmask = ApplyVolTransform()

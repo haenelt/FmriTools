@@ -53,11 +53,6 @@ reverse_contrast = True # if inner surface is darker than outer surface
 cost_method = "GreveFischl" # GreveFischl, sum, sumOfSquares
 contrast_method = "gradient" # gradient, average, fixedDistance, relativeDistance, extrema
 
-# add spm, fmri_tools and OpenFmriAnalysis to path
-pathSPM = "/data/pt_01880/source/spm12"
-pathMOURIK = "/data/hu_haenelt/projects/OpenFmriAnalysis"
-pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
-
 # do not edit below
 
 # make output folder
@@ -98,13 +93,10 @@ input_cfg = join(path_input,"cfg.mat")
 vox2ras_tkr, ras2vox_tkr = vox2ras(ref_vol)
 
 # surf2mat
-cwd = os.getcwd()
-os.chdir(join(pathFMRITOOLS,"io"))
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
           "\"surf2mat(\'{0}\', \'{1}\', \'{2}\', \'{3}\', \'{4}\'); exit;\"". \
           format(lh_white, rh_white, lh_pial, rh_pial, in_surf_mat_ras))
-os.chdir(cwd)
     
 # ras2vox
 data = loadmat(in_surf_mat_ras)
@@ -138,13 +130,10 @@ cfg["output_cmap"] = output_cmap
 savemat(input_cfg, cfg)
 
 # run rBBR
-cwd = os.getcwd()
-os.chdir(join(pathFMRITOOLS,"registration"))
 os.system("matlab" + \
           " -nodisplay -nodesktop -r " + \
-          "\"run_rBBR(\'{0}\', \'{1}\', \'{2}\'); exit;\"". \
-          format(input_cfg, pathSPM, pathMOURIK))
-os.chdir(cwd)
+          "\"run_rBBR(\'{0}\'); exit;\"". \
+          format(input_cfg))
 
 # vox2ras
 data = loadmat(out_surf_mat_vox)

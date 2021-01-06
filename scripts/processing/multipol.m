@@ -34,16 +34,7 @@ name_sess = 'SE_EPI2';
 path_output = '/data/pt_01880/Experiment4_PSF/p6/psf';
 cleanup = true;
 
-% add spm and fmri_tools to path
-pathSPM = '/data/pt_01880/source/spm12'; 
-pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
-
 %%% do not edit below %%%
-
-% add paths to the interpreter's search path
-addpath(pathSPM);
-addpath(fullfile(pathFMRITOOLS,'preprocessing'));
-addpath(fullfile(pathFMRITOOLS,'processing'));
 
 for i = 1:length(input.data)
 

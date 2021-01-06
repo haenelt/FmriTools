@@ -1,11 +1,10 @@
-function regress_physio(input, regressor, pathSPM, TR, cutoff_highpass, path_output, cleanup)
+function regress_physio(input, regressor, TR, cutoff_highpass, path_output, cleanup)
 % This function computes nuisance regression of resting-state data from
 % predefined regressors. The output is the residual time series from the
 % GLM.
 % Inputs:
     % input: input time series
     % regressors: multiple regressors as separate columns in a textfile.
-    % pathSPM: path to spm toolbox.
     % TR: repetition time in s.
     % cutoff_highpass: highpass filter cutoff frequency in 1/Hz
     % path_output: path where output is saved.
@@ -21,7 +20,6 @@ if ~exist('cleanup','var')
 end
 
 % add paths to the interpreter's search path
-addpath(pathSPM);
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used
 spm_get_defaults('cmdline',true); % no gui

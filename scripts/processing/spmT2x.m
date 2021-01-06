@@ -57,13 +57,7 @@ path_output = '/data/pt_01880/Experiment1_ODC/p4/odc/results'; % path where outp
 name_output = 'all'; % basename of output contrasts
 name_sess = 'SE_EPI3'; % name of session (if multiple sessions exist)
 
-% add spm to path
-pathSPM = '/data/pt_01880/source/spm12';
-
 %%% do not edit below %%%
-
-% add paths to the interpreter's search path
-addpath(pathSPM);
 
 % load spm.mat
 load(spm_mat_in);

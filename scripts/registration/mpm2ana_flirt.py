@@ -53,9 +53,6 @@ cleanup = False
 # output path
 path_output = "/home/daniel/Schreibtisch"
 
-# set environments
-pathSPM12 = "/home/daniel/source/spm12"
-
 # do not edit below
 
 # make folder structure
@@ -92,10 +89,10 @@ nb.save(output,os.path.join(path_mpm,"mpm_pd.nii"))
 
 # skull stripping
 print("skullstrip mp2rage")
-skullstrip_spm12(file_mp2rage_pd, pathSPM12, path_mp2rage)
+skullstrip_spm12(file_mp2rage_pd, path_mp2rage)
 
 print("skullstrip mpm")
-skullstrip_spm12(os.path.join(path_mpm,"mpm_pd.nii"), pathSPM12, path_mpm)
+skullstrip_spm12(os.path.join(path_mpm,"mpm_pd.nii"), path_mpm)
 
 # prepare T1-map (MPM)
 print("prepare mpm (t1)")

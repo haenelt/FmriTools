@@ -1,5 +1,5 @@
 function outlier_all = get_outlier(file_rp, file_in, outlier_params,...
-    software, path_output, pathSPM)
+    software, path_output)
 % This function uses the realignment parameter file to identify motion
 % outlier volumes which exceed a defined motion threshold. Furthermore,
 % the realigned time series is checked for intensity outliers by checking
@@ -12,16 +12,12 @@ function outlier_all = get_outlier(file_rp, file_in, outlier_params,...
     % outlier_params: structure containing outlier thresholds.
     % software: which software was used (spm or afni).
     % path_output: path where output is written.
-    % pathSPM: path to spm12 folder.
 % Outputs:
     % outlier_all: array indicated outlier volumes.
     
 % created by Daniel Haenelt
 % Date created: 23-02-2020
 % Last modified: 23-05-2020
-
-% add spm to path
-addpath(pathSPM);
 
 % make output folder
 if ~exist(path_output,'dir') 

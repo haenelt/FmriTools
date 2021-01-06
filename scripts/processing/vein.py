@@ -44,14 +44,7 @@ epi_threshold = 800
 tsnr_threshold = 8
 tsnr_max = 200
 
-# add spm and fmri_tools to path
-pathSPM = "/data/pt_01880/source/spm12"
-pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
-
 # do not edit below
-
-# change to preprocessing folder in fmri_tools
-os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
 
 # prepare path and filename
 path = []
@@ -93,8 +86,8 @@ for i in range(len(path)):
     if not os.path.isfile(os.path.join(path[i],"b"+file[i])):
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
-                  "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-                  format(img_input[i], TR, cutoff_highpass, pathSPM))
+                  "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"". \
+                  format(img_input[i], TR, cutoff_highpass))
 
     if not os.path.isfile(os.path.join(path[i],"mean_b"+file[i])):
         # open baseline corrected time series

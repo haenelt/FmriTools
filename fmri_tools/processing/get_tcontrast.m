@@ -1,5 +1,5 @@
 function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_derivative, ...
-    regressor_nointerest, pathSPM)
+    regressor_nointerest)
 
 % This function calculates contrasts (con, spmT) and percent signal changes
 % (psc) from a general linear model using spm. Only 2-4 experimental
@@ -18,7 +18,6 @@ function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_de
     % name_sess: name of session (optional).
     % hrf_derivative: use hrf temporal derivatives (boolean).
     % regressor_nointerest: include number of regressors of no interest.
-    % pathSPM: path to spm12 folder.
     
 % created by Daniel Haenelt
 % Date created: 13-03-2020
@@ -39,9 +38,6 @@ end
 if ~exist('regressor_nointerest', 'var')
     regressor_nointerest = zeros(length(cond_input),1);
 end
-
-% add spm to path
-addpath(pathSPM);
 
 % print to console
 disp('compute percent signal changes');

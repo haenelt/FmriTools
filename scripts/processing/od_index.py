@@ -96,10 +96,6 @@ order_lowpass = 0
 name_sess = "GE_EPI2"
 name_output = ""
 
-# add spm and fmri_tools to path
-pathSPM = "/data/pt_01880/source/spm12"
-pathFMRITOOLS = "/data/hu_haenelt/projects/FmriTools/fmri_tools"
-
 # do not edit below
 
 # get path from first entry
@@ -156,23 +152,21 @@ for i in range(len(img_input)):
     
     # lowpass filter time series
     if use_lowpass:
-        os.chdir(os.path.join(pathFMRITOOLS,"processing"))
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
-                  "\"lowpass_filter(\'{0}\', {1}, {2}, {3}, \'{4}\'); exit;\"". \
+                  "\"lowpass_filter(\'{0}\', {1}, {2}, {3}); exit;\"". \
                   format(os.path.join(path_file,name_file+ext_file), TR, cutoff_lowpass, 
-                         order_lowpass, pathSPM))
+                         order_lowpass))
         
         # change input to lowpass filtered time series
         name_file = "l" + name_file
 
     # highpass filter time series
     if use_highpass:
-        os.chdir(os.path.join(pathFMRITOOLS,"preprocessing"))
         os.system("matlab" + \
                   " -nodisplay -nodesktop -r " + \
-                  "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"". \
-                  format(os.path.join(path_file,name_file+ext_file), TR, cutoff_highpass, pathSPM))
+                  "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"". \
+                  format(os.path.join(path_file,name_file+ext_file), TR, cutoff_highpass))
 
         # change input to highpass filtered time series
         name_file = "b" + name_file

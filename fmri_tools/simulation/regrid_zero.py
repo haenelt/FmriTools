@@ -5,7 +5,7 @@ import numpy as np
 from numpy.fft import fft, ifft, fft2, ifft2, fftshift
 
 
-def regrid_zero_2d(data_array,Nx_new,Ny_new):
+def regrid_zero_2d(data_array, Nx_new, Ny_new):
     """ Regrid zero 2D
 
     This function loads a two-dimensional numpy array and performs spatial 
@@ -73,7 +73,7 @@ def regrid_zero_2d(data_array,Nx_new,Ny_new):
     return data_array_new
 
 
-def regrid_zero_1d(data_array,N_new):
+def regrid_zero_1d(data_array, N_new):
     """ Regrid zero 1D
 
     This function loads a one-dimensional numpy array and performs spatial 

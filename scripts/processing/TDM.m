@@ -37,19 +37,7 @@ fir_steps = 60; % number of time steps for fir model
 basename = 'on'; % basename of output files
 output_folder = 'contrast_tdm'; % name of folder where glm output is saved
 
-% add libs to path
-pathKNKUTILS = '/data/pt_01880/source/knkutils';
-pathGLMDENOISE = '/data/pt_01880/source/GLMdenoise';
-pathTDM = '/data/pt_01880/source/TDM';
-pathSPM = '/data/pt_01880/source/spm12'; 
-
 %%% do not edit below %%%
-
-% add paths to the interpreter's search path
-addpath(genpath(pathKNKUTILS));
-addpath(genpath(pathGLMDENOISE));
-addpath(genpath(pathTDM));
-addpath(genpath(pathSPM));
 
 % output folder is taken from the first entry of the input list
 if length(img_input) > 1

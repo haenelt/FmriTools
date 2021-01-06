@@ -15,7 +15,7 @@ from nighres.registration import apply_coordinate_mappings
 from fmri_tools.skullstrip.skullstrip_spm12 import skullstrip_spm12
 
 
-def get_nuisance_mask(input, pathSPM, deformation, path_output, nerode_white=1, 
+def get_nuisance_mask(input, deformation, path_output, nerode_white=1, 
                       nerode_csf=1, segmentation=True, cleanup=True):
     """ Get nuisance mask
     
@@ -27,8 +27,6 @@ def get_nuisance_mask(input, pathSPM, deformation, path_output, nerode_white=1,
     ----------
     input : str
         Input anatomy (orig.mgz).
-    pathSPM : str
-        Path to spm toolbox.
     deformation : str
         Coordinate mapping for ana to epi transformation.
     path_output : str
@@ -81,7 +79,6 @@ def get_nuisance_mask(input, pathSPM, deformation, path_output, nerode_white=1,
     # segmentation
     if segmentation:
         skullstrip_spm12(os.path.join(path_output,file + ".nii"), 
-                         pathSPM, 
                          path_output)
 
     # load tissue maps

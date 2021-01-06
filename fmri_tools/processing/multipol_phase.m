@@ -1,4 +1,4 @@
-function multipol_phase(input_real, input_imag, freq, pathSPM, name_sess, path_output)
+function multipol_phase(input_real, input_imag, freq, name_sess, path_output)
 
 % This function takes the real and imaginary parts from the time series
 % fft. Similar to Dumoulin et al., 2017, we compute an coherence estimate
@@ -13,16 +13,12 @@ function multipol_phase(input_real, input_imag, freq, pathSPM, name_sess, path_o
     % input_real: real part of fft.
     % input_imag: imaginary part of.
     % freq: number of cycles.
-    % pathSPM: path to spm toolbox.
     % name_sess: name of sessiincluded in the basename.
     % path_output: path where output is saved.
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019
 % Last modified: 01-09-2020
-
-% add spm to path
-addpath(pathSPM);
 
 % parameters
 % freq_ignored is a vector containing the frequencies that should be

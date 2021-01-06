@@ -1,4 +1,4 @@
-function mask_array = skullstrip_epi(input, pathSPM, roi_size, scale, nerode, ndilate, savemask)
+function mask_array = skullstrip_epi(input, roi_size, scale, nerode, ndilate, savemask)
 % Skullstrip input volume by defining an intensity threshold from the inner 
 % of the brain volume. From a defined mid-point, a brain mask is grown 
 % inside the brain. A binary filling holes algorithm is applied. To reduce 
@@ -6,7 +6,6 @@ function mask_array = skullstrip_epi(input, pathSPM, roi_size, scale, nerode, nd
 % several times.    
 % Inputs:
 %   *input: input file.
-%   *pathSPM: path to spm toolbox.
 %   *roi_size: size of cubic roi for image intensity threshold
 %   *scale: scale image intensity threshold
 %   *nerode: number of eroding iterations
@@ -38,9 +37,6 @@ end
 if ~exist('savemask','var')
     savemask = true;
 end
-
-% add spm toolbox
-addpath(pathSPM);
 
 % prepare path and filename
 [path, file, ext] = fileparts(input);

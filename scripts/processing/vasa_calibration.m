@@ -25,13 +25,9 @@ contrast_input = {
 
 spm_mat_input = '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/contrast/SPM.mat';
 
-% add spm to path
-pathSPM = '/data/pt_01880/source/spm12'; 
-
 %%% do not edit below %%%
 
 % add paths to the interpreter's search path
-addpath(pathSPM);
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used
 spm_get_defaults('cmdline',true); % no gui

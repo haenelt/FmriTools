@@ -31,17 +31,7 @@ input.ecc.fix = 12;
 input.ecc.freq = 8.25;
 input.ecc.cutoff = 96;
 
-% add spm and fmri_tools to path
-pathSPM = '/data/pt_01880/source/spm12'; 
-pathFMRITOOLS = '/data/hu_haenelt/projects/FmriTools/fmri_tools';
-
 %%% do not edit below %%%
-
-% add paths to the interpreter's search path
-addpath(pathSPM);
-cd(fileparts(which(mfilename)));
-addpath(fullfile(pathFMRITOOLS,'preprocessing'));
-addpath(fullfile(pathFMRITOOLS,'processing'));
 
 % concatenate all runs into single cell
 all_data = {input.pol.data.pos input.pol.data.neg input.ecc.data.pos input.ecc.data.neg};
