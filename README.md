@@ -56,3 +56,8 @@ Furthermore, these scripts call additional toolboxes:
 
 ## Contact
 If you have questions, problems or suggestions regarding the FmriTools package, please feel free to contact [me](mailto:daniel.haenelt@gmail.com).
+
+## nb
+TDM.m -> pathKNKUTILS, pathGLMDENOISE, pathTDM
+
+recursiveBBR.py -> pathMOURIK
