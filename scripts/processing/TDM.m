@@ -57,7 +57,7 @@ if ~exist(path_psc,'dir')
 end
 
 % get data
-data = get_TDMdata(img_input, pathSPM);
+data = get_TDMdata(img_input);
 
 % get design
 % We take the condition file of the first run assuming that all runs have
@@ -68,7 +68,7 @@ design = get_TDMdesign(cond_input{1}, TR, size(data{1},2), size(data,2));
 
 % get epi
 % The corrected epi intensities are computed from the first run.
-bc = get_TDMepi(img_input{1}, pathSPM, sigma);
+bc = get_TDMepi(img_input{1}, sigma);
 
 % get mask
 mask = get_TDMmask(data, mask_threshold);
@@ -190,22 +190,18 @@ end
 
 
 
-function [data] = get_TDMdata(file_in, pathSPM)
+function [data] = get_TDMdata(file_in)
 
 % This function sorts timeseries data into a cell array. Each timeseries is
 % reshaped into a 2D array (ind x time).
 % Inputs:
     % file_in: cell array of filenames.
-    % pathSPM: path to spm12 folder.
 % Outputs:
     % data: cell array of data in kendrick kay's format.
 
 % created by Daniel Haenelt
 % Date created: 16-03-2020
 % Last modified: 16-03-2020
-
-% add spm to path
-addpath(pathSPM);
 
 data = {};
 for i = 1:length(file_in)
@@ -257,7 +253,7 @@ end
 end
 
 
-function [epi_reshape] = get_TDMepi(file_in, pathSPM, sigma, path_output, write_output)
+function [epi_reshape] = get_TDMepi(file_in, sigma, path_output, write_output)
 
 % This function computes relative epi intensities by taking the ratio of
 % the temporal mean and the gaussian filtered temporal mean. 
@@ -266,7 +262,6 @@ function [epi_reshape] = get_TDMepi(file_in, pathSPM, sigma, path_output, write_
     % sigma: sigma for gaussian filtering.
     % path_output: path where output is written.
     % write_output: write output files.
-    % pathSPM: path to spm12 folder.
 % Outputs:
     % epi_reshape: relative epi intensities sorted into 1D vector.
 
@@ -282,9 +277,6 @@ end
 if nargin < 3
     sigma = 2;
 end
-
-% add spm to path
-addpath(pathSPM);
 
 % get filename
 [~, name_file, ext_file] = fileparts(file_in);
