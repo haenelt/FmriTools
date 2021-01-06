@@ -64,7 +64,6 @@ rfile = "r" + file # filename of residual time series
 if nuisance_regression:
     
     # baseline correction
-    previous_cwd = os.getcwd()
     os.system("matlab" + \
               " -nodisplay -nodesktop -r " + \
               "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"". \
@@ -101,7 +100,6 @@ if nuisance_regression:
         nb.save(output,os.path.join(path_output,"csf_mask.nii.gz"))
 
         # get nuisance regressor
-        os.chdir(previous_cwd) # change to existing path because of cleanup
         get_nuisance_regressor(os.path.join(path,bfile), 
                                os.path.join(path_output,"wm_mask.nii.gz"), 
                                os.path.join(path_output,"csf_mask.nii.gz"), 
