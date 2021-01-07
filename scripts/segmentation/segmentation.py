@@ -11,7 +11,6 @@ from cortex.polyutils import Surface
 
 # local inputs
 from fmri_tools.segmentation.robust_combination import robust_combination
-from fmri_tools.segmentation.bias_field_correction import bias_field_correction
 from fmri_tools.segmentation.shift_white import shift_white
 from fmri_tools.segmentation.get_thickness_fsurf import get_thickness_fsurf
 from fmri_tools.segmentation.get_ribbon_fsurf import get_ribbon_fsurf
@@ -65,7 +64,7 @@ Part 5
     
 created by Daniel Haenelt
 Date created: 01-11-2018             
-Last modified: 13-10-2020
+Last modified: 07-01-2021
 """
 
 # input data
@@ -122,7 +121,10 @@ if part == 1:
      
     # bias field correction
     print("Bias field correction")
-    bias_field_correction(os.path.join(path_bias,"n"+file))
+    os.system("matlab" + \
+              " -nodisplay -nodesktop -r " + \
+              "\"bias_field_correction(\'{0}\'); exit;\"". \
+              format(os.path.join(path_bias,"n"+file)))
     
     # volume threshold
     print("Volume threshold")

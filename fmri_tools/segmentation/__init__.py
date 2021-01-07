@@ -2,7 +2,6 @@
 
 # local inputs
 from .alpha_shape import alpha_shape
-from .bias_field_correction import bias_field_correction
 from .calculate_area import calculate_area
 from .calculate_distortion import calculate_distortion
 from .get_ribbon_fsurf import get_ribbon_fsurf
