@@ -1,5 +1,17 @@
 function fmri_preprocessing(img_input, slice_params, field_params, ...
     realign_params, outlier_params)
+% FMRI preprocessing
+%
+% fmri_preprocessing(img_input, slice_params, field_params, ...
+%    realign_params, outlier_params)
+%
+% Inputs:
+%   input          - cell array of filenames of input time series.
+%   slice_params   - struct of slice time correction parameters.
+%   field_params   - struct of fieldmap parameters.
+%   realign_params - struct of realignment parameters.
+%   outlier_params - struct of realignment check parameters.
+%
 % This function performs slice time correction, fieldmap undistortion and
 % motion correction in the SPM12 framework which can be applied to a
 % session consisting of multiple runs. Slice time correction and fieldmap 
@@ -19,13 +31,6 @@ function fmri_preprocessing(img_input, slice_params, field_params, ...
 % In the outlier summary, the percentage of within-run outliers are printed
 % out. Additionally, regressors of no interest for neglecting outlier
 % volumes are created.
-% 
-% Inputs:
-    % input: cell array of filenames of input time series.
-    % slice_params: struct of slice time correction parameters.
-    % field_params: struct of fieldmap parameters.
-    % realign_params: struct of realignment parameters.
-    % outlier_params: struct of realignment check parameters.
 
 % created by Daniel Haenelt
 % Date created: 26-02-2019

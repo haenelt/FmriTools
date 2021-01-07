@@ -1,5 +1,5 @@
 % VASO realignment plots
-
+%
 % This script computes the motion parameter plots for realigned vaso time
 % series. BOLD and VASO motion parameters are shown in the same plot. This
 % helps the identification of inconsistent bold and vaso motion

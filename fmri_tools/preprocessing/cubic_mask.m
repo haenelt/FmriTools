@@ -1,12 +1,17 @@
 function cubic_mask(input, path_output, name_output, c, r)
+% Cubic mask
+%
+% cubic_mask(input, path_output, name_output, c, r)
+%
+% Inputs:
+%   input       - file name of time series.
+%   path_output - path where output is written.
+%   name_output - basename of output file.
+%   c           - array of center coordinates (x,y,z)
+%   r           - array of radius along coordinate axes (rx,ry,rz).
+%
 % This function computes a 3D cubic mask within and input array. The array
 % dimensions are taken from the input nifti file. A binary mask is written.
-% Inputs:
-    % input: file name of time series.
-    % path_output: path where output is written.
-    % name_output: basename of output file.
-    % c: array of center coordinates (x,y,z)
-    % r: array of radius along coordinate axes (rx,ry,rz).
 
 % created by Daniel Haenelt
 % Date created: 19-02-2020

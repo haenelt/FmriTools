@@ -1,5 +1,5 @@
 % GLM analysis
-
+%
 % This script computes a fixed-effects GLM for one or multiple runs within 
 % one session. The script is designed for paradigms with 2-4 experimental 
 % conditions. However, for more than 2 conditions, not all contrasts are 

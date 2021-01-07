@@ -1,5 +1,5 @@
 % Generate colour wheel
-
+%
 % This script creates the polar angle RYGB colour wheel for freesurfer. The 
 % script is adapted from Sam Schwarzkopf's examples in the retinotopy 
 % tutorial.

@@ -1,5 +1,5 @@
 % Preprocessing of fmri time series
-
+%
 % This script performs slice timing correction, fieldmap undistortion and
 % realignment of an array of fmri time series. Realignment can be done
 % across multiple time series. Note that the same slice timing and fieldmap 

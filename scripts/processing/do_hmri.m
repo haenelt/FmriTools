@@ -1,5 +1,5 @@
 % hMRI processing
-
+%
 % Computation of quantitative maps from acquired MPMs. The script is
 % based on the batch GUI of the SPM12 toolbox. To run the script, both the
 % hMRI and SPM12 have to be installed. The script gets the root directory 

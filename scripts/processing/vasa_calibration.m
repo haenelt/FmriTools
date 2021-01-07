@@ -1,5 +1,5 @@
 % VASA estimation
-
+%
 % This script computes baseline corrected contrast files using the VasA
 % fMRI approach for task-based data.
 

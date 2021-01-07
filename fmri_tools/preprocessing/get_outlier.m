@@ -1,19 +1,25 @@
-function outlier_all = get_outlier(file_rp, file_in, outlier_params,...
+function [outlier_all] = get_outlier(file_rp, file_in, outlier_params,...
     software, path_output)
+% Get outlier
+%
+% [outlier_all] = get_outlier(file_rp, file_in, outlier_params,...
+%    software, path_output)
+%
+% Inputs:
+%   file_rp        - filename of textfile with realignment parameters.
+%   file_in        - filename of realigned time series.
+%   outlier_params - structure containing outlier thresholds.
+%   software       - which software was used (spm or afni).
+%   path_output    - path where output is written.
+% Outputs:
+%   outlier_all    - array indicated outlier volumes.
+%
 % This function uses the realignment parameter file to identify motion
 % outlier volumes which exceed a defined motion threshold. Furthermore,
 % the realigned time series is checked for intensity outliers by checking
 % if the average z-score of each time point exceeds a defined threshold. A
 % summary file with the listed outliers and a regressor of no interest are
 % written.
-% Inputs:
-    % file_rp: filename of textfile with realignment parameters.
-    % file_in: filename of realigned time series.
-    % outlier_params: structure containing outlier thresholds.
-    % software: which software was used (spm or afni).
-    % path_output: path where output is written.
-% Outputs:
-    % outlier_all: array indicated outlier volumes.
     
 % created by Daniel Haenelt
 % Date created: 23-02-2020

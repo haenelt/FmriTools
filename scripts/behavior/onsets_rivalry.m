@@ -14,7 +14,7 @@
 % In the experiment, participants wear the red filter over their left eye
 % and the green filter over their right eye. In SwitchData, button 
 % responses of 2 and 1 refer to red and green onsets, respectively.
-%
+
 % created by Daniel Haenelt
 % Date created: 05-08-2019         
 % Last modified: 12-08-2020  

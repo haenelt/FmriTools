@@ -1,14 +1,21 @@
-function regress_physio(input, regressor, TR, cutoff_highpass, path_output, cleanup)
+function regress_physio(input, regressor, TR, cutoff_highpass, ...
+    path_output, cleanup)
+% Regress physio
+%
+% regress_physio(input, regressor, TR, cutoff_highpass, ...
+%    path_output, cleanup)
+%
+% Inputs:
+% input           - input time series
+% regressors      - multiple regressors as separate columns in a textfile.
+% TR              - repetition time in s.
+% cutoff_highpass - highpass filter cutoff frequency in 1/Hz
+% path_output     - path where output is saved.
+% cleanup         - delete intermediate files.
+%
 % This function computes nuisance regression of resting-state data from
 % predefined regressors. The output is the residual time series from the
 % GLM.
-% Inputs:
-    % input: input time series
-    % regressors: multiple regressors as separate columns in a textfile.
-    % TR: repetition time in s.
-    % cutoff_highpass: highpass filter cutoff frequency in 1/Hz
-    % path_output: path where output is saved.
-    % cleanup: delete intermediate files.
 
 % created by Daniel Haenelt
 % Date created: 28-02-2019

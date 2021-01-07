@@ -1,5 +1,5 @@
 % Multipol analysis
-
+%
 % This script runs a retinotopy analysis for computing the BOLD amplitude
 % from a phase-encoding paradigm. The analysis includes baseline correction
 % in temporal domain followed by calculating the amplitude at stimulus

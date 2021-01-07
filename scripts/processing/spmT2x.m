@@ -1,5 +1,5 @@
 % SPMT contrast transformation
-
+%
 % This script transforms t-maps to p, -log(p), r (correlation coefficient),
 % d-maps (effect size) or z-maps. 
 %

@@ -1,11 +1,16 @@
 function get_biopac_regressor(input, biopac_input, path_output, TR)
+% Get biopac regressor
+%
+% get_biopac_regressor(input, biopac_input, path_output, TR)
+%
+% Inputs:
+%   input        - input time series
+%   biopac_input - biopac *.mat file.
+%   path_output  - path where output is saved.
+%   TR           - repetition time in s.
+%
 % This function computes nuisance regressors from peripheral cardiac and
 % respiratory data (biopac).
-% Inputs:
-    % input: input time series
-    % biopac_input: biopac *.mat file.
-    % path_output: path where output is saved.
-    % TR: repetition time in s.
 
 % created by Daniel Haenelt
 % Date created: 02-03-2019

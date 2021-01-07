@@ -1,5 +1,5 @@
 % Retinotopy analysis
-
+%
 % This script runs a retinotopy analysis for a phase encoding paradigm
 % with rings and wedges. The analysis includes the following steps: 
 % (1) baseline correction, (2) phase calculation, (3) averaging over 

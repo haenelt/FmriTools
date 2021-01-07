@@ -1,12 +1,17 @@
 function plot_moco(file_rp, software, path_output, name_output)
+% Plot moco
+%
+% plot_moco(file_rp, software, path_output, name_output)
+%
+% Inputs:
+%   file_rp     - file name of textfile with realignment parameters.
+%   software    - which software was used (spm or afni).
+%   path_output - path where output is written.
+%   name_output - basename of saved plots.
+%
 % This function plots the motion parameter from the SPM12 realignment
 % processing. Separate plots for translation (in mm) and rotation (in deg)
 % are saved.
-% Inputs:
-    % file_rp: file name of textfile with realignment parameters.
-    % software: which software was used (spm or afni).
-    % path_output: path where output is written.
-    % name_output: basename of saved plots.
     
 % created by Daniel Haenelt
 % Date created: 23-02-2020

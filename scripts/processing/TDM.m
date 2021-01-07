@@ -1,5 +1,5 @@
 % TDM analysis
-
+%
 % This script executes the TDM method developed by Kendrick Kay et al.
 % (2019) to separate early and late BOLD contributions within an fmri
 % timeseries. In this script, a simple block design with one experimental
