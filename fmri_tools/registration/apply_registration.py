@@ -10,8 +10,8 @@ import nibabel as nb
 from nighres.registration import apply_coordinate_mappings
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
-from fmri_tools.utils.upsample_volume import upsample_volume
+from fmri_tools.io import get_filename
+from fmri_tools.utils import resample_volume
 
 
 def apply_registration(file_in, cmap_in, file_out, interpolation="linear", 
@@ -69,11 +69,11 @@ def apply_registration(file_in, cmap_in, file_out, interpolation="linear",
     # adjust coordinate mapping
     if r:
     
-        # upsample cmap
-        upsample_volume(cmap_in, file_tmp, dxyz = r, rmode = "Linear")
-        upsample_volume(cmap_in, file_tmp2, dxyz = r, rmode = "NN")
+        # resample cmap
+        resample_volume(cmap_in, file_tmp, dxyz = r, rmode = "Linear")
+        resample_volume(cmap_in, file_tmp2, dxyz = r, rmode = "NN")
         
-        # mask upsampled cmap
+        # mask resampled cmap
         cmap = nb.load(file_tmp)
         mask = nb.load(file_tmp2)
         

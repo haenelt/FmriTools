@@ -18,7 +18,7 @@ from .get_series import get_series
 from .get_bandpass_filter import get_bandpass_filter
 from .average_layer import average_layer
 from .check_trigger import check_trigger
-from .upsample_volume import upsample_volume
+from .resample_volume import resample_volume
 from .regrid_time_series import *
 from .remove_nans import remove_nans
 

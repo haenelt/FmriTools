@@ -16,9 +16,9 @@ from scipy.ndimage.morphology import binary_fill_holes
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
-from fmri_tools.utils.upsample_volume import upsample_volume
-from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
+from fmri_tools.io import get_filename
+from fmri_tools.utils import resample_volume
+from fmri_tools.surface import upsample_surf_mesh
 
 
 def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
@@ -83,7 +83,7 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
     res_vol = os.path.join(path_output,"epi_upsampled.nii")
     
     # upsample reference volume and input surface
-    upsample_volume(input_vol, res_vol, dxyz=r, rmode="Cu")    
+    resample_volume(input_vol, res_vol, dxyz=r, rmode="Cu")    
     upsample_surf_mesh(input_white, res_white, n_iter, "linear")
     upsample_surf_mesh(input_pial, res_pial, n_iter, "linear")
     

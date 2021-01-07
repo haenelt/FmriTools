@@ -13,12 +13,12 @@ from sh import gunzip
 from fmri_tools.io.get_filename import get_filename
 
     
-def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
-    """ Upsample volume
+def resample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
+    """ Resample volume
 
-    This function upsamples a nifti volume using the afni function 3dresample. 
-    Before running the function, set the afni environment by calling AFNI in the 
-    terminal. Output is an upsampled nifti volume.    
+    This function resamples a nifti volume using the afni function 3dresample. 
+    Before running the function, set the afni environment by calling AFNI in 
+    the terminal.    
 
     Parameters
     ----------
@@ -40,7 +40,7 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
     -------
     created by Daniel Haenelt
     Date created: 16-12-2019        
-    Last modified: 25-10-2020
+    Last modified: 07-01-2021
     
     """
     
@@ -63,7 +63,7 @@ def upsample_volume(file_in, file_out, dxyz=[0.4, 0.4, 0.4], rmode="Cu"):
         gunzip(file_tmp)
         file_tmp = os.path.splitext(file_tmp)[0]
 
-    # upsample volume
+    # resample volume
     os.system("3dresample " + \
               "-dxyz " + str(dxyz[0]) + " " + str(dxyz[1]) + " " + str(dxyz[2]) + " " +\
               "-rmode " + str(rmode) + " " + \

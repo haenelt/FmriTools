@@ -12,8 +12,8 @@ from nighres.laminar import profile_sampling
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
-from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
-from fmri_tools.utils.upsample_volume import upsample_volume
+from fmri_tools.cmap import generate_coordinate_mapping
+from fmri_tools.utils import resample_volume
 
 
 def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
@@ -33,7 +33,7 @@ def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
     path_output : str
         Path where output is written.
     r : list, optional
-        Destination voxel size after upsampling (performed if not None). The 
+        Destination voxel size after resampling (performed if not None). The 
         default is [0.4,0.4,0.4].
 
     Returns
@@ -52,9 +52,9 @@ def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
     if not os.path.exists(path_output):
         os.makedirs(path_output)
     
-    # upsample volume
+    # resample volume
     if not r == None:
-        upsample_volume(ref_in, os.path.join(path_output, "ref.nii"), r, "Cu")
+        resample_volume(ref_in, os.path.join(path_output, "ref.nii"), r, "Cu")
     else:
         sh.copyfile(ref_in, os.path.join(path_output, "ref.nii"))
     

@@ -15,7 +15,7 @@ from sh import gunzip
 from fmri_tools.io import get_filename
 from fmri_tools.io import write_mgh
 from fmri_tools.cmap import generate_coordinate_mapping
-from fmri_tools.utils import upsample_volume
+from fmri_tools.utils import resample_volume
 from fmri_tools.surface import deform_surface
 from fmri_tools.mapping import map2surface
 
@@ -151,12 +151,12 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
         _, _, ext_vol = get_filename(file_vol)
         _, _, ext_s2t = get_filename(file_s2t)
         
-        upsample_volume(file_vol,
+        resample_volume(file_vol,
                         os.path.join(path_tmp, name_vol+"_upsampled"+ext_vol), 
                         dxyz=r, 
                         rmode=interp_upsample)
         
-        upsample_volume(file_s2t, 
+        resample_volume(file_s2t, 
                         os.path.join(path_tmp, name_s2t+"_upsampled"+ext_s2t), 
                         dxyz=r, 
                         rmode="Linear")
