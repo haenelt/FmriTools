@@ -12,7 +12,7 @@
 
 % created by Daniel Haenelt
 % Date created: 11-09-2020
-% Last modified: 22-09-2020
+% Last modified: 07-01-2021
 
 % input data
 file_t1w = {
@@ -77,6 +77,9 @@ pathHMRI_defaults = '/data/p_gr_weiskopf_software/spm12/toolbox/hMRI-cbs/config/
 pathHMRI_b1_defaults = '/data/p_gr_weiskopf_software/spm12/toolbox/hMRI-cbs/config/local/hmri_b1_CBS_7T_defaults.m';
 
 %%% do not edit below %%%
+
+% get SPM12 root directory from matlab search path
+pathSPM = what('spm12').path;
 
 % change current working directory. The working directoy is the parent
 % folder of the pdw images.
