@@ -31,10 +31,10 @@ function fmri_preprocessing(img_input, slice_params, field_params, ...
 % Date created: 26-02-2019
 % Last modified: 03-06-2020
 
-% add spm to path
+% set spm default parameters
 spm('defaults','FMRI');
-spm_get_defaults('stats.maxmem',2^35);% maxmen indicates how much memory can be used
-spm_get_defaults('cmdline',true);% no gui
+spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used
+spm_get_defaults('cmdline',true); % no gui
 
 % preprocessing summary
 if length(img_input) > 1
