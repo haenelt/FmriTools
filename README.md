@@ -26,7 +26,7 @@ The package cannot be import without the installation of two further modules:
 `pip install pycortex`<br>
 `pip install nighres`
 
-The package contains some matlab functions. Please add the following code to the matalab `startup.m` script to add the package to the matlab search path. Of course you have to specify the paths there. Next to the root directory of this package, you should add the root directories of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/), [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM) and [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis). SPM12 is used throughout the package. The other toolboxes are used by single scripts and might be ignored.
+The package contains some matlab functions. Please add the following code to the matalab `startup.m` script. This includes the package to the matlab search path. Of course you have to specify the paths there. Next to the root directory of this package, you should add the root directories of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/), [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM) and [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis). SPM12 is used throughout the package. The other toolboxes are used by single scripts and might be ignored.
 
 ```matlab
 %------------ FmriTools ------------------------------%
@@ -34,7 +34,7 @@ The package contains some matlab functions. Please add the following code to the
 % Root directory of the fmri_tools package
 path_fmri = <PATH-TO-PRFANALYSIS-FOLDER>;
 
-% Root directory to the SPM12 toolbox
+% Root directory of the SPM12 toolbox
 path_spm12 = <PATH-TO-SPM12-ROOT>;
 
 % Root directories of some toolboxes which are used
@@ -56,12 +56,10 @@ addpath(fullfile(path_fmri, 'skullstrip'));
 % add spm12
 addpath(genpath(path_spm12));
 
-% add kendrick kay's toolboxes
+% add further toolboxes
 addpath(genpath(path_knkutils));
 addpath(genpath(path_glmdnoise));
 addpath(genpath(path_tdm));
-
-% add tim van mourik's toolbox
 addpath(genpath(path_bbr));
 
 path = {};
@@ -70,14 +68,14 @@ clear path_fmri path_spm12 path_knkutils ...
 %-----------------------------------------------------%
 ```
 
-Additionally, various functions need an installation of [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/), [AFNI](https://afni.nimh.nih.gov/), [ANTS](https://www.nitrc.org/projects/ants) and [LAYNII](https://github.com/layerfMRI/LAYNII) and should be added to the system path.
+Additionally, [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [FSL](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/), [AFNI](https://afni.nimh.nih.gov/), [ANTS](https://www.nitrc.org/projects/ants) and [LAYNII](https://github.com/layerfMRI/LAYNII) need to be installed and included to the system path.
 
 ## Dependencies of single scripts
-- The script `./scripts/processing/TDM.m` needs access to the toolboxes [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM) and should be added to the matlab search path as explained above.
-- The script `./scripts/registration/recursiveBBR.py` needs access to the [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis) and should be added to the matlab search path as explained above.
-- The script `./scripts/processing/do_hmri.m` needs an installation of the [hMRI toolbox](https://hmri-group.github.io/hMRI-toolbox/). This is an SPM toolbox and has to be installed within SPM12.
-- The script `./scripts/processing/vasa_calibration.m` needs an installation of the [VASA toolbox](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5573956/). This is an SPM toolbox and has to be installed within SPM12.
-- The script `./scripts/processing/alff.py` needs an installation of the [PhysIO toolbox](https://www.nitrc.org/projects/physio/). This is an SPM toolbox and has to be installed within SPM12.
+- The script `./scripts/processing/TDM.m` needs access to the toolboxes [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM). These toolboxes should be added to the matlab search path as explained above.
+- The script `./scripts/registration/recursiveBBR.py` needs access to the [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis) toolbox. This toolbox should be added to the matlab search path as explained above.
+- The script `./scripts/processing/do_hmri.m` needs an installation of the [hMRI toolbox](https://hmri-group.github.io/hMRI-toolbox/). This toolbox needs to be installed as SPM toolbox.
+- The script `./scripts/processing/vasa_calibration.m` needs an installation of the [VASA toolbox](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5573956/). This toolbox needs to be installed as SPM toolbox.
+- The script `./scripts/processing/alff.py` needs an installation of the [PhysIO toolbox](https://www.nitrc.org/projects/physio/). This toolbox needs to be installed as SPM toolbox.
 6. The scripts `./scripts/preprocessing/gnl_undistortion.py` and `./scripts/preprocessing/gnl_undistortion_time.py` need an installation of [gradunwarp](https://github.com/Washington-University/gradunwarp).
 
 ## Contact
