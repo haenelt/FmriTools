@@ -8,7 +8,7 @@ function bias_field_correction(filename)
 
 % created by Daniel Haenelt
 % Date created: 01-11-2018             
-% Last modified: 12-10-2020
+% Last modified: 07-01-2021
 
 % get SPM12 root directory from matlab search path
 pathSPM = what('spm12').path;
@@ -46,7 +46,7 @@ matlabbatch{1}.spm.spatial.preproc.tissue(6).tpm = {fullfile(pathSPM, 'tpm', 'TP
 matlabbatch{1}.spm.spatial.preproc.tissue(6).ngaus = 2;
 matlabbatch{1}.spm.spatial.preproc.tissue(6).native = [0 0];
 matlabbatch{1}.spm.spatial.preproc.tissue(6).warped = [0 0];
-matlabbatch{1}.spm.spatial.preproc.warp.reg = [0 0.001 0.5 0.05 0.2];
+matlabbatch{1}.spm.spatial.preproc.warp.reg = [0.0 0.001 0.5 0.05 0.2];
 matlabbatch{1}.spm.spatial.preproc.warp.affreg = 'mni';
 matlabbatch{1}.spm.spatial.preproc.warp.samp = 2.0;
 matlabbatch{1}.spm.spatial.preproc.warp.write = [0 0];
