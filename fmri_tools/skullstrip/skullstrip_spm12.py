@@ -7,9 +7,10 @@ import shutil
 # external inputs
 import nibabel as nb
 from nipype.interfaces.spm import NewSegment
+from nipype.interfaces.matlab import MatlabCommand
 
 
-def skullstrip_spm12(filename, path_output):
+def skullstrip_spm12(filename, pathSPM12, path_output):
     """ Skullstrip SPM12
 
     The computation of the skullstrip mask is done on the PD-weighted INV2 
@@ -36,7 +37,10 @@ def skullstrip_spm12(filename, path_output):
     Last modified: 12-10-2020
     
     """
-          
+       
+    # set matlab path to SPM12 folder
+    MatlabCommand.set_default_paths(pathSPM12)
+    
     # parameters
     csf_max = 0.1 # c3 tissue class threshold.
     bone_max = 0.1 # c4 tissue class threshold.
