@@ -1,18 +1,27 @@
-function mask_array = skullstrip_epi(input, roi_size, scale, nerode, ndilate, savemask)
-% Skullstrip input volume by defining an intensity threshold from the inner 
-% of the brain volume. From a defined mid-point, a brain mask is grown 
-% inside the brain. A binary filling holes algorithm is applied. To reduce 
+function [mask_array] = skullstrip_epi(input, roi_size, scale, nerode, ...
+    ndilate, savemask)
+% Skull stripping epi
+%
+% [mask_array] = skullstrip_epi(input, roi_size, scale, nerode, ...
+%    ndilate, savemask)
+%
+% Inputs:
+%   input      - input file.
+%   roi_size   - size of cubic roi for image intensity threshold
+%   scale      - scale image intensity threshold
+%   nerode     - number of eroding iterations
+%   ndilate    - number of dilating iterations
+%   savemask   - save mask time series (boolean).
+%   cleanup    - delete intermediate files after running.
+% Outputs:
+%   mask_array - array containing binary mask.
+%
+% Apply a skull strip by defining an intensity threshold from the inner of 
+% the brain volume. From a defined mid-point, a brain mask is grown inside 
+% the brain. A binary filling holes algorithm is applied. To reduce 
 % remaining skull within the brain mask, the mask is eroded and dilated 
 % several times.    
-% Inputs:
-%   *input: input file.
-%   *roi_size: size of cubic roi for image intensity threshold
-%   *scale: scale image intensity threshold
-%   *nerode: number of eroding iterations
-%   *ndilate: number of dilating iterations
-%   *savemask: save mask time series (boolean).
-%   *cleanup: delete intermediate files after running.
-%    
+
 % created by Daniel Haenelt
 % Date created: 06-11-2018             
 % Last modified: 25-02-2019

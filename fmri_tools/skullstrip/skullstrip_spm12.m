@@ -1,9 +1,16 @@
 function skullstrip_spm12(filename, path_output)
-% Skullstrip SPM12.
+% Skull stripping with SPM12
+% 
+% skullstrip_spm12(filename, path_output)
+% 
+% Inputs:
+%   filename    - filename of input volume. 
+%   path_output - path where output is saved.
 %
-% The computation of the skullstrip mask is done on the PD-weighted INV2 
-% image. According to S. Kashyap, this shows the best results. Outputs are 
-% written in a subfolder of the given output path.    
+% The computation of the skull strip mask should be done on the PD-weighted 
+% (INV2) image of the MP2RAGE sequence. According to S. Kashyap, this shows 
+% the best results. Outputs are written in a subfolder of the given output 
+% path.    
 
 % created by Daniel Haenelt
 % Date created: 01-11-2018             

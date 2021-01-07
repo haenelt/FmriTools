@@ -1,12 +1,16 @@
 function lowpass_filter(input, TR, cutoff_lowpass, order)
-
+% Lowpass filter
+%
+% lowpass_filter(input, TR, cutoff_lowpass, order)
+%
+% Inputs:
+%   input          - file name of time series.
+%   TR             - repetition time in s.
+%   cutoff_lowpass - lowpass 1/cutoff frequency in Hz.
+%   order          - order of butterworth filter.
+%
 % This function computes a buterworth lowpass filter and applied it to a
 % functional time series. The output gets a prefix l to the file name.
-% Inputs:
-    % input: file name of time series.
-    % TR: repetition time in s.
-    % cutoff_lowpass: lowpass 1/cutoff frequency in Hz.
-    % order: order of butterworth filter.
 
 % created by Daniel Haenelt
 % Date created: 05-08-2019

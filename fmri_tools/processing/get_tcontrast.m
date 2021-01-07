@@ -1,6 +1,19 @@
-function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_derivative, ...
-    regressor_nointerest)
-
+function get_tcontrast(cond_input, path_contrast, name_output, ...
+    name_sess, hrf_derivative, regressor_nointerest)
+% Get t-contrast
+%
+% get_tcontrast(cond_input, path_contrast, name_output, ...
+%    name_sess, hrf_derivative, regressor_nointerest)
+%
+% Inputs:
+%   cond_input           - cell array containing filenames of condition 
+%                          files.
+%   path_contrast        - path where spm.mat is saved.
+%   name_output          - name of output (optional).
+%   name_sess            - name of session (optional).
+%   hrf_derivative       - use hrf temporal derivatives (boolean).
+%   regressor_nointerest - include number of regressors of no interest.
+%
 % This function calculates contrasts (con, spmT) and percent signal changes
 % (psc) from a general linear model using spm. Only 2-4 experimental
 % conditions are supported in a block design. Not all contrast permutations
@@ -10,14 +23,6 @@ function get_tcontrast(cond_input, path_contrast, name_output, name_sess, hrf_de
 % design matrix. To mitigate latency-induced amplitude bias in the
 % resulting effect sizes, percent signal changes are also computed based on
 % the method by Calhoun et al. 2004.
-
-% Inputs:
-    % cond_input: cell array containing filenames of condition files.
-    % path_contrast: path where spm.mat is saved.
-    % name_output: name of output (optional).
-    % name_sess: name of session (optional).
-    % hrf_derivative: use hrf temporal derivatives (boolean).
-    % regressor_nointerest: include number of regressors of no interest.
     
 % created by Daniel Haenelt
 % Date created: 13-03-2020

@@ -1,5 +1,17 @@
-function multipol_phase(input_real, input_imag, freq, name_sess, path_output)
-
+function multipol_phase(input_real, input_imag, freq, name_sess, ...
+    path_output)
+% Multipol phase
+%
+% multipol_phase(input_real, input_imag, freq, name_sess, ...
+%    path_output)
+%
+% Inputs:
+%   input_real  - real part of fft.
+%   input_imag  - imaginary part of.
+%   freq        - number of cycles.
+%   name_sess   - name of sessiincluded in the basename.
+%   path_output - path where output is saved.
+%
 % This function takes the real and imaginary parts from the time series
 % fft. Similar to Dumoulin et al., 2017, we compute an coherence estimate
 % of the voxel respose at stimulus frequency by taking the amplitude and 
@@ -9,12 +21,6 @@ function multipol_phase(input_real, input_imag, freq, name_sess, path_output)
 % Based on this, the voxel population can be thresholded to investigate
 % different subpopulations. To run this function, the number of runs has to
 % be specified to choose an appropriate results folder location.
-% Inputs:
-    % input_real: real part of fft.
-    % input_imag: imaginary part of.
-    % freq: number of cycles.
-    % name_sess: name of sessiincluded in the basename.
-    % path_output: path where output is saved.
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019

@@ -1,16 +1,20 @@
 function retino_fourier(input, freq, fix, period, TR)
-
+% Retino fourier
+%
+% retino_fourier(input, freq, fix, period, TR)
+%
+% Inputs:
+%   input  - file name of baseline corrected time series.
+%   freq   - number of cycles.
+%   fix    - pre and post run baseline block in s.
+%   period - cycle period in s
+%   TR     - repetition time in s.
+%
 % This function computes a fourier analysis for retinotopical data. Two
 % time series are saved, namely the real and imaginary part of the Fourier
 % transform. The data is thresholded by only including voxels above the 
 % mean intensity. This is a very crude method for non-brain voxel
 % exclusion. The output data gets the prefix r.
-% Inputs:
-    % input: file name of baseline corrected time series.
-    % freq: number of cycles.
-    % fix: pre and post run baseline block in s.
-    % period: cycle period in s
-    % TR: repetition time in s.
 
 % created by Daniel Haenelt
 % Date created: 08-12-2018

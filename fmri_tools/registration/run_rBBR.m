@@ -1,10 +1,15 @@
 function run_rBBR(input)
+% Run rBBR
+%
+% run_rBBR(input)
+%
+% Inputs:
+%   input - mat-file with all input variables.
+%
 % This function calls the recursive BBR function in the OpenFmriAnalysis
 % toolbox. From an loaded mat-file, all input parameters are ordered in a
 % cell structure, i.e. all the needed variables should be contained in the
 % input file.
-% Inputs:
-    % input: mat-file with all input variables.
 
 % created by Daniel Haenelt
 % Date created: 12-12-2019

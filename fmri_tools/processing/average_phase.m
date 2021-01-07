@@ -1,16 +1,22 @@
-function average_phase(pos_real, pos_imag, neg_real, neg_imag, name_sess, freq)
-
+function average_phase(pos_real, pos_imag, neg_real, neg_imag, ...
+    name_sess, freq)
+% Average phase
+%
+% average_phase(pos_real, pos_imag, neg_real, neg_imag, ...
+%    name_sess, freq)
+%
+% Inputs:
+%   pos_real  - real part of fft in positive direction.
+%   pos_imag  - imaginary part of fft in positive direction.
+%   neg_real  - real part of fft in negative direction.
+%   neg_imag  - imaginary part of fft in negative direction.
+%   name_sess - name of session.
+%   freq      - number of cycles.
+%
 % This function takes the real and imaginary parts from the time series fft
 % of stimuli pairs in positive and negative directions. Both directions are
 % averaged to compensate for the hemodynamic lag. Output files are saved in
 % a created output folder with prefix s.
-% Inputs:
-    % pos_real: real part of fft in positive direction.
-    % pos_imag: imaginary part of fft in positive direction.
-    % neg_real: real part of fft in negative direction.
-    % neg_imag: imaginary part of fft in negative direction.
-    % name_sess: name of session.
-    % freq: number of cycles.
 
 % created by Daniel Haenelt
 % Date created: 08-12-2018
