@@ -1,14 +1,17 @@
 % hMRI processing
 
 % Computation of quantitative maps from acquired MPMs. The script is
-% based on the batch GUI. All input files are defined as cell arrays. The 
-% frame number in the filename string is omitted since 1 (3d volume) is the 
-% default parameter for file selections. The script consists of the 
-% following steps: (1) 7T configurations are loaded. (2) Images are 
-% oriented to align with MNI space. Input for registration is the first pd
-% echo. The registration is then applied to all other images (pdw, t1w, b1,
-% b0). (3) Quantitative maps are created. (4) Resulting maps are reoriented
-% back to native space. (5) Maps are scaled.
+% based on the batch GUI of the SPM12 toolbox. To run the script, both the
+% hMRI and SPM12 have to be installed. The script gets the root directory 
+% of the SPM12 toolbox from the matlab search path. All input files are 
+% defined as cell arrays. The frame number in the filename string is 
+% omitted since 1 (3d volume) is the default parameter for file selections. 
+% The script consists of the following steps: (1) 7T configurations are 
+% loaded. (2) Images are oriented to align with MNI space. Input for 
+% registration is the first pd echo. The registration is then applied to 
+% all other images (pdw, t1w, b1, b0). (3) Quantitative maps are created. 
+% (4) Resulting maps are reoriented back to native space. (5) Maps are 
+% scaled.
 
 % created by Daniel Haenelt
 % Date created: 11-09-2020
