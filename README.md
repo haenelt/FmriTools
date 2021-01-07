@@ -58,11 +58,10 @@ addpath(genpath(path_spm12));
 
 % add further toolboxes
 addpath(genpath(path_knkutils));
-addpath(genpath(path_glmdnoise));
+addpath(genpath(path_glmdenoise));
 addpath(genpath(path_tdm));
 addpath(genpath(path_bbr));
 
-path = {};
 clear path_fmri path_spm12 path_knkutils ...
     path_glmdenoise path_tdm path_bbr;
 %-----------------------------------------------------%

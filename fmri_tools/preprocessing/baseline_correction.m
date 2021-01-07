@@ -7,6 +7,7 @@ function baseline_correction(input, TR, cutoff_highpass, prefix)
 %   input           - file name of time series.
 %   TR              - repetition time in s.
 %   cutoff_highpass - highpass 1/cutoff frequency in Hz.
+%   prefix          - prefix of output filename.
 %
 % This function computes a baseline correction of a functional time series.
 % The output time series gets a prefix b to the file name.
