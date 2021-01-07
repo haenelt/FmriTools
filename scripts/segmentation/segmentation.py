@@ -21,7 +21,6 @@ from fmri_tools.surface.get_curvature import get_curvature
 from fmri_tools.surface.smooth_surface import smooth_surface
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 from fmri_tools.surface.surface_flattening import surface_flattening
-from fmri_tools.skullstrip.skullstrip_spm12 import skullstrip_spm12
 from fmri_tools.utils.volume_threshold import volume_threshold
 from fmri_tools.utils.multiply_images import multiply_images
 from fmri_tools.mapping.morph2dense import morph2dense
@@ -143,7 +142,10 @@ if part == 1:
     
     # skullstrip anatomy
     print("Skullstrip INV2")
-    skullstrip_spm12(fileINV2, path)
+    os.system("matlab" + \
+              " -nodisplay -nodesktop -r " + \
+              "\"skullstrip_spm12(\'{0}\', \'{1}\'); exit;\"". \
+              format(fileINV2, path))
     
     # bring skullstrip_mask in conformed space (mri_vol2vol, NN)
     transmask = ApplyVolTransform()

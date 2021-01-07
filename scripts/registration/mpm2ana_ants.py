@@ -12,7 +12,6 @@ from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 # local inputs
 from fmri_tools.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 from fmri_tools.registration.get_scanner_transform import get_scanner_transform
-from fmri_tools.skullstrip.skullstrip_spm12 import skullstrip_spm12
 
 
 """
@@ -35,7 +34,7 @@ The script needs an installation of ants.
 
 created by Daniel Haenelt
 Date created: 31-01-2019
-Last modified: 13-10-2020
+Last modified: 07-01-2021
 """
 
 # input files
@@ -97,10 +96,16 @@ nb.save(output,os.path.join(path_mpm,"mpm_pd.nii"))
 
 # skull stripping
 print("skullstrip mp2rage")
-skullstrip_spm12(file_mp2rage_pd, path_mp2rage)
+os.system("matlab" + \
+          " -nodisplay -nodesktop -r " + \
+          "\"skullstrip_spm12(\'{0}\', \'{1}\'); exit;\"". \
+          format(file_mp2rage_pd, path_mp2rage))
 
 print("skullstrip mpm")
-skullstrip_spm12(os.path.join(path_mpm,"mpm_pd.nii"), path_mpm)
+os.system("matlab" + \
+          " -nodisplay -nodesktop -r " + \
+          "\"skullstrip_spm12(\'{0}\', \'{1}\'); exit;\"". \
+          format(os.path.join(path_mpm,"mpm_pd.nii"), path_mpm))
 
 # prepare T1-map (MPM)
 print("prepare mpm (t1)")
