@@ -1,3 +1,7 @@
+# matlab backup files
+*.asv
+*.m~
+
 # compiled bytecode
 *.pyc
 
