@@ -5,9 +5,10 @@ import os
 
 # external inputs
 from nipype.interfaces.spm import NewSegment
+from nipype.interfaces.matlab import MatlabCommand
 
 
-def bias_field_correction(filename):
+def bias_field_correction(filename, pathSPM12):
     """ Bias field correction
 
     Renzo recommended to perform a bias field correction using SPM12 before 
@@ -19,6 +20,8 @@ def bias_field_correction(filename):
     ----------
     filename : str
         Path of input image.
+    pathSPM12 : str
+        Path to SPM12 toolbox.
 
     Returns
     -------
@@ -32,6 +35,9 @@ def bias_field_correction(filename):
     
     """
        
+    # set matlab path to SPM12 folder
+    MatlabCommand.set_default_paths(pathSPM12)
+
     # get path of filename
     path = os.path.dirname(filename)
 
