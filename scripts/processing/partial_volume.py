@@ -12,7 +12,7 @@ from nighres.surface import probability_to_levelset
 from nipype.interfaces import afni
 
 # local inputs
-from fmri_tools.processing import estimate_pv
+from fmri_tools.processing.estimate_pv import estimate_pv
 
 
 """

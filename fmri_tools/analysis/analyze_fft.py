@@ -5,7 +5,7 @@ import numpy as np
 from scipy.signal import find_peaks
 
 # local inputs
-from fmri_tools.utils import get_fft
+from fmri_tools.utils.get_fft import get_fft
     
     
 def analyze_fft(input, fovx, fovy, xv, yv, f_cut=0.05, p_min=None, p_max=None, 

@@ -5,7 +5,7 @@ import os
 from os.path import join, basename
 
 # local inputs
-from fmri_tools.surface import deform_surface
+from fmri_tools.surface.deform_surface import deform_surface
 
 
 """

@@ -12,12 +12,10 @@ from nibabel.freesurfer.io import read_geometry
 from nipype.interfaces.freesurfer import SampleToSurface
 
 # local inputs
-from fmri_tools.io import (
-    get_filename,
-    read_mgh,
-    write_mgh,
-    mgh2nii
-    )
+from fmri_tools.io.get_filename import get_filename
+from fmri_tools.io.read_mgh import read_mgh
+from fmri_tools.io.write_mgh import write_mgh
+from fmri_tools.io.mgh2nii import mgh2nii
 
 
 def map2surface(input_surf, input_vol, write_output=False, path_output="", 

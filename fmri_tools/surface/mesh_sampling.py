@@ -12,12 +12,12 @@ import nibabel as nb
 from sh import gunzip
 
 # local inputs
-from fmri_tools.io import get_filename
-from fmri_tools.io import write_mgh
-from fmri_tools.cmap import generate_coordinate_mapping
-from fmri_tools.utils import resample_volume
-from fmri_tools.surface import deform_surface
-from fmri_tools.mapping import map2surface
+from fmri_tools.io.get_filename import get_filename
+from fmri_tools.io.write_mgh import write_mgh
+from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
+from fmri_tools.utils.resample_volume import resample_volume
+from fmri_tools.surface.deform_surface import deform_surface
+from fmri_tools.mapping.map2surface import map2surface
 
 
 def _rescale_cmap(file_cmap, dim, dim_upsampled):

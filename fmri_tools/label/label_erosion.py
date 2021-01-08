@@ -4,7 +4,7 @@
 import numpy as np
 
 # local inputs
-from fmri_tools.label import label_border
+from fmri_tools.label.label_border import label_border
 
 
 def label_erosion(arr_label, adjm, n):

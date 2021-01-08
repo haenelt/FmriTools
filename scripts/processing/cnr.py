@@ -10,7 +10,7 @@ import nibabel as nb
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
-from fmri_tools.processing import get_onset_vols
+from fmri_tools.processing.get_onset_vols import get_onset_vols
 
 
 """

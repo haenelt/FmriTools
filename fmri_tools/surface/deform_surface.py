@@ -17,8 +17,8 @@ from gbb.utils import vox2ras
 from gbb.utils import remove_vertex
 
 # local inputs
-from fmri_tools.io import get_filename
-from fmri_tools.io import mgh2nii
+from fmri_tools.io.get_filename import get_filename
+from fmri_tools.io.mgh2nii import mgh2nii
 
 
 def deform_surface(input_surf, input_orig, input_deform, input_target, 

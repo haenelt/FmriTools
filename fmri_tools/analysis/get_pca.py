@@ -4,7 +4,7 @@
 import numpy as np
 
 # local inputs
-from fmri_tools.utils import get_fft
+from fmri_tools.utils.get_fft import get_fft
 
 
 def get_pca(input, n_iter=10, fft_threshold=0.25):

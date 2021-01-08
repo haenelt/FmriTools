@@ -12,8 +12,8 @@ from nighres.laminar import profile_sampling
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
-from fmri_tools.cmap import generate_coordinate_mapping
-from fmri_tools.utils import resample_volume
+from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
+from fmri_tools.utils.resample_volume import resample_volume
 
 
 def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):

@@ -4,7 +4,7 @@
 import os
 
 # local inputs
-from fmri_tools.mapping import map2surface
+from fmri_tools.mapping.map2surface import map2surface
 
 
 """

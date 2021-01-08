@@ -9,8 +9,8 @@ import nibabel as nb
 from nipype.interfaces import fsl
 
 # local inputs
-from fmri_tools.skullstrip.skullstrip_epi import skullstrip_epi
 from fmri_tools.io.get_filename import get_filename
+from fmri_tools.skullstrip.skullstrip_epi import skullstrip_epi
 from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from fmri_tools.surface.deform_surface import deform_surface
 

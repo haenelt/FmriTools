@@ -16,7 +16,7 @@ from gbb.utils.vox2ras import vox2ras
 from fmri_tools.surface.smooth_surface import smooth_surface
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 from fmri_tools.surface.get_curvature import get_curvature
-from fmri_tools.surface import inflate_surf_mesh
+from fmri_tools.surface.inflate_surf_mesh import inflate_surf_mesh
 
 
 def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, 

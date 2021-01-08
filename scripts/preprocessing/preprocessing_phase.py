@@ -10,9 +10,10 @@ from nipype.interfaces import afni
 from nighres.intensity import phase_unwrapping
 
 # local inputs
-from fmri_tools.io import get_filename
-from fmri_tools.utils import get_mean, get_std
-from fmri_tools.preprocessing import deweight_mask
+from fmri_tools.io.get_filename import get_filename
+from fmri_tools.utils.get_mean import get_mean
+from fmri_tools.utils.get_std import get_std
+from fmri_tools.preprocessing.deweight_mask import deweight_mask
 
 
 """

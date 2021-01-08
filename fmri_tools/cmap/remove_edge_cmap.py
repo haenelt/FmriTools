@@ -8,7 +8,7 @@ import numpy as np
 import nibabel as nb
 
 # local inputs
-from fmri_tools.io import get_filename
+from fmri_tools.io.get_filename import get_filename
     
 
 def remove_edge_cmap(input_cmap, edge_threshold=5, min_threshold=5):

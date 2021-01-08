@@ -12,8 +12,8 @@ from scipy.ndimage.morphology import binary_dilation
 from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 
 # local inputs
-from fmri_tools.registration.get_scanner_transform import get_scanner_transform
 from fmri_tools.io.get_filename import get_filename
+from fmri_tools.registration.get_scanner_transform import get_scanner_transform
 from fmri_tools.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 
 

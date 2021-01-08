@@ -8,10 +8,10 @@ import numpy as np
 from nibabel.freesurfer.io import read_geometry, write_geometry
 
 # local inputs
-from fmri_tools.layer import get_meshlines
-from fmri_tools.surface import match_vertex_number
-from fmri_tools.surface import inflate_surf_mesh
-from fmri_tools.surface import extract_main_component
+from fmri_tools.layer.get_meshlines import get_meshlines
+from fmri_tools.surface.match_vertex_number import match_vertex_number
+from fmri_tools.surface.inflate_surf_mesh import inflate_surf_mesh
+from fmri_tools.surface.extract_main_component import extract_main_component
 
 
 """

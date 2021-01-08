@@ -12,7 +12,7 @@ from nighres.registration import apply_coordinate_mappings
 # local inputs
 from fmri_tools.utils.get_mean4d import get_mean4d
 from fmri_tools.processing.demean_time_series import demean_time_series
-from fmri_tools.mapping import map2surface
+from fmri_tools.mapping.map2surface import map2surface
 
 
 """

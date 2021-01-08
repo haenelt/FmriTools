@@ -15,8 +15,8 @@ from gbb.utils import vox2ras
 from gbb.io import get_filename
 
 # local inputs
-from fmri_tools.surface import smooth_surface
-from fmri_tools.layer import get_meshlines
+from fmri_tools.surface.smooth_surface import smooth_surface
+from fmri_tools.layer.get_meshlines import get_meshlines
 
 
 def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer, 

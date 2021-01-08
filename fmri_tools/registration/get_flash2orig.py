@@ -11,7 +11,7 @@ from nipype.interfaces.freesurfer.preprocess import MRIConvert
 from nighres.registration import apply_coordinate_mappings
 
 # local inputs
-from fmri_tools.cmap import generate_coordinate_mapping
+from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from fmri_tools.registration.get_scanner_transform import get_scanner_transform
 
 

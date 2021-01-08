@@ -8,7 +8,7 @@ import numpy as np
 from scipy.signal import find_peaks
 
 # local inputs
-from fmri_tools.utils import get_acorr
+from fmri_tools.utils.get_acorr import get_acorr
     
     
 def analyze_acorr(input, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, 

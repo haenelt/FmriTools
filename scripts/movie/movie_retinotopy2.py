@@ -13,7 +13,8 @@ from nighres.registration import apply_coordinate_mappings
 
 # local inputs
 from fmri_tools.processing.demean_time_series import demean_time_series
-from fmri_tools.mapping import map2surface, map2stack
+from fmri_tools.mapping.map2surface import map2surface
+from fmri_tools.mapping.map2stack import map2stack
 
 
 """

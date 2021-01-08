@@ -8,7 +8,7 @@ from nighres.registration import apply_coordinate_mappings
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
-from fmri_tools.mapping import map2surface
+from fmri_tools.mapping.map2surface import map2surface
 
 
 """

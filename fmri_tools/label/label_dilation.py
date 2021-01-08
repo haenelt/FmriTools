@@ -5,7 +5,7 @@ import numpy as np
 from gbb.neighbor import nn_2d
 
 # local inputs
-from fmri_tools.label import label_border
+from fmri_tools.label.label_border import label_border
 
 
 def label_dilation(arr_label, adjm, n):

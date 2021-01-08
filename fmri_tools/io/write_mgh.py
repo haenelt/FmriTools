@@ -9,7 +9,7 @@ import nibabel as nb
 from nibabel.freesurfer.mghformat import MGHHeader
 
 # local inputs
-from fmri_tools.io import get_filename
+from fmri_tools.io.get_filename import get_filename
 
 
 def write_mgh(file_out, arr, affine=None, header=None):

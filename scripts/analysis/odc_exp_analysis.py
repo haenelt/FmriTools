@@ -8,9 +8,9 @@ import numpy as np
 import nibabel as nb
 
 # local inputs
-from fmri_tools.analysis import get_pca
-from fmri_tools.analysis import analyze_fft
-from fmri_tools.analysis import analyze_acorr
+from fmri_tools.analysis.get_pca import get_pca
+from fmri_tools.analysis.analyze_fft import analyze_fft
+from fmri_tools.analysis.analyze_acorr import analyze_acorr
 
 
 """

@@ -5,8 +5,8 @@ import numpy as np
 from nibabel.freesurfer.mghformat import MGHHeader
 
 # local input
-from fmri_tools.io import read_hdf5
-from fmri_tools.io import write_mgh
+from fmri_tools.io.read_hdf5 import read_hdf5
+from fmri_tools.io.write_mgh import write_mgh
 
 
 def extract_mgh_from_hdf5(file_in, file_out, t, n):

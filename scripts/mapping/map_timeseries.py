@@ -14,10 +14,10 @@ from nibabel.freesurfer.io import read_geometry
 from joblib import Parallel, delayed
 
 # local inputs
-from fmri_tools.io import get_filename
-from fmri_tools.io import write_hdf5
-from fmri_tools.surface import deform_surface
-from fmri_tools.mapping import map2surface
+from fmri_tools.io.get_filename import get_filename
+from fmri_tools.io.write_hdf5 import write_hdf5
+from fmri_tools.surface.deform_surface import deform_surface
+from fmri_tools.mapping.map2surface import map2surface
 
 
 """
