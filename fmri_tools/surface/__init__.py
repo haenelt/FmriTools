@@ -18,6 +18,7 @@ from .surface_flattening import surface_flattening
 from .upsample_surf_mesh import upsample_surf_mesh
 from .extract_main_component import extract_main_component
 from .gradient import gradient
+from .intracortical_smoothing import intracortical_smoothing
 
 
 """
