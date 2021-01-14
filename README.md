@@ -4,10 +4,10 @@ FmriTools
 [![Python](https://img.shields.io/badge/Python-3.6%7C3.7%7C3.8-blue)](https://github.com/haenelt/GBB)
 [![License](https://img.shields.io/badge/license-GPL--3.0-orange)](https://github.com/haenelt/GBB)
 
-Python package for processing and analyzing high-resolution fMRI data. Various scripts are included which I currently use for data processing. Please be aware that all functions are written for my own convenience and are under contiuous development.
+Python package for processing and analyzing high-resolution fMRI data. Various scripts are included which I currently use for data processing. Please be aware that all functions are written for my own convenience and are under continuous development.
 
 ## Installation
-I recommend to use `Anaconda` to create a new python environment with `Python >= 3.6`. Then, clone this repository and run the following line from the directory in which the repository was cloned with the environment being activated:
+I recommend to use `Miniconda` to create a new python environment with `Python >= 3.6`. Then, clone this repository and run the following line from the directory in which the repository was cloned with the environment being activated:
 
 ```
 python setup.py install
@@ -26,7 +26,7 @@ The package cannot be import without the installation of two further modules:
 `pip install pycortex`<br>
 `pip install nighres`
 
-The package contains some matlab functions. Please add the following code to the matalab `startup.m` script. This includes the package to the matlab search path. Of course you have to specify the paths there. Next to the root directory of this package, you should add the root directories of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/), [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM) and [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis). SPM12 is used throughout the package. The other toolboxes are used by single scripts and might be ignored.
+The package contains some matlab functions. Please add the following code to the matlab `startup.m` script. This includes the package to the matlab search path. Of course you have to specify the paths there. Next to the root directory of this package, you should add the root directories of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/), [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM) and [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis). SPM12 is used throughout the package. The other toolboxes are used by single scripts and might be ignored.
 
 ```matlab
 %------------ FmriTools ------------------------------%

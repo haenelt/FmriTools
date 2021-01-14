@@ -8,4 +8,4 @@ In the following, I list all necessary steps to install the [gradunwarp toolbox]
 5. change to the cloned gradunwarp repository.
 6. install the repository with `python setup.py install` while the conda environment is still activated.
 7. `wget "https://github.com/Washington-University/HCPpipelines/raw/stable/global/scripts/GradientDistortionUnwarp.sh"`.
-- change line 89 to `"gradient_unwarp.py ${name_input}_vol1.nii.gz trilinear.nii.gz siemens -g $file_coeff -n --numpoints 128 --interp_order 2"`, i.e., change arguments to be more accurate for higher resolution data.
+- N.B. call the module `gradient_unwarp.py` with arguments `--numpoints 128` and `--interp_order 2` to have good accuracy when working with high resolution data.
