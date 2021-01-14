@@ -75,7 +75,7 @@ Additionally, [FreeSurfer](https://surfer.nmr.mgh.harvard.edu/), [FSL](https://f
 - The script `./scripts/processing/do_hmri.m` needs an installation of the [hMRI toolbox](https://hmri-group.github.io/hMRI-toolbox/). This toolbox needs to be installed as SPM toolbox.
 - The script `./scripts/processing/vasa_calibration.m` needs an installation of the [VASA toolbox](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5573956/). This toolbox needs to be installed as SPM toolbox.
 - The script `./scripts/processing/alff.py` needs an installation of the [PhysIO toolbox](https://www.nitrc.org/projects/physio/). This toolbox needs to be installed as SPM toolbox.
-6. The scripts `./scripts/preprocessing/gnl_undistortion.py` and `./scripts/preprocessing/gnl_undistortion_time.py` need an installation of [gradunwarp](https://github.com/Washington-University/gradunwarp).
+6. The scripts `./scripts/preprocessing/gnl_undistortion.py` and `./scripts/preprocessing/gnl_undistortion_time.py` need an installation of [gradunwarp](https://github.com/Washington-University/gradunwarp). You can find a summary of how I installed the toolbox [here](./scripts/preprocessing/README.md).
 
 ## Contact
 If you have questions, problems or suggestions regarding the FmriTools package, please feel free to contact [me](mailto:daniel.haenelt@gmail.com).
