@@ -28,8 +28,6 @@ array is not empty, outlier volumes are discarded from the analysis. Optionally,
 the time series can be filtered by a lowpass and a highpass filter. The input 
 images should be in nifti format.
 
-The script needs an installation of afni.
-
 created by Daniel Haenelt
 Date created: 06-12-2018         
 Last modified: 13-10-2020
@@ -173,7 +171,7 @@ for i in range(len(img_input)):
 mean_percent_signal1 /= len(img_input)
 mean_percent_signal2 /= len(img_input)
 
-# threshold tsnr
+# threshold
 if percent_threshold:
     mean_percent_signal1[mean_percent_signal1 > percent_threshold] = percent_threshold
     mean_percent_signal1[mean_percent_signal1 < -percent_threshold] = -percent_threshold
