@@ -9,18 +9,19 @@ function multipol_phase(input_real, input_imag, freq, name_sess, ...
 %   input_real  - real part of fft.
 %   input_imag  - imaginary part of.
 %   freq        - number of cycles.
-%   name_sess   - name of sessiincluded in the basename.
+%   name_sess   - name of session included in the basename.
 %   path_output - path where output is saved.
 %
 % This function takes the real and imaginary parts from the time series
-% fft. Similar to Dumoulin et al., 2017, we compute an coherence estimate
-% of the voxel respose at stimulus frequency by taking the amplitude and 
-% dividing it by the root mean square of the one-sided power spectrum.
-% Other measures as F-statistics are computed by taking the amplitude and 
-% dividing it by the mean amplitude of the rest of the frequency spectrum
-% Based on this, the voxel population can be thresholded to investigate
-% different subpopulations. To run this function, the number of runs has to
-% be specified to choose an appropriate results folder location.
+% fft and computes several metrics. Similar to Dumoulin et al. 2017, we 
+% compute a coherence estimate of the voxel respose at stimulus frequency 
+% by taking the amplitude and dividing it by the root mean square of the 
+% one-sided power spectrum. Other measures as F-statistics are computed by 
+% taking the amplitude and dividing it by the mean amplitude of the rest of 
+% the frequency spectrum. Based on this, the voxel population can be 
+% thresholded to investigate different subpopulations. To run this 
+% function, the number of runs has to be specified to choose an appropriate 
+% results folder location.
 
 % created by Daniel Haenelt
 % Date created: 04-03-2019
@@ -28,7 +29,7 @@ function multipol_phase(input_real, input_imag, freq, name_sess, ...
 
 % parameters
 % freq_ignored is a vector containing the frequencies that should be
-% ignored when calculating the coherence values.
+% ignored when calculating the denominator.
 freq = floor(freq);
 freq_ignored = [];
 %freq_ignored = [0:1 freq-1 freq freq+1];
@@ -96,7 +97,7 @@ data_real_freq_array = squeeze(data_real_array(:,:,:,freq+1));
 A_array = sqrt(data_real_freq_array.^2+data_imag_freq_array.^2); % amplitude
 F_array = A_array ./ mpw * 100; % F-statistic 
 snr_array = A_array ./ mstd; % SNR
-coherence_array = A_array ./ sumpw;
+coherence_array = A_array ./ sumpw; % coherence
 
 % transform to phases
 pha_array = atan2(data_imag_freq_array,data_real_freq_array)/pi*180; % phase in degrees
