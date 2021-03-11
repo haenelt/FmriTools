@@ -10,7 +10,6 @@ import shutil as sh
 import numpy as np
 import nibabel as nb
 from nibabel.freesurfer.io import write_geometry, read_geometry
-from nibabel.affines import apply_affine
 from nipype.interfaces.freesurfer import SampleToSurface
 from nipype.interfaces.freesurfer import SmoothTessellation
 from gbb.utils import vox2ras
@@ -19,6 +18,7 @@ from gbb.utils import remove_vertex
 # local inputs
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.io.mgh2nii import mgh2nii
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 def deform_surface(input_surf, input_orig, input_deform, input_target, 
@@ -63,7 +63,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     -------
     created by Daniel Haenelt
     Date created: 06-02-2019          
-    Last modified: 25-10-2020
+    Last modified: 11-03-2021
     
     """
     
@@ -126,7 +126,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
 
     # apply vox2ras transformation to coordinate mappings
     cmap_array = cmap_img.get_fdata()
-    cmap_array = apply_affine(vox2ras_tkr,cmap_array)
+    cmap_array = apply_affine_chunked(vox2ras_tkr,cmap_array)
 
     components = ["x", "y", "z"]
     vtx_new = np.zeros([len(vtx),3])

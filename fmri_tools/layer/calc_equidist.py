@@ -8,7 +8,6 @@ from collections import Counter
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import read_geometry
 from skimage import measure
 from nighres.surface import probability_to_levelset
@@ -19,6 +18,7 @@ from gbb.utils.vox2ras import vox2ras
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.utils.resample_volume import resample_volume
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
@@ -60,7 +60,7 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
     -------
     created by Daniel Haenelt
     Date created: 31-05-2020
-    Last modified: 17-10-2020   
+    Last modified: 11-03-2021
 
     """
     
@@ -98,8 +98,8 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
     vol = nb.load(res_vol)
     
     # apply ras2vox to coords
-    vtx_white = np.round(apply_affine(ras2vox_tkr, vtx_white)).astype(int)
-    vtx_pial = np.round(apply_affine(ras2vox_tkr, vtx_pial)).astype(int)
+    vtx_white = np.round(apply_affine_chunked(ras2vox_tkr, vtx_white)).astype(int)
+    vtx_pial = np.round(apply_affine_chunked(ras2vox_tkr, vtx_pial)).astype(int)
     
     # surfaces to lines in volume
     white_array = np.zeros(vol.header["dim"][1:4])

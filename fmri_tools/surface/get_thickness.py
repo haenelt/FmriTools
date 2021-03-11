@@ -7,13 +7,13 @@ import shutil as sh
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.affines import apply_affine
 from nighres.laminar import profile_sampling
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from fmri_tools.utils.resample_volume import resample_volume
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
@@ -44,7 +44,7 @@ def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
     -------
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 13-10-2020
+    Last modified: 11-03-2021
     
     """
     
@@ -66,7 +66,7 @@ def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4,0.4,0.4]):
     vox2ras_tkr, _ = vox2ras(os.path.join(path_output, "ref.nii"))
     
     # apply transformation to cmap
-    ras_array = apply_affine(vox2ras_tkr, cmap.get_fdata())
+    ras_array = apply_affine_chunked(vox2ras_tkr, cmap.get_fdata())
     
     # split coordinates into single dimensions
     x_ras = nb.Nifti1Image(ras_array[:,:,:,0], cmap.affine, cmap.header)

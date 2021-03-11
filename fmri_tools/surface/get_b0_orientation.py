@@ -6,13 +6,13 @@ import os
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import read_geometry, write_morph_data
 from gbb.normal import get_normal
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", 
@@ -44,7 +44,7 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="",
     -------
     created by Daniel Haenelt
     Date created: 31-07-2020 
-    Last modified: 13-10-2020
+    Last modified: 11-03-2021
     
     """
     
@@ -64,7 +64,7 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="",
     M = v2s.dot(r2v)
     
     # apply affine transformation
-    vtx = apply_affine(M, vtx)
+    vtx = apply_affine_chunked(M, vtx)
     
     # get surface normals
     n = get_normal(vtx, fac)

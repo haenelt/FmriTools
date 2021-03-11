@@ -7,9 +7,11 @@ import os
 import numpy as np
 import nibabel as nb
 import numpy.linalg as npl
-from nibabel.affines import apply_affine
 from numpy.matlib import repmat
-    
+
+# local inputs
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
+
 
 def get_scanner_transform(input_source, input_target, path_output, 
                           compress_file=False):
@@ -41,7 +43,7 @@ def get_scanner_transform(input_source, input_target, path_output,
     -------
     created by Daniel Haenelt
     Date created: 13-11-2018       
-    Last modified: 12-10-2020
+    Last modified: 11-03-2021
     
     """
     
@@ -83,7 +85,7 @@ def get_scanner_transform(input_source, input_target, path_output,
     coordinate_mapping[:,:,:,2] = Z
     
     # apply transformation to coordinates
-    coordinate_mapping = apply_affine(target2source,coordinate_mapping)
+    coordinate_mapping = apply_affine_chunked(target2source,coordinate_mapping)
     
     # write coordinate map
     target_img.header["dim"][0] = 4

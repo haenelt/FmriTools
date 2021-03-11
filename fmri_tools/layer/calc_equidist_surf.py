@@ -8,7 +8,6 @@ import datetime
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import read_geometry, write_geometry
 from nighres.laminar import profile_meshing
 from gbb.utils import vox2ras
@@ -17,6 +16,7 @@ from gbb.io import get_filename
 # local inputs
 from fmri_tools.surface.smooth_surface import smooth_surface
 from fmri_tools.layer.get_meshlines import get_meshlines
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer, 
@@ -55,7 +55,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     -------
     created by Daniel Haenelt
     Date created: 17-10-2020
-    Last modified: 25-10-2020
+    Last modified: 11-03-2021
 
     """
     
@@ -79,7 +79,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     vox2ras_tkr, ras2vox_tkr = vox2ras(input_boundaries)
 
     # transform vertices to voxel space
-    vtx = apply_affine(ras2vox_tkr, vtx)
+    vtx = apply_affine_chunked(ras2vox_tkr, vtx)
     
     # cut volume edges
     if n_crop:
@@ -109,8 +109,8 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
         vtx_white += n_crop
     
     # transform vertices to ras space
-    vtx_white = apply_affine(vox2ras_tkr, vtx_white)
-    vtx_pial = apply_affine(vox2ras_tkr, vtx_pial)
+    vtx_white = apply_affine_chunked(vox2ras_tkr, vtx_white)
+    vtx_pial = apply_affine_chunked(vox2ras_tkr, vtx_pial)
     
     # write temporary output
     tmp1 = np.random.randint(0, 10, 5)

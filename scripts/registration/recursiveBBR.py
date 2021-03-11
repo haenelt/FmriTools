@@ -7,9 +7,11 @@ from os.path import join, exists
 
 # external inputs
 from scipy.io import loadmat, savemat
-from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import write_geometry
 from gbb.utils.vox2ras import vox2ras
+
+# local inputs
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 """
@@ -30,7 +32,7 @@ The script needs an installation of freesurfer.
 
 created by Daniel Haenelt
 Date created: 12-12-2019             
-Last modified: 13-10-2020  
+Last modified: 11-03-2021
 """
 
 # input surface
@@ -103,8 +105,8 @@ data = loadmat(in_surf_mat_ras)
 
 # apply ras2vox transformation to vertices
 for i in range(2):
-    data["wSurface"][0][i] = apply_affine(ras2vox_tkr, data["wSurface"][0][i])
-    data["pSurface"][0][i] = apply_affine(ras2vox_tkr, data["pSurface"][0][i])
+    data["wSurface"][0][i] = apply_affine_chunked(ras2vox_tkr, data["wSurface"][0][i])
+    data["pSurface"][0][i] = apply_affine_chunked(ras2vox_tkr, data["pSurface"][0][i])
     
 # save surfaces in voxel space
 savemat(in_surf_mat_vox, data)
@@ -143,8 +145,8 @@ for i in range(2):
     data["wSurface"][0][i] = data["wSurface"][0][i][:,0:3]
     data["pSurface"][0][i] = data["pSurface"][0][i][:,0:3]  
     
-    data["wSurface"][0][i] = apply_affine(vox2ras_tkr, data["wSurface"][0][i])
-    data["pSurface"][0][i] = apply_affine(vox2ras_tkr, data["pSurface"][0][i])
+    data["wSurface"][0][i] = apply_affine_chunked(vox2ras_tkr, data["wSurface"][0][i])
+    data["pSurface"][0][i] = apply_affine_chunked(vox2ras_tkr, data["pSurface"][0][i])
     
 # save matfile
 savemat(out_surf_mat_ras, data)

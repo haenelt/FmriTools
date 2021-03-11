@@ -7,7 +7,6 @@ import shutil as sh
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.affines import apply_affine
 from nighres.registration import apply_coordinate_mappings
 from nipype.interfaces.ants import N4BiasFieldCorrection
 
@@ -22,6 +21,7 @@ from fmri_tools.registration.mask_epi import mask_epi
 from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from fmri_tools.utils.remove_nans import remove_nans
 from fmri_tools.utils.multiply_images import multiply_images
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 """
@@ -41,7 +41,7 @@ The script needs an installation of freesufer and ants.
 
 created by Daniel Haenelt
 Date created: 19-06-2020
-Last modified: 13-10-2020
+Last modified: 11-03-2021
 """
 
 # input
@@ -178,7 +178,7 @@ y = arr_cmap_source[:,:,:,1].flatten()
 z = arr_cmap_source[:,:,:,2].flatten()
 
 source_listed = np.array([x,y,z]).T
-source_transformed = apply_affine(M, source_listed)
+source_transformed = apply_affine_chunked(M, source_listed)
 
 x_new = np.reshape(source_transformed[:,0], (xdim,ydim,zdim))
 y_new = np.reshape(source_transformed[:,1], (xdim,ydim,zdim))
@@ -225,7 +225,7 @@ y = arr_cmap_target[:,:,:,1].flatten()
 z = arr_cmap_target[:,:,:,2].flatten()
 
 target_listed = np.array([x,y,z]).T
-target_transformed = apply_affine(Minv, target_listed)
+target_transformed = apply_affine_chunked(Minv, target_listed)
     
 x_new = np.reshape(target_transformed[:,0], (xdim,ydim,zdim))
 y_new = np.reshape(target_transformed[:,1], (xdim,ydim,zdim))

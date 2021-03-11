@@ -6,7 +6,6 @@ import os
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.affines import apply_affine
 from nibabel.freesurfer.io import write_geometry
 from nighres.surface import levelset_to_mesh
 from cortex.polyutils import Surface
@@ -17,6 +16,7 @@ from fmri_tools.surface.smooth_surface import smooth_surface
 from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
 from fmri_tools.surface.get_curvature import get_curvature
 from fmri_tools.surface.inflate_surf_mesh import inflate_surf_mesh
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, 
@@ -59,7 +59,7 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False,
     -------
     created by Daniel Haenelt
     Date created: 18-12-2019
-    Last modified: 13-10-2020
+    Last modified: 11-03-2021
 
     """
     
@@ -88,7 +88,7 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False,
     vox2ras_tkr, _ = vox2ras(ref_in)
     
     # apply vox2ras to vertices
-    vtx = apply_affine(vox2ras_tkr, vtx)
+    vtx = apply_affine_chunked(vox2ras_tkr, vtx)
     
     # flip faces
     if flip_faces:

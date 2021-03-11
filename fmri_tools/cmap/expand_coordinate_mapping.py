@@ -7,11 +7,11 @@ import random
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.affines import apply_affine
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
+from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 
 
 def expand_coordinate_mapping(cmap_in, path_output=None, name_output=None, 
@@ -55,7 +55,7 @@ def expand_coordinate_mapping(cmap_in, path_output=None, name_output=None,
     -------
     created by Daniel Haenelt
     Date created: 18-06-2020
-    Last modified: 13-10-2020
+    Last modified: 11-03-2021
     
     """
     
@@ -123,7 +123,7 @@ def expand_coordinate_mapping(cmap_in, path_output=None, name_output=None,
     z = arr_cmap_source[:,:,:,2].flatten()
     
     source_listed = np.array([x,y,z]).T
-    source_transformed = apply_affine(M, source_listed)
+    source_transformed = apply_affine_chunked(M, source_listed)
     
     x_new = np.reshape(source_transformed[:,0], (xdim,ydim,zdim))
     y_new = np.reshape(source_transformed[:,1], (xdim,ydim,zdim))
