@@ -2,6 +2,9 @@
 *.asv
 *.m~
 
+# pycharm defaults
+*.idea
+
 # compiled bytecode
 *.pyc
 
