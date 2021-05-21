@@ -2,7 +2,7 @@
 *.asv
 *.m~
 
-# pycharm defaults
+# pycharm project directory
 *.idea
 
 # compiled bytecode
