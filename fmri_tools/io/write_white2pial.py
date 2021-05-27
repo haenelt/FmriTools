@@ -6,7 +6,7 @@ from nibabel.freesurfer.io import read_geometry, write_geometry
 from gbb.neighbor import nn_2d
 
 
-def write_white2pial(input_white, input_pial, adjm, step_size=100,
+def write_white2pial(file_out, file_white, file_pial, adjm, step_size=100,
                      shape="line"):
     """ Plot white to pial
 
@@ -17,16 +17,18 @@ def write_white2pial(input_white, input_pial, adjm, step_size=100,
 
     Parameters
     ----------
-    input_white : str
+    file_out : str
+        Filename of output surface.
+    file_white : str
         Filename of white surface.
-    input_pial : str
+    file_pial : str
         Filename of pial surface.
     adjm : obj
         Adjacency matrix.
     step_size : int, optional
-        Subset of vertices. The default is 100.
+        Subset of vertices.
     shape : str, optional
-        line, triangle, prism. The default is "line".
+        line, triangle, prism.
 
     Returns
     -------
@@ -41,9 +43,9 @@ def write_white2pial(input_white, input_pial, adjm, step_size=100,
     """
 
     # read geometry
-    vtx_white, fac_white, header_white = read_geometry(input_white,
+    vtx_white, fac_white, header_white = read_geometry(file_white,
                                                        read_metadata=True)
-    vtx_pial, fac_pial = read_geometry(input_pial)
+    vtx_pial, fac_pial = read_geometry(file_pial)
 
     # array containing a list of considered vertices
     t = np.arange(0, len(vtx_white), step_size)
@@ -107,5 +109,4 @@ def write_white2pial(input_white, input_pial, adjm, step_size=100,
     fac_res = np.array(fac_res)
 
     # write output geometry
-    write_geometry(input_white + "_plot_white2pial", vtx_res, fac_res,
-                   volume_info=header_white)
+    write_geometry(file_out, vtx_res, fac_res, volume_info=header_white)
