@@ -99,7 +99,7 @@ def skullstrip_epi(file_in, roi_size=5, scale=0.75, nerode=2, ndilate=1,
         mask_array = mask_array + mask_temp_array
 
         # check break condition
-        coords = np.transpose(np.nonzero(mask_temp_array is True))
+        coords = np.transpose(np.nonzero(mask_temp_array == True))
         if len(coords) == 0:
             break
 
