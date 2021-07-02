@@ -12,10 +12,6 @@ function plot_moco(file_rp, software, path_output, name_output)
 % This function plots the motion parameter from the SPM12 realignment
 % processing. Separate plots for translation (in mm) and rotation (in deg)
 % are saved.
-    
-% created by Daniel Haenelt
-% Date created: 23-02-2020
-% Last modified: 08-05-2020
 
 % make output folder
 if ~exist(path_output,'dir') 

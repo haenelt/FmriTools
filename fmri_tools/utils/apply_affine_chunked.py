@@ -5,7 +5,7 @@ import numpy as np
 
 
 def apply_affine_chunked(aff, pts, chunk_size=10000):
-    """ Apply an affine matrix to points in chunks.
+    """Apply an affine matrix to points in chunks.
     
     This function is a copy of the routine `apply_affine` from the `affines`
     module of the `nibabel` package. The only difference is that this function
@@ -21,17 +21,13 @@ def apply_affine_chunked(aff, pts, chunk_size=10000):
     pts : (..., N-1) np.ndarray
         Points, where the last dimension contains the coordinates of each
         point. For 3D, the last dimension will be length 3.
+    chunk_size : int, optional
+        Chunk size for large arrays.
 
     Returns
     -------
     (..., N-1) np.ndarray
         Transformed points.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 11-03-2021
-    Last modified: 11-03-2021
 
     """
     
@@ -53,7 +49,7 @@ def apply_affine_chunked(aff, pts, chunk_size=10000):
     j1 = 0
     res = np.zeros_like(pts)
     for _, j2 in enumerate(chunk):
-        res[j1:j2,:] = np.dot(pts[j1:j2,:], rzs.T) + trans[None, :]
+        res[j1:j2, :] = np.dot(pts[j1:j2, :], rzs.T) + trans[None, :]
         j1 = j2
 
     return res.reshape(shape)

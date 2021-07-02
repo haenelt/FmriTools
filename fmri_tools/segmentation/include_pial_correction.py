@@ -5,10 +5,10 @@ import os
 
 # external inputs
 import nibabel as nb
-    
+
 
 def include_pial_correction(path, sub):
-    """ Include pial correction
+    """Include pial correction.
 
     This function takes manual corrections from the file pial_edit.mgz which 
     shall be located in the freesurfer mri folder and includes them in the 
@@ -26,27 +26,23 @@ def include_pial_correction(path, sub):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 28-02-2019
-    Last modified: 12-10-2020
     
     """
-    
+
     # open pial edit
-    edit_img = nb.load(os.path.join(path,sub,"mri","pial_edit.mgz"))
+    edit_img = nb.load(os.path.join(path, sub, "mri", "pial_edit.mgz"))
     edit_array = edit_img.get_fdata()
-    
+
     # open brainmask
-    brainmask_img = nb.load(os.path.join(path,sub,"mri","brainmask.mgz"))
+    brainmask_img = nb.load(os.path.join(path, sub, "mri", "brainmask.mgz"))
     brainmask_array = brainmask_img.get_fdata()
-    
+
     # include manual edits to brainmask
     brainmask_array[edit_array == 256] = 255
     brainmask_array[edit_array == -1] = 1
 
     # save brainmask as brain.finalsurfs.manedit.mgz
-    output = nb.Nifti1Image(brainmask_array, brainmask_img.affine, brainmask_img.header)
-    nb.save(output, os.path.join(path,sub,"mri","brain.finalsurfs.manedit.mgz"))
+    output = nb.Nifti1Image(brainmask_array, brainmask_img.affine,
+                            brainmask_img.header)
+    nb.save(output,
+            os.path.join(path, sub, "mri", "brain.finalsurfs.manedit.mgz"))

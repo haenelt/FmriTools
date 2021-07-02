@@ -9,8 +9,8 @@ import nibabel as nb
 from scipy.signal import fftconvolve
 
 
-def get_acorr(input, write_output=False, path_output="", name_output=""):
-    """ Get acorr
+def get_acorr(arr, write_output=False, path_output="", name_output=""):
+    """Get acorr.
 
     This function computes a normalized autocorrelation of a 2D numpy array. The 
     result is optionally saved as nifti image. The use of the scipy fftconvolve 
@@ -19,7 +19,7 @@ def get_acorr(input, write_output=False, path_output="", name_output=""):
 
     Parameters
     ----------
-    input : ndarray
+    arr : ndarray
         2D nifti input array.
     write_output : bool, optional
         If output is written as nifti fil. The default is False.
@@ -37,18 +37,12 @@ def get_acorr(input, write_output=False, path_output="", name_output=""):
     -------
     .. [1] https://stackoverflow.com/questions/1100100/fft-based-2d-convolution-
     and-correlation-in-python
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 11-04-2019
-    Last modified: 12-10-2020
     
     """
     
     # normalize input array
-    array1 = ( input - np.mean(input) ) / ( np.std(input) *np.shape(input)[0]*np.shape(input)[1] ) 
-    array2 = ( input - np.mean(input) ) / ( np.std(input) ) 
+    array1 = (arr - np.mean(arr)) / (np.std(arr) * np.shape(arr)[0] * np.shape(arr)[1])
+    array2 = (arr - np.mean(arr)) / (np.std(arr))
 
     # compute autocorrelation   
     array_corr = fftconvolve(array1, array2[::-1, ::-1], mode="same")
@@ -59,6 +53,6 @@ def get_acorr(input, write_output=False, path_output="", name_output=""):
     # write nifti
     if write_output is True:
         output = nb.Nifti1Image(array_corr, np.eye(4), nb.Nifti1Header())
-        nb.save(output, os.path.join(path_output,name_output + "_nac.nii"))
+        nb.save(output, os.path.join(path_output, name_output + "_nac.nii"))
     
     return array_corr

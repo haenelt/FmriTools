@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Python package for for analysis of high-resolution fMRI data."""
 
 # local inputs
 from .copy_header import copy_header
@@ -13,12 +14,3 @@ from .read_hdf5 import read_hdf5
 from .write_hdf5 import write_hdf5
 from .extract_mgh_from_hdf5 import extract_mgh_from_hdf5
 from .write_vector_field import write_vector_field
-
-
-"""
-Python package for for analysis of high-resolution fMRI data.
-
-created by Daniel Haenelt
-Date created: 12-10-2020
-Last modified: 20-10-2020
-"""

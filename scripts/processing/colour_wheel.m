@@ -4,10 +4,6 @@
 % script is adapted from Sam Schwarzkopf's examples in the retinotopy 
 % tutorial.
 
-% created by Daniel Haenelt
-% Date created: 08-12-2018
-% Last modified: 13-06-2020
-
 % colour peaks
 R = [1 0 0];
 Y = [1 1 0];

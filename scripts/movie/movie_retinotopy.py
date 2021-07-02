@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Make retinotopy movie
+
+The purpose of the following script is to make a movie to illustrate the
+travelling waves on a flattened patch.
+
+"""
 
 # python standard library inputs
 import os
@@ -10,18 +17,6 @@ import natsort
 # local inputs
 from fmri_tools.img.get_retinotopy_images import get_retinotopy_images
 from fmri_tools.img.get_gif import get_gif
-
-
-"""
-Make retinotopy movie
-
-The purpose of the following script is to make a movie to illustrate the 
-travelling waves on a flattened patch.
-
-created by Daniel Haenelt
-Date created: 14-02-2019
-Last modified: 12-10-2020
-"""
 
 # input files
 input_patch = "/data/pt_01880/V2STRIPES/p6/anatomy/dense/lh.occip3.patch.flat"
@@ -42,11 +37,13 @@ duration = 0.025
 # do not edit below
 
 # get single frames of the travelling wave
-get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr, input_white, hemi, 
-                      path_output, img_res=0.2, theta=0, alpha=2, buffer=0, phase_fwhm=4, sigma=50,
+get_retinotopy_images(input_patch, input_vfs, input_phase, input_snr,
+                      input_white, hemi,
+                      path_output, img_res=0.2, theta=0, alpha=2, buffer=0,
+                      phase_fwhm=4, sigma=50,
                       cleanup=False)
 
 # make gif
-img_files = glob.glob(os.path.join(path_output,"img","*"))
+img_files = glob.glob(os.path.join(path_output, "img", "*"))
 img_files = natsort.natsorted(img_files)
 get_gif(img_files, path_output, name_output, nsteps, duration)

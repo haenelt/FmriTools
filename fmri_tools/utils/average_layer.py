@@ -10,7 +10,7 @@ import nibabel as nb
 
 
 def average_layer(img_input, path_output, basename_output, mode="mean"):
-    """ Average layer
+    """Average layer.
     
     This averages data across different layers or sessions. Input arrays should 
     be in mgh format. The output gets the suffix of the chosen mode.    
@@ -29,12 +29,6 @@ def average_layer(img_input, path_output, basename_output, mode="mean"):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 25-10-2019
-    Last modified: 12-10-2020
     
     """
     
@@ -45,11 +39,11 @@ def average_layer(img_input, path_output, basename_output, mode="mean"):
     # initialise array
     data = nb.load(img_input[0])
     data_size = data.header["dims"][0]
-    data_res = np.zeros((data_size,len(img_input)))
+    data_res = np.zeros((data_size, len(img_input)))
     
     # collect input arrays
     for i in range(len(img_input)):
-        data_res[:,i] = nb.load(img_input[i]).get_fdata()[:,0,0]
+        data_res[:, i] = nb.load(img_input[i]).get_fdata()[:, 0, 0]
     
     # average
     if mode == "mean":
@@ -65,4 +59,4 @@ def average_layer(img_input, path_output, basename_output, mode="mean"):
     
     # write output file
     output = nb.Nifti1Image(data_res, data.affine, data.header)
-    nb.save(output,os.path.join(path_output, basename_output+"_"+mode+".mgh"))
+    nb.save(output, os.path.join(path_output, basename_output+"_"+mode+".mgh"))

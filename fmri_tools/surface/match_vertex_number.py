@@ -5,7 +5,7 @@ import numpy as np
 
     
 def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
-    """ Match vertex number
+    """Match vertex number.
     
     This function takes arrays of white and pial surface vertices as input and 
     matches the vertex numbers of both surfaces. The match is based on index
@@ -36,12 +36,6 @@ def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
         Updated face array.
     ind_white : list
         updated index list.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 10-12-2019
-    Last modified: 23-10-2020
 
     """
       
@@ -84,8 +78,8 @@ def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
         check_remove = np.where(ind_remove[i] == ind_white)[0]
         if len(check_remove):
             row, col = np.where(fac_old == check_remove)
-            fac_outlier[row,col] = 1 # remember which faces to remove
-            fac_temp = fac_new.copy() # update face numbering
+            fac_outlier[row, col] = 1  # remember which faces to remove
+            fac_temp = fac_new.copy()  # update face numbering
             fac_temp[fac_old > check_remove] = -1
             fac_temp[fac_temp != -1] = 0
             fac_new += fac_temp
@@ -99,7 +93,7 @@ def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
             loop_status = counter
 
     # remove outliers in faces
-    fac_outlier = np.sum(fac_outlier,1)
+    fac_outlier = np.sum(fac_outlier, 1)
     fac_new = fac_new[fac_outlier == 0]
 
     # remove outliers in vertices

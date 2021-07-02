@@ -12,36 +12,34 @@ import nibabel as nb
 from sh import gunzip
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
-from fmri_tools.io.write_mgh import write_mgh
-from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
-from fmri_tools.utils.resample_volume import resample_volume
-from fmri_tools.surface.deform_surface import deform_surface
-from fmri_tools.mapping.map2surface import map2surface
+from ..io.get_filename import get_filename
+from ..io.write_mgh import write_mgh
+from ..cmap.generate_coordinate_mapping import generate_coordinate_mapping
+from ..utils.resample_volume import resample_volume
+from ..surface.deform_surface import deform_surface
+from ..mapping.map2surface import map2surface
 
 
 def _rescale_cmap(file_cmap, dim, dim_upsampled):
-    """
-    Rescales and overwrites coordinate mapping if upsampled.
-    """
-    
+    """Rescales and overwrites coordinate mapping if upsampled."""
+
     # load cmap
     cmap = nb.load(file_cmap)
-    arr_cmap = cmap.get_fdata()    
-    
+    arr_cmap = cmap.get_fdata()
+
     # rescale
     for i in range(cmap.header["dim"][4]):
-        arr_cmap[:,:,:,i] = arr_cmap[:,:,:,i] / dim[i] * dim_upsampled[i]
-    
+        arr_cmap[:, :, :, i] = arr_cmap[:, :, :, i] / dim[i] * dim_upsampled[i]
+
     # overwrite cmap
     cmap = nb.Nifti1Image(arr_cmap, cmap.affine, cmap.header)
     nb.save(cmap, file_cmap)
 
 
-def mesh_sampling(surf_in, vol_in, write_output=False, path_output="", 
-                  source2target_in="", interp_method="nearest", r=[0.4,0.4,0.4], 
-                  interp_upsample="Cu", cleanup=True):
-    """ Mesh sampling
+def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
+                  source2target_in="", interp_method="nearest",
+                  r=[0.4, 0.4, 0.4], interp_upsample="Cu", cleanup=True):
+    """Mesh sampling.
 
     This function samples data onto a surface mesh. Optionally, the volume can 
     be upsampled and a coordinate mapping can be applied to transform the 
@@ -80,29 +78,22 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     header : MGHHeader
         Image header.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 24-06-2020        
-    Last modified: 25-10-2020
-
     """
-    
+
     # clean everything if no output is written
     if not write_output:
         path_output, _, _ = get_filename(vol_in)
         cleanup = True
-    
+
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)
-
 
     tmp1 = np.random.randint(0, 10, 5)
     tmp1 = ''.join(str(i) for i in tmp1)
     tmp2 = datetime.datetime.now().strftime("%S%f")
     tmp_string = tmp1 + tmp2
-    path_tmp = os.path.join(path_output, "tmp_"+tmp_string)
+    path_tmp = os.path.join(path_output, "tmp_" + tmp_string)
     if not os.path.exists(path_tmp):
         os.makedirs(path_tmp)
     else:
@@ -110,64 +101,66 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
 
     # get filenames
     _, hemi, name_mesh = get_filename(surf_in)
-    name_mesh = name_mesh.replace(".","")
+    name_mesh = name_mesh.replace(".", "")
     _, name_vol, ext_vol = get_filename(vol_in)
 
     # check filename
     if not hemi == "lh" and not hemi == "rh":
         sys.exit("Could not identify hemi from filename!")
-    
+
     # copy temporary vol
-    file_vol = os.path.join(path_tmp, name_vol+ext_vol)
+    file_vol = os.path.join(path_tmp, name_vol + ext_vol)
     sh.copy(vol_in, file_vol)
 
     # unzip if necessary
     if file_vol[-3:] == ".gz":
         gunzip(file_vol)
         file_vol = file_vol[:-3]
-    
+
     # get cmap
     if source2target_in:
         _, name_s2t, ext_s2t = get_filename(source2target_in)
-        file_s2t = os.path.join(path_tmp, name_s2t+ext_s2t)
+        file_s2t = os.path.join(path_tmp, name_s2t + ext_s2t)
         sh.copy(source2target_in, file_s2t)
     else:
         name_s2t = "cmap_t2t"
         ext_s2t = ".nii"
         generate_coordinate_mapping(vol_in,
                                     pad=0,
-                                    path_output=path_tmp, 
-                                    suffix="t2t", 
+                                    path_output=path_tmp,
+                                    suffix="t2t",
                                     time=False,
                                     write_output=True)
-        file_s2t = os.path.join(path_tmp, name_s2t+ext_s2t)
-    
+        file_s2t = os.path.join(path_tmp, name_s2t + ext_s2t)
+
     if file_s2t[-3:] == ".gz":
         gunzip(file_s2t)
         file_s2t = file_s2t[:-3]
-    
+
     # upsample volumes and rescale cmap
     if r:
         _, _, ext_vol = get_filename(file_vol)
         _, _, ext_s2t = get_filename(file_s2t)
-        
+
         resample_volume(file_vol,
-                        os.path.join(path_tmp, name_vol+"_upsampled"+ext_vol), 
-                        dxyz=r, 
+                        os.path.join(path_tmp,
+                                     name_vol + "_upsampled" + ext_vol),
+                        dxyz=r,
                         rmode=interp_upsample)
-        
-        resample_volume(file_s2t, 
-                        os.path.join(path_tmp, name_s2t+"_upsampled"+ext_s2t), 
-                        dxyz=r, 
+
+        resample_volume(file_s2t,
+                        os.path.join(path_tmp,
+                                     name_s2t + "_upsampled" + ext_s2t),
+                        dxyz=r,
                         rmode="Linear")
 
-        file_vol = os.path.join(path_tmp, name_vol+"_upsampled"+ext_vol)
-        file_s2t = os.path.join(path_tmp, name_s2t+"_upsampled"+ext_s2t)
-        
+        file_vol = os.path.join(path_tmp, name_vol + "_upsampled" + ext_vol)
+        file_s2t = os.path.join(path_tmp, name_s2t + "_upsampled" + ext_s2t)
+
         _rescale_cmap(file_s2t,
                       nb.load(vol_in).header["dim"][1:4] - 1,
                       nb.load(file_vol).header["dim"][1:4] - 1)
-        
+
     # deform mesh
     deform_surface(input_surf=surf_in,
                    input_orig=file_s2t,
@@ -179,23 +172,24 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
                    smooth_iter=0,
                    flip_faces=False,
                    cleanup=True)
-       
+
     # do mapping
-    file_def = os.path.join(path_tmp, hemi+"."+name_mesh+"_def")    
-    arr, affine, header = map2surface(input_surf=file_def, 
-                                      input_vol=file_vol, 
+    file_def = os.path.join(path_tmp, hemi + "." + name_mesh + "_def")
+    arr, affine, header = map2surface(input_surf=file_def,
+                                      input_vol=file_vol,
                                       write_output=False,
-                                      path_output=path_tmp, 
+                                      path_output=path_tmp,
                                       interp_method=interp_method,
-                                      input_surf_target=None, 
-                                      input_ind=None, 
+                                      input_surf_target=None,
+                                      input_ind=None,
                                       cleanup=True)
-    
+
     if write_output:
         _, name_vol, _ = get_filename(file_vol)
-        file_out = os.path.join(path_output, hemi+"."+name_vol+"_"+name_mesh+".mgh")
+        file_out = os.path.join(path_output,
+                                hemi + "." + name_vol + "_" + name_mesh + ".mgh")
         write_mgh(file_out, arr, affine, header)
-    
+
     # delete intermediate files
     if cleanup:
         sh.rmtree(path_tmp, ignore_errors=True)

@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Reliability measure between sessions. Data within a defined label is compared
+vertex-wise using Pearson correlation. Only a fraction of vertices is used to
+account for spatial covariance of nearby vertices. The p-value is estimated
+using a permutation analysis. A scatter and a Bland-Altman plot is created.
+
+"""
 
 # python standard library inputs
 import os
@@ -10,18 +17,6 @@ import nibabel as nb
 import matplotlib.pyplot as plt
 from nibabel.freesurfer.io import read_label, read_morph_data
 from scipy.stats import pearsonr
-
-
-"""
-Reliability measure between sessions. Data within a defined label is compared 
-vertex-wise using Pearson correlation. Only a fraction of vertices is used to 
-account for spatial covariance of nearby vertices. The p-value is estimated 
-using a permutation analysis. A scatter and a Bland-Altman plot is created.
-
-created by Daniel Haenelt
-Date created: 17-11-2018
-Last modified: 12-10-2020
-"""
 
 # input paths
 input_label = '/data/pt_01880/ismrm_analysis/label/lh.roi2_v1.label'
@@ -75,13 +70,13 @@ md = np.mean(diff)  # mean of the difference
 sd = np.std(diff, axis=0)  # Standard deviation of the difference
 
 plt.scatter(mean, diff)
-plt.axhline(md,           color='gray', linestyle='--')
-plt.axhline(md + 1.96*sd, color='gray', linestyle='--')
-plt.axhline(md - 1.96*sd, color='gray', linestyle='--')
-plt.title('Bland-Altman Plot: '+os.path.basename(input_label))
+plt.axhline(md, color='gray', linestyle='--')
+plt.axhline(md + 1.96 * sd, color='gray', linestyle='--')
+plt.axhline(md - 1.96 * sd, color='gray', linestyle='--')
+plt.title('Bland-Altman Plot: ' + os.path.basename(input_label))
 plt.xlabel("Average of 2 sessions")
 plt.ylabel("Difference between 2 sessions")
-plt.savefig(os.path.join(path_output,basename_output+'_bland_altman.png'))
+plt.savefig(os.path.join(path_output, basename_output + '_bland_altman.png'))
 
 # compare correlation coefficient to change level (permutation)
 null_dist = []
@@ -89,29 +84,30 @@ for i in range(niter):
     # permute data points in sess2
     label_shuffled = random.sample(label, len(label))
     label_shuffled = label_shuffled[0:ndata]
-    
+
     y_shuffle = sess2[label_shuffled]
-    null_dist.append(pearsonr(x,y_shuffle)[0])
-    
+    null_dist.append(pearsonr(x, y_shuffle)[0])
 
 p = np.array(null_dist) > r[0]
 p = p[p == True]
 p = len(p) / niter
 
 # print results
-print('ROI: '+os.path.basename(input_label))
-print('Number of points: '+str(ndata))
-print('Number of iterations: '+str(niter))
-print('Correlation coefficient: '+str(r[0]))
-print('p-value: '+str(p))
+print('ROI: ' + os.path.basename(input_label))
+print('Number of points: ' + str(ndata))
+print('Number of iterations: ' + str(niter))
+print('Correlation coefficient: ' + str(r[0]))
+print('p-value: ' + str(p))
 
 # scatter plot with regression line
 plt.figure()
 plt.scatter(x, y)
-plt.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)),'r')
+plt.plot(np.unique(x), np.poly1d(np.polyfit(x, y, 1))(np.unique(x)), 'r')
 plt.title(corr_title)
 plt.xlabel(corr_x_label)
 plt.ylabel(corr_y_label)
-plt.figtext(0.27, 0.8, "r = "+str(np.round(r[0],3))+", p = "+str(np.round(p, 3)), horizontalalignment="center")
-plt.savefig(os.path.join(path_output,basename_output+'.png'))
+plt.figtext(0.27, 0.8,
+            "r = " + str(np.round(r[0], 3)) + ", p = " + str(np.round(p, 3)),
+            horizontalalignment="center")
+plt.savefig(os.path.join(path_output, basename_output + '.png'))
 plt.show()

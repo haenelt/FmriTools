@@ -8,8 +8,8 @@ import numpy as np
 import nibabel as nb
 
 
-def clean_ana(input, min_value, new_range, overwrite=True):
-    """ Clean ana
+def clean_ana(file_in, min_value, new_range, overwrite=True):
+    """Clean ana.
 
     This function removes ceiling values from a computed T1 map of an mp2rage 
     acquisition. Low intensity values are removed and the data range is 
@@ -18,7 +18,7 @@ def clean_ana(input, min_value, new_range, overwrite=True):
 
     Parameters
     ----------
-    input : str
+    file_in : str
         Filename of input image.
     min_value : float
         Threshold of low intensity values.
@@ -31,17 +31,11 @@ def clean_ana(input, min_value, new_range, overwrite=True):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 20-10-2019        
-    Last modified: 12-10-2020
     
     """
     
     # load data
-    data = nb.load(input)
+    data = nb.load(file_in)
     data_array = data.get_fdata()
     
     # remove ceiling
@@ -58,13 +52,12 @@ def clean_ana(input, min_value, new_range, overwrite=True):
     # output cleaned dataset
     output = nb.Nifti1Image(data_array, data.affine, data.header)
     if overwrite:
-        nb.save(output, input)
+        nb.save(output, file_in)
     else:
-        path = os.path.dirname(input)
-        if os.path.splitext(input)[1] == ".gz":
-            basename = os.path.splitext(os.path.splitext(os.path.basename(input))[0])[0]
+        path = os.path.dirname(file_in)
+        if os.path.splitext(file_in)[1] == ".gz":
+            basename = os.path.splitext(os.path.splitext(os.path.basename(file_in))[0])[0]
             nb.save(output, os.path.join(path, basename+"_clean.nii.gz"))
         else:
-            basename = os.path.splitext(os.path.basename(input))[0]
+            basename = os.path.splitext(os.path.basename(file_in))[0]
             nb.save(output, os.path.join(path, basename+"_clean.nii"))
-            

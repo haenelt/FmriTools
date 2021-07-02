@@ -15,10 +15,6 @@
 % and the green filter over their right eye. In SwitchData, button 
 % responses of 2 and 1 refer to red and green onsets, respectively.
 
-% created by Daniel Haenelt
-% Date created: 05-08-2019         
-% Last modified: 12-08-2020  
-
 % input of condition files
 input = {
     '/data/pt_01880/Experiment2_Rivalry/p1/rivalry/GE_EPI1/Run_1/logfiles/p1_GE_EPI1_Run1_rivalry_Cond.mat',...

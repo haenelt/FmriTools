@@ -10,10 +10,6 @@
 % loaded as textfile containing one column with either zeroes for valid 
 % time points or ones for outliers in different rows.
 
-% created by Daniel Haenelt
-% Date created: 10-12-2018
-% Last modified: 12-10-2020
-
 % input data
 img_input = {
     '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_1/udata.nii',...

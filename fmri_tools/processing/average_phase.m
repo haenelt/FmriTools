@@ -18,10 +18,6 @@ function average_phase(pos_real, pos_imag, neg_real, neg_imag, ...
 % averaged to compensate for the hemodynamic lag. Output files are saved in
 % a created output folder with prefix s.
 
-% created by Daniel Haenelt
-% Date created: 08-12-2018
-% Last modified: 10-12-2018
-
 % parameters
 % freq_ignored is a vector containing the frequencies that should be
 % ignored when calculating the coherence values.

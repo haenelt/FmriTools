@@ -13,10 +13,6 @@ function bias_field_correction(filename)
 %
 % [1] https://surfer.nmr.mgh.harvard.edu/fswiki/HighFieldRecon
 
-% created by Daniel Haenelt
-% Date created: 01-11-2018             
-% Last modified: 07-01-2021
-
 % get SPM12 root directory from matlab search path
 pathSPM = what('spm12').path;
 

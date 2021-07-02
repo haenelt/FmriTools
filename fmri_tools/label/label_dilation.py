@@ -5,11 +5,11 @@ import numpy as np
 from gbb.neighbor import nn_2d
 
 # local inputs
-from fmri_tools.label.label_border import label_border
+from .label_border import label_border
 
 
 def label_dilation(arr_label, adjm, n):
-    """ Label dilation
+    """Label dilation.
     
     This function dilates a labeled region of interest which is defined as a 1D
     array of triangular mesh indices. Dilation is done by adding the one-ring
@@ -29,12 +29,6 @@ def label_dilation(arr_label, adjm, n):
     -------
     arr_label : ndarray
         1D array of dilated label indices.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 20-11-2020             
-    Last modified: 20-11-2020 
 
     """
     

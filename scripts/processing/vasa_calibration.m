@@ -3,10 +3,6 @@
 % This script computes baseline corrected contrast files using the VasA
 % fMRI approach for task-based data.
 
-% created by Daniel Haenelt
-% Date created: 12-02-2019
-% Last modified: 12-02-2019
-
 % input data
 img_input = {
     '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_1/udata.nii',...

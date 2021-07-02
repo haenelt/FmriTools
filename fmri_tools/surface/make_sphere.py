@@ -12,14 +12,12 @@ import numpy as np
 from nibabel.freesurfer.io import read_geometry, write_geometry
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
-from fmri_tools.surface.inflate_surf_mesh import inflate_surf_mesh
+from ..io.get_filename import get_filename
+from ..surface.inflate_surf_mesh import inflate_surf_mesh
 
 
 def _cart2pol(x, y, z):
-    """
-    Helper function for transformation cartesian to polar coordinates.
-    """
+    """Helper function for transformation cartesian to polar coordinates."""
     
     r = np.sqrt(x**2+y**2+z**2)
     phi = np.arctan2(y, x)
@@ -28,8 +26,7 @@ def _cart2pol(x, y, z):
 
     
 def _pol2cart(r, phi, theta):
-    """
-    Helper function for transformation from polar to cartesian coordinates.
+    """Helper function for transformation from polar to cartesian coordinates.
     """
     
     x = r*np.sin(theta)*np.cos(phi)
@@ -39,7 +36,7 @@ def _pol2cart(r, phi, theta):
 
 
 def make_sphere(file_in, file_out, n_inflate=100, radius=None):
-    """ Make sphere
+    """Make sphere.
 
     The scripts takes a generated FreeSurfer mesh and transformes it into
     a sphere with defined radius.    
@@ -58,12 +55,6 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
     Returns
     -------
     None.
-
-    None
-    -------
-    created by Daniel Haenelt
-    Date created: 26-08-2020       
-    Last modified: 25-10-2020    
 
     """
     
@@ -89,26 +80,23 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
                           n_inflate)
     else:
         copyfile(file_in, file_tmp)
-        
     
     # inflate surface
     try:
         subprocess.run(['mris_sphere', 
                         '-q', 
                         file_tmp, 
-                        file_out], check = True)
+                        file_out], check=True)
     except subprocess.CalledProcessError:
         sys.exit("Sphere computation failed!")
-    
 
     # change radius      
     if radius:
         vtx, fac = read_geometry(file_out)
-        r, phi, theta = _cart2pol(vtx[:,0], vtx[:,1], vtx[:,2])
+        r, phi, theta = _cart2pol(vtx[:, 0], vtx[:, 1], vtx[:, 2])
         r[:] = radius
-        vtx[:,0], vtx[:,1], vtx[:,2] = _pol2cart(r, phi, theta)
+        vtx[:, 0], vtx[:, 1], vtx[:, 2] = _pol2cart(r, phi, theta)
         write_geometry(file_out, vtx, fac)
     
     # remove temporary file
     os.remove(file_tmp)
-    

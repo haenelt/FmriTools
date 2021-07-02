@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Python package for for analysis of high-resolution fMRI data."""
 
 # local inputs
 from .get_mean import get_mean
@@ -22,12 +23,3 @@ from .resample_volume import resample_volume
 from .regrid_time_series import *
 from .remove_nans import remove_nans
 from .apply_affine_chunked import apply_affine_chunked
-
-
-"""
-Python package for for analysis of high-resolution fMRI data.
-
-created by Daniel Haenelt
-Date created: 12-10-2020
-Last modified: 12-10-2020
-"""

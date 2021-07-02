@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Python package for for analysis of high-resolution fMRI data."""
 
 # local inputs
 from .alpha_shape import alpha_shape
@@ -10,12 +11,3 @@ from .orthographic_projection import orthographic_projection
 from .robust_combination import robust_combination
 from .shift_white import shift_white
 from .include_pial_correction import include_pial_correction
-
-
-"""
-Python package for for analysis of high-resolution fMRI data.
-
-created by Daniel Haenelt
-Date created: 12-10-2020
-Last modified: 13-10-2020
-"""

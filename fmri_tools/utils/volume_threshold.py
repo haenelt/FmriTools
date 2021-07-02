@@ -7,8 +7,8 @@ import os
 import nibabel as nb
 
     
-def volume_threshold(filename, prefix, data_max):
-    """ Volume threshold
+def volume_threshold(file_in, prefix, data_max):
+    """Volume threshold.
 
     Takes a nifti volume and sets a maximum threshold value. All values above 
     the threshold are replaced by the threshold value. The output image is saved 
@@ -16,7 +16,7 @@ def volume_threshold(filename, prefix, data_max):
 
     Parameters
     ----------
-    filename : str
+    file_in : str
         Path of input image.
     prefix : str
         Defined prefix for the output image.
@@ -27,23 +27,17 @@ def volume_threshold(filename, prefix, data_max):
     -------
     None.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 01-11-2018             
-    Last modified: 12-10-2020
-
     """
     
     # load data
-    data_img = nb.load(filename)
+    data_img = nb.load(file_in)
     data_array = data_img.get_fdata()
     
     # set maximum threshold
     data_array[data_array > data_max] = data_max
     
     # write output data
-    filenameOUT = os.path.join(os.path.dirname(filename),prefix+os.path.basename(filename))
+    filename_out = os.path.join(os.path.dirname(file_in),
+                                prefix + os.path.basename(file_in))
     output = nb.Nifti1Image(data_array, data_img.affine, data_img.header)
-    nb.save(output,filenameOUT)
-    
+    nb.save(output, filename_out)

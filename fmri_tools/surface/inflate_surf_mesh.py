@@ -6,11 +6,11 @@ import sys
 import subprocess
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def inflate_surf_mesh(file_in, file_out, n_iter):
-    """ Inflate surf mesh
+    """Inflate surf mesh.
 
     The scripts takes a generated FreeSurfer surfaces and inflates it.    
 
@@ -26,12 +26,6 @@ def inflate_surf_mesh(file_in, file_out, n_iter):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 17-12-2019             
-    Last modified: 12-10-2020
     
     """
     
@@ -46,7 +40,6 @@ def inflate_surf_mesh(file_in, file_out, n_iter):
                         '-n', str(n_iter), 
                         '-no-save-sulc', 
                         file_in, 
-                        file_out], check = True)
+                        file_out], check=True)
     except subprocess.CalledProcessError:
         sys.exit("Surface inflation failed!")
-        

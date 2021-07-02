@@ -9,16 +9,16 @@ import nibabel as nb
 from nipype.interfaces import fsl
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
-from fmri_tools.skullstrip.skullstrip_epi import skullstrip_epi
-from fmri_tools.cmap.generate_coordinate_mapping import generate_coordinate_mapping
-from fmri_tools.surface.deform_surface import deform_surface
+from ..io.get_filename import get_filename
+from ..skullstrip.skullstrip_epi import skullstrip_epi
+from ..cmap.generate_coordinate_mapping import generate_coordinate_mapping
+from ..surface.deform_surface import deform_surface
 
 
 def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco, 
                    file_surf, delta_te=1.02, smooth=2.5, udir="y-", bw=16.304, 
                    nerode=1, cleanup=True):
-    """ Apply fieldmap
+    """Apply fieldmap.
 
     This function computes a deformation field from a fieldmap acquisition and 
     applies the inverse transformation to the undistorted surface. The following 
@@ -64,12 +64,6 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 31-01-2020
-    Last modified: 19-10-2020
     
     """
     
@@ -91,7 +85,7 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
     # get matrix size in phase encoding direction from uncorrected epi
     data = nb.load(file_epi)
     phase_encode = data.header.get_dim_info()[1]
-    ImageMatrixPhaseEncode = data.header["dim"][phase_encode+1]
+    image_matrix_phase_encode = data.header["dim"][phase_encode+1]
     
     # calculate median epi
     udata = nb.load(file_epi_moco)
@@ -123,7 +117,7 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
     flirt = fsl.FLIRT()
     flirt.inputs.cost_func = "mutualinfo"
     flirt.inputs.dof = 6
-    flirt.inputs.interp = "trilinear" # trlinear, nearestneighbour, sinc or spline
+    flirt.inputs.interp = "trilinear"  # trlinear, nearestneighbour, sinc or spline
     flirt.inputs.in_file = file_fmap_magn
     flirt.inputs.reference = os.path.join(path_udata, "median_"+name_udata)
     flirt.inputs.output_type = "NIFTI"
@@ -153,7 +147,7 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
     arr_fmap1 = arr_fmap1 * arr_mask
     arr_fmap2 = (arr_fmap2 * arr_mask) 
     arr_fmap2 = arr_fmap2 + np.abs(np.min(arr_fmap2))
-    arr_fmap2 = arr_fmap2 / np.max(arr_fmap2) * 4095 # rescale phase image to be within 0-4095
+    arr_fmap2 = arr_fmap2 / np.max(arr_fmap2) * 4095  # rescale phase image to be within 0-4095
     
     fmap1_img = nb.Nifti1Image(arr_fmap1, fmap1_img.affine, fmap1_img.header)
     nb.save(fmap1_img, os.path.join(path_fmap0, "pr"+name_fmap0))
@@ -171,7 +165,7 @@ def apply_fieldmap(file_fmap_magn, file_fmap_phase, file_epi, file_epi_moco,
     prepare.run() 
     
     # effective echo spacing in s
-    dwell_time = 1/(bw * ImageMatrixPhaseEncode)
+    dwell_time = 1/(bw * image_matrix_phase_encode)
     
     # unmask fieldmap (fsl.FUGUE)
     fugue = fsl.preprocess.FUGUE()

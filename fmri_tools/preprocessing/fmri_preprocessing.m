@@ -32,10 +32,6 @@ function fmri_preprocessing(img_input, slice_params, field_params, ...
 % out. Additionally, regressors of no interest for neglecting outlier
 % volumes are created.
 
-% created by Daniel Haenelt
-% Date created: 26-02-2019
-% Last modified: 03-06-2020
-
 % set spm default parameters
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used

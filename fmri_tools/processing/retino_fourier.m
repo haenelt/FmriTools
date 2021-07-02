@@ -16,10 +16,6 @@ function retino_fourier(input, freq, fix, period, TR)
 % mean intensity. This is a very crude method for non-brain voxel
 % exclusion. The output data gets the prefix r.
 
-% created by Daniel Haenelt
-% Date created: 08-12-2018
-% Last modified: 10-12-2018
-
 % prepare path and file name
 [path, file, ext] = fileparts(input);
 
@@ -94,5 +90,3 @@ for i = 1:size(cR,4)
     spm_write_vol(ndata_img(i),cR(:,:,:,i));
 end
 disp(['Saved real image: ' ndata_img(1).fname]);
-
-

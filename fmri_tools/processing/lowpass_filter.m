@@ -12,10 +12,6 @@ function lowpass_filter(input, TR, cutoff_lowpass, order)
 % This function computes a buterworth lowpass filter and applied it to a
 % functional time series. The output gets a prefix l to the file name.
 
-% created by Daniel Haenelt
-% Date created: 05-08-2019
-% Last modified: 05-08-2019
-
 % get fileparts of input
 [path, file, ext] = fileparts(input);
 

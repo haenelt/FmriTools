@@ -4,8 +4,8 @@
 import nibabel as nb
 
 
-def multiply_images(file1, file2, fileOUT):
-    """ Multiply images
+def multiply_images(file1, file2, file_out):
+    """Multiply images.
 
     This script does voxewise multiplication of two images. The output image 
     takes the header information of the first image.    
@@ -16,18 +16,12 @@ def multiply_images(file1, file2, fileOUT):
         Filename of first input image.
     file2 : str
         Filename of second input image.
-    fileOUT : str
+    file_out : str
         Filename of the output image.
 
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 01-11-2018             
-    Last modified: 12-10-2020
     
     """
     
@@ -38,8 +32,8 @@ def multiply_images(file1, file2, fileOUT):
     file2_array = file2_img.get_fdata()
     
     # multiply both images
-    fileOUT_array = file1_array * file2_array
+    file_out_array = file1_array * file2_array
     
     # write output image
-    output = nb.Nifti1Image(fileOUT_array, file1_img.affine, file1_img.header)
-    nb.save(output,fileOUT)
+    output = nb.Nifti1Image(file_out_array, file1_img.affine, file1_img.header)
+    nb.save(output, file_out)

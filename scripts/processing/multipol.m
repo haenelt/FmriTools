@@ -9,10 +9,6 @@
 % cycle fraction is discarded from analysis. Cleanup will delete all
 % generated time series at the end.
 
-% created by Daniel Haenelt
-% Date created: 04-03-2019
-% Last modified: 12-10-2020
-
 % input data
 input.data = {
     '/data/pt_01880/Experiment4_PSF/p6/psf/SE_EPI2/multipol_2/udata.nii',...

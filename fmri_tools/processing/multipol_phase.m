@@ -23,10 +23,6 @@ function multipol_phase(input_real, input_imag, freq, name_sess, ...
 % function, the number of runs has to be specified to choose an appropriate 
 % results folder location.
 
-% created by Daniel Haenelt
-% Date created: 04-03-2019
-% Last modified: 01-09-2020
-
 % parameters
 % freq_ignored is a vector containing the frequencies that should be
 % ignored when calculating the denominator.

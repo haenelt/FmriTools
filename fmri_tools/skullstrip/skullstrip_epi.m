@@ -20,11 +20,7 @@ function [mask_array] = skullstrip_epi(input, roi_size, scale, nerode, ...
 % the brain volume. From a defined mid-point, a brain mask is grown inside 
 % the brain. A binary filling holes algorithm is applied. To reduce 
 % remaining skull within the brain mask, the mask is eroded and dilated 
-% several times.    
-
-% created by Daniel Haenelt
-% Date created: 06-11-2018             
-% Last modified: 25-02-2019
+% several times.
 
 % default parameters
 if ~exist('roi_size','var')

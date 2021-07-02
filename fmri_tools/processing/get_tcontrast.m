@@ -23,10 +23,6 @@ function get_tcontrast(cond_input, path_contrast, name_output, ...
 % design matrix. To mitigate latency-induced amplitude bias in the
 % resulting effect sizes, percent signal changes are also computed based on
 % the method by Calhoun et al. 2004.
-    
-% created by Daniel Haenelt
-% Date created: 13-03-2020
-% Last modified: 26-05-2020
 
 if ~exist('name_output', 'var')  
     name_output = '';

@@ -6,7 +6,7 @@ from gbb.neighbor import nn_2d
 
 
 def label_border(arr_label, adjm):
-    """ Label border
+    """Label border.
     
     This function returns border vertex indices from an input array containing 
     vertex indices of a freesurfer label.
@@ -22,12 +22,6 @@ def label_border(arr_label, adjm):
     -------
     border : ndarray
         1D array of border indices.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 19-11-2020             
-    Last modified: 19-11-2020 
 
     """
     

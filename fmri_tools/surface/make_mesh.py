@@ -12,16 +12,16 @@ from cortex.polyutils import Surface
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
-from fmri_tools.surface.smooth_surface import smooth_surface
-from fmri_tools.surface.upsample_surf_mesh import upsample_surf_mesh
-from fmri_tools.surface.get_curvature import get_curvature
-from fmri_tools.surface.inflate_surf_mesh import inflate_surf_mesh
-from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
+from ..surface.smooth_surface import smooth_surface
+from ..surface.upsample_surf_mesh import upsample_surf_mesh
+from ..surface.get_curvature import get_curvature
+from ..surface.inflate_surf_mesh import inflate_surf_mesh
+from ..utils.apply_affine_chunked import apply_affine_chunked
 
 
 def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False, 
               niter_smooth=2, niter_upsample=0, niter_inflate=15):
-    """ Make mesh
+    """Make mesh.
 
     This function generates a surface mesh from a levelset image. The surface 
     mesh is smoothed and a curvature file is generated. Vertices are in the 
@@ -55,12 +55,6 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False,
     -------
     None.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 18-12-2019
-    Last modified: 11-03-2021
-
     """
     
     # make output folder
@@ -73,12 +67,13 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False,
     boundary_array = boundary.get_fdata()
     
     if nlayer != -1:
-        boundary_array = boundary_array[:,:,:,nlayer]
+        boundary_array = boundary_array[:, :, :, nlayer]
 
     boundary = nb.Nifti1Image(boundary_array, boundary.affine, boundary.header)
     
     # make mesh
-    surf = levelset_to_mesh(boundary, connectivity="18/6", level=0.0, inclusive=True)
+    surf = levelset_to_mesh(boundary, connectivity="18/6", level=0.0,
+                            inclusive=True)
     
     # get vertices and faces
     vtx = surf["result"]["points"]
@@ -105,8 +100,8 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False,
         upsample_surf_mesh(file_out, file_out, niter_upsample, "linear")
         
     # print number of vertices and average edge length
-    print("number of vertices: "+str(len(vtx[:,0])))
-    print("average edge length: "+str(Surface(vtx,fac).avg_edge_length))
+    print("number of vertices: "+str(len(vtx[:, 0])))
+    print("average edge length: "+str(Surface(vtx, fac).avg_edge_length))
     
     # get curvature (looks for hemisphere prefix)
     get_curvature(file_out, os.path.dirname(file_out))

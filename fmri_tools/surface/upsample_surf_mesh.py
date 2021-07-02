@@ -6,11 +6,11 @@ import sys
 import subprocess
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def upsample_surf_mesh(file_in, file_out, n_iter, method):
-    """ Upsample surf mesh
+    """Upsample surf mesh.
     
     The scripts takes generated FreeSurfer surfaces and upsamples them using Jon 
     Polimeni's function mris_mesh_subdivide.    
@@ -30,12 +30,6 @@ def upsample_surf_mesh(file_in, file_out, n_iter, method):
     -------
     None.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 01-11-2018             
-    Last modified: 12-10-2020
-
     """
     
     # make output folder
@@ -49,7 +43,6 @@ def upsample_surf_mesh(file_in, file_out, n_iter, method):
                         '--surf', file_in, 
                         '--out', file_out, 
                         '--method', method, 
-                        '--iter', str(n_iter)], check = True)
+                        '--iter', str(n_iter)], check=True)
     except subprocess.CalledProcessError:
         sys.exit("Surface subdivision failed!")
-        

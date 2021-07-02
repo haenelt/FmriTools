@@ -5,7 +5,7 @@ import numpy as np
 
 
 def get_white_2d(nx, ny, mu, sigma):
-    """ Get white 2D
+    """Get white 2D.
 
     Creates a 2D array with Gaussian noise.    
 
@@ -24,23 +24,17 @@ def get_white_2d(nx, ny, mu, sigma):
     -------
     img : ndarray
         White noise array.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 04-01-2019
-    Last modified: 12-10-2020
     
     """
-    
-    img = np.random.normal(mu,sigma,nx*ny)
-    img = np.reshape(img,(nx,ny))
-    
+
+    img = np.random.normal(mu, sigma, nx * ny)
+    img = np.reshape(img, (nx, ny))
+
     return img
 
 
 def get_white_1d(n, mu, sigma):
-    """ Get white 1D
+    """Get white 1D.
     
     Creates a 1D array with Gaussian noise.
 
@@ -57,15 +51,9 @@ def get_white_1d(n, mu, sigma):
     -------
     img : ndarray
         White noise array.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 08-01-2019
-    Last modified: 12-10-2020
     
     """
-    
-    img = np.random.normal(mu,sigma,n)
-    
+
+    img = np.random.normal(mu, sigma, n)
+
     return img

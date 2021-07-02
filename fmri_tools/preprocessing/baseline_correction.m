@@ -12,10 +12,6 @@ function baseline_correction(input, TR, cutoff_highpass, prefix)
 % This function computes a baseline correction of a functional time series.
 % The output time series gets a prefix b to the file name.
 
-% created by Daniel Haenelt
-% Date created: 07-12-2018
-% Last modified: 11-11-2019
-
 if ~exist('prefix','var')  
     prefix = 'b';
 end

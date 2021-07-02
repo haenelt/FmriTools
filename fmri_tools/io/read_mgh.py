@@ -6,7 +6,7 @@ import nibabel as nb
 
 
 def read_mgh(file_in):
-    """ Read MGH
+    """Read MGH.
 
     This function reads a surface mgh file and removes empty dimensions from the
     data array.
@@ -14,7 +14,7 @@ def read_mgh(file_in):
     Parameters
     ----------
     file_in : str
-        Filename of input file.
+        File name of input file.
 
     Raises
     ------
@@ -30,12 +30,6 @@ def read_mgh(file_in):
         Affine transformation matrix.
     header : MGHHeader
         Image header.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 25-08-2020
-    Last modified: 20-10-2020
 
     """
     

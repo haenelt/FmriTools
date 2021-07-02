@@ -14,14 +14,14 @@ from gbb.utils import vox2ras
 from gbb.io import get_filename
 
 # local inputs
-from fmri_tools.surface.smooth_surface import smooth_surface
-from fmri_tools.layer.get_meshlines import get_meshlines
-from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
+from ..surface.smooth_surface import smooth_surface
+from ..layer.get_meshlines import get_meshlines
+from ..utils.apply_affine_chunked import apply_affine_chunked
 
 
-def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer, 
+def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
                        n_smooth=2, n_crop=2):
-    """ Calc equidist surf
+    """Calc equidist surf.
     
     The function computes a set of matched surface meshs to create equidistant
     layers within the cerebral cortex. First, from a starting mesh and a 
@@ -51,55 +51,49 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     -------
     None.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 17-10-2020
-    Last modified: 11-03-2021
-
     """
-    
+
     # make output folder
     if not os.path.exists(path_output):
         os.makedirs(path_output)
-    
+
     # get hemisphere and basename of freesurfer surface
     _, hemi, name = get_filename(input_mesh)
-    name = name.replace(".","")
+    name = name.replace(".", "")
 
     # check filename
     if not hemi[:2] == "lh" and not hemi[:2] == "rh":
         sys.exit("Could not identify hemi from filename!")
-    
+
     # load data
     vtx, fac = read_geometry(input_mesh)
     level = nb.load(input_boundaries)
-    
+
     # get ras <-> vox transformation
     vox2ras_tkr, ras2vox_tkr = vox2ras(input_boundaries)
 
     # transform vertices to voxel space
     vtx = apply_affine_chunked(ras2vox_tkr, vtx)
-    
+
     # cut volume edges
     if n_crop:
         arr_level = level.get_fdata()
-        arr_level = arr_level[n_crop:-n_crop,n_crop:-n_crop,n_crop:-n_crop,:]
+        arr_level = arr_level[n_crop:-n_crop, n_crop:-n_crop, n_crop:-n_crop, :]
         level = nb.Nifti1Image(arr_level, level.affine, level.header)
         vtx -= n_crop
-    
+
     mesh = dict()
     mesh["points"] = vtx
     mesh["faces"] = fac
-    
+
     # compute new wm and csf borders
     border = profile_meshing(level,
                              mesh,
-                             save_data=False, 
-                             overwrite=False, 
+                             save_data=False,
+                             overwrite=False,
                              output_dir=None,
                              file_name=None)
-    
+
     vtx_white = border["profile"][0]["points"]
     vtx_pial = border["profile"][-1]["points"]
 
@@ -107,44 +101,45 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     if n_crop:
         vtx_pial += n_crop
         vtx_white += n_crop
-    
+
     # transform vertices to ras space
     vtx_white = apply_affine_chunked(vox2ras_tkr, vtx_white)
     vtx_pial = apply_affine_chunked(vox2ras_tkr, vtx_pial)
-    
+
     # write temporary output
     tmp1 = np.random.randint(0, 10, 5)
     tmp1 = ''.join(str(i) for i in tmp1)
     tmp2 = datetime.datetime.now().strftime("%S%f")
     tmp_string = tmp1 + tmp2
-    
-    tmp_white = os.path.join(path_output, "tmp_white_"+tmp_string)
-    tmp_pial = os.path.join(path_output, "tmp_pial_"+tmp_string)
-    
+
+    tmp_white = os.path.join(path_output, "tmp_white_" + tmp_string)
+    tmp_pial = os.path.join(path_output, "tmp_pial_" + tmp_string)
+
     if os.path.exists(tmp_white) or os.path.exists(tmp_pial):
         raise FileExistsError("Temporary file already exists!")
-    
+
     write_geometry(tmp_white, vtx_white, fac)
     write_geometry(tmp_pial, vtx_pial, fac)
-    
+
     # smooth output
     if n_smooth:
         smooth_surface(tmp_white, tmp_white, n_smooth)
         smooth_surface(tmp_pial, tmp_pial, n_smooth)
-        
-        vtx_white, fac_white = read_geometry(tmp_white)            
+
+        vtx_white, fac_white = read_geometry(tmp_white)
         vtx_pial, fac_pial = read_geometry(tmp_pial)
-    
+
     # mesh lines
     vtx_lines, fac_lines = get_meshlines(vtx_pial, vtx_white)
-    write_geometry(os.path.join(path_output,"mesh_line"), vtx_lines, fac_lines)
-    
+    write_geometry(os.path.join(path_output, "mesh_line"), vtx_lines, fac_lines)
+
     # get final layers
     for i in range(n_layer):
-        vtx_layer = vtx_white + i/(n_layer-1) * (vtx_pial - vtx_white)
-        filename_out = os.path.join(path_output, hemi+"."+name+"_layer_"+str(i))
-        write_geometry(filename_out, vtx_layer, fac)    
+        vtx_layer = vtx_white + i / (n_layer - 1) * (vtx_pial - vtx_white)
+        filename_out = os.path.join(path_output,
+                                    hemi + "." + name + "_layer_" + str(i))
+        write_geometry(filename_out, vtx_layer, fac)
 
-    # clean
+        # clean
     os.remove(tmp_white)
     os.remove(tmp_pial)

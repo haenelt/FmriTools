@@ -47,10 +47,6 @@
 % The script was taken from cg_spmT2x.m v1.25 by Christian Gaser and
 % adapted to my own purposes.
 
-% created by Daniel Haenelt
-% Date created: 17-04-2020
-% Last modified: 26-05-2020
-
 % input
 spm_mat_in = '/data/pt_01880/Experiment1_ODC/p4/odc/SE_EPI3/contrast_all/SPM.mat'; % SPM.mat
 path_output = '/data/pt_01880/Experiment1_ODC/p4/odc/results'; % path where output is written

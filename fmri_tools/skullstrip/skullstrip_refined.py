@@ -8,11 +8,11 @@ import nibabel as nb
 from nipype.interfaces.freesurfer import ApplyVolTransform
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
     
     
 def skullstrip_refined(file_mask1, file_mask2):
-    """ Skullstrip refined
+    """Skullstrip refined.
 
     The purpose of the following function is to enhance the skullstrip mask in 
     native space. It uses a second mask which was manually corrected during the 
@@ -30,12 +30,6 @@ def skullstrip_refined(file_mask1, file_mask2):
     -------
     file_out : str
         Filename of enhanced brainmask.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 31-01-2020            
-    Last modified: 12-10-2020
     
     """
     
@@ -72,7 +66,8 @@ def skullstrip_refined(file_mask1, file_mask2):
     mask_enhanced_array = mask1_array * mask2_array
     
     # write enhancec brainmask
-    mask_enhanced = nb.Nifti1Image(mask_enhanced_array, mask1.affine, mask1.header)   
+    mask_enhanced = nb.Nifti1Image(mask_enhanced_array, mask1.affine,
+                                   mask1.header)
     nb.save(mask_enhanced, file_out)
 
     # remove temporary file

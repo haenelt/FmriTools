@@ -5,10 +5,6 @@
 % helps the identification of inconsistent bold and vaso motion
 % corrections.
 
-% created by Daniel Haenelt
-% Date created: 20-10-2019
-% Last modified: 25-05-2020
-
 % array of of input time series
 rp_bold = {
     '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/data.nii',...

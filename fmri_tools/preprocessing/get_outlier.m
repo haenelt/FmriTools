@@ -20,10 +20,6 @@ function [outlier_all] = get_outlier(file_rp, file_in, outlier_params,...
 % if the average z-score of each time point exceeds a defined threshold. A
 % summary file with the listed outliers and a regressor of no interest are
 % written.
-    
-% created by Daniel Haenelt
-% Date created: 23-02-2020
-% Last modified: 23-05-2020
 
 % make output folder
 if ~exist(path_output,'dir') 

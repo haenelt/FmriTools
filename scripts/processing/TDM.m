@@ -7,10 +7,6 @@
 % stimulus durations of the experimental conditions are assumed to be the
 % same across functional runs.
 
-% created by Daniel Haenelt
-% Date created: 16-03-2020
-% Last modified: 18-03-2020
-
 % input data
 img_input = {
     '/data/pt_01983/func/flicker/GE_EPI1/Run_1/uadata.nii',...

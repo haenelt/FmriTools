@@ -5,7 +5,7 @@ import nibabel as nb
 
 
 def copy_header(file_in):
-    """ Copy header
+    """Copy header.
     
     The function reads the header information from a nifti file and copies it 
     into an empty header. This is done to omit unnecessary header extensions.    
@@ -19,12 +19,6 @@ def copy_header(file_in):
     -------
     header_new : niiheader
         Cleaned nibabel header.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 23-06-2020             
-    Last modified: 12-10-2020
 
     """
     

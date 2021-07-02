@@ -7,10 +7,10 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.fft import fft, fftshift
-    
-    
-def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
-    """ Get RF pulse BW
+
+
+def get_rf_pulse_bw(file_in, npad=1000, ninterp=1000000):
+    """Get RF pulse BW.
 
     This function computes the bandwidth in Hz of an RF pulse. The RF pulse
     shape has to be exported from the POET simulation. This can be done by 
@@ -20,15 +20,13 @@ def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
 
     Parameters
     ----------
-    input : str
+    file_in : str
         Textfile of one event block.
     npad : int, optional
         Pad zeros before and after pulse. The default is 1000.
     ninterp : int, optional
         Number of frequency steps for spline interpolation. The default is 
         1000000.
-    threshold : float, optional
-        Value at which bw is estimated. The default is 0.1.
 
     Returns
     -------
@@ -38,18 +36,12 @@ def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
         Pulse shape in frequency domain (cycles/second).
     bw : float
         Bandwidth (Hz).
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 15-05-2019
-    Last modified: 12-10-2020
     
     """
-    
+
     # read file
-    file=[]
-    with open(input) as fp:  
+    file = []
+    with open(file_in) as fp:
         line = fp.readline()
         while line:
             line = fp.readline()
@@ -64,7 +56,7 @@ def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
         temp = [float(s) for s in re.findall(r'-?\d+\.?\d*', file[i])]
         if len(temp) > 0:
             rf.append(temp[0])
-    
+
     # remove zeros at the beginning
     exit_loop = 0
     cnt = 0
@@ -83,16 +75,16 @@ def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
             cnt -= 1
         else:
             exit_loop = 1
-    rf = rf[:cnt+1]
+    rf = rf[:cnt + 1]
 
     # pad beginning and ending with zeros
-    rf = np.pad(rf,npad,'constant')
+    rf = np.pad(rf, npad, 'constant')
 
     # get magnitude fft
     rf_fft = np.abs(fft(rf))
 
     # get frequency axis 
-    freq = np.fft.fftfreq(len(rf),1e-6) # timesteps in seconds
+    freq = np.fft.fftfreq(len(rf), 1e-6)  # timesteps in seconds
 
     # shift center frequency to center and normalize magnitude
     freq = fftshift(freq)
@@ -104,30 +96,30 @@ def get_rf_pulse_bw(input, npad=1000, ninterp=1000000, threshold=0.1):
     rf_fft_spline = np.interp(freq_spline, freq, rf_fft)
 
     threshold = 0.1
-    for i in range(len(rf_fft_spline)-1):
-        if rf_fft_spline[i] <= threshold and rf_fft_spline[i+1] > threshold:
+    for i in range(len(rf_fft_spline) - 1):
+        if rf_fft_spline[i] <= threshold < rf_fft_spline[i + 1]:
             freq1 = freq_spline[i]
-    
-        if rf_fft_spline[i] > threshold and rf_fft_spline[i+1] <= threshold:
+
+        if rf_fft_spline[i] > threshold >= rf_fft_spline[i + 1]:
             freq2 = freq_spline[i]
 
     # bandwidth in Hz
     bw = freq2 - freq1
-    print("Pulse bandwidth in Hz: "+str(bw))
+    print("Pulse bandwidth in Hz: " + str(bw))
 
     # plot pulse and corresponding fft
     fig, ax = plt.subplots()
-    ax.plot(np.linspace(0,len(rf),len(rf)),rf)
+    ax.plot(np.linspace(0, len(rf), len(rf)), rf)
     ax.set_xlabel("Time in microseconds")
     ax.set_ylabel("Amplitude in a.u.")
     ax.set_title("Pulse shape in time domain")
     plt.show()
 
     fig, ax = plt.subplots()
-    ax.plot(freq_spline,rf_fft_spline)
+    ax.plot(freq_spline, rf_fft_spline)
     ax.set_xlabel("frequency in cycles/second")
     ax.set_ylabel("Normalized amplitude in a.u.")
     ax.set_title("Pulse shape in frequency domain")
     plt.show()
-    
+
     return rf, rf_fft, bw

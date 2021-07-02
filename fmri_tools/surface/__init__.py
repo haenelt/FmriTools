@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Python package for for analysis of high-resolution fMRI data."""
 
 # local inputs
 from .apply_fieldmap import apply_fieldmap
@@ -19,12 +20,3 @@ from .upsample_surf_mesh import upsample_surf_mesh
 from .extract_main_component import extract_main_component
 from .gradient import gradient
 from .intracortical_smoothing import intracortical_smoothing
-
-
-"""
-Python package for for analysis of high-resolution fMRI data.
-
-created by Daniel Haenelt
-Date created: 12-10-2020
-Last modified: 24-10-2020
-"""

@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Generate 2D pattern
+
+This script creates a two-dimensional sinusoidal or rectangular pattern.
+
+"""
 
 # external inputs
 import numpy as np
@@ -8,17 +14,6 @@ from numpy.fft import fft2, fftshift
 
 # local inputs
 from fmri_tools.simulation.pattern import pattern_2d
-
-
-"""
-Generate 2D pattern
-
-This script creates a two-dimensional sinusoidal or rectangular pattern.
-
-created by Daniel Haenelt
-Date created: 18-02-2019
-Last modified: 12-10-2020
-"""
 
 # 2D parameters
 Nx_sim = 1024
@@ -46,22 +41,22 @@ theta_mask = 0
 # do not edit below
 
 # Generate pattern
-neural, bold, mri, _ = pattern_2d(Nx_sim, Ny_sim, FOVx, FOVy, Nx_mri, Ny_mri, 
-                                  omega_x, omega_y, phi_x, phi_y, theta, 
+neural, bold, mri, _ = pattern_2d(Nx_sim, Ny_sim, FOVx, FOVy, Nx_mri, Ny_mri,
+                                  omega_x, omega_y, phi_x, phi_y, theta,
                                   rect_shape, beta, fwhm_bold, fwhm_noise,
                                   a_mask, b_mask, theta_mask)
 
 # Plot
 # plot neural map
 _, ax = plt.subplots()
-ax.imshow(neural, extent=[0,FOVx,0,FOVy])
+ax.imshow(neural, extent=[0, FOVx, 0, FOVy])
 ax.set_xlabel("Distance in mm")
 ax.set_ylabel("Distance in mm")
 ax.set_title("Simulated pattern")
 
 # plot sampled pattern
 _, ax = plt.subplots()
-ax.imshow(mri,extent=[0,FOVx,0,FOVy])
+ax.imshow(mri, extent=[0, FOVx, 0, FOVy])
 ax.set_xlabel("Distance in mm")
 ax.set_ylabel("Distance in mm")
 ax.set_title("Sampled pattern")
@@ -69,21 +64,22 @@ ax.set_title("Sampled pattern")
 # autocorrelation
 mri_auto = correlate(mri, mri, "same")
 _, ax = plt.subplots()
-ax.imshow(mri_auto, extent=[-FOVx/2,FOVx/2,-FOVy/2,FOVy/2])
+ax.imshow(mri_auto, extent=[-FOVx / 2, FOVx / 2, -FOVy / 2, FOVy / 2])
 ax.set_xlabel("Lag in mm")
 ax.set_ylabel("Lag in mm")
 ax.set_title("Autocorrelation")
 
 # fft
-mri_fft = fftshift(np.abs(fft2(mri))**2)
+mri_fft = fftshift(np.abs(fft2(mri)) ** 2)
 _, ax = plt.subplots()
-ticks = [-Nx_mri/(2*FOVx),Nx_mri/(2*FOVx),-Ny_mri/(2*FOVy),Ny_mri/(2*FOVy)]
+ticks = [-Nx_mri / (2 * FOVx), Nx_mri / (2 * FOVx), -Ny_mri / (2 * FOVy),
+         Ny_mri / (2 * FOVy)]
 if not Nx_mri % 2:
-    ticks[0] = (-Nx_mri-1)/(2*FOVx)
-    ticks[1] = (Nx_mri-1)/(2*FOVy)
+    ticks[0] = (-Nx_mri - 1) / (2 * FOVx)
+    ticks[1] = (Nx_mri - 1) / (2 * FOVy)
 if not Ny_mri % 2:
-    ticks[2] = (-Ny_mri-1)/(2*FOVy)
-    ticks[3] = (Ny_mri-1)/(2*FOVy)
+    ticks[2] = (-Ny_mri - 1) / (2 * FOVy)
+    ticks[3] = (Ny_mri - 1) / (2 * FOVy)
 ax.imshow(mri_fft, extent=ticks)
 ax.set_xlabel("Spatial frequency in cycles/mm")
 ax.set_ylabel("Spatial frequency in cycles/mm")

@@ -17,10 +17,6 @@ function regress_physio(input, regressor, TR, cutoff_highpass, ...
 % predefined regressors. The output is the residual time series from the
 % GLM.
 
-% created by Daniel Haenelt
-% Date created: 28-02-2019
-% Last modified: 28-02-2019
-
 % default parameter
 if ~exist('cleanup','var')  
     cleanup = true;

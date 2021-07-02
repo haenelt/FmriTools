@@ -12,10 +12,6 @@ function get_biopac_regressor(input, biopac_input, path_output, TR)
 % This function computes nuisance regressors from peripheral cardiac and
 % respiratory data (biopac).
 
-% created by Daniel Haenelt
-% Date created: 02-03-2019
-% Last modified: 02-03-2019
-
 % add paths to the interpreter's search path
 spm('defaults','FMRI');
 spm_get_defaults('stats.maxmem',2^35); % maxmen indicates how much memory can be used

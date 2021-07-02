@@ -11,10 +11,6 @@
 % resting_state_0p8 and task_0p8 -> 16.304
 % localiser_2p0 -> 20.027
 
-% created by Daniel Haenelt
-% Date created: 06-08-2019
-% Last modified: 12-10-2020
-
 % array of of input time series
 img_input = {
     '/data/pt_01880/temp_p5/Run_1/data.nii',...

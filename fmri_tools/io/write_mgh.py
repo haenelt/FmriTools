@@ -9,12 +9,12 @@ import nibabel as nb
 from nibabel.freesurfer.mghformat import MGHHeader
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def write_mgh(file_out, arr, affine=None, header=None):
-    """ Write MGH
-    
+    """Write MGH.
+
     This function adds two empty dimensions to an array and saves it as a
     freesurfer mgh surface file.
 
@@ -38,12 +38,6 @@ def write_mgh(file_out, arr, affine=None, header=None):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 25-08-2020
-    Last modified: 20-10-2020
 
     """
     

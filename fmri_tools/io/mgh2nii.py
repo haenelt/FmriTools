@@ -7,17 +7,17 @@ import os
 from nipype.interfaces.freesurfer.preprocess import MRIConvert
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
-def mgh2nii(filename, path_output, out_type="nii"):
-    """ MGH2NII
+def mgh2nii(file_in, path_output, out_type="nii"):
+    """MGH2NII.
 
     This function converts a volume file from freesurfer mgh to nifti format.    
 
     Parameters
     ----------
-    filename : str
+    file_in : str
         Full path of the input file.
     path_output : str
         Path where output is written.
@@ -27,22 +27,16 @@ def mgh2nii(filename, path_output, out_type="nii"):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 06-01-2020             
-    Last modified: 12-10-2020
     
-    """    
+    """
 
     # get filename
-    path, name, ext = get_filename(filename)
+    path, name, ext = get_filename(file_in)
 
     # convert volume to nifti format
     mc = MRIConvert()
-    mc.inputs.in_file = filename
-    mc.inputs.out_file = os.path.join(path_output,name+"."+out_type)
-    mc.inputs.in_type = ext.replace('.','')
+    mc.inputs.in_file = file_in
+    mc.inputs.out_file = os.path.join(path_output, name + "." + out_type)
+    mc.inputs.in_type = ext.replace('.', '')
     mc.inputs.out_type = out_type
     mc.run()

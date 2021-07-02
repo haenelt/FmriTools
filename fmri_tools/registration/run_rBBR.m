@@ -11,10 +11,6 @@ function run_rBBR(input)
 % cell structure, i.e. all the needed variables should be contained in the
 % input file.
 
-% created by Daniel Haenelt
-% Date created: 12-12-2019
-% Last modified: 12-12-2019
-
 % load input mat file
 load(input);
 

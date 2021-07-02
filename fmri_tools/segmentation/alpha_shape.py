@@ -11,7 +11,7 @@ from shapely.ops import cascaded_union, polygonize
 
 
 def alpha_shape(points, alpha):    
-    """ Alpha shape
+    """Alpha shape.
 
     This function computes the alpha shape (concave hull) of a set of points. It 
     is taken and slightly changed from [1]. Delaunay triangles are computed 
@@ -41,12 +41,6 @@ def alpha_shape(points, alpha):
     -------
     .. [1] http://blog.thehumangeo.com/2014/05/12/drawing-boundaries-in-python/ 
     (accessed 22-10-2018)
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 01-11-2018             
-    Last modified: 12-10-2020
 
     """
     

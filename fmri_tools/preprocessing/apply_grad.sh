@@ -22,10 +22,6 @@
 # Outputs:
 #   *trilinear: unwarped image.
 #   *fullWarp_abs: warp field.
-#
-# created by Daniel Haenelt
-# Date created: 29-12-2018
-# Last modified: 13-10-2020
 
 # get python2 environment
 echo -e "\nPassed arguments"

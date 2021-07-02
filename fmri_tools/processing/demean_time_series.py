@@ -8,9 +8,9 @@ import numpy as np
 import nibabel as nb
 
 
-def demean_time_series(img_input, path_output="", name_output="", 
+def demean_time_series(img_input, path_output="", name_output="",
                        write_output=False):
-    """ Demean time series
+    """Demean time series.
 
     This function demeans each voxel time series. Input is either a 4d nifti or 
     compressed nifti file.    
@@ -30,15 +30,9 @@ def demean_time_series(img_input, path_output="", name_output="",
     -------
     output : niimg
         Demeaned 4d nifti volume.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 24-10-2019
-    Last modified: 12-10-2020
     
     """
-    
+
     # load data
     if isinstance(img_input, nb.Nifti1Image):
         data_array = img_input.get_fdata()
@@ -48,17 +42,18 @@ def demean_time_series(img_input, path_output="", name_output="",
     else:
         print("Input must be either string or instance of nibabel class")
         return
-    
+
     # get mean of each voxel time series
     data_mean = np.mean(data_array, axis=3)
-    
+
     # demean time series
     for i in range(np.shape(data_array)[3]):
-        data_array[:,:,:,i] = ( data_array[:,:,:,i] - data_mean )/ data_mean * 100
-       
+        data_array[:, :, :, i] = (data_array[:, :, :, i] - data_mean) / data_mean * 100
+
     # write output    
     output = nb.Nifti1Image(data_array, img_input.affine, img_input.header)
     if write_output:
-        nb.save(output, os.path.join(path_output, "demean_"+name_output+".nii"))
-    
+        nb.save(output,
+                os.path.join(path_output, "demean_" + name_output + ".nii"))
+
     return output

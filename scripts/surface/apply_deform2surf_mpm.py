@@ -1,25 +1,19 @@
 # -*- coding: utf-8 -*-
+"""
+Apply deformation to surface mesh
+
+The purpose of the following script is to apply two deformations in succession
+(orig -> ana -> mpm) to a surface mesh using generated coordinate mappings. The
+script needs an installation of freesurfer.
+
+"""
 
 # python standard library inputs
-import os 
+import os
 from os.path import join, basename
 
 # local inputs
 from fmri_tools.surface.deform_surface import deform_surface
-
-
-"""
-Apply deformation to surface mesh
-
-The purpose of the following script is to apply two deformations in succession 
-(orig -> ana -> mpm) to a surface mesh using generated coordinate mappings.
-
-The script needs an installation of freesurfer.
-
-created by Daniel Haenelt
-Date created: 30-01-2020
-Last modified: 19-10-2020
-"""
 
 # input files
 input_surf = ["/data/pt_01983/func/anatomy/layer/lh.layer0",
@@ -68,41 +62,40 @@ input_surf = ["/data/pt_01983/func/anatomy/layer/lh.layer0",
 input_orig = "/data/pt_01983/func/anatomy/freesurfer/mri/orig.mgz"
 input_ana = "/data/pt_01983/func/anatomy/S7_MP2RAGE_0p7_T1_Images_2.45.nii"
 input_mpm = "/data/pt_01983/func/mpm/Session1/seste/s2019-10-17_13-17-140642-00001-00352-1__dis3d_R1_scaled.nii"
-input_deform1 = "/data/pt_01983/func/deformation/header/T12orig.nii.gz" # ana2orig
-input_deform2 = "/data/pt_01983/func/deformation/MPM/sess1/mpm_2_mp2rage.nii.gz" # mpm2ana
+input_deform1 = "/data/pt_01983/func/deformation/header/T12orig.nii.gz"  # ana2orig
+input_deform2 = "/data/pt_01983/func/deformation/MPM/sess1/mpm_2_mp2rage.nii.gz"  # mpm2ana
 path_output = "/data/pt_01983/func/anatomy/layer_mpm/Session1"
 
 # do not edit below
 
-for i in range(len(input_surf)):    
-    
+for i in range(len(input_surf)):
     # orig -> ana
-    deform_surface(input_surf[i], 
-                   input_orig, 
-                   input_deform1, 
-                   input_ana, 
-                   path_output, 
+    deform_surface(input_surf[i],
+                   input_orig,
+                   input_deform1,
+                   input_ana,
+                   path_output,
                    input_mask=None,
                    interp_method="trilinear",
-                   smooth_iter=0, 
+                   smooth_iter=0,
                    flip_faces=False,
                    cleanup=True)
 
     # ana -> epi
-    deform_surface(join(path_output, basename(input_surf[i])+"_def"),
+    deform_surface(join(path_output, basename(input_surf[i]) + "_def"),
                    input_ana,
                    input_deform2,
                    input_mpm,
-                   path_output, 
+                   path_output,
                    input_mask=None,
                    interp_method="trilinear",
-                   smooth_iter=0, 
+                   smooth_iter=0,
                    flip_faces=False,
                    cleanup=True)
 
     # rename output
-    os.rename(join(path_output, basename(input_surf[i])+"_def_def"),
-              join(path_output, basename(input_surf[i])+"_mpm"))
-    
+    os.rename(join(path_output, basename(input_surf[i]) + "_def_def"),
+              join(path_output, basename(input_surf[i]) + "_mpm"))
+
     # remove all intermediate steps
-    os.remove(join(path_output, basename(input_surf[i])+"_def"))
+    os.remove(join(path_output, basename(input_surf[i]) + "_def"))

@@ -1,24 +1,18 @@
 # -*- coding: utf-8 -*-
+"""
+Make visual fieldsign map
+
+The purpose of the following script is to make a visual fieldsign map from
+sampled phase-encoded retinotopy data. The script needs an installation of
+freesurfer.
+
+"""
 
 # python standard library inputs
 import os
 
 # local inputs
 from fmri_tools.mapping.get_vfs import get_vfs
-
-
-"""
-Make visual fieldsign map
-
-The purpose of the following script is to make a visual fieldsign map from 
-sampled phase-encoded retinotopy data.
-
-The script needs an installation of freesurfer.
-
-created by Daniel Haenelt
-Date created: 14-02-2019
-Last modified: 13-10-2020
-"""
 
 # input files
 hemi = "lh"
@@ -34,8 +28,9 @@ path_output = "/data/pt_01880/Experiment1_ODC/p3/retinotopy/avg/surf/"
 
 # do not edit below
 
-get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real, ecc_imag, pol_real, 
-            pol_imag, path_output, fwhm_ecc = 4.0, fwhm_pol = 2.0, fwhm_vfs = 8.0, cleanup=True)
+get_vfs(input_sphere, input_white, input_patch, input_aparc, hemi, ecc_real,
+        ecc_imag, pol_real, pol_imag, path_output, fwhm_ecc=4.0, fwhm_pol=2.0,
+        fwhm_vfs=8.0, cleanup=True)
 
 # remove generated tmp.dat file
-os.remove(os.path.join(os.getcwd(),"tmp.dat"))
+os.remove(os.path.join(os.getcwd(), "tmp.dat"))

@@ -6,11 +6,11 @@ import sys
 import subprocess
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def smooth_surface(file_in, file_out, n_iter):
-    """ Smooth surface
+    """Smooth surface.
     
     This function smoothes a surface mesh using freesurfer.    
     
@@ -27,12 +27,6 @@ def smooth_surface(file_in, file_out, n_iter):
     -------
     None.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 13-07-2019
-    Last modified: 12-10-2020
-
     """
        
     # make output folder
@@ -46,7 +40,6 @@ def smooth_surface(file_in, file_out, n_iter):
                         '-n', str(n_iter), 
                         '-nw', 
                         file_in, 
-                        file_out], check = True)
+                        file_out], check=True)
     except subprocess.CalledProcessError:
         sys.exit("Surface smoothing failed!")
-        

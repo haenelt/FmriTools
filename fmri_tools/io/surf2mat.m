@@ -19,10 +19,6 @@ function [wSurface, pSurface, faceData] = surf2mat(lh_white, rh_white, ...
 % structure compatible with OpenFmriAnalysis. FREESURFER has to be in the
 % search path.
 
-% created by Daniel Haenelt
-% Date created: 09-12-2019
-% Last modified: 12-12-2019
-
 % default input
 if ~exist('save_output','var')  
     save_output = '';

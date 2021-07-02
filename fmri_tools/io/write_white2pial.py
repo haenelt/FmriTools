@@ -8,7 +8,7 @@ from gbb.neighbor import nn_2d
 
 def write_white2pial(file_out, file_white, file_pial, adjm, step_size=100,
                      shape="line"):
-    """ Plot white to pial
+    """Plot white to pial.
 
     This function generates lines between corresponding vertices at the white
     and pial surface to visualize the shift between matched vertices caused by
@@ -33,12 +33,6 @@ def write_white2pial(file_out, file_white, file_pial, adjm, step_size=100,
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 07-11-2019
-    Last modified: 05-10-2020
 
     """
 

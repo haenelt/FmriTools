@@ -10,11 +10,7 @@ function skullstrip_spm12(filename, path_output)
 % The computation of the skull strip mask should be done on the PD-weighted 
 % (INV2) image of the MP2RAGE sequence. According to S. Kashyap, this shows 
 % the best results. Outputs are written in a subfolder of the given output 
-% path.    
-
-% created by Daniel Haenelt
-% Date created: 01-11-2018             
-% Last modified: 07-01-2021
+% path.
 
 % get SPM12 root directory from matlab search path
 pathSPM = what('spm12').path;

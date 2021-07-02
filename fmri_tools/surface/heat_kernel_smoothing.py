@@ -5,8 +5,8 @@ import numpy as np
 from gbb.neighbor.nn_2d import nn_2d
 
 
-def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
-    """ Heat kernel smoothing
+def heat_kernel_smoothing(vtx, data, adjm, sigma, n_smooth):
+    """Heat kernel smoothing.
     
     This function performs heat kernel smoothing [1,2,3] on a triangle mesh. The 
     code is mainly adapted from the matlab code by Chung et al. [4]. The kernel 
@@ -21,8 +21,6 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
     ----------
     vtx : ndarray
         Vertex points of surface mesh.
-    fac : ndarray
-        Faces of surface mesh.
     data : ndarray
         Array of vertex-wise sampled data points.
     adjm : ndarray
@@ -46,12 +44,6 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
     .. [3] Chung, MK, et al. Encoding cortical surface by spherical harmonics. 
     Statistica Sinica 18, 1269--1291 (2008).
     .. [4] http://pages.stat.wisc.edu/~mchung/softwares/hk/hk_smooth.m
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 04-03-2020
-    Last modified: 12-10-2020
     
     """
     
@@ -59,7 +51,7 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
     n_vertex = len(vtx)
 
     # heat kernel shape
-    K = lambda x, sigma : np.exp(-x/(4*sigma))/np.sum(np.exp(-x/(4*sigma)))
+    k_shape = lambda x, s: np.exp(-x / (4 * s)) / np.sum(np.exp(-x / (4 * s)))
     
     # get max degree (number of first order neighbors)
     max_degree = 0
@@ -70,8 +62,8 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
             max_degree = degree
     
     # heat kernel weight computation
-    neighbor = np.zeros((n_vertex, max_degree+1)).astype(int) # including the current vertex
-    weight = np.zeros((n_vertex, max_degree+1)) # including the current vertex
+    neighbor = np.zeros((n_vertex, max_degree+1)).astype(int)  # including the current vertex
+    weight = np.zeros((n_vertex, max_degree+1))  # including the current vertex
     for i in range(n_vertex):
         
         # get vertex neighbors
@@ -81,13 +73,14 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
         # get distance to vertex neighbors
         distance = 0
         for j in range(degree):
-            distance = np.append(distance, np.sum(( vtx[nn[j]] - vtx[i,:] ) ** 2))
+            distance = np.append(distance,
+                                 np.sum((vtx[nn[j]] - vtx[i, :]) ** 2))
             
         # get heat kernel weighting for each neighbor
-        weight[i,:1+degree] = K(distance, sigma)
+        weight[i, :1+degree] = k_shape(distance, sigma)
         
         # get corresponding neighbor (add 1 because of dummy row)
-        neighbor[i,:1+degree] = np.append([i],nn) + 1        
+        neighbor[i, :1+degree] = np.append([i], nn) + 1
 
     # add dummy row
     data = np.append(1, data)
@@ -98,7 +91,7 @@ def heat_kernel_smoothing(vtx, fac, data, adjm, sigma, n_smooth):
         # add weights
         res = np.zeros_like(data)
         for j in range(max_degree):
-            res[1:] += data[neighbor[:,j]] * weight[:,j]
+            res[1:] += data[neighbor[:, j]] * weight[:, j]
         
         # initialize new data array
         data = res.copy()

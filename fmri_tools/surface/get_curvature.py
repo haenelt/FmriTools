@@ -9,7 +9,7 @@ from nipype.interfaces.freesurfer import Curvature
     
 
 def get_curvature(file_in, path_output, a=10):
-    """ Get curvature
+    """Get curvature.
     
     This function calculates a curvature file for an input surface mesh using 
     freesurfer. The input file needs to have a prefix which indicates the 
@@ -27,12 +27,6 @@ def get_curvature(file_in, path_output, a=10):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 13-07-2019
-    Last modified: 12-10-2020
     
     """
     
@@ -45,11 +39,11 @@ def get_curvature(file_in, path_output, a=10):
     curv = Curvature()
     curv.inputs.in_file = file_in
     curv.inputs.save = True
-    curv.inputs.averages = a # for curv file
+    curv.inputs.averages = a  # for curv file
     curv.run()
     
     # rename mean curvature to curv
-    os.rename(file_in+".H", os.path.join(path_output,hemi+".curv"))
+    os.rename(file_in+".H", os.path.join(path_output, hemi+".curv"))
     
     # delete gaussian curvature file and temporary input file
     os.remove(file_in+".K")

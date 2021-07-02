@@ -10,9 +10,9 @@ from nibabel.freesurfer.io import read_label
 from scipy.stats import ttest_ind, levene
 
 
-def analyze_alff_between_stripes(input_label, input_contrast, input_rest, 
+def analyze_alff_between_stripes(input_label, input_contrast, input_rest,
                                  min_contrast, nvert):
-    """ Analyze ALFF between stripes
+    """Analyze ALFF between stripes.
     
     Comparison of resting-state data within and between V2 stripes. Mask stripes 
     within a ROI from a label with a thresholded contrast and select randomly 
@@ -45,12 +45,6 @@ def analyze_alff_between_stripes(input_label, input_contrast, input_rest,
     p_levene : float
         p-value from Levene's test.
     
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 11-03-2019
-    Last modified: 13-10-2020
-    
     """
 
     # load data
@@ -64,7 +58,7 @@ def analyze_alff_between_stripes(input_label, input_contrast, input_rest,
 
     contrast_pos[contrast < min_contrast] = np.NaN
     contrast_neg[contrast > -min_contrast] = np.NaN
-    
+
     contrast_pos[~label] = np.NaN
     contrast_neg[~label] = np.NaN
     contrast_pos[~np.isnan(contrast_pos)] = 1
@@ -77,21 +71,21 @@ def analyze_alff_between_stripes(input_label, input_contrast, input_rest,
     rest_pos = rest_pos * contrast_pos
     rest_pos = rest_pos[~np.isnan(rest_pos)]
     rest_pos = rest_pos[rest_pos != np.min(rest_pos)]
-    
+
     rest_neg = rest_neg * contrast_neg
     rest_neg = rest_neg[~np.isnan(rest_neg)]
     rest_neg = rest_neg[rest_neg != np.min(rest_neg)]
-    
+
     # select random number of vertices
-    label_shuffled_pos = random.sample(range(0,len(rest_pos)), nvert)
-    label_shuffled_neg = random.sample(range(0,len(rest_neg)), nvert)
+    label_shuffled_pos = random.sample(range(0, len(rest_pos)), nvert)
+    label_shuffled_neg = random.sample(range(0, len(rest_neg)), nvert)
 
     rest_pos = rest_pos[label_shuffled_pos]
     rest_neg = rest_neg[label_shuffled_neg]
 
     # independent samples t-test
-    # Levene's test is run to check for equal variances. If variances are not equal, Welch's t-test
-    # is performed.
+    # Levene's test is run to check for equal variances. If variances are not
+    # equal, Welch's t-test is performed.
     _, p_levene = levene(rest_pos, rest_neg)
     if p_levene < 0.05:
         t, p = ttest_ind(rest_pos, rest_neg, equal_var=False)

@@ -6,11 +6,11 @@ import sys
 import subprocess
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def extract_main_component(file_in, file_out):
-    """ Extract main component
+    """Extract main component.
     
     This function removes unconnected parts found in a surface mesh and returns
     the main component.
@@ -26,12 +26,6 @@ def extract_main_component(file_in, file_out):
     -------
     None.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 24-10-20120
-    Last modified: 24-10-2020
-
     """
     
     # make output folder
@@ -43,6 +37,6 @@ def extract_main_component(file_in, file_out):
     try:
         subprocess.run(['mris_extract_main_component', 
                         file_in, 
-                        file_out], check = True)
+                        file_out], check=True)
     except subprocess.CalledProcessError:
         sys.exit("Main component extraction failed!")

@@ -9,12 +9,12 @@ import numpy as np
 from nibabel.freesurfer.mghformat import MGHHeader
 
 # local input
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def write_hdf5(file_out, arr, affine=None, header=None):
-    """ Write HDF5
-    
+    """Write HDF5.
+
     This function writes a numpy array to an hdf5 file. Optionally, an affine 
     transformation matrix and parts of an MGHHeader are stored. The array is 
     stored in half-precision floating-point format.
@@ -40,18 +40,12 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     -------
     None.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 20-10-2020
-    Last modified: 25-10-2020
-
     """
 
     # check filename
     if isinstance(file_out, str):
         if not (file_out.endswith("h5") or file_out.endswith("hdf5")):            
-            raise ValueError("Currently supported file formats are " + \
+            raise ValueError("Currently supported file formats are " +
                              "h5 and hdf5.")
     else:
         raise ValueError("Filename must be a string!")

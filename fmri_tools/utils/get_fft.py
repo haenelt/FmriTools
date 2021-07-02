@@ -10,9 +10,9 @@ from numpy.fft import fft2, fftshift
 from numpy.random import shuffle
 
     
-def get_fft(input, write_output=False, path_output="", name_output="", 
-            normalization=False, N=1000):
-    """ Get FFT
+def get_fft(arr, write_output=False, path_output="", name_output="",
+            normalization=False, n=1000):
+    """Get FFT.
 
     This function computes the power spectrum of a 2D numpy array. The result is 
     saved as nifti image. Optionally, the FFT spectrum can be normalized. To do 
@@ -24,7 +24,7 @@ def get_fft(input, write_output=False, path_output="", name_output="",
 
     Parameters
     ----------
-    input : ndarray
+    arr : ndarray
         2D nifti input array.
     write_output : bool, optional
         If output is written as nifti file. The default is False.
@@ -34,7 +34,7 @@ def get_fft(input, write_output=False, path_output="", name_output="",
         Basename of output image. The default is "".
     normalization : bool, optional
         Indicate if power spectrum is normalized. The default is False.
-    N : int, optional
+    n : int, optional
         Number of shuffled for normalization. The default is 1000.
 
     Returns
@@ -42,34 +42,28 @@ def get_fft(input, write_output=False, path_output="", name_output="",
     array_fft : ndarray
         Fourier transformed array.
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 11-04-2019
-    Last modified: 12-10-2020
-
     """
     
     # copy input data
-    data = input.copy()
+    data = arr.copy()
     
     # compute autocorrelation
     array_fft = np.abs(fftshift(fft2(data)))
 
     shuffle_mean = []
     if normalization is True:
-        for i in range(N):
+        for i in range(n):
             # shuffle input array
-            shuffle(data) # shuffle along first axis
-            data = data.T # transpose array
-            shuffle(data) # shuffle along second axis
+            shuffle(data)  # shuffle along first axis
+            data = data.T  # transpose array
+            shuffle(data)  # shuffle along second axis
             data = data.T            
         
             # get fft
             array_shuffle_fft = np.abs(fftshift(fft2(data)))
             
             # get 50th percentile
-            shuffle_mean.append(np.percentile(array_shuffle_fft,50))
+            shuffle_mean.append(np.percentile(array_shuffle_fft, 50))
         
         # get mean of percentiles
         array_50 = np.mean(shuffle_mean)
@@ -82,6 +76,6 @@ def get_fft(input, write_output=False, path_output="", name_output="",
     # write nifti
     if write_output is True:
         output = nb.Nifti1Image(array_fft, np.eye(4), nb.Nifti1Header())
-        nb.save(output, os.path.join(path_output,name_output + "_fft.nii"))
+        nb.save(output, os.path.join(path_output, name_output + "_fft.nii"))
         
     return array_fft

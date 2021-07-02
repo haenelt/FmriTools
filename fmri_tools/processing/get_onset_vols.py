@@ -9,7 +9,7 @@ from scipy.io import loadmat
 
 
 def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):
-    """ Get onset vols
+    """Get onset vols.
 
     This function returns all the volume indices corresponding to an 
     experimental condition in from a block design.    
@@ -31,12 +31,6 @@ def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):
     -------
     onsets : ndarray
         sorted volumes of experimental condition.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 16-09-2019
-    Last modified: 12-10-2020
 
     """
     

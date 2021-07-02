@@ -13,10 +13,6 @@
 % (4) Resulting maps are reoriented back to native space. (5) Maps are 
 % scaled.
 
-% created by Daniel Haenelt
-% Date created: 11-09-2020
-% Last modified: 07-01-2021
-
 % input data
 file_t1w = {
     '/data/pt_01880/test_mpm/t1_kp_mtflash3d_v1ax_0p5_0007/s2803151-123034-00001-00352-1.nii'

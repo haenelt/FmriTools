@@ -4,11 +4,11 @@
 import os
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def write_label(file_out, arr_label):
-    """ Write label
+    """Write label.
 
     This function writes a textfile which can be read as label file in 
     freesurfer.        
@@ -29,12 +29,6 @@ def write_label(file_out, arr_label):
     Returns
     -------
     None.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 03-09-2020
-    Last modified: 19-11-2020
 
     """
     

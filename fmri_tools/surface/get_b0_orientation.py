@@ -11,13 +11,13 @@ from gbb.normal import get_normal
 from gbb.utils.vox2ras import vox2ras
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
-from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
+from ..io.get_filename import get_filename
+from ..utils.apply_affine_chunked import apply_affine_chunked
 
 
 def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", 
                        name_output=""):
-    """ Get B0 orientation
+    """Get B0 orientation.
     
     This function computes the angle between surface normals and B0-direction 
     per vertex.    
@@ -39,12 +39,6 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="",
     -------
     theta : ndarray
         Angle in radians.
-
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 31-07-2020 
-    Last modified: 11-03-2021
     
     """
     
@@ -61,16 +55,16 @@ def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="",
     # get transformation matrix
     _, r2v = vox2ras(vol_in)      # ras-tkr -> voxel
     v2s = nb.load(vol_in).affine  # voxel -> scanner-ras
-    M = v2s.dot(r2v)
+    m = v2s.dot(r2v)
     
     # apply affine transformation
-    vtx = apply_affine_chunked(M, vtx)
+    vtx = apply_affine_chunked(m, vtx)
     
     # get surface normals
     n = get_normal(vtx, fac)
     
     # get angle between b0 and surface normals in radians    
-    theta = np.arccos(np.dot(n, [0,0,1]))
+    theta = np.arccos(np.dot(n, [0, 0, 1]))
     
     # write output
     if write_output:

@@ -9,18 +9,18 @@ import nibabel as nb
 from numpy.fft import fft, ifft, fft2, ifft2
 
 # local inputs
-from fmri_tools.simulation.get_white import get_white_2d, get_white_1d
-from fmri_tools.simulation.filter_odc import filter_odc_2d, filter_odc_1d
-from fmri_tools.simulation.filter_bold import filter_bold_2d, filter_bold_1d
-from fmri_tools.simulation.mask_pattern import mask_pattern_2d, mask_pattern_1d
-from fmri_tools.simulation.filter_sigmoid import filter_sigmoid
+from ..simulation.get_white import get_white_2d, get_white_1d
+from ..simulation.filter_odc import filter_odc_2d, filter_odc_1d
+from ..simulation.filter_bold import filter_bold_2d, filter_bold_1d
+from ..simulation.mask_pattern import mask_pattern_2d, mask_pattern_1d
+from ..simulation.filter_sigmoid import filter_sigmoid
 
 
-def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100, 
-           rho=0.5, delta=0.3, epsilon=0.4, theta=0, alpha=4, beta=0.05, 
-           fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, b_mask=1000, 
-           alpha_mask=0, path_white=False):
-    """ ODC 2D
+def odc_2d(nx_sim=1024, ny_sim=1024, fov_x=20, fov_y=20, nx_mri=100, ny_mri=100,
+           rho=0.5, delta=0.3, epsilon=0.4, theta=0, alpha=4, beta=0.05,
+           fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, b_mask=1000,
+           alpha_mask=0, path_white=None):
+    """ODC 2D.
     
     This function generates realistic ocular dominance patterns according to the 
     model proposed by [1] in 2D. Implementation follows [2] and most of the 
@@ -34,17 +34,17 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100,
 
     Parameters
     ----------
-    Nx_sim : int, optional
+    nx_sim : int, optional
         Array size of the simulated patch in x-direction. The default is 1024.
-    Ny_sim : int, optional
+    ny_sim : int, optional
         Array size of the simulated patch in y-direction. The default is 1024.
-    FOVx : float, optional
+    fov_x : float, optional
         Field of view in x-direction (mm). The default is 20.
-    FOVy : float, optional
+    fov_y : float, optional
         Field of view in y-direction (mm). The default is 20.
-    Nx_mri : int, optional
+    nx_mri : int, optional
         Array size of the MR image in x-direction. The default is 100.
-    Ny_mri : int, optional
+    ny_mri : int, optional
         Array size of the MR image in y-direction. The default is 100.
     rho : float, optional
         Main spatial frequency determining columnar width in cycles/mm. The 
@@ -73,11 +73,11 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100,
     alpha_mask : float, optional
         Rotational angle of elliptical mask. The default is 0.
     path_white : str, optional
-        Path to existing white noise image. The default is False.
+        Path to existing white noise image. The default is None.
 
     Returns
     -------
-    white_img : ndarray
+    arr_white : ndarray
         Initial white noise pattern.
     odc_img : ndarray
         Neural map.
@@ -85,9 +85,9 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100,
         BOLD response with measurement noise.
     ymri_img : ndarray
         Sampled MRI signal.
-    F_odc_fft : ndarray
+    f_odc_fft : ndarray
         Anisotropic band-pass filter in spatial frequency representation.
-    F_bold_fft : ndarray
+    f_bold_fft : ndarray
         BOLD filter in spatial frequency representation.
 
     References
@@ -97,48 +97,44 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100,
     .. [2] Chaimow, D, et al. Modeling and analysis of mechanisms underlying 
     fMRI-based decoding of information conveyed in cortical columns, Neuroimage
     56(2), 627--642 (2011).
-    
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 07-01-2019     
-    Last modified: 12-10-2020
 
     """
     
     # get white noise
     if path_white:
-        input = nb.load(path_white)
-        white_img = input.get_fdata()
+        img = nb.load(path_white)
+        arr_white = img.get_fdata()
     else:     
-        white_img = get_white_2d(Nx_sim, Ny_sim, 0, 1)
+        arr_white = get_white_2d(nx_sim, ny_sim, 0, 1)
 
     # get band-pass filter
-    F_odc_fft = filter_odc_2d(Nx_sim, Ny_sim, FOVx, FOVy, rho, delta, epsilon, theta)
+    f_odc_fft = filter_odc_2d(nx_sim, ny_sim, fov_x, fov_y, rho, delta, epsilon,
+                              theta)
 
     # generate ODC pattern (neural map)
-    odc_img = np.real(ifft2( fft2(white_img) * F_odc_fft ))
+    odc_img = np.real(ifft2(fft2(arr_white) * f_odc_fft))
     odc_img = filter_sigmoid(odc_img, alpha)
 
     # BOLD response
-    F_bold_fft = filter_bold_2d(Nx_sim, Ny_sim, FOVx, FOVy, fwhm_bold, beta)
-    y_img = np.real(ifft2( fft2(odc_img) * F_bold_fft ))
+    f_bold_fft = filter_bold_2d(nx_sim, ny_sim, fov_x, fov_y, fwhm_bold, beta)
+    y_img = np.real(ifft2(fft2(odc_img) * f_bold_fft))
 
     # add measurement noise
-    noise_img = get_white_2d(Nx_sim, Ny_sim, 0, fwhm_noise/(2*np.sqrt(2*np.log(2))))
+    noise_img = get_white_2d(nx_sim, ny_sim, 0,
+                             fwhm_noise / (2 * np.sqrt(2 * np.log(2))))
     y_img = noise_img + y_img
 
     # voxel sampling
     y_fft = fft2(y_img)
 
-    kx_sample = np.round(Nx_mri/2).astype(int)
-    ky_sample = np.round(Ny_mri/2).astype(int)
+    kx_sample = np.round(nx_mri / 2).astype(int)
+    ky_sample = np.round(ny_mri / 2).astype(int)
 
-    ymri_fft = np.zeros((Nx_mri,Ny_mri), dtype=complex)
-    ymri_fft[:kx_sample,:ky_sample] = y_fft[:kx_sample,:ky_sample] 
-    ymri_fft[:kx_sample,-1:-ky_sample-1:-1] = y_fft[:kx_sample,-1:-ky_sample-1:-1] 
-    ymri_fft[-1:-kx_sample-1:-1,:ky_sample] = y_fft[-1:-kx_sample-1:-1,:ky_sample] 
-    ymri_fft[-1:-kx_sample-1:-1,-1:-ky_sample-1:-1] = y_fft[-1:-kx_sample-1:-1,-1:-ky_sample-1:-1] 
+    ymri_fft = np.zeros((nx_mri, ny_mri), dtype=complex)
+    ymri_fft[:kx_sample, :ky_sample] = y_fft[:kx_sample, :ky_sample]
+    ymri_fft[:kx_sample, -1:-ky_sample-1:-1] = y_fft[:kx_sample, -1:-ky_sample-1:-1]
+    ymri_fft[-1:-kx_sample-1:-1, :ky_sample] = y_fft[-1:-kx_sample-1:-1, :ky_sample]
+    ymri_fft[-1:-kx_sample-1:-1, -1:-ky_sample-1:-1] = y_fft[-1:-kx_sample-1:-1, -1:-ky_sample-1:-1]
 
     ymri_img = np.real(ifft2(ymri_fft))
     
@@ -149,13 +145,13 @@ def odc_2d(Nx_sim=1024, Ny_sim=1024, FOVx=20, FOVy=20, Nx_mri=100, Ny_mri=100,
                                           b_mask,
                                           alpha_mask)
     
-    return white_img, odc_img, y_img, ymri_img, F_odc_fft, F_bold_fft
+    return arr_white, odc_img, y_img, ymri_img, f_odc_fft, f_bold_fft
 
 
-def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4, 
-           beta=0.05, fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000, 
-           b_mask=1000, path_white=False):
-    """ ODC 1D
+def odc_1d(n_sim=1024, fov=20, n_mri=100, rho=0.5, delta=0.3, alpha=4,
+           beta=0.05, fwhm_bold=1.02, fwhm_noise=0.001, a_mask=1000,
+           b_mask=1000, path_white=None):
+    """ODC 1D.
 
     This function generates realistic ocular dominance patterns according to the 
     model proposed by [1] in 1D. The rest follows similar to the ODC generation 
@@ -163,11 +159,11 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4,
 
     Parameters
     ----------
-    N_sim : int, optional
+    n_sim : int, optional
         Array size of the simulated patch in x-direction. The default is 1024.
-    FOV : float, optional
+    fov : float, optional
         Field of view in x-direction (mm). The default is 20.
-    N_mri : int, optional
+    n_mri : int, optional
         Array size of the MR image in x-direction. The default is 100.
     rho : float, optional
         Main spatial frequency determining columnar width in cycles/mm. The 
@@ -189,11 +185,11 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4,
     b_mask : float, optional
         Right side length of mask. The default is 1000.
     path_white : str, optional
-        Path to existing white noise image. The default is False.
+        Path to existing white noise image. The default is None.
 
     Returns
     -------
-    white_img : ndarray
+    arr_white : ndarray
         Initial white noise pattern.
     odc_img : ndarray
         Neural map.
@@ -201,21 +197,15 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4,
         BOLD response with measurement noise.
     ymri_img : ndarray
         Sampled MRI signal.
-    F_odc_fft : ndarray
+    f_odc_fft : ndarray
         Anisotropic band-pass filter in spatial frequency representation.
-    F_bold_fft : ndarray
+    f_bold_fft : ndarray
         BOLD filter in spatial frequency representation.
 
     References
     -------
     .. [1] Rojer, AS, et al. Cat and monkey cortical columnar patterns modeled
     by bandpass-filtered 2D white noise, Biol Cybern 62(5), 381--391 (1990).
-    
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 08-01-2019     
-    Last modified: 12-10-2020
 
     """
     
@@ -224,32 +214,33 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4,
     
     # get white noise
     if path_white:
-        input = nb.load(path_white)
-        white_img = input.get_fdata()
+        img_white = nb.load(path_white)
+        arr_white = img_white.get_fdata()
     else:     
-        white_img = get_white_1d(N_sim, 0, 1)
+        arr_white = get_white_1d(n_sim, 0, 1)
 
     # get band-pass filter
-    F_odc_fft = filter_odc_1d(N_sim, FOV, rho, delta)
+    f_odc_fft = filter_odc_1d(n_sim, fov, rho, delta)
 
     # generate ODC pattern (neural map)
-    odc_img = np.real(ifft( fft(white_img) * F_odc_fft ))
+    odc_img = np.real(ifft(fft(arr_white) * f_odc_fft))
     odc_img = filter_sigmoid(odc_img, alpha)
 
     # BOLD response
-    F_bold_fft = filter_bold_1d(N_sim, FOV, fwhm_bold, beta)
-    y_img = np.real(ifft( fft(odc_img) * F_bold_fft ))
+    f_bold_fft = filter_bold_1d(n_sim, fov, fwhm_bold, beta)
+    y_img = np.real(ifft(fft(odc_img) * f_bold_fft))
 
     # add measurement noise
-    noise_img = get_white_1d(N_sim, 0, fwhm_noise/(2*np.sqrt(2*np.log(2))))
+    noise_img = get_white_1d(n_sim, 0,
+                             fwhm_noise / (2 * np.sqrt(2 * np.log(2))))
     y_img = noise_img + y_img
 
     # voxel sampling
     y_fft = fft(y_img)
 
-    k_sample = np.round(N_mri/2).astype(int)
+    k_sample = np.round(n_mri / 2).astype(int)
 
-    ymri_fft = np.zeros(N_mri, dtype=complex)
+    ymri_fft = np.zeros(n_mri, dtype=complex)
     ymri_fft[:k_sample] = y_fft[:k_sample] 
     ymri_fft[-1:-k_sample-1:-1] = y_fft[-1:-k_sample-1:-1] 
 
@@ -258,4 +249,4 @@ def odc_1d(N_sim=1024, FOV=20, N_mri=100, rho=0.5, delta=0.3, alpha=4,
     # mask voxel sampling
     ymri_img = ymri_img * mask_pattern_1d(len(ymri_img), a_mask, b_mask)
     
-    return white_img, odc_img, y_img, ymri_img, F_odc_fft, F_bold_fft
+    return arr_white, odc_img, y_img, ymri_img, f_odc_fft, f_bold_fft

@@ -10,10 +10,6 @@
 % further analysis. We use this to have already initialised activation in
 % the first volume.
 
-% created by Daniel Haenelt
-% Date created: 07-12-2018
-% Last modified: 12-10-2020
-
 % input data
 input.pol.data.pos = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/pol_anticlock/udata.nii'; % anticlock
 input.pol.data.neg = '/data/pt_01880/Experiment3_Stripes/p3/retinotopy2/pol_clock/udata.nii'; % clock

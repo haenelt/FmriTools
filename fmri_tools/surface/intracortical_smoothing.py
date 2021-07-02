@@ -11,13 +11,13 @@ from shutil import copyfile
 import numpy as np
 
 # local inputs
-from fmri_tools.io.get_filename import get_filename
+from ..io.get_filename import get_filename
 
 
 def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0, 
                             rad_start=0, rad_size=1, tan_weights="gauss", 
                             cleanup=True):
-    """ Intracortical smoothing
+    """Intracortical smoothing.
     
     This function applies the freesurfer function mris_smooth_intracortical
     (available since FreeSurfer 7) which enables simultaneous smoothing in 
@@ -68,18 +68,12 @@ def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
     losses compared to conventional large-voxel fMRI data, NeuroImage 189, 
     601--614 (2019).
 
-    Notes
-    -------
-    created by Daniel Haenelt
-    Date created: 13-01-2021 
-    Last modified: 13-01-2021
-
     """
    
     # check output file name
     path_output, name_output, ext_output = get_filename(file_out)
     if ext_output not in [".mgh", ".mgz"]:
-        raise ValueError("Output file name is expected to have the file " \
+        raise ValueError("Output file name is expected to have the file "
                          "extension mgh or mgz!")
     
     # make output folder
