@@ -195,10 +195,6 @@ function [data] = get_TDMdata(file_in)
 % Outputs:
     % data: cell array of data in kendrick kay's format.
 
-% created by Daniel Haenelt
-% Date created: 16-03-2020
-% Last modified: 16-03-2020
-
 data = {};
 for i = 1:length(file_in)
     
@@ -228,10 +224,6 @@ function [design] = get_TDMdesign(mat_in, TR, nvols, nruns)
 % Outputs:
     % design: design matrix in kendrick kay's format.
 
-% created by Daniel Haenelt
-% Date created: 16-03-2020
-% Last modified: 16-03-2020
-
 % load condition file
 design_mat = load(mat_in);
 
@@ -260,10 +252,6 @@ function [epi_reshape] = get_TDMepi(file_in, sigma, path_output, write_output)
     % write_output: write output files.
 % Outputs:
     % epi_reshape: relative epi intensities sorted into 1D vector.
-
-% created by Daniel Haenelt
-% Date created: 16-03-2020
-% Last modified: 16-03-2020
 
 if nargin < 4
     path_output = '';
@@ -319,10 +307,6 @@ function [mask_array] = get_TDMmask(data, mask_threshold)
     % mask_threshold: threshold for binary mask.
 % Outputs:
     % mask_array: binary mask of data vector.
-
-% created by Daniel Haenelt
-% Date created: 16-03-2020
-% Last modified: 16-03-2020
 
 if nargin < 2
     mask_threshold = 0.8;
