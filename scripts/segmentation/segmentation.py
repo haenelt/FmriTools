@@ -49,10 +49,8 @@ from fmri_tools.segmentation.robust_combination import robust_combination
 from fmri_tools.segmentation.shift_white import shift_white
 from fmri_tools.segmentation.get_thickness_fsurf import get_thickness_fsurf
 from fmri_tools.segmentation.get_ribbon_fsurf import get_ribbon_fsurf
-from fmri_tools.segmentation.include_pial_correction import \
-    include_pial_correction
-from fmri_tools.segmentation.orthographic_projection import \
-    orthographic_projection
+from fmri_tools.segmentation.include_pial_correction import include_pial_correction
+from fmri_tools.segmentation.orthographic_projection import orthographic_projection
 from fmri_tools.layer.calc_equivol_surf import calc_equivol_surf
 from fmri_tools.surface.get_curvature import get_curvature
 from fmri_tools.surface.smooth_surface import smooth_surface
