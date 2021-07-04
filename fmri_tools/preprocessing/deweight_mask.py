@@ -36,7 +36,7 @@ def deweight_mask(file_in, mask_in, mask_max=0.25, sigma_gaussian=10.0,
 
     Returns
     -------
-    data_array : TYPE
+    data_array : np.ndarray
         Image matrix with filtered voxels.
 
     """
