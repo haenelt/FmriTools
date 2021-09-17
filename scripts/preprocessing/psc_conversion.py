@@ -20,8 +20,9 @@ file_in = [
     "/data/pt_01880/Experiment1_ODC/p4/retinotopy2/ecc_expanding/data.nii",
     "/data/pt_01880/Experiment1_ODC/p4/retinotopy2/ecc_contracting/data.nii",
 ]
+cutoff_psc = 50
 
 # do not edit below
 
 for i in range(len(file_in)):
-    scale_timeseries(file_in[i], prefix="a")
+    scale_timeseries(file_in[i], cutoff=cutoff_psc, prefix="p")

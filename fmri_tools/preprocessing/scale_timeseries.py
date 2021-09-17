@@ -11,7 +11,7 @@ import nibabel as nb
 from ..io.get_filename import get_filename
 
 
-def scale_timeseries(file_in, prefix="p"):
+def scale_timeseries(file_in, cutoff=50, prefix="p"):
     """Scale time series.
 
     The function converts a time series to percent signal change. Each voxel is
@@ -21,6 +21,8 @@ def scale_timeseries(file_in, prefix="p"):
     ----------
     file_in : str
         Filename of nifti time series.
+    cutoff : float, optional
+        Threshold data which exceed the cutoff percentage.
     prefix : str, optional
         Prefix of output time series basename. The default is "p".
 
@@ -35,15 +37,24 @@ def scale_timeseries(file_in, prefix="p"):
 
     # load data
     data = nb.load(file_in)
+    nt = data.header["dim"][4]
 
     # load array with appended volumes
-    data_array = data.get_fdata()
-    mean_array = np.mean(data_array, axis=3)
+    arr = data.get_fdata()
+    arr_mean = np.mean(arr, axis=3)
+    arr_mean = np.repeat(arr_mean[:, :, :, np.newaxis], nt, axis=3)
 
     # compute percent signal change
-    data_array = data_array / mean_array * 100
+    arr = arr / arr_mean * 100
+    
+    # threshold data
+    if cutoff:
+        arr_max = np.max(arr, axis=3)
+        arr_min = np.min(arr, axis=3)
+    
+        arr[arr_max > 100 + cutoff, :] = 100
+        arr[arr_min < 100 - cutoff, :] = 100
 
     # write output
-    output = nb.Nifti1Image(data_array, data.affine, data.header)
-    output.set_data_dtype(np.float)
+    output = nb.Nifti1Image(arr, data.affine, data.header)
     nb.save(output, os.path.join(path_file, prefix + name_file + ext_file))
