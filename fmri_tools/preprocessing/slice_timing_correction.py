@@ -13,7 +13,8 @@ from scipy.interpolate import InterpolatedUnivariateSpline as Interp
 from ..io.get_filename import get_filename
 
 
-def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
+def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None, 
+                            manufacturer="siemens", prefix="a"):
     """Slice timing correction.
 
     This function performs slice timing correction of a nifti time series. For 
@@ -25,7 +26,12 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
     step. The interpolated time series is sampled onto a regular grid with a 
     defined new TR. Therefore, the reference slice is always the first slice 
     acquired at t = 0. Only for writing the new TR in the header of the output 
-    time series, AFNI has to be included in the search path.    
+    time series, AFNI has to be included in the search path. For time series 
+    acquired with multiband, the number of slices has to be a multiple of the 
+    multiband factor. For interleaved slice acquisition, siemens sequences start
+    with the odd (even) slice for images with odd (even) number of slices. You
+    can switch to cmrr to consider that the cmrr sequence always starts with
+    the odd slice (first slice) in interleaved mode.
 
     Parameters
     ----------
@@ -37,6 +43,10 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
         TR of slice timing corrected time series in s.
     order : str
         Slice ordering (ascending, descending, interleaved).
+    mb : int
+        Multiband factor.
+    manufacturer : str
+        Sequence type (siemens, cmrr).
     prefix : str, optional
         Prefix of output time series basename. The default is "a".
 
@@ -45,6 +55,13 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
     None.
     
     """
+
+    if not mb:
+        mb = 1
+
+    if manufacturer not in ["siemens", "cmrr"]:
+        raise ValueError("Unknown manufacturer")
+
 
     # get filename
     path_file, name_file, ext_file = get_filename(file_in)
@@ -62,12 +79,18 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
     data_array[:, :, :, -1] = data.get_fdata()[:, :, :, -1]
     data_array[:, :, :, 1:-1] = data.get_fdata()
 
+    mb_package = nz/mb
+    if np.mod(mb_package, 1):
+        sys.exit("Number of slice and multiband factor do not match!")
+    else:
+        mb_package = int(mb_package)
+
     # get slice order
     if order == "ascending":
         slice_order = np.arange(0, nz)
     elif order == "descending":
-        slice_order = np.arange(nz - 1, -1, -1)
-    elif order == "interleaved" and np.mod(nz, 2):  # odd slice number
+        slice_order = np.arange(nz - 1, - 1, -1)
+    elif order == "interleaved" and np.mod(nz, 2) or manufacturer == "cmrr":  # odd slice number
         slice_order = np.arange(0, nz, 2)
         slice_order = np.append(slice_order, np.arange(1, nz, 2))
     elif order == "interleaved" and not np.mod(nz, 2):  # even slice number
@@ -75,9 +98,17 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
         slice_order = np.append(slice_order, np.arange(0, nz, 2))
     else:
         sys.exit("Choose a valid slice ordering!")
+    
+    if order == "interleaved":
+        temporal_order = np.arange(0, nz/(2*mb))
+        temporal_order = np.tile(temporal_order, mb)
+        temporal_order = np.append(temporal_order, temporal_order + nz/(2*mb))
+    else:
+        temporal_order = np.arange(0, nz/mb)
+        temporal_order = np.tile(temporal_order, mb)
 
     # some parameters  
-    TA = TR_old / nz  # acquisition time needed for one slice
+    TA = TR_old / (nz/mb)  # acquisition time needed for one slice
     TT = TR_old * nt  # total acquisition time
     TR_append = np.floor(TR_old / TR_new).astype(
         int) * TR_new  # number of appended TRs in output array
@@ -89,7 +120,7 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
         print("Slice timing correction for slice: " + str(z + 1) + "/" + str(nz))
         for x in range(nx):
             for y in range(ny):
-                t = np.arange(z * TA - TR_old, z * TA + (nt + 1) * TR_old, TR_old)
+                t = np.arange(temporal_order[z] * TA - TR_old, temporal_order[z] * TA + (nt + 1) * TR_old, TR_old)
                 cubic_interper = Interp(t, data_array[x, y, slice_order[z], :], k=3)
                 data_array_corrected[x, y, slice_order[z], :] = cubic_interper(t_new)
 
@@ -118,4 +149,3 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
     os.system("3drefit " +
               "-TR " + str(TR_new) + " " +
               os.path.join(path_file, prefix + name_file + ext_file))
-    
