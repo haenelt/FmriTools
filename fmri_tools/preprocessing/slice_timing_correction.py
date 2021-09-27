@@ -118,3 +118,4 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, prefix="a"):
     os.system("3drefit " +
               "-TR " + str(TR_new) + " " +
               os.path.join(path_file, prefix + name_file + ext_file))
+    
