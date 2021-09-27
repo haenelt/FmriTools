@@ -125,8 +125,8 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None,
         temporal_order = np.tile(temporal_order, mb)
     
     # some prints for sanity check
-    print("Spatial ordering of slices: "+str(slice_order))
-    print("Temporal ordering of slices: "+str(temporal_order))
+    print("Spatial order of slices: "+str(slice_order))
+    print("Temporal order of slices: "+str(temporal_order))
     
     # some parameters  
     TA = TR_old / mb_package  # acquisition time needed for one slice
