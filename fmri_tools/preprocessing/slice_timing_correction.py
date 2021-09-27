@@ -2,7 +2,6 @@
 
 # python standard library inputs
 import os
-import sys
 
 # external inputs
 import numpy as np
@@ -10,7 +9,18 @@ import nibabel as nb
 from scipy.interpolate import InterpolatedUnivariateSpline as Interp
 
 # local inputs
-from ..io.get_filename import get_filename
+#from ..io.get_filename import get_filename
+from fmri_tools.io.get_filename import get_filename
+
+
+def _set_tr(img, tr):
+    """Helper function to set tr in nifti header."""
+    
+    header = img.header.copy()
+    zooms = header.get_zooms()[:3] + (tr,)
+    header.set_zooms(zooms)
+    
+    return img.__class__(img.get_fdata().copy(), img.affine, header)
 
 
 def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None, 
@@ -25,13 +35,12 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None,
     respectively. These time points are removed again after the interpolation 
     step. The interpolated time series is sampled onto a regular grid with a 
     defined new TR. Therefore, the reference slice is always the first slice 
-    acquired at t = 0. Only for writing the new TR in the header of the output 
-    time series, AFNI has to be included in the search path. For time series 
-    acquired with multiband, the number of slices has to be a multiple of the 
-    multiband factor. For interleaved slice acquisition, siemens sequences start
-    with the odd (even) slice for images with odd (even) number of slices. You
-    can switch to cmrr to consider that the cmrr sequence always starts with
-    the odd slice (first slice) in interleaved mode.
+    acquired at t = 0. For time series acquired with multiband, the number of 
+    slices has to be a multiple of the multiband factor. For interleaved slice 
+    acquisition, siemens sequences start with the odd (even) slice for images 
+    with odd (even) number of slices. You can switch to cmrr to consider that 
+    the cmrr sequence always starts with the odd slice (first slice) in 
+    interleaved mode irrespective of the number of slices.
 
     Parameters
     ----------
@@ -53,15 +62,14 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None,
     Returns
     -------
     None.
-    
+
     """
 
     if not mb:
         mb = 1
 
     if manufacturer not in ["siemens", "cmrr"]:
-        raise ValueError("Unknown manufacturer")
-
+        raise ValueError("Unknown manufacturer!")
 
     # get filename
     path_file, name_file, ext_file = get_filename(file_in)
@@ -79,17 +87,18 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None,
     data_array[:, :, :, -1] = data.get_fdata()[:, :, :, -1]
     data_array[:, :, :, 1:-1] = data.get_fdata()
 
+    # effective number of sequentially acquired slices
     mb_package = nz/mb
     if np.mod(mb_package, 1):
-        sys.exit("Number of slice and multiband factor do not match!")
+        raise ValueError("Number of slices and multiband factor does not match!")
     else:
         mb_package = int(mb_package)
 
-    # get slice order
+    # spatial order of acquired slices
     if order == "ascending":
         slice_order = np.arange(0, nz)
     elif order == "descending":
-        slice_order = np.arange(nz - 1, - 1, -1)
+        slice_order = np.arange(nz-1, - 1, -1)
     elif order == "interleaved" and np.mod(nz, 2) or manufacturer == "cmrr":  # odd slice number
         slice_order = np.arange(0, nz, 2)
         slice_order = np.append(slice_order, np.arange(1, nz, 2))
@@ -97,18 +106,30 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None,
         slice_order = np.arange(1, nz, 2)
         slice_order = np.append(slice_order, np.arange(0, nz, 2))
     else:
-        sys.exit("Choose a valid slice ordering!")
+        raise ValueError("Choose a valid slice ordering!")
     
+    # temporal order of acquired slices
     if order == "interleaved":
-        temporal_order = np.arange(0, nz/(2*mb))
-        temporal_order = np.tile(temporal_order, mb)
-        temporal_order = np.append(temporal_order, temporal_order + nz/(2*mb))
-    else:
-        temporal_order = np.arange(0, nz/mb)
-        temporal_order = np.tile(temporal_order, mb)
+        target = np.ceil(mb_package/2).astype(int)
+        temporal_order = np.arange(0, target)
+        if float(mb_package/2).is_integer():
+            temporal_order2 = np.arange(0, target)
+        else:
+            temporal_order2 = np.arange(0, target)[:-1]            
 
+        temporal_order = np.tile(temporal_order, mb)
+        temporal_order2 = np.tile(temporal_order2, mb)
+        temporal_order = np.append(temporal_order, temporal_order2 + target)
+    else:
+        temporal_order = np.arange(0, mb_package)
+        temporal_order = np.tile(temporal_order, mb)
+    
+    # some prints for sanity check
+    print("Spatial ordering of slices: "+str(slice_order))
+    print("Temporal ordering of slices: "+str(temporal_order))
+    
     # some parameters  
-    TA = TR_old / (nz/mb)  # acquisition time needed for one slice
+    TA = TR_old / mb_package  # acquisition time needed for one slice
     TT = TR_old * nt  # total acquisition time
     TR_append = np.floor(TR_old / TR_new).astype(
         int) * TR_new  # number of appended TRs in output array
@@ -143,9 +164,5 @@ def slice_timing_correction(file_in, TR_old, TR_new, order, mb=None,
 
     # write output
     output = nb.Nifti1Image(data_array_corrected, data.affine, data.header)
+    output = _set_tr(output, TR_new)
     nb.save(output, os.path.join(path_file, prefix + name_file + ext_file))
-
-    # change TR in header
-    os.system("3drefit " +
-              "-TR " + str(TR_new) + " " +
-              os.path.join(path_file, prefix + name_file + ext_file))
