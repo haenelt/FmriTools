@@ -24,8 +24,11 @@ file_in = [
 TR_old = 2.0
 TR_new = 2.0
 order = "descending"
+mb = None
+manufacturer = "siemens"
 
 # do not edit below
 
 for i in range(len(file_in)):
-    slice_timing_correction(file_in[i], TR_old, TR_new, order, prefix="a")
+    slice_timing_correction(file_in[i], TR_old, TR_new, order, mb, manufacturer,
+                            prefix="a")
