@@ -134,7 +134,7 @@ if field_params.fieldmap_undistortion
     
     % clear
     clear matlabbatch
-
+    
 end
 
 % realignment
