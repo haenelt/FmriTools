@@ -13,7 +13,8 @@ from scipy.interpolate import InterpolatedUnivariateSpline as Interp
 from ..io.get_filename import get_filename
 
 
-def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0):
+def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0,
+                       nvol_remove=0):
     """Regrid time series.
 
     This function interpolates the time series onto a new time grid using cubic 
@@ -32,6 +33,8 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0):
         TR of regridded time series in s.
     t_start : float, optional
         Shift time series in s (t_start >= 0 and <= TR_old). The default is 0.
+    nvol_remove : int, optional
+        Remove volumes at the end of the time series.
 
     Returns
     -------
@@ -91,6 +94,10 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0):
     # clean corrected array
     data_array_regrid[np.isnan(data_array_regrid)] = 0
     data_array_regrid[data_array_regrid < 0] = 0
+
+    # remove volumes at the end
+    if nvol_remove:
+        data_array_regrid = data_array_regrid[:, :, :, :-nvol_remove]
 
     # update data header
     data.header["dim"][4] = np.shape(data_array_regrid)[3]

@@ -49,7 +49,8 @@ img_bold = ["/data/pt_01880/temp/try2/Run_1/ubold.nii",
 TR_old = 5  # effective TR of bold+vaso
 TR_new = 3  # TR of upsampled bold corrected time series
 vaso_shift = 2.8425  # start of vaso block (asymmetric TR)
-vaso_threshold = 6
+vaso_threshold = 6  # threshold unrealistic intensities
+nvol_remove = 0  # number of volumes removed at the end of the time series
 
 # do not edit below
 
@@ -59,9 +60,10 @@ for i in range(len(img_vaso)):
     path_vaso, name_vaso, ext_vaso = get_filename(img_vaso[i])
 
     # upsample time series
-    regrid_time_series(img_bold[i], path_bold, TR_old, TR_new, t_start=0)
+    regrid_time_series(img_bold[i], path_bold, TR_old, TR_new, t_start=0,
+                       nvol_remove=nvol_remove)
     regrid_time_series(img_vaso[i], path_vaso, TR_old, TR_new,
-                       t_start=vaso_shift)
+                       t_start=vaso_shift, nvol_remove=nvol_remove)
 
     # new filenames
     file_bold = os.path.join(path_bold, name_bold + "_upsampled" + ext_bold)
