@@ -2,13 +2,12 @@
 """
 Split VASO and BOLD
 
-This scripts splits the vaso and bold time series into separate files. The time
-series always starts with the non-nulled BOLD volume. So, all even and odd time
-points are denoted as bold and vaso, respectively. Additionally, volumes at the
-beginning (non steady-state volumes) are overwritten by following steady-state
-volumes. Furthermore, volumes at the end of the scan can be discarded. Note that
-the number of volumes refers here to the individual volumes in the bold+vaso
-time series.
+This scripts splits the vaso and bold time series into separate files. Splitted
+time series are names as bold (not-nulled) and vaso (nulled), respectively.
+Additionally, volumes at the beginning (non steady-state volumes) can be
+overwritten by following steady-state volumes. Furthermore, volumes at the end
+of the scan can be discarded. Note that the number of volumes refers here to the
+individual volumes in the bold+vaso time series.
 
 """
 
@@ -33,8 +32,9 @@ img_input = ["/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/Run_1/data.nii",
              ]
 
 # paramteers
-start_vol = 2
-end_vol = 5
+start_vol = 2  # overwrite volumes at the beginning
+end_vol = 5  # discard volumes at the end
+first_bold = True  # if True, time series starts with (not-nulled) bold volume
 
 # do not edit below
 
@@ -55,8 +55,12 @@ for i in range(len(img_input)):
     t_even = np.arange(0, np.shape(data_array)[3], 2)
     t_odd = np.arange(1, np.shape(data_array)[3], 2)
 
-    bold_array = data_array[:, :, :, t_even]
-    vaso_array = data_array[:, :, :, t_odd]
+    if first_bold:
+        bold_array = data_array[:, :, :, t_even]
+        vaso_array = data_array[:, :, :, t_odd]
+    else:
+        bold_array = data_array[:, :, :, t_odd]
+        vaso_array = data_array[:, :, :, t_even]
 
     # new array length
     data.header["dim"][4] = np.shape(vaso_array)[3]
