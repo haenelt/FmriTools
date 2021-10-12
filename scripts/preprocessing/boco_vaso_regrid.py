@@ -47,23 +47,27 @@ img_bold = ["/data/pt_01880/temp/try2/Run_1/ubold.nii",
 
 # parameters
 TR_old = 5  # effective TR of bold+vaso
-TR_new = 3  # TR of upsampled bold corrected time series
-vaso_shift = 2.8425  # start of vaso block (asymmetric TR)
+TR_new = 3  # TR of upsampled corrected time series
+start_bold = 0  # start of bold block in s
+start_vaso = 0  # start of vaso block in s
 vaso_threshold = 6  # threshold unrealistic intensities
 nvol_remove = 0  # number of volumes removed at the end of the time series
 
 # do not edit below
 
-for i in range(len(img_vaso)):
+for bold, vaso in zip(img_bold, img_vaso):
+
     # get filenames
-    path_bold, name_bold, ext_bold = get_filename(img_bold[i])
-    path_vaso, name_vaso, ext_vaso = get_filename(img_vaso[i])
+    path_bold, name_bold, ext_bold = get_filename(bold)
+    path_vaso, name_vaso, ext_vaso = get_filename(vaso)
 
     # upsample time series
-    regrid_time_series(img_bold[i], path_bold, TR_old, TR_new, t_start=0,
+    regrid_time_series(bold, path_bold, TR_old, TR_new,
+                       t_start=start_bold,
                        nvol_remove=nvol_remove)
-    regrid_time_series(img_vaso[i], path_vaso, TR_old, TR_new,
-                       t_start=vaso_shift, nvol_remove=nvol_remove)
+    regrid_time_series(vaso, path_vaso, TR_old, TR_new,
+                       t_start=start_vaso,
+                       nvol_remove=nvol_remove)
 
     # new filenames
     file_bold = os.path.join(path_bold, name_bold + "_upsampled" + ext_bold)
@@ -73,12 +77,12 @@ for i in range(len(img_vaso)):
                                        ext_vaso)
 
     # load bold data
-    bold = nb.load(file_bold)
-    bold_array = bold.get_fdata()
+    bold_data = nb.load(file_bold)
+    bold_array = bold_data.get_fdata()
 
     # load vaso data
-    vaso = nb.load(file_vaso)
-    vaso_array = vaso.get_fdata()
+    vaso_data = nb.load(file_vaso)
+    vaso_array = vaso_data.get_fdata()
 
     # bold correction
     vaso_array = np.divide(vaso_array, bold_array)
@@ -92,5 +96,5 @@ for i in range(len(img_vaso)):
     vaso_array[vaso_array >= vaso_threshold] = vaso_threshold
 
     # write output
-    output = nb.Nifti1Image(vaso_array, vaso.affine, vaso.header)
+    output = nb.Nifti1Image(vaso_array, vaso_data.affine, vaso_data.header)
     nb.save(output, file_vaso_corrected)
