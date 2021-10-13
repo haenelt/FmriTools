@@ -9,7 +9,7 @@ import nibabel as nb
 from nipype.interfaces.ants import N4BiasFieldCorrection
 
 
-def run_all(file_bold, file_vaso, file_out, apply_bias):
+def calc_t1w(file_bold, file_vaso, file_out, apply_bias):
     """Compute a T1-weighted image from nulled and not-nulled time series. Be
     aware that the computation takes all time points. Therefore, volumes not in
     steady-state should be removed before running this function.
@@ -97,4 +97,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # run function
-    run_all(args.bold, args.vaso, args.out, args.no_bias)
+    calc_t1w(args.bold, args.vaso, args.out, args.no_bias)
+
