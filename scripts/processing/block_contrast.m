@@ -45,6 +45,7 @@ multi_input = {};
 TR = 3; % repetition time  in s
 cutoff_highpass = 270; % 1/cutoff_highpass frequency in Hz (odc: 270, localiser: 96)
 microtime_onset = 8; % only change to 1 if reference slice in slice timing is first slice
+hrf_cbv = false; % use an hrf designed for CBV responses
 hrf_derivative = false; % include hrf derivative in model
 name_sess = 'GE_EPI2'; % name of session (if multiple sessions exist)
 name_output = ''; % basename of output contrasts
@@ -91,6 +92,11 @@ n_noise = zeros(length(img_input),1);
 % number of volumes is taken from the first entry of the input list
 data_img = spm_vol(img_input{1});
 nt = length(data_img);
+
+% change hrf for cbv response (personal discussion with Denis Chaimow)
+if hrf_cbv == true
+    spm_get_defaults('stats.fmri.hrf', [5.5, 16, 1, 1, -6, 0, 32]);
+end
 
 % fmri model
 matlabbatch{1}.spm.stats.fmri_spec.dir = {path_output};
