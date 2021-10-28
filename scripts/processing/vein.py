@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Venous mask
 
@@ -15,6 +14,7 @@ removed from the baseline corrected timeseries. The method is taken from
 Kashyap et al., 2017.
 
 """
+
 
 # python standard library inputs
 import os
@@ -45,9 +45,9 @@ tsnr_max = 200
 # prepare path and filename
 path = []
 file = []
-for i in range(len(img_input)):
-    path.append(os.path.split(img_input[i])[0])
-    file.append(os.path.split(img_input[i])[1])
+for item in img_input:
+    path.append(os.path.split(item)[0])
+    file.append(os.path.split(item)[1])
 
 # output folder is taken from the first entry of the input list and set into 
 if len(img_input) > 1:
@@ -87,8 +87,7 @@ for i in range(len(path)):
 
     if not os.path.isfile(os.path.join(path[i], "mean_b" + file[i])):
         # open baseline corrected time series
-        data_img = nb.load(os.path.join(path[i], "b" + file[i]))
-        data_array = data_img.get_fdata()
+        data_array = nb.load(os.path.join(path[i], "b" + file[i])).get_fdata()
 
         # remove outlier vols from array
         if outlier_input[i]:
@@ -105,8 +104,7 @@ for i in range(len(path)):
 
     if not os.path.isfile(os.path.join(path[i], "tsnr_b" + file[i])):
         # open baseline corrected time series
-        data_img = nb.load(os.path.join(path[i], "b" + file[i]))
-        data_array = data_img.get_fdata()
+        data_array = nb.load(os.path.join(path[i], "b" + file[i])).get_fdata()
 
         # remove outlier vols from array
         if outlier_input[i]:
@@ -196,13 +194,11 @@ output = nb.Nifti1Image(mask_array, affine, header)
 fileOUT = os.path.join(path_output, "vein.nii")
 nb.save(output, fileOUT)
 
-# write log
-fileID = open(os.path.join(path_output, "vein_info.txt"), "a")
-fileID.write("script executed: " + datetime.datetime.now().strftime(
-    "%Y-%m-%d %H:%M:%S") + "\n")
-fileID.write("cutoff_highpass: " + str(cutoff_highpass) + "\n")
-fileID.write("mean epi threshold: " + str(epi_threshold) + "\n")
-fileID.write("tsnr threshold: " + str(tsnr_threshold) + "\n")
-fileID.write("tsnr max: " + str(tsnr_max) + "\n")
-fileID.write("outlier input: " + str(len(outlier_input)) + "\n")
-fileID.close()
+with open(os.path.join(path_output, "vein_info.txt"), "a") as fileID:
+    fileID.write("script executed: " + datetime.datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S") + "\n")
+    fileID.write("cutoff_highpass: " + str(cutoff_highpass) + "\n")
+    fileID.write("mean epi threshold: " + str(epi_threshold) + "\n")
+    fileID.write("tsnr threshold: " + str(tsnr_threshold) + "\n")
+    fileID.write("tsnr max: " + str(tsnr_max) + "\n")
+    fileID.write("outlier input: " + str(len(outlier_input)) + "\n")
