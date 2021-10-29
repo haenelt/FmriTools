@@ -10,7 +10,7 @@ import nibabel as nb
 from nipype.interfaces.ants import N4BiasFieldCorrection
 
 # local inputs
-from ..io.get_filename import get_filename
+from fmri_tools.io.get_filename import get_filename
 
 
 def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
@@ -27,7 +27,8 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
     tr : float
         Volume repetition time (TR) in s.
     cutoff_highpass : float, optional
-        Cutoff time in s for baseline correction.
+        Cutoff time in s for baseline correction. Not applied if cutoff is set
+        to zero.
     average : str, optional
         Mode for temporal average (mean or median).
     apply_bias : bool, optional
@@ -39,7 +40,8 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
 
     """
 
-    # cuttoff_highpass: cutoff in s for baseline correction
+    if average not in ["mean", "median"]:
+        raise ValueError("Average mode must be either mean or median!")
 
     # read time series
     data = nb.load(file_in)
@@ -52,7 +54,7 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
         os.makedirs(path_output)
 
     # baseline correction
-    if cutoff_highpass is not None:
+    if cutoff_highpass != 0:
         os.system("matlab" +
                   " -nodisplay -nodesktop -r " +
                   "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"".
@@ -64,10 +66,8 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
 
     if average == "mean":
         arr_mean = np.mean(arr, axis=3)
-    elif average == "median":
-        arr_mean = np.median(arr, axis=3)
     else:
-        raise ValueError("Average mode must be either mean or median!")
+        arr_mean = np.median(arr, axis=3)
 
     # write average
     data.header["dim"][0] = 3
@@ -81,6 +81,7 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
         n4 = N4BiasFieldCorrection()
         n4.inputs.dimension = 3
         n4.inputs.input_image = file_out
+        n4.inputs.bias_image = os.path.join(path_output, 'n4bias.nii')
         n4.inputs.output_image = file_out
         n4.run()
 
@@ -101,17 +102,18 @@ if __name__ == "__main__":
     tr_help = "volume repetition time (TR) in s."
     cutoff_help = "cutoff time in s for baseline correction (optional)."
     average_help = "average mode (mean or median) (optional)."
-    bias_help = "apply bias field correction (optional)."
+    bias_help = "apply no bias field correction (optional)."
 
     # parse arguments from command line
     parser = argparse.ArgumentParser(description=parser_description)
-    parser.add_argument('-i', '--in', type=str, help=input_help, dest='in_')
-    parser.add_argument('-t', '--tr', type=str, help=tr_help)
-    parser.add_argument('-c', '--cutoff', type=str, help=cutoff_help)
+    parser.add_argument('-i', '--in', type=str, help=input_help, dest='in_',
+                        metavar="IN")
+    parser.add_argument('-t', '--tr', type=float, help=tr_help)
+    parser.add_argument('-c', '--cutoff', type=float, help=cutoff_help)
     parser.add_argument('-a', '--average', type=str, help=average_help)
-    parser.add_argument('-b', '--bias', type=bool, help=bias_help)
+    parser.add_argument('-n', '--no_bias', action='store_false', help=bias_help)
     args = parser.parse_args()
 
     # run function
     static_susceptibility(args.in_, args.tr, args.cutoff, args.average,
-                          args.bias)
+                          args.no_bias)
