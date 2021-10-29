@@ -13,7 +13,7 @@ from nipype.interfaces.ants import N4BiasFieldCorrection
 from fmri_tools.io.get_filename import get_filename
 
 
-def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
+def static_susceptibility(file_in, tr, cutoff_highpass=270, mode="mean",
                           apply_bias=True):
     """Computation of the temporal mean of an EPI time series. A temporal
     baseline correction and a bias field correction on the resulting temporal
@@ -29,7 +29,7 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
     cutoff_highpass : float, optional
         Cutoff time in s for baseline correction. Not applied if cutoff is set
         to zero.
-    average : str, optional
+    mode : str, optional
         Mode for temporal average (mean or median).
     apply_bias : bool, optional
         Apply bias field correction on temporal mean.
@@ -40,7 +40,7 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
 
     """
 
-    if average not in ["mean", "median"]:
+    if mode not in ["mean", "median"]:
         raise ValueError("Average mode must be either mean or median!")
 
     # read time series
@@ -64,10 +64,9 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
         arr = nb.load(os.path.join(path_file, "b{0}{1}".
                                    format(name_file, ext_file))).get_fdata()
 
-    if average == "mean":
-        arr_mean = np.mean(arr, axis=3)
-    else:
-        arr_mean = np.median(arr, axis=3)
+    # temporal average
+    arr_mean = np.mean(arr, axis=3) if mode == "mean" \
+        else np.median(arr, axis=3)
 
     # write average
     data.header["dim"][0] = 3
@@ -101,7 +100,7 @@ if __name__ == "__main__":
     input_help = "input file name of time series."
     tr_help = "volume repetition time (TR) in s."
     cutoff_help = "cutoff time in s for baseline correction (optional)."
-    average_help = "average mode (mean or median) (optional)."
+    mode_help = "average mode (mean or median) (optional)."
     bias_help = "apply no bias field correction (optional)."
 
     # parse arguments from command line
@@ -110,10 +109,10 @@ if __name__ == "__main__":
                         metavar="IN")
     parser.add_argument('-t', '--tr', type=float, help=tr_help)
     parser.add_argument('-c', '--cutoff', type=float, help=cutoff_help)
-    parser.add_argument('-a', '--average', type=str, help=average_help)
+    parser.add_argument('-m', '--mode', type=str, help=mode_help)
     parser.add_argument('-n', '--no_bias', action='store_false', help=bias_help)
     args = parser.parse_args()
 
     # run function
-    static_susceptibility(args.in_, args.tr, args.cutoff, args.average,
+    static_susceptibility(args.in_, args.tr, args.cutoff, args.mode,
                           args.no_bias)
