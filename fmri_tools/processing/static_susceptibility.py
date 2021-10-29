@@ -81,8 +81,8 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, average="mean",
         n4 = N4BiasFieldCorrection()
         n4.inputs.dimension = 3
         n4.inputs.input_image = file_out
-        n4.inputs.bias_image = os.path.join(path_output, 'n4bias.nii')
-        n4.inputs.output_image = file_out
+        n4.inputs.bias_image = os.path.join(path_output, "n4bias.nii")
+        n4.inputs.output_image = os.path.join(path_output, "nssw.nii")
         n4.run()
 
 
