@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
 
-def mean_epi():
+def static_susceptibility():
     pass
