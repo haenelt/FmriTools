@@ -23,3 +23,4 @@ from .resample_volume import resample_volume
 from .regrid_time_series import *
 from .remove_nans import remove_nans
 from .apply_affine_chunked import apply_affine_chunked
+from .calc_t1w import calc_t1w

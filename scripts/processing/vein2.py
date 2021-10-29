@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Venous mask from phase data
 
@@ -9,6 +8,7 @@ large dispersion over time (phase_threshold). Optionally, outliers are volumes
 are removed from the baseline corrected timeseries.
 
 """
+
 
 # python standard library inputs
 import os
@@ -74,15 +74,9 @@ output = nb.Nifti1Image(mask_array, affine, header)
 fileOUT = os.path.join(path_output, "vein.nii")
 nb.save(output, fileOUT)
 
-if outlier_input:
-    outlier_text = True
-else:
-    outlier_text = False
-
-# write log
-fileID = open(os.path.join(path_output, "vein_info.txt"), "a")
-fileID.write("script executed: " + datetime.datetime.now().strftime(
-    "%Y-%m-%d %H:%M:%S") + "\n")
-fileID.write("phase_threshold: " + str(phase_threshold) + "\n")
-fileID.write("outlier input: " + str(outlier_text) + "\n")
-fileID.close()
+outlier_text = bool(outlier_input)
+with open(os.path.join(path_output, "vein_info.txt"), "a") as fileID:
+    fileID.write("script executed: " + datetime.datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S") + "\n")
+    fileID.write("phase_threshold: " + str(phase_threshold) + "\n")
+    fileID.write("outlier input: " + str(outlier_text) + "\n")
