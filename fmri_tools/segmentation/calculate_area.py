@@ -49,7 +49,7 @@ def calculate_area(filename_surf, filename_area=""):
 
     # compute area per face (DPF)
     facvtx = np.concatenate([vtx[fac[:, 0]], vtx[fac[:, 1]], vtx[fac[:, 2]]], axis=1)
-    facvtx0 = facvtx[:, 0:6] - np.concatenate([facvtx[:, 6:9], facvtx[:, 6:9]],  axis=1)  # place 3rd vtx at origin
+    facvtx0 = facvtx[:, 0:6] - np.concatenate([facvtx[:, 6:9], facvtx[:, 6:9]], axis=1)  # place 3rd vtx at origin
     cp = np.cross(facvtx0[:, 0:3], facvtx0[:, 3:6], axisa=1,  axisb=1)  # cross product
     dpf = norm(cp, axis=1) / 2  # half of the norm
     print("Total area (facewise): " + str(np.sum(dpf)))
