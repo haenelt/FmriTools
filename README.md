@@ -32,7 +32,7 @@ The package contains some matlab functions. Please add the following code to the
 %------------ FmriTools ------------------------------%
 
 % Root directory of the fmri_tools package
-path_fmri = <PATH-TO-PRFANALYSIS-FOLDER>;
+path_fmri = <PATH-TO-FMRITOOLS-FOLDER>;
 
 % Root directory of the SPM12 toolbox
 path_spm12 = <PATH-TO-SPM12-ROOT>;
