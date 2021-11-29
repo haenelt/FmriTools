@@ -17,6 +17,7 @@ INSTALL_REQUIREMENTS = ['numpy',
                         'sh',
                         'h5py',
                         'gbb',
+                        'pycortex',
                         ]
 
 EXTRA_REQUIREMENTS = {"addon": ['pydicom', 'natsort', 'joblib']}

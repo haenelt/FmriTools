@@ -19,12 +19,7 @@ Some scripts need optional (non-default) packages which can be installed with th
 pip install fmri_tools[addon]
 ```
 
-Another option is to install the package in development mode by creating a `conda.pth` (which includes the path of the cloned repository) in the site-packages folder of your conda environment. Necessary external python packages can be installed by running `pip install -r requirements.txt`. With `pip install -r requirements_extra.txt`, optional (non-default) packages are installed which are only needed for single scripts.
-
-The package cannot be import without the installation of two further modules:
-
-`pip install pycortex`<br>
-`pip install nighres`
+Another option is to install the package in development mode by creating a `conda.pth` (which includes the path of the cloned repository) in the site-packages folder of your conda environment. Necessary external python packages can be installed by running `pip install -r requirements.txt`. The package cannot be import without the installation of nighres. An installation guide can be found [here](https://nighres.readthedocs.io/en/latest/installation.html). With `pip install -r requirements_extra.txt`, optional (non-default) packages are installed which are only needed for single scripts.
 
 The package contains some matlab functions. Please add the following code to the matlab `startup.m` script. This includes the package to the matlab search path. Of course you have to specify the paths there. Next to the root directory of this package, you should add the root directories of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/), [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM) and [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis). SPM12 is used throughout the package. The other toolboxes are used by single scripts and might be ignored.
 

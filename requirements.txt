@@ -11,3 +11,4 @@ surfdist
 sh
 h5py
 gbb
+pycortex
