@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Python package for for analysis of high-resolution fMRI data."""
+"""Python package for the analysis of high-resolution fMRI data."""
 
 import fmri_tools.analysis
 import fmri_tools.cmap
