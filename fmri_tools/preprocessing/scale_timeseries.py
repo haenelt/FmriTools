@@ -55,9 +55,6 @@ def scale_timeseries(file_in, cutoff=50, prefix="p"):
         arr[arr_max > 100 + cutoff, :] = 100 + cutoff
         arr[arr_min < 100 - cutoff, :] = 100 - cutoff
 
-    # center around zero
-    arr -= 100
-
     # write output
     output = nb.Nifti1Image(arr, data.affine, data.header)
     nb.save(output, os.path.join(path_file, prefix + name_file + ext_file))
