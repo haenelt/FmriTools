@@ -10,7 +10,7 @@ import nibabel as nb
 from nipype.interfaces.ants import N4BiasFieldCorrection
 
 # local inputs
-from ..io.get_filename import get_filename
+from fmri_tools.io.get_filename import get_filename
 
 
 def static_susceptibility(file_in, tr, cutoff_highpass=270, mode="mean",
