@@ -108,8 +108,10 @@ if __name__ == "__main__":
     parser.add_argument('-i', '--in', type=str, help=input_help, dest='in_',
                         metavar="IN")
     parser.add_argument('-t', '--tr', type=float, help=tr_help)
-    parser.add_argument('-c', '--cutoff', type=float, help=cutoff_help)
-    parser.add_argument('-m', '--mode', type=str, help=mode_help)
+    parser.add_argument('-c', '--cutoff', type=float, default=270,
+                        help=cutoff_help)
+    parser.add_argument('-m', '--mode', type=str, default="mean",
+                        help=mode_help)
     parser.add_argument('-n', '--no_bias', action='store_false', help=bias_help)
     args = parser.parse_args()
 
