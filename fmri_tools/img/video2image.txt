@@ -1,5 +1,0 @@
-# split video file into single images
-mplayer -vo png <input file>
-
-# merge single images into video file
-ffmpeg -framerate 25 -i img_%d.png -c:v libx264 -profile:v high -crf 20 -pix_fmt yuv420p output.mp4
