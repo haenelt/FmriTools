@@ -15,7 +15,7 @@ import numpy as np
 import nibabel as nb
 
 # local inputs
-from fmri_tools.processing.demean_time_series import demean_time_series
+from fmri_tools.preprocessing.scale_timeseries import demean_timeseries
 
 # input
 file_in = "/data/pt_01880/Experiment4_PSF/p6/psf/GE_EPI1/multipol_2/uadata.nii"
@@ -66,4 +66,4 @@ output = nb.Nifti1Image(merge_array, data.affine, data.header)
 nb.save(output, os.path.join(path_output, name_output + ".nii"))
 
 if demean:
-    demean_time_series(output, path_output, name_output, write_output=True)
+    demean_timeseries(output)

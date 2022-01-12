@@ -20,7 +20,7 @@ import nibabel as nb
 from nighres.registration import apply_coordinate_mappings
 
 # local inputs
-from fmri_tools.processing.demean_time_series import demean_time_series
+from fmri_tools.preprocessing.scale_timeseries import demean_timeseries
 from fmri_tools.mapping.map2surface import map2surface
 from fmri_tools.mapping.map2stack import map2stack
 from fmri_tools.matlab import MatlabCommand
@@ -97,8 +97,8 @@ sh.move(os.path.join(path_tmp, basename_tmp),
         os.path.join(path_native, "temp.nii"))
 
 # demean time series
-data = demean_time_series(os.path.join(path_native, "temp.nii"),
-                          write_output=False)
+data = demean_timeseries(os.path.join(path_native, "temp.nii"),
+                         write_output=False)
 data_array = data.get_fdata()
 
 # discard volumes at the beginning and at the end

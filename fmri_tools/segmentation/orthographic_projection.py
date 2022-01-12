@@ -14,7 +14,7 @@ from shapely.geometry import mapping
 from skimage.draw import polygon
 
 # local inputs
-from ..io.read_patch import read_patch
+from ..io.surf import read_patch
 from ..segmentation.alpha_shape import alpha_shape
 
 

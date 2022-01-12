@@ -10,7 +10,7 @@ from scipy.stats import sem
 from nibabel.freesurfer.io import read_geometry, write_morph_data
 
 # local inputs
-from ..io.read_patch import read_patch
+from ..io.surf import read_patch
 
 
 def calculate_distortion(file_patch, file_white, path_output, hemi):

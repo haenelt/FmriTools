@@ -29,7 +29,7 @@ from nipype.interfaces.ants import N4BiasFieldCorrection
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.io.mgh2nii import mgh2nii
 from fmri_tools.io.read_vox2vox import read_vox2vox
-from fmri_tools.io.copy_header import copy_header
+from fmri_tools.io.vol import copy_header
 from fmri_tools.registration.clean_ana import clean_ana
 from fmri_tools.registration.mask_ana import mask_ana
 from fmri_tools.registration.mask_epi import mask_epi

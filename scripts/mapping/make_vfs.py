@@ -12,7 +12,7 @@ freesurfer.
 import os
 
 # local inputs
-from fmri_tools.mapping.get_vfs import get_vfs
+from fmri_tools.mapping.vfs import get_vfs
 
 # input files
 hemi = "lh"

@@ -13,8 +13,7 @@ from nipype.interfaces.freesurfer import SampleToSurface
 
 # local inputs
 from ..io.get_filename import get_filename
-from ..io.read_mgh import read_mgh
-from ..io.write_mgh import write_mgh
+from ..io.surf import write_mgh, read_mgh
 from ..io.mgh2nii import mgh2nii
 
 

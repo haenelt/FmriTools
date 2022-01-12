@@ -3,12 +3,14 @@
 # external inputs
 import nibabel as nb
 
+__all__ = ['copy_header']
+
 
 def copy_header(file_in):
     """Copy header.
-    
-    The function reads the header information from a nifti file and copies it 
-    into an empty header. This is done to omit unnecessary header extensions.    
+
+    The function reads the header information from a nifti file and copies it
+    into an empty header. This is done to omit unnecessary header extensions.
 
     Parameters
     ----------
@@ -21,7 +23,7 @@ def copy_header(file_in):
         Cleaned nibabel header.
 
     """
-    
+
     # load header
     header = nb.load(file_in).header
 
@@ -72,5 +74,5 @@ def copy_header(file_in):
     header_new["srow_z"] = header["srow_z"]
     header_new["intent_name"] = header["intent_name"]
     header_new["magic"] = header["magic"]
-    
+
     return header_new

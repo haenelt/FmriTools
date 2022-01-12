@@ -13,7 +13,7 @@ from sh import gunzip
 
 # local inputs
 from ..io.get_filename import get_filename
-from ..io.write_mgh import write_mgh
+from ..io.surf import write_mgh
 from ..cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from ..utils.resample_volume import resample_volume
 from ..surface.deform_surface import deform_surface

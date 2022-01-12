@@ -15,9 +15,9 @@ from ..io.get_filename import get_filename
 from ..utils.apply_affine_chunked import apply_affine_chunked
 
 
-def get_b0_orientation(surf_in, vol_in, write_output=False, path_output="", 
-                       name_output=""):
-    """Get B0 orientation.
+def b0_orientation(surf_in, vol_in, write_output=False, path_output="",
+                   name_output=""):
+    """B0 orientation.
     
     This function computes the angle between surface normals and B0-direction 
     per vertex.    
