@@ -1,7 +1,7 @@
-function get_biopac_regressor(input, biopac_input, path_output, TR)
+function ft_biopac_regressor(input, biopac_input, path_output, TR)
 % Get biopac regressor
 %
-% get_biopac_regressor(input, biopac_input, path_output, TR)
+% ft_biopac_regressor(input, biopac_input, path_output, TR)
 %
 % Inputs:
 %   input        - input time series

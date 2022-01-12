@@ -31,6 +31,7 @@ from nighres.registration import embedded_antsreg, apply_coordinate_mappings
 # local inputs
 from fmri_tools.cmap.expand_coordinate_mapping import expand_coordinate_mapping
 from fmri_tools.registration.get_scanner_transform import get_scanner_transform
+from fmri_tools.matlab import MatlabCommand
 
 # input files
 file_mpm_r1 = "/home/daniel/Schreibtisch/mpm_reg/data/mpm/s122880a-145639-00001-00352-1_R1.nii"
@@ -91,16 +92,16 @@ nb.save(output, os.path.join(path_mpm, "mpm_pd.nii"))
 
 # skull stripping
 print("skullstrip mp2rage")
-os.system("matlab" +
-          " -nodisplay -nodesktop -r " +
-          "\"skullstrip_spm12(\'{0}\', \'{1}\'); exit;\"".
-          format(file_mp2rage_pd, path_mp2rage))
+matlab = MatlabCommand("ft_skullstrip_spm12",
+                       file_mp2rage_pd,
+                       path_mp2rage)
+matlab.run()
 
 print("skullstrip mpm")
-os.system("matlab" +
-          " -nodisplay -nodesktop -r " +
-          "\"skullstrip_spm12(\'{0}\', \'{1}\'); exit;\"".
-          format(os.path.join(path_mpm, "mpm_pd.nii"), path_mpm))
+matlab = MatlabCommand("ft_skullstrip_spm12",
+                       os.path.join(path_mpm, "mpm_pd.nii"),
+                       path_mpm)
+matlab.run()
 
 # prepare T1-map (MPM)
 print("prepare mpm (t1)")

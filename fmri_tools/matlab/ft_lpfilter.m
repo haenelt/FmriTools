@@ -1,7 +1,7 @@
-function lowpass_filter(input, TR, cutoff_lowpass, order)
+function ft_lpfilter(input, TR, cutoff_lowpass, order)
 % Lowpass filter
 %
-% lowpass_filter(input, TR, cutoff_lowpass, order)
+% ft_lpfilter(input, TR, cutoff_lowpass, order)
 %
 % Inputs:
 %   input          - file name of time series.

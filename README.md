@@ -10,16 +10,16 @@ Python package for processing and analyzing high-resolution fMRI data. Various s
 I recommend to use `Miniconda` to create a new python environment with `Python >= 3.6`. Then, clone this repository and run the following line from the directory in which the repository was cloned with the environment being activated:
 
 ```
-python setup.py install
+python install .
 ```
 
 Some scripts need optional (non-default) packages which can be installed with the following command:
 
 ```
-pip install fmri_tools[addon]
+pip install .[addon]
 ```
 
-Another option is to install the package in development mode by creating a `conda.pth` (which includes the path of the cloned repository) in the site-packages folder of your conda environment. Necessary external python packages can be installed by running `pip install -r requirements.txt`. The package cannot be import without the installation of nighres. An installation guide can be found [here](https://nighres.readthedocs.io/en/latest/installation.html). With `pip install -r requirements_extra.txt`, optional (non-default) packages are installed which are only needed for single scripts.
+Another option is to install the package in development mode by creating a `conda.pth` (which includes the path of the cloned repository) in the site-packages folder of your conda environment. Necessary external python packages can be installed by running `pip install -r requirements.txt`. The package cannot be import without the installation of nighres. An installation guide can be found [here](https://nighres.readthedocs.io/en/latest/installation.html).
 
 The package contains some matlab functions. Please add the following code to the matlab `startup.m` script. This includes the package to the matlab search path. Of course you have to specify the paths there. Next to the root directory of this package, you should add the root directories of [SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/), [knkutils](https://github.com/kendrickkay/knkutils), [GLMdenoise](https://github.com/kendrickkay/GLMdenoise), [TDM](https://github.com/kendrickkay/TDM) and [OpenFmriAnalysis](https://github.com/TimVanMourik/OpenFmriAnalysis). SPM12 is used throughout the package. The other toolboxes are used by single scripts and might be ignored.
 

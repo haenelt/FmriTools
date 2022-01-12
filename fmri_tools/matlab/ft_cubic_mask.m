@@ -1,7 +1,7 @@
-function cubic_mask(input, path_output, name_output, c, r)
+function ft_cubic_mask(input, path_output, name_output, c, r)
 % Cubic mask
 %
-% cubic_mask(input, path_output, name_output, c, r)
+% ft_cubic_mask(input, path_output, name_output, c, r)
 %
 % Inputs:
 %   input       - file name of time series.

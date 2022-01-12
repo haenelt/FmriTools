@@ -1,7 +1,7 @@
-function baseline_correction(input, TR, cutoff_highpass, prefix)
+function ft_baseline_correction(input, TR, cutoff_highpass, prefix)
 % Baseline correction
 %
-% baseline_correction(input, TR, cutoff_highpass, prefix)
+% ft_baseline_correction(input, TR, cutoff_highpass, prefix)
 %
 % Inputs:
 %   input           - file name of time series.

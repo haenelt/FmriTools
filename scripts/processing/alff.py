@@ -21,6 +21,7 @@ from fmri_tools.preprocessing.get_nuisance_mask import get_nuisance_mask
 from fmri_tools.preprocessing.get_nuisance_regressor import \
     get_nuisance_regressor
 from fmri_tools.processing.get_alff import get_alff
+from fmri_tools.matlab import MatlabCommand
 
 # input
 anatomy = ""  # T1w full brain anatomy (e.g. orig)
@@ -59,19 +60,21 @@ rfile = "r" + file  # filename of residual time series
 if nuisance_regression:
 
     # baseline correction
-    os.system("matlab" +
-              " -nodisplay -nodesktop -r " +
-              "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"".
-              format(function, TR, cutoff_highpass))
+    matlab = MatlabCommand("ft_baseline_correction",
+                           function,
+                           TR,
+                           cutoff_highpass)
+    matlab.run()
 
     if biopac:
 
         # get biopac regressors
-        os.system("matlab" +
-                  " -nodisplay -nodesktop -r " +
-                  "\"get_biopac_regressor(\'{0}\', \'{1}\', \'{2}\', {3}); exit;\"".
-                  format(os.path.join(path, bfile),
-                         biopac_input, path_output, TR))
+        matlab = MatlabCommand("ft_biopac_regressor",
+                               os.path.join(path, bfile),
+                               biopac_input,
+                               path_output,
+                               TR)
+        matlab.run()
 
     else:
 
@@ -107,12 +110,14 @@ if nuisance_regression:
     else:
         clean_glm = 0
 
-    os.system("matlab" +
-              " -nodisplay -nodesktop -r " +
-              "\"regress_physio(\'{0}\', \'{1}\', {2}, {3}, \'{4}\', {5}); exit;\"".
-              format(function,
-                     os.path.join(path_output, "nuisance_regressor.txt"),
-                     TR, cutoff_highpass, path_output, clean_glm))
+    matlab = MatlabCommand("ft_regress_physio",
+                           function,
+                           os.path.join(path_output, "nuisance_regressor.txt"),
+                           TR,
+                           cutoff_highpass,
+                           path_output,
+                           clean_glm)
+    matlab.run()
 
     # get alff    
     get_alff(os.path.join(path_output, rfile), TR, path_output, hp_freq,

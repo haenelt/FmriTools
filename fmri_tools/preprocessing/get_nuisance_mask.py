@@ -11,6 +11,9 @@ from nipype.interfaces.fsl import BET
 from nipype.interfaces.freesurfer.preprocess import MRIConvert
 from nighres.registration import apply_coordinate_mappings
 
+# local input
+from ..matlab import MatlabCommand
+
 
 def get_nuisance_mask(orig_in, deformation, path_output, nerode_white=1,
                       nerode_csf=1, segmentation=True, cleanup=True):
@@ -69,11 +72,10 @@ def get_nuisance_mask(orig_in, deformation, path_output, nerode_white=1,
 
     # segmentation
     if segmentation:
-        os.system("matlab" +
-                  " -nodisplay -nodesktop -r " +
-                  "\"skullstrip_spm12(\'{0}\', \'{1}\'); exit;\"".
-                  format(os.path.join(path_output, file + ".nii"),
-                         path_output))
+        matlab = MatlabCommand("ft_skullstrip_spm12",
+                               os.path.join(path_output, file + ".nii"),
+                               path_output)
+        matlab.run()
 
     # load tissue maps
     wm_array = nb.load(os.path.join(path_output, "skull", "c2" + file + ".nii")).get_fdata()

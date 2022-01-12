@@ -1,7 +1,7 @@
-function skullstrip_spm12(filename, path_output)
+function ft_skullstrip_spm12(filename, path_output)
 % Skull stripping with SPM12
 % 
-% skullstrip_spm12(filename, path_output)
+% ft_skullstrip_spm12(filename, path_output)
 % 
 % Inputs:
 %   filename    - filename of input volume. 

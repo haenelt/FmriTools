@@ -20,6 +20,7 @@ from nighres.registration import apply_coordinate_mappings
 from fmri_tools.utils.get_mean4d import get_mean4d
 from fmri_tools.processing.demean_time_series import demean_time_series
 from fmri_tools.mapping.map2surface import map2surface
+from fmri_tools.matlab import MatlabCommand
 
 input_series = ["/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/udata.nii",
                 "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_2/udata.nii",
@@ -79,10 +80,12 @@ for i in range(len(input_series)):
     if os.path.exists(os.path.join(path_tmp, basename_tmp)):
         raise FileExistsError("Temporary file already exists!")
 
-    os.system("matlab" +
-              " -nodisplay -nodesktop -r " +
-              "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"".
-              format(input_series[i], TR, cutoff_highpass, prefix))
+    matlab = MatlabCommand("ft_baseline_correction",
+                           input_series[i],
+                           TR,
+                           cutoff_highpass,
+                           prefix)
+    matlab.run()
 
     # move baseline corrected time series to output folder
     sh.move(os.path.join(path_tmp, basename_tmp),

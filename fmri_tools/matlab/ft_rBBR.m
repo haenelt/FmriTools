@@ -1,7 +1,7 @@
-function run_rBBR(input)
+function ft_rBBR(input)
 % Run rBBR
 %
-% run_rBBR(input)
+% ft_rBBR(input)
 %
 % Inputs:
 %   input - mat-file with all input variables.

@@ -28,6 +28,7 @@ import nibabel as nb
 # local inputs
 from fmri_tools.io.get_filename import get_filename
 from fmri_tools.processing.get_onset_vols import get_onset_vols
+from fmri_tools.matlab import MatlabCommand
 
 # input data
 img_input = [
@@ -108,11 +109,11 @@ for i in range(len(img_input)):
 
     # highpass filter time series
     if use_highpass:
-        os.system("matlab" +
-                  " -nodisplay -nodesktop -r " +
-                  "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"".
-                  format(os.path.join(path_file, name_file + ext_file), TR,
-                         cutoff_highpass))
+        matlab = MatlabCommand("ft_baseline_correction",
+                               os.path.join(path_file, name_file + ext_file),
+                               TR,
+                               cutoff_highpass)
+        matlab.run()
 
         # change input to highpass filtered time series
         name_file = "b" + name_file

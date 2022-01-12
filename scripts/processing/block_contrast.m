@@ -66,7 +66,7 @@ spm_get_defaults('cmdline',true); % no gui
 % lowpass filtering
 if lowpass
     for i = 1:length(img_input)
-        lowpass_filter(img_input{i}, TR, cutoff_lowpass, order_lowpass);
+        ft_lpfilter(img_input{i}, TR, cutoff_lowpass, order_lowpass);
     end
     
     % change input to lowpass filtered time series
@@ -179,4 +179,4 @@ spm_jobman('run',matlabbatch);
 clear matlabbatch
 
 % calculate contrasts
-get_tcontrast(cond_input, path_output, name_output, name_sess, hrf_derivative, n_noise);
+ft_tcontrast(cond_input, path_output, name_output, name_sess, hrf_derivative, n_noise);

@@ -24,6 +24,9 @@ import datetime
 import numpy as np
 import nibabel as nb
 
+# local inputs
+from fmri_tools.matlab import MatlabCommand
+
 # input data
 img_input = ["/data/pt_01880/temp_phase/udata.nii",
              ]
@@ -80,10 +83,11 @@ for i in range(len(path)):
 
     # look for baseline corrected time series
     if not os.path.isfile(os.path.join(path[i], "b" + file[i])):
-        os.system("matlab" +
-                  " -nodisplay -nodesktop -r " +
-                  "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"".
-                  format(img_input[i], TR, cutoff_highpass))
+        matlab = MatlabCommand("ft_baseline_correction",
+                               img_input[i],
+                               TR,
+                               cutoff_highpass)
+        matlab.run()
 
     if not os.path.isfile(os.path.join(path[i], "mean_b" + file[i])):
         # open baseline corrected time series

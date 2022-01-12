@@ -23,6 +23,7 @@ from nighres.registration import apply_coordinate_mappings
 from fmri_tools.processing.demean_time_series import demean_time_series
 from fmri_tools.mapping.map2surface import map2surface
 from fmri_tools.mapping.map2stack import map2stack
+from fmri_tools.matlab import MatlabCommand
 
 input_series = "/nobackup/actinium2/haenelt/V2STRIPES/p6/psf/multipol_14/udata.nii"
 input_deformation = "/nobackup/actinium2/haenelt/V2STRIPES/p6/deformation/multipol/epi2orig.nii.gz"
@@ -84,10 +85,12 @@ if os.path.exists(os.path.join(path_tmp, basename_tmp)):
     raise FileExistsError("Temporary file already exists!")
 
 # look for baseline corrected time series
-os.system("matlab" +
-          " -nodisplay -nodesktop -r " +
-          "\"baseline_correction(\'{0}\', {1}, {2}, \'{3}\'); exit;\"".
-          format(input_series, TR, cutoff_highpass, prefix))
+matlab = MatlabCommand("ft_baseline_correction",
+                       input_series,
+                       TR,
+                       cutoff_highpass,
+                       prefix)
+matlab.run()
 
 # move baseline corrected time series to output folder
 sh.move(os.path.join(path_tmp, basename_tmp),

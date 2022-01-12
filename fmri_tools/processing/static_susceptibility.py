@@ -11,6 +11,7 @@ from nipype.interfaces.ants import N4BiasFieldCorrection
 
 # local inputs
 from fmri_tools.io.get_filename import get_filename
+from fmri_tools.matlab import MatlabCommand
 
 
 def static_susceptibility(file_in, tr, cutoff_highpass=270, mode="mean",
@@ -55,10 +56,11 @@ def static_susceptibility(file_in, tr, cutoff_highpass=270, mode="mean",
 
     # baseline correction
     if cutoff_highpass != 0:
-        os.system("matlab" +
-                  " -nodisplay -nodesktop -r " +
-                  "\"baseline_correction(\'{0}\', {1}, {2}); exit;\"".
-                  format(file_in, tr, cutoff_highpass))
+        matlab = MatlabCommand("ft_baseline_correction",
+                               file_in,
+                               tr,
+                               cutoff_highpass)
+        matlab.run()
 
         # read corrected time series
         arr = nb.load(os.path.join(path_file, "b{0}{1}".

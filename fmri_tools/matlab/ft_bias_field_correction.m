@@ -1,7 +1,7 @@
-function bias_field_correction(filename)
+function ft_bias_field_correction(filename)
 % Bias field correction.
 %
-% bias_field_correction(filename)
+% ft_bias_field_correction(filename)
 %
 % Inputs:
 %   filename - filename of input volume.

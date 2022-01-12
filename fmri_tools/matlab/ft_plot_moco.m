@@ -1,7 +1,7 @@
-function plot_moco(file_rp, software, path_output, name_output)
+function ft_plot_moco(file_rp, software, path_output, name_output)
 % Plot moco
 %
-% plot_moco(file_rp, software, path_output, name_output)
+% ft_plot_moco(file_rp, software, path_output, name_output)
 %
 % Inputs:
 %   file_rp     - file name of textfile with realignment parameters.

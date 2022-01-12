@@ -33,6 +33,7 @@ from fmri_tools.io.get_filename import get_filename
 from fmri_tools.utils.get_mean import get_mean
 from fmri_tools.utils.get_std import get_std
 from fmri_tools.preprocessing.deweight_mask import deweight_mask
+from fmri_tools.matlab import MatlabCommand
 
 # input data
 input_magn = "/data/pt_01880/temp_phase/data.nii"
@@ -68,19 +69,21 @@ moco.inputs.oned_matrix_save = os.path.join(path_moco, 'moco_matrix.1D')
 moco.run()
 
 # plot motion parameters
-os.system("matlab" +
-          " -nodisplay -nodesktop -r " +
-          "\"plot_moco(\'{0}\', \'afni\', \'{1}\', \'{2}\'); exit;\"".
-          format(os.path.join(path_moco, 'moco_params.1D'), path_moco, 'rp'))
+matlab = MatlabCommand("ft_plot_moco",
+                       os.path.join(path_moco, 'moco_params.1D'),
+                       "afni",
+                       path_moco,
+                       "rp")
+matlab.run()
 
 # sum motion outliers
-os.system("matlab" +
-          " -nodisplay -nodesktop -r " +
-          "\"get_outlier(\'{0}\', \'{1}\', \'{2}\', \'afni\', \'{3}\'); exit;\"".
-          format(os.path.join(path_moco, "moco_params.1D"),
-                 os.path.join(path_magn, 'u' + name_magn + ext_magn),
-                 outlier_params,
-                 os.path.join(path_magn, "outlier")))
+matlab = MatlabCommand("ft_outlier",
+                       os.path.join(path_moco, "moco_params.1D"),
+                       os.path.join(path_magn, 'u' + name_magn + ext_magn),
+                       outlier_params,
+                       "afni",
+                       os.path.join(path_magn, "outlier"))
+matlab.run()
 
 # unwrap phase data
 magn_img = nb.load(input_magn)

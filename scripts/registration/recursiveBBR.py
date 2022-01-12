@@ -28,6 +28,7 @@ from gbb.utils.vox2ras import vox2ras
 
 # local inputs
 from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
+from fmri_tools.matlab import MatlabCommand
 
 # input surface
 lh_white = "/data/pt_01880/odc_temp/surface/match/lh.layer10_def2_smooth_match"
@@ -89,10 +90,13 @@ input_cfg = join(path_input, "cfg.mat")
 vox2ras_tkr, ras2vox_tkr = vox2ras(ref_vol)
 
 # surf2mat
-os.system("matlab" +
-          " -nodisplay -nodesktop -r " +
-          "\"surf2mat(\'{0}\', \'{1}\', \'{2}\', \'{3}\', \'{4}\'); exit;\"".
-          format(lh_white, rh_white, lh_pial, rh_pial, in_surf_mat_ras))
+matlab = MatlabCommand("ft_surf2mat",
+                       lh_white,
+                       rh_white,
+                       lh_pial,
+                       rh_pial,
+                       in_surf_mat_ras)
+matlab.run()
 
 # ras2vox
 data = loadmat(in_surf_mat_ras)
@@ -128,10 +132,8 @@ cfg["output_cmap"] = output_cmap
 savemat(input_cfg, cfg)
 
 # run rBBR
-os.system("matlab" +
-          " -nodisplay -nodesktop -r " +
-          "\"run_rBBR(\'{0}\'); exit;\"".
-          format(input_cfg))
+matlab = MatlabCommand("ft_rBBR", input_cfg)
+matlab.run()
 
 # vox2ras
 data = loadmat(out_surf_mat_vox)

@@ -60,6 +60,7 @@ from fmri_tools.utils.volume_threshold import volume_threshold
 from fmri_tools.utils.multiply_images import multiply_images
 from fmri_tools.mapping.morph2dense import morph2dense
 from fmri_tools.mapping.map2grid import map2grid
+from fmri_tools.matlab import MatlabCommand
 
 # input data
 fileUNI = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S6_MP2RAGE_0p7_UNI_Images_2.45.nii"
@@ -116,10 +117,9 @@ if part == 1:
 
     # bias field correction
     print("Bias field correction")
-    os.system("matlab" +
-              " -nodisplay -nodesktop -r " +
-              "\"bias_field_correction(\'{0}\'); exit;\"".
-              format(os.path.join(path_bias, "n" + file)))
+    matlab = MatlabCommand("ft_biased_field_correction",
+                           os.path.join(path_bias, "n" + file))
+    matlab.run()
 
     # volume threshold
     print("Volume threshold")
@@ -138,10 +138,10 @@ if part == 1:
 
     # skullstrip anatomy
     print("Skullstrip INV2")
-    os.system("matlab" +
-              " -nodisplay -nodesktop -r " +
-              "\"skullstrip_spm12(\'{0}\', \'{1}\'); exit;\"".
-              format(fileINV2, path))
+    matlab = MatlabCommand("ft_skullstrip_spm12",
+                           fileINV2,
+                           path)
+    matlab.run()
 
     # bring skullstrip_mask in conformed space (mri_vol2vol, NN)
     transmask = ApplyVolTransform()
