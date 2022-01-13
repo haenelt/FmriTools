@@ -64,6 +64,6 @@ def get_surface_voxel(file_in, path_output):
                 if np.mod(k, 2) != 0 and z_calc != 0:
                     img_res[i, j, k] += z_max
 
-                    # write output image
+    # write output image
     newimg = nb.Nifti1Image(img_res, img.affine, img.header)
     nb.save(newimg, os.path.join(path_output, "surface_voxel.nii"))
