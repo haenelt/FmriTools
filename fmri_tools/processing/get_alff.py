@@ -59,8 +59,8 @@ def get_alff(file_in, TR, path_output, hp_freq=0.01, lp_freq=0.08, cleanup=True)
     # filtering
     bandpass = Bandpass()
     bandpass.inputs.in_file = file_in
-    bandpass.inputs.highpass = hp_freq
-    bandpass.inputs.lowpass = lp_freq
+    bandpass.inputs.apply_inverse = hp_freq
+    bandpass.inputs.apply = lp_freq
     bandpass.inputs.tr = TR
     bandpass.inputs.outputtype = 'NIFTI'
     bandpass.inputs.out_file = os.path.join(path_output, file + "_filtered.nii")

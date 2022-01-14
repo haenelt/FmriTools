@@ -4,116 +4,183 @@
 import os
 import datetime
 import subprocess
+import functools
 import shutil as sh
 from shutil import copyfile
+from abc import ABC, abstractmethod
 
 # external inputs
 import numpy as np
-from gbb.neighbor.nn_2d import nn_2d
 
 # local inputs
+from .mesh import Mesh
 from ..io.get_filename import get_filename
 
-__all__ = ['heat_kernel_smoothing', 'intracortical_smoothing']
+__all__ = ['HeatKernel', 'intracortical_smoothing']
 
 
-def heat_kernel_smoothing(vtx, data, adjm, sigma, n_smooth):
-    """Heat kernel smoothing.
+class Filter(ABC):
+    NSHUFFLE = 10
+    FIT_RANGE = np.arange(1, 10)
 
-    This function performs heat kernel smoothing [1,2,3] on a triangle mesh. The
-    code is mainly adapted from the matlab code by Chung et al. [4]. The kernel
-    bandwidth corresponds to diffusion time in the heat equation [3]. The FWHM
-    follows 4*sqrt(log 2*n_smooth*sigma) with the natural log.
+    def __init__(self, vtx, fac):
+        self.vtx = vtx
+        self.fac = fac
+        self._mesh = Mesh(vtx, fac)
 
-    If you use this code, please reference one of the following papers. The
-    details on the mathematical basis of of the algorithm can be found in these
-    papers.
+    @abstractmethod
+    def apply(self, data, n_iter):
+        pass
 
-    Parameters
-    ----------
-    vtx : ndarray
-        Vertex points of surface mesh.
-    data : ndarray
-        Array of vertex-wise sampled data points.
-    adjm : ndarray
-        Adjacency matrix.
-    sigma : float
-        Kernel bandwidth.
-    n_smooth : int
-        Number of iterations.
+    @property
+    @functools.lru_cache
+    def fit_fwhm(self):
+        fwhm_mean = []
+        fwhm_std = []
+        for i in self.FIT_RANGE:
+            fwhm = []
+            for j in range(self.NSHUFFLE):
+                fwhm.append(self._fwhm(i))
 
-    Returns
-    -------
-    res : ndarray
-        Array of vertex-wise smoothed data points.
+            fwhm_mean.append(np.mean(fwhm))
+            fwhm_std.append(np.std(fwhm))
 
-    References
-    -------
-    .. [1] Chung, MK, et al. Cortical thickness analysis in autism via heat
-    kernel smoothing. Neuroimage 25(1), 1256--1265 (2005).
-    .. [2] Chung, MK, et al. Unified statistical approach to cortical thickness
-    analysis. Inf Process Med Imaging 19, 627--638 (2005).
-    .. [3] Chung, MK, et al. Encoding cortical surface by spherical harmonics.
-    Statistica Sinica 18, 1269--1291 (2008).
-    .. [4] http://pages.stat.wisc.edu/~mchung/softwares/hk/hk_smooth.m
+        return fwhm_mean, fwhm_std
 
-    """
+    def _fwhm(self, n_iter):
 
-    # number of vertices
-    n_vertex = len(vtx)
+        data = np.random.normal(0, 1, len(self.vtx))
+        data_filt = self.apply(data, n_iter)
+        edges = self._mesh.edges
+        edge_length = self._mesh.avg_edge_length
 
-    # heat kernel shape
-    k_shape = lambda x, s: np.exp(-x / (4 * s)) / np.sum(np.exp(-x / (4 * s)))
+        var_ds = np.var(data_filt[edges[:,0]] - data_filt[edges[:,1]])
+        var_s = np.var(data_filt)
 
-    # get max degree (number of first order neighbors)
-    max_degree = 0
-    for i in range(n_vertex):
-        nn = nn_2d(i, adjm, 0)
-        degree = len(nn)
-        if degree > max_degree:
-            max_degree = degree
+        hallo = 1 - var_ds / (2 * var_s)
+        fwhm = edge_length * np.sqrt(-2*np.log(2) / np.log(hallo))
+        return fwhm
 
-    # heat kernel weight computation
-    neighbor = np.zeros((n_vertex, max_degree + 1)).astype(
-        int)  # including the current vertex
-    weight = np.zeros(
-        (n_vertex, max_degree + 1))  # including the current vertex
-    for i in range(n_vertex):
 
-        # get vertex neighbors
-        nn = nn_2d(i, adjm, 0)
-        degree = len(nn)
 
-        # get distance to vertex neighbors
-        distance = 0
-        for j in range(degree):
-            distance = np.append(distance,
-                                 np.sum((vtx[nn[j]] - vtx[i, :]) ** 2))
 
-        # get heat kernel weighting for each neighbor
-        weight[i, :1 + degree] = k_shape(distance, sigma)
 
-        # get corresponding neighbor (add 1 because of dummy row)
-        neighbor[i, :1 + degree] = np.append([i], nn) + 1
 
-    # add dummy row
-    data = np.append(1, data)
 
-    # iterative kernel smoothing
-    for i in range(n_smooth):
 
-        # add weights
-        res = np.zeros_like(data)
-        for j in range(max_degree):
-            res[1:] += data[neighbor[:, j]] * weight[:, j]
+class HeatKernel(Filter):
 
-        # initialize new data array
-        data = res.copy()
+    def __init__(self, vtx, fac, sigma):
+        super().__init__(vtx, fac)
+        #self.vtx = vtx
+        #self.fac = fac
+        self.sigma = sigma
+        #self._mesh = Mesh(vtx, fac)
 
-    # remove dummy row
-    res = res[1:]
+    @property
+    @functools.lru_cache
+    def kernel(self):
+        """Heat kernel smoothing.
 
-    return res
+        This function performs heat kernel smoothing [1,2,3] on a triangle mesh. The
+        code is mainly adapted from the matlab code by Chung et al. [4]. The kernel
+        bandwidth corresponds to diffusion time in the heat equation [3]. The FWHM
+        follows 4*sqrt(log 2*n_smooth*sigma) with the natural log.
+
+        If you use this code, please reference one of the following papers. The
+        details on the mathematical basis of of the algorithm can be found in these
+        papers.
+
+        Parameters
+        ----------
+        vtx : ndarray
+            Vertex points of surface mesh.
+        data : ndarray
+            Array of vertex-wise sampled data points.
+        adjm : ndarray
+            Adjacency matrix.
+        sigma : float
+            Kernel bandwidth.
+        n_smooth : int
+            Number of iterations.
+
+        Returns
+        -------
+        res : ndarray
+            Array of vertex-wise smoothed data points.
+
+        References
+        -------
+        .. [1] Chung, MK, et al. Cortical thickness analysis in autism via heat
+        kernel smoothing. Neuroimage 25(1), 1256--1265 (2005).
+        .. [2] Chung, MK, et al. Unified statistical approach to cortical thickness
+        analysis. Inf Process Med Imaging 19, 627--638 (2005).
+        .. [3] Chung, MK, et al. Encoding cortical surface by spherical harmonics.
+        Statistica Sinica 18, 1269--1291 (2008).
+        .. [4] http://pages.stat.wisc.edu/~mchung/softwares/hk/hk_smooth.m
+
+        """
+
+        # heat kernel shape
+        k_shape = lambda x, s: np.exp(-x / (2 * s**2)) / np.sum(
+            np.exp(-x / (2 * s**2)))
+
+        # parameters
+        nvtx = len(self.vtx)  # number of vertices
+
+        # heat kernel weight computation
+        neighbor = np.zeros((nvtx, self._max_neighbor + 1), dtype=np.int64)  # including the current vertex
+        weight = np.zeros((nvtx, self._max_neighbor + 1))  # including the current vertex
+
+        for i in range(nvtx):
+
+            # get vertex neighbors
+            nn = self._mesh.neighborhood(i)
+            degree = len(nn)
+
+            # get distance to vertex neighbors
+            distance = [np.sum((self.vtx[n, :]-self.vtx[i, :])**2) for n in nn]
+            distance.insert(0, 0)
+            distance = np.array(distance)
+
+            # get heat kernel weighting for each neighbor
+            weight[i, :1 + degree] = k_shape(distance, self.sigma)
+
+            # get corresponding neighbor (add 1 because of dummy row)
+            neighbor[i, :1 + degree] = np.append([i], nn) + 1
+
+        return weight, neighbor
+
+    @property
+    @functools.lru_cache
+    def _max_neighbor(self):
+        return np.max(self._mesh.n_neighbors).astype(int)  # max number of first order neighbors
+
+    def apply(self, data, n_iter=1):
+
+        weight, neighbor = self.kernel
+        data = np.append(1, data)  # add dummy row
+
+        # iterative kernel smoothing
+        for i in range(n_iter):
+
+            # add weights
+            res = np.zeros_like(data)
+            for j in range(self._max_neighbor):
+                res[1:] += data[neighbor[:, j]] * weight[:, j]
+
+            # initialize new data array
+            data = res.copy()
+
+        # remove dummy row
+        res = res[1:]
+
+        return res
+
+    def apply_inverse(self, data):
+        return data - self.apply(data)
+
+
 
 
 def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
