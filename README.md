@@ -10,7 +10,7 @@ Python package for processing and analyzing high-resolution fMRI data. Various s
 I recommend to use `Miniconda` to create a new python environment with `Python >= 3.6`. Then, clone this repository and run the following line from the directory in which the repository was cloned with the environment being activated:
 
 ```
-python install .
+pip install .
 ```
 
 Some scripts need optional (non-default) packages which can be installed with the following command:

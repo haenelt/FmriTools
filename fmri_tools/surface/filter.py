@@ -16,171 +16,322 @@ import numpy as np
 from .mesh import Mesh
 from ..io.get_filename import get_filename
 
-__all__ = ['HeatKernel', 'intracortical_smoothing']
+__all__ = ['HeatKernel', 'IterativeNN', 'intracortical_smoothing']
 
 
 class Filter(ABC):
-    NSHUFFLE = 10
-    FIT_RANGE = np.arange(1, 10)
+    """Abstract Base Class for data filtering.
 
-    def __init__(self, vtx, fac):
-        self.vtx = vtx
-        self.fac = fac
-        self._mesh = Mesh(vtx, fac)
+    Base class for the application of a spatial filter kernel on scalar data
+    defined on a triangular surface mesh.
+
+    Parameters
+    ----------
+    verts : np.ndarray, shape=(N,3)
+        Vertex coordinates.
+    faces : np.ndarray, shape=(M,3)
+        Vertex indices of each triangle.
+
+    """
+
+    NSHUFFLE = 10  # number of shuffles for FWHM estimation
+    ITER_RANGE = np.arange(1, 10)  # range of iterations for FWHM estimation
+
+    def __init__(self, verts, faces):
+        self.verts = verts
+        self.faces = faces
+        self._mesh = Mesh(verts, faces)
 
     @abstractmethod
-    def apply(self, data, n_iter):
+    def kernel(self):
+        """Abstract method for computing kernel weights and a corresponding
+        neighbor list."""
         pass
 
-    @property
-    @functools.lru_cache
-    def fit_fwhm(self):
-        fwhm_mean = []
-        fwhm_std = []
-        for i in self.FIT_RANGE:
-            fwhm = []
-            for j in range(self.NSHUFFLE):
-                fwhm.append(self._fwhm(i))
-
-            fwhm_mean.append(np.mean(fwhm))
-            fwhm_std.append(np.std(fwhm))
-
-        return fwhm_mean, fwhm_std
-
-    def _fwhm(self, n_iter):
-
-        data = np.random.normal(0, 1, len(self.vtx))
-        data_filt = self.apply(data, n_iter)
-        edges = self._mesh.edges
-        edge_length = self._mesh.avg_edge_length
-
-        var_ds = np.var(data_filt[edges[:,0]] - data_filt[edges[:,1]])
-        var_s = np.var(data_filt)
-
-        hallo = 1 - var_ds / (2 * var_s)
-        fwhm = edge_length * np.sqrt(-2*np.log(2) / np.log(hallo))
-        return fwhm
-
-
-
-
-
-
-
-
-class HeatKernel(Filter):
-
-    def __init__(self, vtx, fac, sigma):
-        super().__init__(vtx, fac)
-        #self.vtx = vtx
-        #self.fac = fac
-        self.sigma = sigma
-        #self._mesh = Mesh(vtx, fac)
-
-    @property
-    @functools.lru_cache
-    def kernel(self):
-        """Heat kernel smoothing.
-
-        This function performs heat kernel smoothing [1,2,3] on a triangle mesh. The
-        code is mainly adapted from the matlab code by Chung et al. [4]. The kernel
-        bandwidth corresponds to diffusion time in the heat equation [3]. The FWHM
-        follows 4*sqrt(log 2*n_smooth*sigma) with the natural log.
-
-        If you use this code, please reference one of the following papers. The
-        details on the mathematical basis of of the algorithm can be found in these
-        papers.
+    def apply(self, data, n_iter=1):
+        """Iterative application of smoothing kernel (lowpass filter).
 
         Parameters
         ----------
-        vtx : ndarray
-            Vertex points of surface mesh.
-        data : ndarray
-            Array of vertex-wise sampled data points.
-        adjm : ndarray
-            Adjacency matrix.
-        sigma : float
-            Kernel bandwidth.
-        n_smooth : int
+        data : np.ndarray, shape=(N,)
+            Data to be filtered.
+        n_iter : int, optional
             Number of iterations.
 
         Returns
         -------
-        res : ndarray
-            Array of vertex-wise smoothed data points.
-
-        References
-        -------
-        .. [1] Chung, MK, et al. Cortical thickness analysis in autism via heat
-        kernel smoothing. Neuroimage 25(1), 1256--1265 (2005).
-        .. [2] Chung, MK, et al. Unified statistical approach to cortical thickness
-        analysis. Inf Process Med Imaging 19, 627--638 (2005).
-        .. [3] Chung, MK, et al. Encoding cortical surface by spherical harmonics.
-        Statistica Sinica 18, 1269--1291 (2008).
-        .. [4] http://pages.stat.wisc.edu/~mchung/softwares/hk/hk_smooth.m
+        res : np.ndarray, shape=(N,)
+            Filtered data.
 
         """
 
-        # heat kernel shape
-        k_shape = lambda x, s: np.exp(-x / (2 * s**2)) / np.sum(
-            np.exp(-x / (2 * s**2)))
-
         # parameters
-        nvtx = len(self.vtx)  # number of vertices
-
-        # heat kernel weight computation
-        neighbor = np.zeros((nvtx, self._max_neighbor + 1), dtype=np.int64)  # including the current vertex
-        weight = np.zeros((nvtx, self._max_neighbor + 1))  # including the current vertex
-
-        for i in range(nvtx):
-
-            # get vertex neighbors
-            nn = self._mesh.neighborhood(i)
-            degree = len(nn)
-
-            # get distance to vertex neighbors
-            distance = [np.sum((self.vtx[n, :]-self.vtx[i, :])**2) for n in nn]
-            distance.insert(0, 0)
-            distance = np.array(distance)
-
-            # get heat kernel weighting for each neighbor
-            weight[i, :1 + degree] = k_shape(distance, self.sigma)
-
-            # get corresponding neighbor (add 1 because of dummy row)
-            neighbor[i, :1 + degree] = np.append([i], nn) + 1
-
-        return weight, neighbor
-
-    @property
-    @functools.lru_cache
-    def _max_neighbor(self):
-        return np.max(self._mesh.n_neighbors).astype(int)  # max number of first order neighbors
-
-    def apply(self, data, n_iter=1):
-
         weight, neighbor = self.kernel
-        data = np.append(1, data)  # add dummy row
+        res = np.zeros_like(data)
 
         # iterative kernel smoothing
-        for i in range(n_iter):
+        for _ in range(n_iter):
 
             # add weights
             res = np.zeros_like(data)
             for j in range(self._max_neighbor):
-                res[1:] += data[neighbor[:, j]] * weight[:, j]
+                res += data[neighbor[:, j]] * weight[:, j]
 
             # initialize new data array
             data = res.copy()
 
-        # remove dummy row
-        res = res[1:]
-
         return res
 
-    def apply_inverse(self, data):
-        return data - self.apply(data)
+    def apply_inverse(self, data, n_iter=1):
+        """Inverse application of smoothing kernel (highpass filter).
+
+        Parameters
+        ----------
+        data : np.ndarray, shape=(N,)
+            Data to be filtered.
+        n_iter : int, optional
+            Number of iterations.
+
+        Returns
+        -------
+        np.ndarray, shape=(N,)
+            Filtered data.
+
+        """
+
+        return data - self.apply(data, n_iter)
+
+    def fwhm(self, n_iter):
+        """Estimate the full width at half maximum (FWHM) of the filter.
+
+        The kernel size is described by its full width at half maximum (FWHM)
+        and is estimated by the equation given in [1]_.
+
+        Parameters
+        ----------
+        n_iter : int
+            Number of iterations.
+
+        Returns
+        -------
+        float
+            FWHM of the filter.
+
+        References
+        ----------
+        .. [1] Hagler, DJ, et al. Smoothing and cluster thresholding for
+        cortical surface-based group analysis of fMRI data. Neuroimage 33(4),
+        1093--1103 (2005).
+
+        """
+
+        data = np.random.normal(0, 1, len(self.verts))  # random noise
+        data_filt = self.apply(data, n_iter)
+        edges = self._mesh.edges
+        edge_length = self._mesh.avg_edge_length
+
+        var_ds = np.var(data_filt[edges[:, 0]] - data_filt[edges[:, 1]])
+        var_s = np.var(data_filt)
+        var_ratio = 1 - var_ds / (2 * var_s)
+
+        return edge_length * np.sqrt(-2*np.log(2) / np.log(var_ratio))
+
+    @property
+    @functools.lru_cache
+    def fwhm_range(self):
+        """Estimate the full width at half maximum (FWHM) of the filter for a
+        range of iteration steps.
+
+        Returns
+        -------
+        filter_size_mean : np.ndarray, shape=(len(ITER_RANGE),)
+            Mean of the FWHM of the filter for a range of iteration steps.
+        filter_size_std : np.ndarray, shape=(len(ITER_RANGE),)
+            Standard deviation of the FWHM of the filter for a range of
+            iteration steps.
+
+        """
+
+        filter_size_mean = []
+        filter_size_std = []
+        for i in self.ITER_RANGE:
+            filter_size = [self.fwhm(i) for _ in range(self.NSHUFFLE)]
+            filter_size_mean.append(np.mean(filter_size))
+            filter_size_std.append(np.std(filter_size))
+
+        return filter_size_mean, filter_size_std
+
+    @property
+    @functools.lru_cache
+    def _max_neighbor(self):
+        """Maximum number of first order neighbors."""
+
+        return np.max(self._mesh.n_neighbors).astype(int)
 
 
+class HeatKernel(Filter):
+    """Heat kernel smoothing.
+
+    Heat kernel smoothing [1]_, [2]_, [3]_ on scalar data defined on a
+    triangular surface mesh. The code is mainly adapted from the matlab code by
+    Chung et al. [4]_. The kernel bandwidth corresponds to the diffusion time in
+    the heat equation [3]_. The FWHM follows 4*sqrt(log(2*n_iter*sigma)) with
+    the natural log.
+
+    If you use this code, please reference one of the following papers. The
+    details on the mathematical basis of of the algorithm can be found there.
+
+    Parameters
+    ----------
+    verts : np.ndarray, shape=(N,3)
+        Vertex coordinates.
+    faces : np.ndarray, shape=(M,3)
+        Vertex indices of each triangle.
+    sigma : float
+        Kernel bandwidth.
+
+    References
+    ----------
+    .. [1] Chung, MK, et al. Cortical thickness analysis in autism via heat
+    kernel smoothing. Neuroimage 25(1), 1256--1265 (2005).
+    .. [2] Chung, MK, et al. Unified statistical approach to cortical thickness
+    analysis. Inf Process Med Imaging 19, 627--638 (2005).
+    .. [3] Chung, MK, et al. Encoding cortical surface by spherical harmonics.
+    Statistica Sinica 18, 1269--1291 (2008).
+    .. [4] http://pages.stat.wisc.edu/~mchung/softwares/hk/hk_smooth.m
+
+    """
+
+    def __init__(self, verts, faces, sigma):
+        super().__init__(verts, faces)
+        self.sigma = sigma
+
+    @property
+    @functools.lru_cache
+    def kernel(self):
+        """Computation of smoothing kernel.
+
+        Returns
+        -------
+        np.ndarray, shape=(N, self._max_neighbors + 1)
+            Heat kernel weighting for each vertex neighbor.
+        np.ndarray, shape=(N, self._max_neighbors + 1)
+            Correspond array containing vertex neighbors.
+
+        """
+
+        # parameters
+        # self._max_neighbor + 1 because the current index is included as well
+        nverts = len(self.verts)
+        neighbor = np.zeros((nverts, self._max_neighbor + 1), dtype=np.int64)
+        weight = np.zeros((nverts, self._max_neighbor + 1))
+
+        for i in range(nverts):
+
+            # vertex neighbors
+            nn = self._mesh.neighborhood(i)
+            degree = len(nn)
+
+            # get distance to vertex neighbors
+            distance = [
+                float(np.sum((self.verts[n, :] - self.verts[i, :]) ** 2)) for n
+                in nn]
+            distance.insert(0, 0)
+            distance = np.array(distance)
+
+            # heat kernel weighting for each neighbor and corresponding
+            # neighbors
+            weight[i, :1 + degree] = self._kernel_shape(distance, self.sigma)
+            neighbor[i, :1 + degree] = np.append([i], nn)
+
+        return weight, neighbor
+
+    @staticmethod
+    def _kernel_shape(x, s):
+        """Heat kernel shape."""
+
+        return np.exp(-x / (2 * s**2)) / np.sum(np.exp(-x / (2 * s**2)))
+
+
+class IterativeNN(Filter):
+    """Iterative nearest neighbor smoothing.
+
+    Implementation of a simple iterative smoothing kernel for scalar data
+    defined on a triangular surface mesh. The code follows the description in
+    [1]_. In brief, for each iteration, data at each vertex is averaged with
+    data from all first order neighbors.
+
+    Parameters
+    ----------
+    verts : np.ndarray, shape=(N,3)
+        Vertex coordinates.
+    faces : np.ndarray, shape=(M,3)
+        Vertex indices of each triangle.
+
+    References
+    ----------
+    .. [1] Hagler, DJ, et al. Smoothing and cluster thresholding for cortical
+    surface-based group analysis of fMRI data. Neuroimage 33(4), 1093--1103
+    (2005).
+
+    """
+
+    def __init__(self, verts, faces):
+        super().__init__(verts, faces)
+
+    @property
+    @functools.lru_cache
+    def kernel(self):
+        """Computation of smoothing kernel.
+
+        Returns
+        -------
+        np.ndarray, shape=(N, self._max_neighbors + 1)
+            Heat kernel weighting for each vertex neighbor.
+        np.ndarray, shape=(N, self._max_neighbors + 1)
+            Correspond array containing vertex neighbors.
+
+        """
+
+        # parameters
+        # self._max_neighbor + 1 because the current index is included as well
+        nverts = len(self.verts)
+        neighbor = np.zeros((nverts, self._max_neighbor + 1), dtype=np.int64)
+        weight = np.zeros((nverts, self._max_neighbor + 1))
+
+        for i in range(nverts):
+
+            # vertex neighbors
+            nn = self._mesh.neighborhood(i)
+            degree = len(nn)
+
+            # weighting for each neighbor and corresponding neighbors
+            weight[i, :1 + degree] = 1 / (1 + degree)
+            neighbor[i, :1 + degree] = np.append([i], nn)
+
+        return weight, neighbor
+
+
+class Gaussian(Filter):
+
+    def __init__(self, verts, faces):
+        super().__init__(verts, faces)
+
+    @property
+    @functools.lru_cache
+    def kernel(self):
+        pass
+
+
+class LaplacianGaussian(Gaussian):
+
+    def __init__(self, verts, faces):
+        super().__init__(verts, faces)
+
+    @property
+    @functools.lru_cache
+    def kernel(self):
+        pass
 
 
 def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
@@ -261,12 +412,12 @@ def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
     path_overlay = os.path.join(path_temp, "overlay")
 
     # make temporary folder
-    if not os.path.exists(path_temp):
-        os.mkdir(path_temp)
-        os.mkdir(path_surf)
-        os.mkdir(path_overlay)
-    else:
+    if os.path.exists(path_temp):
         raise FileExistsError("Temporary folder already exists!")
+
+    os.mkdir(path_temp)
+    os.mkdir(path_surf)
+    os.mkdir(path_overlay)
 
     # copy input files to temporary folder
     for i, f in enumerate(file_surf):
