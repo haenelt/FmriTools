@@ -6,6 +6,11 @@
 % and one baseline condition is expected. Furthermore, the onset times and
 % stimulus durations of the experimental conditions are assumed to be the
 % same across functional runs.
+%
+% Dependencies (should be added to the matlab search path):
+% - knkutils: https://github.com/kendrickkay/knkutils
+% - GLMdenoise: https://github.com/kendrickkay/GLMdenoise
+% - TDM: https://github.com/kendrickkay/TDM
 
 % input data
 img_input = {

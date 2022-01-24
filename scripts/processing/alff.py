@@ -8,6 +8,9 @@ regressors are taken either from mean WM and CSF masks or based on biopac
 recordings. Optionally, no nuisance regression is performed. The script needs an
 installation of freesurfer, ants adn afni.
 
+Dependencies (should be installed as SPM toolbox):
+- PhysIO toolbox: https://www.nitrc.org/projects/physio/
+
 """
 
 # python standard library inputs

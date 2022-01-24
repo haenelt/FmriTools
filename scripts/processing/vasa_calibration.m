@@ -2,6 +2,9 @@
 %
 % This script computes baseline corrected contrast files using the VasA
 % fMRI approach for task-based data.
+%
+% Dependencies (should be installed as SPM toolbox):
+% - VASA toolbox: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5573956/
 
 % input data
 img_input = {
