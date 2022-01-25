@@ -14,6 +14,9 @@ around the y-axis, a scaling in all direction and a translation along the y-axis
 and along the z-axis. The default is 'rst' for all transformations. The script
 needs an installation of freesurfer.
 
+Dependencies (should be added to the matlab search path):
+- OpenFmriAnalysis: https://github.com/TimVanMourik/OpenFmriAnalysis
+
 """
 
 # python standard library inputs

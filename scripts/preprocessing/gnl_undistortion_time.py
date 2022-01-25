@@ -6,6 +6,10 @@ This scripts calls the HCP toolbox to correct for gradient nonlinearities in the
 input time series. The corrected time series gets the suffix _gnlcorr. The
 script needs an installation of fsl.
 
+Dependencies:
+- gradunwarp: https://github.com/Washington-University/gradunwarp
+- please see the readme in the current folder for installation instructions
+
 """
 
 # python standard library inputs

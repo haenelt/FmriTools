@@ -12,6 +12,9 @@
 % all other images (pdw, t1w, b1, b0). (3) Quantitative maps are created. 
 % (4) Resulting maps are reoriented back to native space. (5) Maps are 
 % scaled.
+%
+% Dependencies (should be installed as SPM toolbox):
+% - hMRI toolbox: https://hmri-group.github.io/hMRI-toolbox/
 
 % input data
 file_t1w = {

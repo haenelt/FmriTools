@@ -6,6 +6,10 @@ This scripts calls the HCP toolbox to correct for gradient nonlinearities in the
 input volume. Further explanations can be found in a separate readme. The script
 needs an installation of fsl.
 
+Dependencies:
+- gradunwarp: https://github.com/Washington-University/gradunwarp
+- please see the readme in the current folder for installation instructions
+
 """
 
 # python standard library inputs
