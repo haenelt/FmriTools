@@ -11,12 +11,14 @@ from abc import ABC, abstractmethod
 
 # external inputs
 import numpy as np
+from scipy.sparse.linalg import expm_multiply
 
 # local inputs
 from .mesh import Mesh
 from ..io.get_filename import get_filename
 
-__all__ = ['HeatKernel', 'IterativeNN', 'intracortical_smoothing']
+__all__ = ['HeatKernel', 'IterativeNN', 'Gaussian', 'LaplacianGaussian',
+           'intracortical_smoothing']
 
 
 class Filter(ABC):
@@ -35,7 +37,6 @@ class Filter(ABC):
     """
 
     NSHUFFLE = 10  # number of shuffles for FWHM estimation
-    ITER_RANGE = np.arange(1, 10)  # range of iterations for FWHM estimation
 
     def __init__(self, verts, faces):
         self.verts = verts
@@ -101,7 +102,7 @@ class Filter(ABC):
 
         return data - self.apply(data, n_iter)
 
-    def fwhm(self, n_iter):
+    def fwhm(self, n_iter=1):
         """Estimate the full width at half maximum (FWHM) of the filter.
 
         The kernel size is described by its full width at half maximum (FWHM)
@@ -109,7 +110,7 @@ class Filter(ABC):
 
         Parameters
         ----------
-        n_iter : int
+        n_iter : int, optional
             Number of iterations.
 
         Returns
@@ -135,31 +136,6 @@ class Filter(ABC):
         var_ratio = 1 - var_ds / (2 * var_s)
 
         return edge_length * np.sqrt(-2*np.log(2) / np.log(var_ratio))
-
-    @property
-    @functools.lru_cache
-    def fwhm_range(self):
-        """Estimate the full width at half maximum (FWHM) of the filter for a
-        range of iteration steps.
-
-        Returns
-        -------
-        filter_size_mean : np.ndarray, shape=(len(ITER_RANGE),)
-            Mean of the FWHM of the filter for a range of iteration steps.
-        filter_size_std : np.ndarray, shape=(len(ITER_RANGE),)
-            Standard deviation of the FWHM of the filter for a range of
-            iteration steps.
-
-        """
-
-        filter_size_mean = []
-        filter_size_std = []
-        for i in self.ITER_RANGE:
-            filter_size = [self.fwhm(i) for _ in range(self.NSHUFFLE)]
-            filter_size_mean.append(np.mean(filter_size))
-            filter_size_std.append(np.std(filter_size))
-
-        return filter_size_mean, filter_size_std
 
     @property
     @functools.lru_cache
@@ -313,25 +289,129 @@ class IterativeNN(Filter):
 
 
 class Gaussian(Filter):
+    """Gaussian filter.
 
-    def __init__(self, verts, faces):
+    Implementation of a Gaussian filter which can be described by a heat
+    diffusion process. The code follows the derivation in [1]_.
+
+    Parameters
+    ----------
+    verts : np.ndarray, shape=(N,3)
+        Vertex coordinates.
+    faces : np.ndarray, shape=(M,3)
+        Vertex indices of each triangle.
+    t : float
+        Gaussian filter size.
+
+    References
+    ----------
+    .. [1] Chen, Yi, et al. Scale-specific analysis of fMRI data on the
+    irregular cortical surface. Neuroimage 181, 370--381 (2018).
+
+    """
+
+    def __init__(self, verts, faces, t):
         super().__init__(verts, faces)
+        self.t = t
 
     @property
     @functools.lru_cache
     def kernel(self):
-        pass
+        """Computation of smoothing kernel.
+
+        Computation of the exponent of the diffusion operator which is defined
+        by the Laplace-Beltrami operator. The full kernel needs the computation
+        of the matrix exponential which is computationally expensive. Therefore,
+        the filter will be applied without explicit determination of the matrix
+        exponential.
+
+        Returns
+        -------
+        scipy.sparse.csr.csr_matrix
+            Exponent of heat diffusion operator.
+
+        """
+
+        return -self.t*self._mesh.laplace_beltrami
+
+    def apply(self, data, n_iter=1):
+        """Iterative application of smoothing kernel (lowpass filter). The
+        iteration parameter is only included here for consistency with the other
+        filter classes. No iterative application was done in the original paper,
+        hence n_iter=1.
+
+        Parameters
+        ----------
+        data : np.ndarray, shape=(N,)
+            Data to be filtered.
+        n_iter : int, optional
+            Number of iterations.
+
+        Returns
+        -------
+        res : np.ndarray, shape=(N,)
+            Filtered data.
+
+        """
+
+        res = data.copy()
+        for _ in range(n_iter):
+            res = expm_multiply(self.kernel, res)
+
+        return res
 
 
 class LaplacianGaussian(Gaussian):
+    """Laplacian of Gaussian filter.
 
-    def __init__(self, verts, faces):
-        super().__init__(verts, faces)
+    Implementation of a Laplacian of Gaussian (LoG) filter which can be
+    described by a heat diffusion process. The code follows the derivation in
+    [1]_.
 
-    @property
-    @functools.lru_cache
-    def kernel(self):
-        pass
+    Parameters
+    ----------
+    verts : np.ndarray, shape=(N,3)
+        Vertex coordinates.
+    faces : np.ndarray, shape=(M,3)
+        Vertex indices of each triangle.
+    t : float
+        Gaussian filter size.
+
+    References
+    ----------
+    .. [1] Chen, Yi, et al. Scale-specific analysis of fMRI data on the
+    irregular cortical surface. Neuroimage 181, 370--381 (2018).
+
+    """
+
+    def __init__(self, verts, faces, t):
+        super().__init__(verts, faces, t)
+
+    def apply(self, data, n_iter=1):
+        """Iterative application of bandpass kernel (bandpass filter). The
+        iteration parameter is only included here for consistency with the other
+        filter classes. No iterative application was done in the original paper,
+        hence n_iter=1.
+
+        Parameters
+        ----------
+        data : np.ndarray, shape=(N,)
+            Data to be filtered.
+        n_iter : int, optional
+            Number of iterations.
+
+        Returns
+        -------
+        res : np.ndarray, shape=(N,)
+            Filtered data.
+
+        """
+
+        res = data.copy()
+        for _ in range(n_iter):
+            res = -self._mesh.laplace_beltrami * expm_multiply(self.kernel, res)
+
+        return res
 
 
 def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
