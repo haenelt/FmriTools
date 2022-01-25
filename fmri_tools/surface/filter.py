@@ -36,8 +36,6 @@ class Filter(ABC):
 
     """
 
-    NSHUFFLE = 10  # number of shuffles for FWHM estimation
-
     def __init__(self, verts, faces):
         self.verts = verts
         self.faces = faces
