@@ -12,4 +12,3 @@ h5py
 gbb
 pycortex
 nilearn
-tqdm

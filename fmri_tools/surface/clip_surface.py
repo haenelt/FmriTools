@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# python standard library inputs
+import argparse
+
 # external inputs
 import numpy as np
-from tqdm import tqdm
-from nibabel.freesurfer.io import read_label
+from nibabel.freesurfer.io import read_label, read_geometry, write_geometry
 
 # local inputs
 from ..io.surf import read_mgh, write_mgh
@@ -47,7 +49,7 @@ def clip_surface(verts, faces, ind_keep):
     faces = faces[faces_keep == 3, :]
 
     # reindex faces
-    for i, ind in tqdm(enumerate(ind_keep)):
+    for i, ind in enumerate(ind_keep):
         faces[faces == ind] = i
 
     return verts, faces
@@ -77,8 +79,6 @@ def clip_mgh(mgh_in, label_in, mgh_out):
 
 
 if __name__ == "__main__":
-    import argparse
-    from nibabel.freesurfer.io import read_geometry, read_label, write_geometry
 
     # description
     parser_description = "This program cuts out a region of interest (ROI) " \
