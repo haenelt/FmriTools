@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 
 # external inputs
 import numpy as np
-from scipy.sparse.linalg import expm_multiply
+from scipy.sparse.linalg import expm, expm_multiply
 
 # local inputs
 from .mesh import Mesh
@@ -100,6 +100,45 @@ class Filter(ABC):
 
         return data - self.apply(data, n_iter)
 
+    def apply_noise(self, n_iter=1):
+        """Apply smoothing kernel (lowpass filter) to random noise.
+
+        Parameters
+        ----------
+        n_iter : int, optional
+            Number of iterations.
+
+        Returns
+        -------
+        np.ndarray, shape=(N,)
+            Filtered random noise.
+
+        """
+
+        data = np.random.normal(0, 1, len(self.verts))
+
+        return self.apply(data, n_iter)
+
+    def apply_inverse_noise(self, n_iter=1):
+        """Inverse application of smoothing kernel (highpass filter) to random
+        noise.
+
+        Parameters
+        ----------
+        n_iter : int, optional
+            Number of iterations.
+
+        Returns
+        -------
+        np.ndarray, shape=(N,)
+            Filtered random noise.
+
+        """
+
+        data = np.random.normal(0, 1, len(self.verts))
+
+        return data - self.apply(data, n_iter)
+
     def fwhm(self, n_iter=1):
         """Estimate the full width at half maximum (FWHM) of the filter.
 
@@ -124,8 +163,7 @@ class Filter(ABC):
 
         """
 
-        data = np.random.normal(0, 1, len(self.verts))  # random noise
-        data_filt = self.apply(data, n_iter)
+        data_filt = self.apply_noise(n_iter)
         edges = self._mesh.edges
         edge_length = self._mesh.avg_edge_length
 
@@ -149,8 +187,13 @@ class HeatKernel(Filter):
     Heat kernel smoothing [1]_, [2]_, [3]_ on scalar data defined on a
     triangular surface mesh. The code is mainly adapted from the matlab code by
     Chung et al. [4]_. The kernel bandwidth corresponds to the diffusion time in
-    the heat equation [3]_. The FWHM follows 4*sqrt(log(2*n_iter*sigma)) with
+    the heat equation [3]_. The FWHM follows 2*sqrt(log(4)*n_iter*sigma) with
     the natural log.
+
+    As pointed out in [4]_, the heat diffusion model becomes less valid as the
+    bandwidth increases, and for large bandwidths (which depends on the average
+    edge length for the surface), this method becomes indistinguishable from the
+    nearest-neighbor method.
 
     If you use this code, please reference one of the following papers. The
     details on the mathematical basis of of the algorithm can be found there.
@@ -300,6 +343,10 @@ class Gaussian(Filter):
         Vertex indices of each triangle.
     t : float
         Gaussian filter size.
+    full : bool
+        If True, the matrix exponential is computed. If False, the matrix
+        exponential will be applied without explicit determination which is
+        computationally less demanding.
 
     References
     ----------
@@ -308,29 +355,34 @@ class Gaussian(Filter):
 
     """
 
-    def __init__(self, verts, faces, t):
+    def __init__(self, verts, faces, t, full=False):
         super().__init__(verts, faces)
         self.t = t
+        self.full = full
 
     @property
     @functools.lru_cache
     def kernel(self):
         """Computation of smoothing kernel.
 
-        Computation of the exponent of the diffusion operator which is defined
-        by the Laplace-Beltrami operator. The full kernel needs the computation
-        of the matrix exponential which is computationally expensive. Therefore,
-        the filter will be applied without explicit determination of the matrix
-        exponential.
+        Computation of the diffusion operator which is defined by the Laplace-
+        Beltrami operator. The full kernel needs the computations of a matrix
+        exponential which is computationally expensive. Therefore, only the
+        exponent can be returned optionally. In this case, the matrix
+        exponential of the exponent is applied without explicit determination.
 
         Returns
         -------
         scipy.sparse.csr.csr_matrix
-            Exponent of heat diffusion operator.
+            Heat diffusion operator.
 
         """
 
-        return -self.t*self._mesh.laplace_beltrami
+        exponent = -self.t*self._mesh.laplace_beltrami
+        if not self.full:
+            return exponent
+
+        return expm(exponent)
 
     def apply(self, data, n_iter=1):
         """Iterative application of smoothing kernel (lowpass filter). The
@@ -354,7 +406,10 @@ class Gaussian(Filter):
 
         res = data.copy()
         for _ in range(n_iter):
-            res = expm_multiply(self.kernel, res)
+            if self.full:
+                res = self.kernel.dot(res)
+            else:
+                res = expm_multiply(self.kernel, res)
 
         return res
 
@@ -374,6 +429,10 @@ class LaplacianGaussian(Gaussian):
         Vertex indices of each triangle.
     t : float
         Gaussian filter size.
+    full : bool
+        If True, the matrix exponential is computed. If False, the matrix
+        exponential will be applied without explicit determination which is
+        computationally less demanding.
 
     References
     ----------
@@ -382,8 +441,8 @@ class LaplacianGaussian(Gaussian):
 
     """
 
-    def __init__(self, verts, faces, t):
-        super().__init__(verts, faces, t)
+    def __init__(self, verts, faces, t, full=False):
+        super().__init__(verts, faces, t, full)
 
     def apply(self, data, n_iter=1):
         """Iterative application of bandpass kernel (bandpass filter). The
@@ -406,8 +465,12 @@ class LaplacianGaussian(Gaussian):
         """
 
         res = data.copy()
+        laplacian = self._mesh.laplace_beltrami
         for _ in range(n_iter):
-            res = -self._mesh.laplace_beltrami * expm_multiply(self.kernel, res)
+            if self.full:
+                res = laplacian.dot(self.kernel.dot(res))
+            else:
+                res = laplacian.dot(expm_multiply(self.kernel, res))
 
         return res
 
