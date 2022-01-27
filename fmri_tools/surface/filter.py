@@ -3,6 +3,7 @@
 # python standard library inputs
 import os
 import datetime
+import warnings
 import subprocess
 import functools
 import shutil as sh
@@ -11,6 +12,7 @@ from abc import ABC, abstractmethod
 
 # external inputs
 import numpy as np
+from scipy.stats import norm
 from scipy.sparse.linalg import expm, expm_multiply
 
 # local inputs
@@ -406,11 +408,7 @@ class Gaussian(Filter):
 
         res = data.copy()
         for _ in range(n_iter):
-            if self.full:
-                res = self.kernel.dot(res)
-            else:
-                res = expm_multiply(self.kernel, res)
-
+            res = self.kernel.dot(res) if self.full else expm_multiply(self.kernel, res)
         return res
 
 
@@ -473,6 +471,98 @@ class LaplacianGaussian(Gaussian):
                 res = laplacian.dot(expm_multiply(self.kernel, res))
 
         return res
+
+    def spatial_scale(self, n_iter=1, n_max=None):
+        """Estimation of filtered spatial frequency range.
+
+        When applying the bandpass filter, the spatial frequency characterics
+        of the filter should be known. Here, we estimate the main spatial
+        frequency of the filter by applying the filter to gaussian noise. In the
+        filtered noise map, all maxima are then located and their distance to
+        the nearest minimum is computed by following the path with maximum
+        descent. The distribution of min-max distances is described as a
+        log-normal distribution (since distances cannot be negative) and its
+        mean and variance are estimated as described in [1]_. The main spatial
+        cycle period is then defined as two times the expected value of the
+        min-max length distribution.
+
+        Parameters
+        ----------
+        n_iter : int, optional
+            Number of iterations.
+        n_max : int, optional
+            Number of maxima to be used. If None, all found maxima are taken. If
+            less maxima are found than set, all found maxima are used.
+
+        Returns
+        -------
+        dict
+            Dictionary collecting the output under the following keys
+
+            * period (float) : Mean spatial cycle period of the filter.
+            * freq (float) : Mean spatial frequency of the filter.
+            * mean (float) : Expected value of the log-normal distribution.
+            * variance (float) : Variance of the log-normal distribution.
+            * length (np.ndarray) : Min-Max distance distribution.
+
+        References
+        ----------
+        .. [1] http://www.talkstats.com/threads/convert-mean-and-variance-of-lognormal-to-normal-distribution.2757/
+
+        """
+
+        indices = np.arange(len(self.verts))
+        data_filt = self.apply_noise(n_iter)
+
+        # find maxima
+        ind_max = []
+        for ind in indices:
+            nn = self._mesh.neighborhood(ind)
+            if data_filt[ind] >= np.max(data_filt[nn]):
+                ind_max.append(ind)
+
+        # select subset of found maxima
+        n_ind_max = len(ind_max)
+        if n_max and n_ind_max > n_max:
+            ind_max = np.random.choice(ind_max, n_max, replace=False)
+        elif n_max and n_ind_max < n_max:
+            warnings.warn("Not enough maxima found, using all!")
+
+        # compute min-max distances
+        length = np.zeros(n_ind_max)
+        for i, ind in enumerate(ind_max):
+            l_tmp = 0
+            while True:
+                nn = self._mesh.neighborhood(ind)
+                nn_min = nn[np.argmin(data_filt[nn])]
+                if data_filt[nn_min] < data_filt[ind]:
+                    l_tmp += self._euclidean_dist(self.verts[ind],
+                                                  self.verts[nn_min])
+                    ind = nn_min
+                else:
+                    length[i] = l_tmp
+                    break
+
+        # describe distribution
+        length = length[length != 0]  # remove singularities
+        data = np.log(length)  # transform to log-normal
+        mu, sigma = norm.fit(data)
+
+        mean = np.exp(mu + sigma ** 2 / 2)
+        variance = np.exp(sigma ** 2 + 2 * mu) * (np.exp(sigma ** 2) - 1)
+
+        return {'period': 2 * mean,
+                'freq': 1 / (2 * mean),
+                'mean': mean,
+                'variance': variance,
+                'length': length,
+                }
+
+    @staticmethod
+    def _euclidean_dist(a, b):
+        """Calculate euclidean distance between two points."""
+
+        return np.sqrt(np.sum((a - b) ** 2))
 
 
 def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
