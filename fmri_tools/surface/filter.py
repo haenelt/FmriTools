@@ -117,9 +117,7 @@ class Filter(ABC):
 
         """
 
-        data = np.random.normal(0, 1, len(self.verts))
-
-        return self.apply(data, n_iter)
+        return self.apply(self._noise, n_iter)
 
     def apply_inverse_noise(self, n_iter=1):
         """Inverse application of smoothing kernel (highpass filter) to random
@@ -137,7 +135,7 @@ class Filter(ABC):
 
         """
 
-        data = np.random.normal(0, 1, len(self.verts))
+        data = self._noise
 
         return data - self.apply(data, n_iter)
 
@@ -174,6 +172,12 @@ class Filter(ABC):
         var_ratio = 1 - var_ds / (2 * var_s)
 
         return edge_length * np.sqrt(-2*np.log(2) / np.log(var_ratio))
+
+    @property
+    def _noise(self):
+        """Generate random gaussian noise."""
+
+        return np.random.normal(0, 1, len(self.verts))
 
     @property
     @functools.lru_cache
@@ -408,7 +412,8 @@ class Gaussian(Filter):
 
         res = data.copy()
         for _ in range(n_iter):
-            res = self.kernel.dot(res) if self.full else expm_multiply(self.kernel, res)
+            res = self.kernel.dot(res) if self.full else \
+                expm_multiply(self.kernel, res)
         return res
 
 
