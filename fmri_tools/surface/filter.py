@@ -26,8 +26,10 @@ __all__ = ['HeatKernel', 'IterativeNN', 'Gaussian', 'LaplacianGaussian',
 class Filter(ABC):
     """Abstract Base Class for data filtering.
 
-    Base class for the application of a spatial filter kernel on scalar data
-    defined on a triangular surface mesh.
+    Base class for the application of a compact spatial filter kernel on scalar
+    data defined on a triangular surface mesh. Compact means that the input
+    data is weighted with a kernel that has all its weights concentrated in a
+    compact local neighborhood.
 
     Parameters
     ----------
@@ -279,10 +281,10 @@ class HeatKernel(Filter):
 class IterativeNN(Filter):
     """Iterative nearest neighbor smoothing.
 
-    Implementation of a simple iterative smoothing kernel for scalar data
-    defined on a triangular surface mesh. The code follows the description in
-    [1]_. In brief, for each iteration, data at each vertex is averaged with
-    data from all first order neighbors.
+    Implementation of a simple iterative smoothing kernel (averaging box) for
+    scalar data defined on a triangular surface mesh. The code follows the
+    description in [1]_. In brief, for each iteration, data at each vertex is
+    averaged with data from all first order neighbors.
 
     Parameters
     ----------
