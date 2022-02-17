@@ -60,6 +60,7 @@ def gnl_correction(file_in, file_bash, file_coeff, python3_env, python2_env,
     file_warp = os.path.join(path_grad, "warp.nii.gz")
     file_jacobian = os.path.join(path_grad, "warp_jacobian.nii.gz")
     
+    # run gradient unwarp
     os.system("bash " + file_bash +
               " " + python3_env +
               " " + python2_env +
