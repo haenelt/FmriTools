@@ -66,7 +66,7 @@ from fmri_tools.matlab import MatlabCommand
 fileUNI = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S6_MP2RAGE_0p7_UNI_Images_2.45.nii"
 fileINV1 = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S3_MP2RAGE_0p7_INV1_2.45.nii"
 fileINV2 = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S4_MP2RAGE_0p7_INV2_2.45.nii"
-pathEXPERT = "/data/hu_haenelt/projects/scripts/segmentation"
+pathEXPERT = "/data/hu_haenelt/projects/FmriTools/scripts/segmentation/segmentation.py"
 namePATCH = "occip"
 sub = "freesurfer"
 part = 1
@@ -117,7 +117,7 @@ if part == 1:
 
     # bias field correction
     print("Bias field correction")
-    matlab = MatlabCommand("ft_biased_field_correction",
+    matlab = MatlabCommand("ft_bias_field_correction",
                            os.path.join(path_bias, "n" + file))
     matlab.run()
 
