@@ -83,7 +83,7 @@ def mesh_sampling(surf_in, vol_in, write_output=False, path_output="",
     # clean everything if no output is written
     if not write_output:
         path_output, _, _ = get_filename(vol_in)
-        cleanup = True
+        #cleanup = True
 
     # make output folder
     if not os.path.exists(path_output):
