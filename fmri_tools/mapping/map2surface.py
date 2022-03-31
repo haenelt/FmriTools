@@ -65,7 +65,7 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     # clean everything if no output is written
     if not write_output:
         path_output, _, _ = get_filename(input_vol)
-        cleanup = True
+        #cleanup = True
 
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
