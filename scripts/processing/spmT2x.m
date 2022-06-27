@@ -48,10 +48,10 @@
 % adapted to my own purposes.
 
 % input
-spm_mat_in = '/data/pt_01880/Experiment1_ODC/p5/odc/VASO2/contrast_all_cbv/SPM.mat'; % SPM.mat
-path_output = '/data/pt_01880/Experiment1_ODC/p5/odc/results'; % path where output is written
-name_output = 'all_cbv'; % basename of output contrasts
-name_sess = 'VASO2'; % name of session (if multiple sessions exist)
+spm_mat_in = '/data/pt_01880/Experiment10_Mono/pilot4/odc/odc/contrast_vaso/SPM.mat'; % SPM.mat
+path_output = '/data/pt_01880/Experiment10_Mono/pilot4/odc/results/'; % path where output is written
+name_output = 'vaso'; % basename of output contrasts
+name_sess = 'odc'; % name of session (if multiple sessions exist)
 
 %%% do not edit below %%%
 
