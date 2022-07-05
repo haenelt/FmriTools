@@ -76,7 +76,9 @@ if len(input_epi) == len(input_reg):
                                       )
 
             # unzip output
-            gunzip(os.path.join(path_tmp, str(j) + "_def-img.nii.gz"))
+            file_out_gz = os.path.join(path_tmp, str(j) + "_def-img.nii.gz")
+            if os.path.exists(file_out_gz):
+                gunzip(file_out_gz)
 
         # merge final deformed time series
         data = nb.load(os.path.join(path_tmp, "0_def-img.nii"))
