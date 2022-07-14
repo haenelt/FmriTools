@@ -8,14 +8,17 @@ import sys
 import numpy as np
 import nibabel as nb
 from nibabel.freesurfer.mghformat import MGHHeader
-from nibabel.freesurfer.io import write_geometry, read_geometry
+from nibabel.freesurfer.io import write_geometry, read_geometry, read_label, \
+    read_morph_data, write_morph_data
+from scipy.spatial import Delaunay
 from gbb.neighbor.nn_2d import nn_2d
 
 # local inputs
 from .get_filename import get_filename
 
-__all__ = ['write_mgh', 'read_mgh', 'write_label', 'read_patch',
-           'write_vector_field', 'write_white2pial']
+__all__ = ['write_mgh', 'read_mgh', 'write_label', 'read_patch', 'patch_as_mesh',
+           'mgh_to_patch', 'curv_to_patch', 'label_to_patch', 'write_vector_field',
+           'write_white2pial']
 
 
 def write_mgh(file_out, arr, affine=None, header=None):
@@ -220,6 +223,121 @@ def read_patch(file_in):
     z = data_array_float[:, 3]
 
     return x, y, z, ind
+
+
+def patch_as_mesh(file_out, file_patch):
+    """Patch as Mesh.
+
+    This function reads coordinates from a flattened freesurfer patch and creates a
+    triangular surface mesh using Delaunay triangulation.
+
+    Parameters
+    ----------
+    file_out : str
+        Filename of output surface mesh.
+    file_patch : str
+        Filename of freesurfer patch file.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    x, y, _, ind = read_patch(file_patch)
+    coords = np.zeros((len(x), 2))
+    coords[:, 0] = x
+    coords[:, 1] = y
+
+    tri = Delaunay(coords)
+    fac = tri.simplices
+
+    vtx = np.zeros((len(x), 3))
+    vtx[:, 0] = x
+    vtx[:, 1] = y
+
+    write_geometry(file_out, vtx, fac)
+
+
+def mgh_to_patch(file_out, file_mgh, file_patch):
+    """MGH to Patch.
+
+    This function reads an MGH overlay and saves only coordinates that match with the
+    corresponding freesurfer patch.
+
+    Parameters
+    ----------
+    file_out : str
+        Filename of output surface mesh.
+    file_mgh : str
+        Filename of mgh overlay.
+    file_patch : str
+        Filename of freesurfer patch file.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    _, _, _, ind = read_patch(file_patch)
+    arr, affine, header = read_mgh(file_mgh)
+    arr = arr[ind]
+    write_mgh(file_out, arr, affine=affine, header=header)
+
+
+def curv_to_patch(file_out, file_curv, file_patch):
+    """Curv to Patch.
+
+    This function reads a freesurfer curvature file and saves only coordinates that
+    match with the corresponding freesurfer patch.
+
+    Parameters
+    ----------
+    file_out : str
+        Filename of output surface mesh.
+    file_curv : str
+        Filename of freesurfer curvature file.
+    file_patch : str
+        Filename of freesurfer patch file.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    _, _, _, ind = read_patch(file_patch)
+    curv = read_morph_data(file_curv)
+    curv = curv[ind]
+    write_morph_data(file_out, curv)
+
+
+def label_to_patch(file_out, file_label, file_patch):
+    """Label to Patch.
+
+    This function reads a freesurfer label file and saves only coordinates that match
+    with the corresponding freesurfer patch.
+
+    Parameters
+    ----------
+    file_out : str
+        Filename of output surface mesh.
+    file_label : str
+        Filename of freesurfer label file.
+    file_patch : str
+        Filename of freesurfer patch file.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    _, _, _, ind = read_patch(file_patch)
+    label = read_label(file_label)
+    label_new = [np.where(ind == i)[0][0] for i in label]
+    write_label(file_out, label_new)
 
 
 def write_vector_field(vtx0, vtx1, adjm, file_out, step_size=100, shape="line"):
