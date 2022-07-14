@@ -19,7 +19,6 @@ file_data = "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.spmT_left_rig
 file_out = "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.refined_enhanced_inflated_relief"
 scale_factor = 2
 
-
 # do not edit below
 
 def sigmoid(x):
