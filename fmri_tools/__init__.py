@@ -4,5 +4,5 @@
 # meta infos
 __author__ = "Daniel Haenelt"
 __license__ = "GPL v3"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __status__ = "Development"
