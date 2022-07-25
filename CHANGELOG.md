@@ -11,3 +11,6 @@
 - remove imports in `__init__.py`
 - bundle matlab functions in one folder
 - Added new functionality
+
+## v1.0.1
+- freeze version for stripes manuscript
