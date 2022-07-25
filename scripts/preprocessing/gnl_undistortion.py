@@ -33,7 +33,7 @@ cleanup = True
 # do not edit below
 
 # get path of bash file
-file_bash = os.path.join(fmri_tools.__path__, 
+file_bash = os.path.join(os.path.dirname(fmri_tools.__file__),
                          "preprocessing", 
                          "apply_grad.sh")
 
