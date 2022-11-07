@@ -340,7 +340,8 @@ def label_to_patch(file_out, file_label, file_patch):
     write_label(file_out, label_new)
 
 
-def write_vector_field(vtx0, vtx1, adjm, file_out, step_size=100, shape="line"):
+def write_vector_field(vtx0, vtx1, adjm, file_out, meta_data=None, step_size=100,
+                       shape="line"):
     """Write vector field.
 
     This function generates a surface mesh to visualize a vector field as a
@@ -356,6 +357,9 @@ def write_vector_field(vtx0, vtx1, adjm, file_out, step_size=100, shape="line"):
         Adjacency matrix.
     file_out : str
         Filename of output surface mesh.
+    meta_data : dict-like or None
+        Header information. See documentation of argument volume_info in
+        nibabel.freesurfer.io.write_geometry for more information. The default is None.
     step_size : int, optional
         Vector subset which will be visualized. The default is 100.
     shape : str, optional
@@ -429,7 +433,7 @@ def write_vector_field(vtx0, vtx1, adjm, file_out, step_size=100, shape="line"):
     f_res = np.array(f_res)
 
     # write output geometry
-    write_geometry(file_out, v_res, f_res)
+    write_geometry(file_out, v_res, f_res, volume_info=meta_data)
 
 
 def write_white2pial(file_out, file_white, file_pial, adjm, step_size=100,
