@@ -30,7 +30,7 @@ class Mesh:
         self.faces = faces
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def tris(self):
         """Array of coordinates in each face.
 
@@ -45,7 +45,7 @@ class Mesh:
         return self.verts[self.faces]
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def adjm(self):
         """Compute a sparse adjacency matrix. The matrix has the size
         (nvertex, nvertex). Each matrix entry with value 1 stands for an edge of
@@ -91,7 +91,7 @@ class Mesh:
         return csr_matrix((data, (row, col)), shape=(nverts, nverts))
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def edges(self):
         """Edge array.
 
@@ -114,7 +114,7 @@ class Mesh:
         return edge_coords
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def vfm(self):
         """Compute a sparse matrix of vertex-face associations. The matrix has
         the size (nvertex, nfaces). For each vertex index, all associated faces
@@ -140,7 +140,7 @@ class Mesh:
         return csr_matrix((data, (row, col)), shape=(nverts, nfaces))
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def face_normals(self):
         """Face-wise surfaces normals.
 
@@ -160,7 +160,7 @@ class Mesh:
         return n
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def vertex_normals(self):
         """Vertex-wise surfaces normals. The code is taken from [1]_ and adapted
         to my own purposes.
@@ -186,7 +186,7 @@ class Mesh:
         return n
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def face_areas(self):
         """Triangle areas.
 
@@ -207,7 +207,7 @@ class Mesh:
         return n
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def cotangent(self):
         """Cotangent of angle opposite each vertex in each face.
 
@@ -241,7 +241,7 @@ class Mesh:
         return cots
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def laplace_beltrami(self):
         """Laplace-Beltrami operator. The operator is a sparse adjacency matrix
         with edge weights determined by the cotangents of the angles opposite
@@ -283,7 +283,7 @@ class Mesh:
         return D_inv * (V - W)
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def avg_edge_length(self):
         """Average of all edges in the surface.
         
@@ -300,7 +300,7 @@ class Mesh:
         return edge_length.mean()
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def n_neighbors(self):
         """Number of neighbors for each vertex.
 

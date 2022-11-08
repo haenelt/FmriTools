@@ -14,3 +14,7 @@
 
 ## v1.0.1
 - freeze version for stripes manuscript
+
+## v1.0.2
+- freeze version for psf-bold manuscript
+- make functools backwards compatible with python=3.6

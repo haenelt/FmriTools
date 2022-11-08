@@ -182,7 +182,7 @@ class Filter(ABC):
         return np.random.normal(0, 1, len(self.verts))
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def _max_neighbor(self):
         """Maximum number of first order neighbors."""
 
@@ -232,7 +232,7 @@ class HeatKernel(Filter):
         self.sigma = sigma
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def kernel(self):
         """Computation of smoothing kernel.
 
@@ -305,7 +305,7 @@ class IterativeNN(Filter):
         super().__init__(verts, faces)
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def kernel(self):
         """Computation of smoothing kernel.
 
@@ -369,7 +369,7 @@ class Gaussian(Filter):
         self.full = full
 
     @property
-    @functools.lru_cache
+    @functools.lru_cache()
     def kernel(self):
         """Computation of smoothing kernel.
 
