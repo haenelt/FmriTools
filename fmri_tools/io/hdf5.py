@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+from pathlib import Path
 
 # external inputs
 import numpy as np
@@ -44,14 +45,14 @@ def read_hdf5(file_in):
     """
 
     # check filename
-    if not isinstance(file_in, str):
+    if not isinstance(file_in, str) and not isinstance(file_in, Path):
         raise ValueError("Filename must be a string!")
 
-    if not (file_in.endswith("h5") or file_in.endswith("hdf5")):
+    if not str(file_in).endswith("h5") and not str(file_in).endswith("hdf5"):
         raise ValueError("Currently supported file formats are " +
                          "h5 and hdf5.")
-    with h5py.File(file_in, "r") as hf:
 
+    with h5py.File(file_in, "r") as hf:
         # read data array
         if "array" in hf.keys():
             data = hf["array"][:]
@@ -103,12 +104,13 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     """
 
     # check filename
-    if not isinstance(file_out, str):
+    if not isinstance(file_out, str) and not isinstance(file_out, Path):
         raise ValueError("Filename must be a string!")
 
-    if not (file_out.endswith("h5") or file_out.endswith("hdf5")):
+    if not str(file_out).endswith("h5") and not str(file_out).endswith("hdf5"):
         raise ValueError("Currently supported file formats are " +
                          "h5 and hdf5.")
+
     # make output folder
     path_output, _, _ = get_filename(file_out)
     if not os.path.exists(path_output):

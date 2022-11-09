@@ -73,7 +73,7 @@ def clip_mgh(mgh_in, label_in, mgh_out):
 
     """
 
-    arr, affine, header = read_mgh(mgh_in, read_affine=True, read_header=True)
+    arr, affine, header = read_mgh(mgh_in)
     label = read_label(label_in)
     write_mgh(mgh_out, arr[label], affine, header)
 

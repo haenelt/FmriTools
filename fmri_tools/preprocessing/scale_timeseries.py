@@ -2,6 +2,7 @@
 
 # python standard library inputs
 import os
+from pathlib import Path
 
 # external inputs
 import numpy as np
@@ -22,7 +23,7 @@ def scale_timeseries(file_in, cutoff=50, prefix="p"):
     Parameters
     ----------
     file_in : str
-        Filename.
+        File name.
     cutoff : float, optional
         Threshold data which exceed the cutoff percentage.
     prefix : str, optional
@@ -72,7 +73,7 @@ def demean_timeseries(img_input, path_output="", name_output="",
     Parameters
     ----------
     img_input : niimg
-        4d nifti volume or string to filename.
+        4d nifti volume or file name.
     path_output : str, optional
         Path where output is saved. The default is "".
     name_output : str, optional
@@ -90,7 +91,7 @@ def demean_timeseries(img_input, path_output="", name_output="",
     # load data
     if isinstance(img_input, nb.Nifti1Image):
         data_array = img_input.get_fdata()
-    elif isinstance(img_input, str):
+    elif isinstance(img_input, str) or isinstance(img_input, Path):
         img_input = nb.load(img_input)
         data_array = img_input.get_fdata()
     else:

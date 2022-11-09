@@ -3,6 +3,7 @@
 # python standard library inputs
 import os
 import sys
+from pathlib import Path
 
 # external inputs
 import numpy as np
@@ -51,10 +52,10 @@ def write_mgh(file_out, arr, affine=None, header=None):
     """
 
     # check filename
-    if not isinstance(file_out, str):
+    if not isinstance(file_out, str) and not isinstance(file_out, Path):
         raise ValueError("Filename must be a string!")
 
-    if not file_out.endswith("mgh"):
+    if not str(file_out).endswith("mgh"):
         raise ValueError("Currently supported file format is mgh.")
 
     # make output folder
@@ -77,7 +78,7 @@ def write_mgh(file_out, arr, affine=None, header=None):
     nb.save(output, file_out)
 
 
-def read_mgh(file_in, read_affine=False, read_header=False):
+def read_mgh(file_in):
     """Read MGH.
 
     This function reads a surface mgh file and removes empty dimensions from the
@@ -87,10 +88,6 @@ def read_mgh(file_in, read_affine=False, read_header=False):
     ----------
     file_in : str
         File name of input file.
-    read_affine : bool
-        If True, return affine transformation matrix.
-    read_header : bool
-        If True, return header information.
 
     Raises
     ------
@@ -103,17 +100,17 @@ def read_mgh(file_in, read_affine=False, read_header=False):
     arr : ndarray
         Image array.
     affine : ndarray
-        Affine transformation matrix. Returned only if `read_affine` is True.
+        Affine transformation matrix.
     header : MGHHeader
-        Image header. Returned only if `read_header` is True.
+        Image header.
 
     """
 
     # check filename
-    if not isinstance(file_in, str):
+    if not isinstance(file_in, str) and not isinstance(file_in, Path):
         raise ValueError("Filename must be a string!")
 
-    if not file_in.endswith("mgh"):
+    if not str(file_in).endswith("mgh"):
         raise ValueError("Currently supported file format is mgh.")
 
     # get header
@@ -121,16 +118,10 @@ def read_mgh(file_in, read_affine=False, read_header=False):
     affine = nb.load(file_in).affine
 
     # get data
-    res = nb.load(file_in).get_fdata()
-    res = np.squeeze(res)
+    arr = nb.load(file_in).get_fdata()
+    arr = np.squeeze(arr)
 
-    if read_affine:
-        res += (affine,)
-
-    if read_header:
-        res += (header,)
-
-    return res
+    return arr, affine, header
 
 
 def write_label(file_out, arr_label):
@@ -159,10 +150,10 @@ def write_label(file_out, arr_label):
     """
 
     # check filename
-    if not isinstance(file_out, str):
+    if not isinstance(file_out, str) and not isinstance(file_out, Path):
         raise ValueError("Filename must be a string!")
 
-    if not file_out.endswith("label"):
+    if not str(file_out).endswith("label"):
         raise ValueError("Currently supported file format is txt.")
 
     # make output folder
@@ -291,7 +282,7 @@ def mgh_to_patch(file_out, file_mgh, file_patch):
     """
 
     _, _, _, ind = read_patch(file_patch)
-    arr, affine, header = read_mgh(file_mgh, read_affine=True, read_header=True)
+    arr, affine, header = read_mgh(file_mgh)
     arr = arr[ind]
     write_mgh(file_out, arr, affine=affine, header=header)
 

@@ -135,9 +135,7 @@ def map2surface(input_surf, input_vol, write_output=False, path_output="",
     sampler.run()
 
     # load data
-    arr_sampled, affine_sampled, header_sampled = read_mgh(file_sampled,
-                                                           read_affine=True,
-                                                           read_header=True)
+    arr_sampled, affine_sampled, header_sampled = read_mgh(file_sampled)
 
     # map on separate mesh
     if input_ind:
