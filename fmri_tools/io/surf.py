@@ -77,7 +77,7 @@ def write_mgh(file_out, arr, affine=None, header=None):
     nb.save(output, file_out)
 
 
-def read_mgh(file_in):
+def read_mgh(file_in, read_affine=False, read_header=False):
     """Read MGH.
 
     This function reads a surface mgh file and removes empty dimensions from the
@@ -87,6 +87,10 @@ def read_mgh(file_in):
     ----------
     file_in : str
         File name of input file.
+    read_affine : bool
+        If True, return affine transformation matrix.
+    read_header : bool
+        If True, return header information.
 
     Raises
     ------
@@ -99,9 +103,9 @@ def read_mgh(file_in):
     arr : ndarray
         Image array.
     affine : ndarray
-        Affine transformation matrix.
+        Affine transformation matrix. Returned only if `read_affine` is True.
     header : MGHHeader
-        Image header.
+        Image header. Returned only if `read_header` is True.
 
     """
 
@@ -117,10 +121,16 @@ def read_mgh(file_in):
     affine = nb.load(file_in).affine
 
     # get data
-    arr = nb.load(file_in).get_fdata()
-    arr = np.squeeze(arr)
+    res = nb.load(file_in).get_fdata()
+    res = np.squeeze(res)
 
-    return arr, affine, header
+    if read_affine:
+        res += (affine,)
+
+    if read_header:
+        res += (header,)
+
+    return res
 
 
 def write_label(file_out, arr_label):

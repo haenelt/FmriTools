@@ -2,6 +2,7 @@
 
 import functools
 import numpy as np
+from nibabel.freesurfer.io import read_geometry
 from scipy.sparse import csr_matrix, triu, dia_matrix
 
 __all__ = ['Mesh']
@@ -376,6 +377,25 @@ class Mesh:
         res[~np.isfinite(res_sum), :] = 0
 
         return res
+
+    @classmethod
+    def from_file(cls, file_surf):
+        """Initialize class object from file.
+
+        Parameters
+        ----------
+        file_surf : str
+            File name of freesurfer geometry.
+
+        Returns
+        -------
+        Constructor from file name.
+
+        """
+
+        vtx, fac = read_geometry(file_surf)
+
+        return cls(vtx, fac)
 
     @property
     def verts(self):
