@@ -291,7 +291,7 @@ def mgh_to_patch(file_out, file_mgh, file_patch):
     """
 
     _, _, _, ind = read_patch(file_patch)
-    arr, affine, header = read_mgh(file_mgh)
+    arr, affine, header = read_mgh(file_mgh, read_affine=True, read_header=True)
     arr = arr[ind]
     write_mgh(file_out, arr, affine=affine, header=header)
 
