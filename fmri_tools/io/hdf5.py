@@ -46,7 +46,7 @@ def read_hdf5(file_in):
 
     # check filename
     if not isinstance(file_in, str) and not isinstance(file_in, Path):
-        raise ValueError("Filename must be a string!")
+        raise ValueError("Filename must be a string or a pathlib.Path instance!")
 
     if not str(file_in).endswith("h5") and not str(file_in).endswith("hdf5"):
         raise ValueError("Currently supported file formats are " +
@@ -105,7 +105,7 @@ def write_hdf5(file_out, arr, affine=None, header=None):
 
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
-        raise ValueError("Filename must be a string!")
+        raise ValueError("Filename must be a string or a pathlib.Path instance!")
 
     if not str(file_out).endswith("h5") and not str(file_out).endswith("hdf5"):
         raise ValueError("Currently supported file formats are " +

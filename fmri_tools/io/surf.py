@@ -53,7 +53,7 @@ def write_mgh(file_out, arr, affine=None, header=None):
 
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
-        raise ValueError("Filename must be a string!")
+        raise ValueError("Filename must be a string or a pathlib.Path instance!")
 
     if not str(file_out).endswith("mgh"):
         raise ValueError("Currently supported file format is mgh.")
@@ -108,7 +108,7 @@ def read_mgh(file_in):
 
     # check filename
     if not isinstance(file_in, str) and not isinstance(file_in, Path):
-        raise ValueError("Filename must be a string!")
+        raise ValueError("Filename must be a string or a pathlib.Path instance!")
 
     if not str(file_in).endswith("mgh"):
         raise ValueError("Currently supported file format is mgh.")
@@ -151,7 +151,7 @@ def write_label(file_out, arr_label):
 
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
-        raise ValueError("Filename must be a string!")
+        raise ValueError("Filename must be a string or a pathlib.Path instance!")
 
     if not str(file_out).endswith("label"):
         raise ValueError("Currently supported file format is txt.")

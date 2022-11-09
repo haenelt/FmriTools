@@ -95,7 +95,7 @@ def demean_timeseries(img_input, path_output="", name_output="",
         img_input = nb.load(img_input)
         data_array = img_input.get_fdata()
     else:
-        print("Input must be either string or instance of nibabel class")
+        print("Input must be either a file name or an instance of the nibabel class")
         return
 
     # get mean of each voxel time series
