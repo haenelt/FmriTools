@@ -8,9 +8,9 @@ import shutil as sh
 import numpy as np
 import nibabel as nb
 from nighres.laminar import profile_sampling
-from gbb.utils.vox2ras import vox2ras
 
 # local inputs
+from ..io.affine import read_vox2ras_tkr
 from ..cmap.generate_coordinate_mapping import generate_coordinate_mapping
 from ..utils.resample_volume import resample_volume
 from ..utils.apply_affine_chunked import apply_affine_chunked
@@ -57,7 +57,7 @@ def get_thickness(boundaries_in, ref_in, hemi, path_output, r=[0.4, 0.4, 0.4]):
     cmap.header["dim"][0] = 1
 
     # get voxel to vertex ras coordinate transformation
-    vox2ras_tkr, _ = vox2ras(os.path.join(path_output, "ref.nii"))
+    vox2ras_tkr, _ = read_vox2ras_tkr(os.path.join(path_output, "ref.nii"))
 
     # apply transformation to cmap
     ras_array = apply_affine_chunked(vox2ras_tkr, cmap.get_fdata())

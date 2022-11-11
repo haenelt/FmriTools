@@ -8,9 +8,9 @@ import numpy as np
 import nibabel as nb
 from nibabel.freesurfer.io import read_geometry, write_morph_data
 from gbb.normal import get_normal
-from gbb.utils.vox2ras import vox2ras
 
 # local inputs
+from ..io.affine import read_vox2ras_tkr
 from ..io.get_filename import get_filename
 from ..utils.apply_affine_chunked import apply_affine_chunked
 
@@ -53,7 +53,7 @@ def b0_orientation(surf_in, vol_in, write_output=False, path_output="",
     vtx, fac = read_geometry(surf_in)
     
     # get transformation matrix
-    _, r2v = vox2ras(vol_in)      # ras-tkr -> voxel
+    _, r2v = read_vox2ras_tkr(vol_in)  # ras-tkr -> voxel
     v2s = nb.load(vol_in).affine  # voxel -> scanner-ras
     m = v2s.dot(r2v)
     

@@ -12,10 +12,10 @@ import nibabel as nb
 from nibabel.freesurfer.io import write_geometry, read_geometry
 from nipype.interfaces.freesurfer import SampleToSurface
 from nipype.interfaces.freesurfer import SmoothTessellation
-from gbb.utils import vox2ras
 from gbb.utils import remove_vertex
 
 # local inputs
+from ..io.affine import read_vox2ras_tkr
 from ..io.get_filename import get_filename
 from ..io.mgh2nii import mgh2nii
 from ..utils.apply_affine_chunked import apply_affine_chunked
@@ -111,7 +111,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     vtx, fac = read_geometry(input_surf)
 
     # get affine vox2ras-tkr transformation to target volume
-    vox2ras_tkr, _ = vox2ras(input_target)
+    vox2ras_tkr, _ = read_vox2ras_tkr(input_target)
 
     # divide coordinate mapping into its x, y and z components
     cmap_img = nb.load(input_deform)

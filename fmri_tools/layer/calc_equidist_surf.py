@@ -10,10 +10,10 @@ import numpy as np
 import nibabel as nb
 from nibabel.freesurfer.io import read_geometry, write_geometry
 from nighres.laminar import profile_meshing
-from gbb.utils import vox2ras
 from gbb.io import get_filename
 
 # local inputs
+from ..io.affine import read_vox2ras_tkr
 from ..surface.smooth_surface import smooth_surface
 from ..layer.get_meshlines import get_meshlines
 from ..utils.apply_affine_chunked import apply_affine_chunked
@@ -70,7 +70,7 @@ def calc_equidist_surf(input_mesh, input_boundaries, path_output, n_layer,
     level = nb.load(input_boundaries)
 
     # get ras <-> vox transformation
-    vox2ras_tkr, ras2vox_tkr = vox2ras(input_boundaries)
+    vox2ras_tkr, ras2vox_tkr = read_vox2ras_tkr(input_boundaries)
 
     # transform vertices to voxel space
     vtx = apply_affine_chunked(ras2vox_tkr, vtx)

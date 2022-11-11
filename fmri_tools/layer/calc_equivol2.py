@@ -13,9 +13,9 @@ from skimage import measure
 from nighres.surface import probability_to_levelset
 from nighres.laminar import volumetric_layering
 from scipy.ndimage.morphology import binary_fill_holes
-from gbb.utils.vox2ras import vox2ras
 
 # local inputs
+from ..io.affine import read_vox2ras_tkr
 from ..surface.upsample_surf_mesh import upsample_surf_mesh
 from ..utils.resample_volume import resample_volume
 from ..utils.apply_affine_chunked import apply_affine_chunked
@@ -74,7 +74,7 @@ def calc_equivol2(input_white, input_pial, input_vol, path_output, n_layers,
     upsample_surf_mesh(input_pial, res_pial, n_iter, "linear")
 
     # get affine ras2vox-tkr transformation to reference volume
-    _, ras2vox_tkr = vox2ras(res_vol)
+    _, ras2vox_tkr = read_vox2ras_tkr(res_vol)
 
     # load surface
     vtx_white, fac_white = read_geometry(res_white)

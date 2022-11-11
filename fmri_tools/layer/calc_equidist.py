@@ -12,9 +12,9 @@ from nibabel.freesurfer.io import read_geometry
 from skimage import measure
 from nighres.surface import probability_to_levelset
 from scipy.ndimage.morphology import binary_fill_holes
-from gbb.utils.vox2ras import vox2ras
 
 # local inputs
+from ..io.affine import read_vox2ras_tkr
 from ..io.get_filename import get_filename
 from ..surface.upsample_surf_mesh import upsample_surf_mesh
 from ..utils.resample_volume import resample_volume
@@ -82,7 +82,7 @@ def calc_equidist(input_white, input_pial, input_vol, n_layers, path_output,
     upsample_surf_mesh(input_pial, res_pial, n_iter, "linear")
 
     # get affine ras2vox-tkr transformation to reference volume
-    _, ras2vox_tkr = vox2ras(res_vol)
+    _, ras2vox_tkr = read_vox2ras_tkr(res_vol)
 
     # load surface
     vtx_white, _ = read_geometry(res_white)

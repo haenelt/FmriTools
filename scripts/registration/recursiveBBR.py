@@ -27,9 +27,9 @@ from os.path import join, exists
 # external inputs
 from scipy.io import loadmat, savemat
 from nibabel.freesurfer.io import write_geometry
-from gbb.utils.vox2ras import vox2ras
 
 # local inputs
+from fmri_tools.io.affine import read_vox2ras_tkr
 from fmri_tools.utils.apply_affine_chunked import apply_affine_chunked
 from fmri_tools.matlab import MatlabCommand
 
@@ -90,7 +90,7 @@ out_surf_mat_vox = join(subjects_dir, output_surf_vox)
 input_cfg = join(path_input, "cfg.mat")
 
 # get affine vox2ras-tkr and ras2vox-tkr transformation to reference volume
-vox2ras_tkr, ras2vox_tkr = vox2ras(ref_vol)
+vox2ras_tkr, ras2vox_tkr = read_vox2ras_tkr(ref_vol)
 
 # surf2mat
 matlab = MatlabCommand("ft_surf2mat",

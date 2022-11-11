@@ -9,9 +9,9 @@ import nibabel as nb
 from nibabel.freesurfer.io import write_geometry
 from nighres.surface import levelset_to_mesh
 from cortex.polyutils import Surface
-from gbb.utils.vox2ras import vox2ras
 
 # local inputs
+from ..io.affine import read_vox2ras_tkr
 from ..surface.smooth_surface import smooth_surface
 from ..surface.upsample_surf_mesh import upsample_surf_mesh
 from ..surface.get_curvature import get_curvature
@@ -80,7 +80,7 @@ def make_mesh(boundary_in, ref_in, file_out, nlayer, flip_faces=False,
     fac = surf["result"]["faces"]
     
     # get vox2ras transformation
-    vox2ras_tkr, _ = vox2ras(ref_in)
+    vox2ras_tkr, _ = read_vox2ras_tkr(ref_in)
     
     # apply vox2ras to vertices
     vtx = apply_affine_chunked(vox2ras_tkr, vtx)
