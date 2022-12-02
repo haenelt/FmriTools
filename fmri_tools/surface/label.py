@@ -2,9 +2,13 @@
 
 # external inputs
 import numpy as np
+from nibabel.affines import apply_affine
 from gbb.neighbor import nn_2d
 
-__all__ = ['label_border', 'label_dilation', 'label_erosion']
+# internal inputs
+from ..io.affine import vox2ras_tkr
+
+__all__ = ['label_border', 'label_dilation', 'label_erosion', 'roi_fov', 'roi_sphere']
 
 
 def label_border(arr_label, adjm):
@@ -68,21 +72,14 @@ def label_dilation(arr_label, adjm, n):
     """
 
     arr_dilate = []
-    for i in range(n):
-
-        # get label border
+    for _ in range(n):
         border = label_border(arr_label, adjm)
-
-        # dilate
         for j in border:
             nn = nn_2d(j, adjm, 0)
             arr_dilate.extend(nn)
-
-        # update label indices
         arr_label = np.append(arr_label, arr_dilate)
         arr_label = np.unique(arr_label)
         arr_label = np.sort(arr_label)
-
     return arr_label
 
 
@@ -109,12 +106,70 @@ def label_erosion(arr_label, adjm, n):
 
     """
 
-    for i in range(n):
-        # get label border
+    for _ in range(n):
         border = label_border(arr_label, adjm)
-
-        # update label indices
         tmp = np.in1d(arr_label, border)
-        arr_label = arr_label[tmp == False]
-
+        arr_label = arr_label[tmp != 1]
     return arr_label
+
+
+def roi_fov(vtx, vol_dims, vol_ds):
+    """ROI from image FOV.
+
+    This function creates a ROI label for all vertex indices within an imaging FOV.
+
+    Parameters
+    ----------
+    vtx : ndarray
+        Vertex array
+    vol_dims : tuple
+        Tuple containing volume dimensions in x-, y- and z-direction.
+    vol_ds : tuple
+        Tuple containing voxel sizes in x-, y- and z-direction.
+
+    Returns
+    -------
+    arr_label : ndarray
+        1D array of roi indices.
+
+    """
+
+    _, r2v = vox2ras_tkr(vol_dims, vol_ds)  # affine transformation to voxel space
+    vtx_voxel = apply_affine(r2v, vtx)  # apply transformation to vertex array
+
+    # mask vertices within volume dimensions
+    arr_label = np.arange(len(vtx), dtype=int)
+    for i, v in enumerate(vol_dims):
+        arr_label[vtx_voxel[:, i] < 0] = -1
+        arr_label[vtx_voxel[:, i] > v - 1] = -1
+
+    return arr_label[arr_label != -1]
+
+
+def roi_sphere(vtx, ind, radius):
+    """Spherical ROI.
+
+    This function creates a ROI label for all vertex indices within a 3D sphere.
+
+    Parameters
+    ----------
+    vtx : ndarray
+        Vertex array
+    ind : int
+        Vertex index of the center of the sphere.
+    radius : float
+        Radius of the sphere.
+
+    Returns
+    -------
+    arr_label : ndarray
+        1D array of roi indices.
+
+    """
+
+    x_diff = vtx[:, 0] - vtx[ind, 0]
+    y_diff = vtx[:, 1] - vtx[ind, 1]
+    z_diff = vtx[:, 2] - vtx[ind, 2]
+    distance = np.sqrt(x_diff**2 + y_diff**2 + z_diff**2)
+    arr_label = np.arange(len(vtx))
+    return arr_label[distance <= radius]

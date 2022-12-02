@@ -8,14 +8,14 @@ import numpy as np
 import nibabel as nb
 from numpy.linalg import inv
 
-__all__ = ['read_vox2vox', 'read_vox2ras_tkr']
+__all__ = ['read_vox2vox', 'read_vox2ras_tkr', 'vox2ras_tkr']
 
 
 def read_vox2vox(input_lta):
     """Read vox2vox.
 
-    This function reads a freesurfer lta file and extracts the vox2vox
-    transformation matrix as numpy array.
+    This function reads a freesurfer lta file and extracts the vox2vox transformation
+    matrix as numpy array.
 
     Parameters
     ----------
@@ -58,8 +58,7 @@ def read_vox2ras_tkr(input_vol):
     """Calculate vox2ras_tkr from header information.
 
     This function computes the vox2ras-tkr transform from header information of a Nifti
-    of MGH file. The calculation follows the implementation found in the MGHHeader class
-    (nibabel.freesurfer.mghformat.MGHHeader.get_vox2ras_tkr).
+    or MGH file.
 
     Parameters
     ----------
@@ -68,12 +67,13 @@ def read_vox2ras_tkr(input_vol):
 
     Returns
     -------
-    v2rtkr : ndarray
+    ndarray
         Forward vox2ras-tkr transformation matrix.
-    r2vtkr : ndarray
+    ndarray
         Inverse of v2rtkr.
 
     """
+
     hdr = nb.load(input_vol).header
     ext = Path(input_vol).suffixes
     if ".nii" in ext:
@@ -84,6 +84,32 @@ def read_vox2ras_tkr(input_vol):
         ds = hdr["delta"][:3]
     else:
         raise ValueError("Unknown file extension!")
+
+    return vox2ras_tkr(dims, ds)
+
+
+def vox2ras_tkr(dims, ds):
+    """Calculate vox2ras_tkr transformation.
+
+    This function computes the vox2ras-tkr transform. The calculation follows the
+    implementation found in the MGHHeader class
+    (nibabel.freesurfer.mghformat.MGHHeader.get_vox2ras_tkr).
+
+    Parameters
+    ----------
+    dims : tuple
+        Tuple containing volume dimensions in x-, y- and z-direction.
+    ds : tuple
+        Tuple containing voxel sizes in x-, y- and z-direction.
+
+    Returns
+    -------
+    v2rtkr : ndarray
+        Forward vox2ras-tkr transformation matrix.
+    r2vtkr : ndarray
+        Inverse of v2rtkr.
+
+    """
 
     ns = dims * ds / 2.0
     v2rtkr = np.array(
