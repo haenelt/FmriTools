@@ -18,7 +18,7 @@ from nighres.registration import apply_coordinate_mappings
 
 # local inputs
 from fmri_tools.utils.get_mean4d import get_mean4d
-from fmri_tools.preprocessing.scale_timeseries import demean_timeseries
+from fmri_tools.preprocessing.timeseries import ScaleTimeseries
 from fmri_tools.mapping.map2surface import map2surface
 from fmri_tools.matlab import MatlabCommand
 
@@ -97,8 +97,8 @@ for i in range(len(input_series)):
 # get demeaned mean time series
 data = get_mean4d(input_series, path_output="", name_output="",
                   write_output=False)
-data = demean_timeseries(data, write_output=False)
 data_array = data.get_fdata()
+data_array = ScaleTimeseries(data_array).demean()
 
 # discard volumes at the beginning and at the end
 if start_vol != 0:

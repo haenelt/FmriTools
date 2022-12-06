@@ -6,8 +6,12 @@ This scripts converts timeseries data into percent signal change.
 
 """
 
+# external inputs
+import nibabel as nb
+
 # local inputs
-from fmri_tools.preprocessing.scale_timeseries import scale_timeseries
+from fmri_tools.io.get_filename import get_filename
+from fmri_tools.preprocessing.timeseries import ScaleTimeseries
 
 # input
 file_in = [
@@ -24,5 +28,10 @@ cutoff_psc = 50
 
 # do not edit below
 
-for i in range(len(file_in)):
-    scale_timeseries(file_in[i], cutoff=cutoff_psc, prefix="p")
+for f in file_in:
+    data = nb.load(f)
+    scale = ScaleTimeseries(data.get_fdata())
+    arr_scaled = scale.psc(cutoff_psc)
+    output = nb.Nifti1Image(arr_scaled, data.affine, data.header)
+    path, basename, ext = get_filename(f)
+    nb.save(output, f"{path}/p{basename}{ext}")

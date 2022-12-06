@@ -15,7 +15,7 @@ import numpy as np
 import nibabel as nb
 
 # local inputs
-from fmri_tools.preprocessing.scale_timeseries import demean_timeseries
+from fmri_tools.preprocessing.timeseries import ScaleTimeseries
 
 # input
 file_in = "/data/pt_01880/Experiment4_PSF/p6/psf/GE_EPI1/multipol_2/uadata.nii"
@@ -59,11 +59,10 @@ for i in range(np.shape(data_array)[3]):
         c = 0
 
 merge_array /= full_cycle
+if demean:
+    merge_array = ScaleTimeseries(merge_array).demean()
 
 # write output
 data.header["dim"][4] = int(period / TR)
 output = nb.Nifti1Image(merge_array, data.affine, data.header)
 nb.save(output, os.path.join(path_output, name_output + ".nii"))
-
-if demean:
-    demean_timeseries(output)

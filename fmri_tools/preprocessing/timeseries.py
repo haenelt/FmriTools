@@ -1,15 +1,152 @@
 # -*- coding: utf-8 -*-
 
-# python standard library inputs
-from math import prod
-
 # external inputs
+import numpy as np
+import nibabel as nb
+
+__all__ = ["ScaleTimeseries", "FilterTimeseries"]
+
+
+class ScaleTimeseries:
+    """Implementation of several methods to scale fmri time series data.
+
+    Parameters
+    ----------
+    arr : np.ndarray
+        4D time series array.
+
+    """
+
+    def __init__(self, arr):
+        self.arr = arr
+
+    @property
+    def arr_mean(self):
+        """Temporal mean."""
+        return np.nanmean(self.arr, axis=3)
+
+    @property
+    def arr_std(self):
+        """Temporal standard deviation."""
+        return np.nanstd(self.arr, axis=3)
+
+    @property
+    def arr_mean_repeated(self):
+        """Expanded temporal mean."""
+        return np.repeat(
+            self.arr_mean[:, :, :, np.newaxis], np.shape(self.arr)[3], axis=3
+        )
+
+    @property
+    def arr_std_repeated(self):
+        """Expanded temporal standard deviation."""
+        return np.repeat(
+            self.arr_std[:, :, :, np.newaxis], np.shape(self.arr)[3], axis=3
+        )
+
+    def psc(self, cutoff_size=None):
+        """Percent signal change conversion."""
+        self.arr = self._save_division(self.arr, self.arr_mean_repeated) * 100
+        if cutoff_size:
+            self.arr = self._cutoff(100, cutoff_size)
+        return self.arr
+
+    def normalize(self, cutoff_size=None):
+        """Normalize time series."""
+        self.arr = self._save_division(self.arr, self.arr_mean_repeated)
+        if cutoff_size:
+            self.arr = self._cutoff(1, cutoff_size)
+        return self.arr
+
+    def standardize(self, cutoff_size=None):
+        """Standardize time series."""
+        self.arr = self._save_division(
+            self.arr - self.arr_mean_repeated, self.arr_std_repeated
+        )
+        if cutoff_size:
+            self.arr = self._cutoff(0, cutoff_size)
+        return self.arr
+
+    def demean(self, cutoff_size=None):
+        """Demean time series."""
+        self.arr = self._save_division(
+            self.arr - self.arr_mean_repeated, self.arr_mean_repeated
+        )
+        if cutoff_size:
+            self.arr = self._cutoff(0, cutoff_size)
+        return self.arr
+
+    def _cutoff(self, mu, width):
+        """Threshold outliers."""
+        arr_max = np.max(self.arr, axis=3)
+        arr_min = np.min(self.arr, axis=3)
+        self.arr[arr_max > mu + width, :] = mu + width
+        self.arr[arr_min < mu - width, :] = mu - width
+        return self.arr
+
+    @staticmethod
+    def _save_division(arr1, arr2):
+        return np.divide(arr1, arr2, out=np.zeros_like(arr1), where=arr2 != 0)
+
+    @classmethod
+    def from_file(cls, file_data):
+        """Initialize class object from file."""
+        data = nb.load(file_data)
+        return cls(data.get_fdata(), data.affine, data.header)
+
+from math import prod
 import numpy as np
 from numpy.fft import fft, ifft
 from nilearn.signal import clean
 
-__all__ = ['lowpass_sma', 'lowpass_gaussian', 'bandpass_boxcar',
-           'bandpass_butterworth']
+
+class FilterTimeseries(ScaleTimeseries):
+    def detrend(self):
+        pass
+
+    def lowpass_sma(self):
+        pass
+
+    def lowpass_gaussian(self):
+        pass
+
+    def bandpass_boxcar(self):
+        pass
+
+    def bandpass_butterworth(self):
+        pass
+
+
+def detrend_timeseries(arr, cutoff_sec, TR, store_dc=False):
+    """sdf"""
+    # https://lukas-snoek.com/NI-edu/fMRI-introduction/week_4/temporal_preprocessing.html
+
+    # dc component
+    arr0 = np.mean(arr, axis=3)
+
+    # time-based  gaussian running line smoother (which is used by FSL)
+    # convolve a gaussian kernel with the signal
+    sigma = cutoff_sec / (np.sqrt(8 * np.log(2)) * TR)
+
+    truncate = 4.0  # truncate the filter at this many standard deviations
+    radius = int(truncate * float(sigma) + 0.5)  # radius of the gaussian kernel
+    x = np.arange(-radius, radius + 1)
+    phi_x = np.exp(-0.5 / sigma**2 * x**2)
+    phi_x = phi_x / phi_x.sum()
+
+    arr_filtered = np.zeros_like(arr)
+    for ix, iy, iz in np.ndindex(arr.shape[:-1]):
+        # arr_filtered[ix, iy, iz, :] = gaussian_filter(arr[ix, iy, iz], sigma)
+        # should give the same results as scipy implementation but faster
+        arr_filtered[ix, iy, iz, :] = np.convolve(arr[ix, iy, iz], phi_x, mode="same")
+
+    # remove lowpass
+    arr -= arr_filtered
+
+    if store_dc:
+        arr += np.repeat(arr0[:, :, :, np.newaxis], arr.shape[3], axis=3)
+
+    return arr
 
 
 def lowpass_sma(arr, window_size):
@@ -273,3 +410,9 @@ def _reshape_back(array, shape):
     """
 
     return np.reshape(array, shape)
+
+
+
+
+
+
