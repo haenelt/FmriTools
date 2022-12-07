@@ -13,7 +13,11 @@ from nibabel.freesurfer.mghformat import MGHHeader
 from .surf import write_mgh
 from .get_filename import get_filename
 
-__all__ = ['read_hdf5', 'write_hdf5', 'extract_mgh_from_hdf5']
+__all__ = ["read_hdf5", "write_hdf5", "extract_mgh_from_hdf5"]
+
+
+# data type for writing hdf5
+DATA_TYPE = np.float64  # np.float16
 
 
 def read_hdf5(file_in):
@@ -49,8 +53,7 @@ def read_hdf5(file_in):
         raise ValueError("Filename must be a string or a pathlib.Path instance!")
 
     if not str(file_in).endswith("h5") and not str(file_in).endswith("hdf5"):
-        raise ValueError("Currently supported file formats are " +
-                         "h5 and hdf5.")
+        raise ValueError("Currently supported file formats are " + "h5 and hdf5.")
 
     with h5py.File(file_in, "r") as hf:
         # read data array
@@ -108,8 +111,7 @@ def write_hdf5(file_out, arr, affine=None, header=None):
         raise ValueError("Filename must be a string or a pathlib.Path instance!")
 
     if not str(file_out).endswith("h5") and not str(file_out).endswith("hdf5"):
-        raise ValueError("Currently supported file formats are " +
-                         "h5 and hdf5.")
+        raise ValueError("Currently supported file formats are " + "h5 and hdf5.")
 
     # make output folder
     path_output, _, _ = get_filename(file_out)
@@ -124,35 +126,39 @@ def write_hdf5(file_out, arr, affine=None, header=None):
         header_new["Pxyz_c"] = header["Pxyz_c"]
 
     with h5py.File(file_out, "w") as hf:
-        hf.create_dataset("array",
-                          data=arr,
-                          shape=np.shape(arr),
-                          chunks=True,
-                          compression="gzip",
-                          compression_opts=9,
-                          dtype=np.float16)
+        hf.create_dataset(
+            "array",
+            data=arr,
+            shape=np.shape(arr),
+            chunks=True,
+            compression="gzip",
+            compression_opts=9,
+            dtype=DATA_TYPE,
+        )
 
         if affine is not None:
-            hf.create_dataset("affine",
-                              data=affine,
-                              shape=np.shape(affine),
-                              compression="gzip",
-                              compression_opts=9)
+            hf.create_dataset(
+                "affine",
+                data=affine,
+                shape=np.shape(affine),
+                compression="gzip",
+                compression_opts=9,
+            )
 
         if header is not None:
             grp = hf.create_group("header")
-            grp.create_dataset("dims",
-                               data=header_new["dims"],
-                               compression="gzip",
-                               compression_opts=9)
-            grp.create_dataset("Mdc",
-                               data=header_new["Mdc"],
-                               compression="gzip",
-                               compression_opts=9)
-            grp.create_dataset("Pxyz_c",
-                               data=header_new["Pxyz_c"],
-                               compression="gzip",
-                               compression_opts=9)
+            grp.create_dataset(
+                "dims", data=header_new["dims"], compression="gzip", compression_opts=9
+            )
+            grp.create_dataset(
+                "Mdc", data=header_new["Mdc"], compression="gzip", compression_opts=9
+            )
+            grp.create_dataset(
+                "Pxyz_c",
+                data=header_new["Pxyz_c"],
+                compression="gzip",
+                compression_opts=9,
+            )
 
 
 def extract_mgh_from_hdf5(file_in, file_out, t, n):
