@@ -20,4 +20,5 @@
 - make functools backwards compatible with python=3.6
 
 ## v1.0.3
+- freeze version for odc manuscript
 - include functions for time series mapping
