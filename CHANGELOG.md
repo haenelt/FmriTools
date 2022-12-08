@@ -18,3 +18,6 @@
 ## v1.0.2
 - freeze version for psf-bold manuscript
 - make functools backwards compatible with python=3.6
+
+## v1.0.3
+- include functions for time series mapping

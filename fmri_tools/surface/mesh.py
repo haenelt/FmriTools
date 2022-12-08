@@ -429,14 +429,10 @@ class Mesh:
 
         # mask voxels which are outside the coordinate map
         mask = np.ones(len(self.verts), dtype=bool)
-        mask[vtx_vox[:, 0] < 0] = 0
-        mask[vtx_vox[:, 1] < 0] = 0
-        mask[vtx_vox[:, 2] < 0] = 0
-        mask[vtx_vox[:, 0] > nx - 1] = 0
-        mask[vtx_vox[:, 1] > ny - 1] = 0
-        mask[vtx_vox[:, 2] > nz - 1] = 0
-        mask = mask[mask == 1]
-        vtx_vox = vtx_vox[mask, :]
+        for i, n in enumerate((nx, ny, nz)):
+            mask[vtx_vox[:, i] < 0] = 0
+            mask[vtx_vox[:, i] > n - 1] = 0
+        vtx_vox = vtx_vox[mask == 1, :]
 
         # apply transformation
         arr_cmap = nb.load(file_cmap).get_fdata()

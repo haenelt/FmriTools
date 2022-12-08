@@ -2,11 +2,11 @@
 
 # external inputs
 import numpy as np
-from nibabel.affines import apply_affine
 from gbb.neighbor import nn_2d
 
 # internal inputs
 from ..io.affine import vox2ras_tkr
+from ..utils.apply_affine_chunked import apply_affine_chunked
 
 __all__ = ['label_border', 'label_dilation', 'label_erosion', 'roi_fov', 'roi_sphere']
 
@@ -116,7 +116,8 @@ def label_erosion(arr_label, adjm, n):
 def roi_fov(vtx, vol_dims, vol_ds):
     """ROI from image FOV.
 
-    This function creates a ROI label for all vertex indices within an imaging FOV.
+    This function creates a ROI label for all vertex indices within an imaging FOV. Nans
+    in the vertex array are excluded.
 
     Parameters
     ----------
@@ -135,11 +136,14 @@ def roi_fov(vtx, vol_dims, vol_ds):
     """
 
     _, r2v = vox2ras_tkr(vol_dims, vol_ds)  # affine transformation to voxel space
-    vtx_voxel = apply_affine(r2v, vtx)  # apply transformation to vertex array
+    vtx_voxel = apply_affine_chunked(r2v, vtx)  # apply transformation to vertex array
 
     # mask vertices within volume dimensions
     arr_label = np.arange(len(vtx), dtype=int)
     for i, v in enumerate(vol_dims):
+        arr_label[np.isnan(vtx_voxel[:, 0])] = -1
+        arr_label[np.isnan(vtx_voxel[:, 1])] = -1
+        arr_label[np.isnan(vtx_voxel[:, 2])] = -1
         arr_label[vtx_voxel[:, i] < 0] = -1
         arr_label[vtx_voxel[:, i] > v - 1] = -1
 
@@ -149,7 +153,8 @@ def roi_fov(vtx, vol_dims, vol_ds):
 def roi_sphere(vtx, ind, radius):
     """Spherical ROI.
 
-    This function creates a ROI label for all vertex indices within a 3D sphere.
+    This function creates a ROI label for all vertex indices within a 3D sphere. Nans in
+    the vertex array are excluded automatically.
 
     Parameters
     ----------
@@ -171,5 +176,6 @@ def roi_sphere(vtx, ind, radius):
     y_diff = vtx[:, 1] - vtx[ind, 1]
     z_diff = vtx[:, 2] - vtx[ind, 2]
     distance = np.sqrt(x_diff**2 + y_diff**2 + z_diff**2)
+
     arr_label = np.arange(len(vtx))
     return arr_label[distance <= radius]

@@ -161,15 +161,15 @@ def write_hdf5(file_out, arr, affine=None, header=None):
             )
 
 
-def extract_mgh_from_hdf5(file_in, file_out, t, n):
+def extract_mgh_from_hdf5(file_in, file_out, t, n=None):
     """Extract MGH from HDF5.
 
-    This function reads an hdf5 file which is expected to contain a 3D array
-    with dimensions vertex x time point x layer and optionally some header
-    information and an affine transformation matrix from the original mgh file.
-    Data from one time point and one layer are extracted and saved again as mgh
-    file. If no affine matrix or header information exist, an identity matrix
-    and an empty header are set, respectively.
+    This function reads an hdf5 file which is expected to contain a 2D or 3D array with
+    dimensions vertex x time point (x cortical layer) plus some header information
+    (optional) and an affine transformation matrix (optional). The third dimension is
+    optional. Data from one time point (and one layer) is extracted and saved as mgh
+    file. If no affine matrix or header information exists, an identity matrix and an
+    empty header are set, respectively.
 
     Parameters
     ----------
@@ -179,8 +179,9 @@ def extract_mgh_from_hdf5(file_in, file_out, t, n):
         Filename of mgh output file.
     t : int
         Time point which is assumed to be stored along the second dimension.
-    n : int
-        Layer which is assumed to be stored along the third dimension.
+    n : int, optional
+        Layer which is assumed to be stored along the third dimension. The default is
+        None.
 
     Raises
     ------
@@ -197,11 +198,11 @@ def extract_mgh_from_hdf5(file_in, file_out, t, n):
     data, affine, header = read_hdf5(file_in)
 
     # check dimensionality
-    if len(np.shape(data)) != 3:
+    if n and data.ndim != 3:
         raise ValueError("Data array has incorrect number of dimensions!")
 
     # extract one time point and one layer
-    data = data[:, t, n]
+    data = data[:, t, n] if n else data[:, t]
 
     # check affine
     if affine is None:

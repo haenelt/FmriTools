@@ -111,7 +111,7 @@ def vox2ras_tkr(dims, ds):
 
     """
 
-    ns = dims * ds / 2.0
+    ns = np.asarray(dims) * np.asarray(ds) / 2.0
     v2rtkr = np.array(
         [[-ds[0], 0, 0, ns[0]],
          [0, 0, ds[2], -ns[2]],
