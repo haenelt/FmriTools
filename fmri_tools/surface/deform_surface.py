@@ -21,15 +21,15 @@ from ..io.mgh2nii import mgh2nii
 from ..utils.apply_affine_chunked import apply_affine_chunked
 
 
-def deform_surface(input_surf, input_orig, input_deform, input_target,
-                   path_output, input_mask=None, interp_method="nearest",
-                   smooth_iter=0, flip_faces=False, cleanup=True):
-    """Deform surface.
+def deform_surface(input_surf, input_orig, input_deform, input_target, path_output,
+                   input_mask=None, interp_method="nearest", smooth_iter=0,
+                   flip_faces=False, cleanup=True):
+    """Deform surface using freesurfer.
 
-    This function deforms a surface mesh in freesurfer convention using a 
-    coordinate map containing voxel coordinates. The computation takes quite a 
-    while because in the case of removed vertices, i.e. if a mask is given as 
-    input, the remaining faces are reindexed.    
+    This function deforms a surface mesh in freesurfer convention using a
+    coordinate map containing voxel coordinates. The computation takes quite a
+    while because in the case of removed vertices, i.e. if a mask is given as
+    input, the remaining faces are reindexed.
 
     Parameters
     ----------
@@ -48,7 +48,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     interp_method : str, optional
         Interpolation method (nearest or trilinear). The default is "nearest".
     smooth_iter : int, optional
-        Number of smoothing iterations applied to final image (if set > 0). The 
+        Number of smoothing iterations applied to final image (if set > 0). The
         default is 0.
     flip_faces : bool, optional
         Reverse normal direction of mesh. The default is False.
@@ -58,7 +58,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     Returns
     -------
     None.
-    
+
     """
 
     # set freesurfer path environment
@@ -66,7 +66,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
 
     # freesurfer subject
     tmp1 = np.random.randint(0, 10, 5)
-    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp1 = "".join(str(i) for i in tmp1)
     tmp2 = datetime.datetime.now().strftime("%S%f")
     tmp_string = tmp1 + tmp2
     sub = "tmp_" + tmp_string
@@ -75,7 +75,7 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     if not os.path.exists(path_output):
         os.makedirs(path_output)
 
-    # mimic freesurfer folder structure (with some additional folder for 
+    # mimic freesurfer folder structure (with some additional folder for
     # intermediate files)
     path_sub = os.path.join(path_output, sub)
     path_mri = os.path.join(path_sub, "mri")
@@ -102,8 +102,10 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     sh.copyfile(input_surf, os.path.join(path_surf, hemi + ".source"))
     if ext_orig != ".mgz":
         mgh2nii(input_orig, path_mri, "mgz")
-        os.rename(os.path.join(path_mri, name_orig + ".mgz"),
-                  os.path.join(path_mri, "orig.mgz"))
+        os.rename(
+            os.path.join(path_mri, name_orig + ".mgz"),
+            os.path.join(path_mri, "orig.mgz"),
+        )
     else:
         sh.copyfile(input_orig, os.path.join(path_mri, "orig.mgz"))
 
@@ -126,8 +128,9 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
     vtx_new = np.zeros([len(vtx), 3])
     for i in range(len(components)):
         file_temp = os.path.join(path_mri, components[i] + "_deform.nii")
-        file_sampled = os.path.join(path_surf,
-                                    hemi + "." + components[i] + "_sampled.mgh")
+        file_sampled = os.path.join(
+            path_surf, hemi + "." + components[i] + "_sampled.mgh"
+        )
 
         # get target volume
         temp_array = cmap_array[:, :, :, i]
@@ -183,7 +186,9 @@ def deform_surface(input_surf, input_orig, input_deform, input_target,
         # save index mapping between original and transformed surface
         np.savetxt(
             os.path.join(path_output, hemi + "." + name_surf + "_ind.txt"),
-            ind_keep, fmt='%d')
+            ind_keep,
+            fmt="%d",
+        )
     else:
         fac_new = fac
 

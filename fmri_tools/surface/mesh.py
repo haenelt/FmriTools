@@ -2,8 +2,14 @@
 
 import functools
 import numpy as np
+import nibabel as nb
 from nibabel.freesurfer.io import read_geometry
 from scipy.sparse import csr_matrix, triu, dia_matrix
+
+# local inputs
+from ..io.affine import read_vox2ras_tkr
+from ..utils.interpolation import linear_interpolation3d
+from ..utils.apply_affine_chunked import apply_affine_chunked
 
 __all__ = ["Mesh"]
 
@@ -395,6 +401,59 @@ class Mesh:
         """
 
         return self.adjm[ind, :].indices
+
+    def transform_coords(self, file_cmap, file_target):
+        """Transform vertex coordinates to a target space using a coordinate mapping
+        file. Vertices outside the coordinate mapping are set to nan.
+
+        Parameters
+        ----------
+        file_cmap : str
+            File name of coordinate mapping.
+        file_target : str
+            File name of volume in target space.
+
+        Returns
+        -------
+        np.ndarray, shape=(N,3)
+            Vertex-wise array.
+
+        """
+
+        nx, ny, nz = nb.load(file_cmap).header["dim"][1:4]
+        _, ras2vox = read_vox2ras_tkr(file_cmap)
+        vox2ras, _ = read_vox2ras_tkr(file_target)
+
+        # transform to voxel space
+        vtx_vox = apply_affine_chunked(ras2vox, self.verts)
+
+        # mask voxels which are outside the coordinate map
+        mask = np.ones(len(self.verts), dtype=bool)
+        mask[vtx_vox[:, 0] < 0] = 0
+        mask[vtx_vox[:, 1] < 0] = 0
+        mask[vtx_vox[:, 2] < 0] = 0
+        mask[vtx_vox[:, 0] > nx - 1] = 0
+        mask[vtx_vox[:, 1] > ny - 1] = 0
+        mask[vtx_vox[:, 2] > nz - 1] = 0
+        mask = mask[mask == 1]
+        vtx_vox = vtx_vox[mask, :]
+
+        # apply transformation
+        arr_cmap = nb.load(file_cmap).get_fdata()
+        x = linear_interpolation3d(vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2],
+                                   arr_cmap[:, :, :, 0])
+        y = linear_interpolation3d(vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2],
+                                   arr_cmap[:, :, :, 1])
+        z = linear_interpolation3d(vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2],
+                                   arr_cmap[:, :, :, 2])
+
+        # update vertex array
+        vtx_res = apply_affine_chunked(vox2ras, np.array([x, y, z]).T)
+        self.verts = np.empty_like(self.verts)
+        self.verts[:] = np.nan
+        self.verts[mask, :] = vtx_res
+
+        return self.verts
 
     def _f2v(self, nf_arr):
         """Transform face- to vertex-wise expression.
