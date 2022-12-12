@@ -2,7 +2,7 @@
 """
 Create FOV ROI
 
-This script computes a label file to include only verticies (in further analysis) which
+This script computes a label file to include only vertices (in further analysis) which
 are within the intersection of multiple volumes.
 
 """
