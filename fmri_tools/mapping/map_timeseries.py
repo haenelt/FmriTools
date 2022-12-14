@@ -2,10 +2,9 @@
 
 # external inputs
 import numpy as np
-import nibabel as nb
 
 # local inputs
-from ..io.affine import read_vox2ras_tkr
+from ..io.affine import vox2ras_tkr
 from ..utils.apply_affine_chunked import apply_affine_chunked
 from ..utils.interpolation import nn_interpolation3d, linear_interpolation3d
 
@@ -13,7 +12,7 @@ from ..utils.interpolation import nn_interpolation3d, linear_interpolation3d
 _sampler = {"linear": linear_interpolation3d, "nearest": nn_interpolation3d}
 
 
-def map_timeseries(vtx, file_timeseries, interpolation="linear"):
+def map_timeseries(vtx, arr_timeseries, dims, ds, interpolation="linear"):
     """Map time series data onto a surface mesh. A 2D array is returned which contains
     vertex-wise sampled data for each time point in separate columns. All vertices
     outside the time series volume are set to nan.
@@ -22,8 +21,12 @@ def map_timeseries(vtx, file_timeseries, interpolation="linear"):
     ----------
     vtx : np.ndarray, shape=(N,3)
         Vertex-wise array.
-    file_timeseries : str
-        File name of fMRI time series.
+    arr_timeseries : np.ndarray, shape=(X,Y,Z,T)
+        4D array of fMRI time series.
+    dims : tuple
+        Tuple containing volume dimensions in x-, y- and z-direction.
+    ds : tuple
+        Tuple containing voxel sizes in x-, y- and z-direction.
     interpolation : str, optional (linear | nearest)
         Interpolation method (linear or nearest neighbor interpolation).
 
@@ -34,9 +37,8 @@ def map_timeseries(vtx, file_timeseries, interpolation="linear"):
 
     """
 
-    arr = nb.load(file_timeseries).get_fdata()
-    nx, ny, nz, nt = np.shape(arr)
-    _, ras2vox = read_vox2ras_tkr(file_timeseries)
+    nx, ny, nz, nt = np.shape(arr_timeseries)
+    _, ras2vox = vox2ras_tkr(dims, ds)
     vtx_vox = apply_affine_chunked(ras2vox, vtx)
 
     # exclude nans and vertices outside of the volume
@@ -53,7 +55,7 @@ def map_timeseries(vtx, file_timeseries, interpolation="linear"):
 
     for i in range(nt):
         arr_sampled[mask == 1, i] = _sampler[interpolation](
-            vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2], arr[:, :, :, i]
+            vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2], arr_timeseries[:, :, :, i]
         )
 
     return arr_sampled
