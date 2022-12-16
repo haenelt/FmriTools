@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import itertools
 import functools
 import numpy as np
 import nibabel as nb
@@ -436,12 +437,15 @@ class Mesh:
 
         # apply transformation
         arr_cmap = nb.load(file_cmap).get_fdata()
-        x = linear_interpolation3d(vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2],
-                                   arr_cmap[:, :, :, 0])
-        y = linear_interpolation3d(vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2],
-                                   arr_cmap[:, :, :, 1])
-        z = linear_interpolation3d(vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2],
-                                   arr_cmap[:, :, :, 2])
+        x = linear_interpolation3d(
+            vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2], arr_cmap[:, :, :, 0]
+        )
+        y = linear_interpolation3d(
+            vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2], arr_cmap[:, :, :, 1]
+        )
+        z = linear_interpolation3d(
+            vtx_vox[:, 0], vtx_vox[:, 1], vtx_vox[:, 2], arr_cmap[:, :, :, 2]
+        )
 
         # update vertex array
         vtx_res = apply_affine_chunked(vox2ras, np.array([x, y, z]).T)
@@ -450,6 +454,85 @@ class Mesh:
         self.verts[mask, :] = vtx_res
 
         return self.verts
+
+    def remove_vertices(self, ind_keep, create_ind=False):
+        """Remove vertices and update the corresponding face array.
+
+        Parameters
+        ----------
+        ind_keep : list
+            Index list of vertices to keep.
+
+        Returns
+        -------
+        np.ndarray, shape=(N,3)
+            Array of remaining vertices.
+        np.ndarray, shape=(M,3)
+            Array of updated faces.
+        list
+            Returned only if `create_ind` is True. Updated index list of vertices to
+            keep after vertex cleaning.
+
+        """
+
+        # get indices which will be removed
+        ind_tmp = np.arange(len(self.verts))
+        ind_remove = list(set(ind_tmp) - set(ind_keep))
+        ind_remove = sorted(ind_remove, reverse=True)
+
+        # get new vertices
+        self.verts = self.verts[ind_keep, :]
+
+        # get new faces
+        fac_keep = np.zeros(len(self.faces))
+        fac_keep += np.in1d(self.faces[:, 0], ind_keep)
+        fac_keep += np.in1d(self.faces[:, 1], ind_keep)
+        fac_keep += np.in1d(self.faces[:, 2], ind_keep)
+        self.faces = self.faces[fac_keep == 3, :]
+
+        # reindex faces
+        loop_status = 0
+        loop_length = len(ind_remove)
+        for i in range(loop_length):
+            # print status
+            counter = np.floor(i / loop_length * 100)
+            if counter != loop_status:
+                print("sort faces: " + str(counter) + " %")
+                loop_status = counter
+
+            tmp = self.faces[self.faces >= ind_remove[i]] - 1
+            self.faces[self.faces >= ind_remove[i]] = tmp
+
+        # get indices which will be cleaned
+        ind_vtx = np.arange(len(self.verts))
+        ind_fac = list(itertools.chain(*self.faces))
+        ind_fac = list(set(ind_fac))
+        ind_remove = list(set(ind_vtx) - set(ind_fac))
+        ind_remove = sorted(ind_remove, reverse=True)
+
+        # remove singularities (vertices without faces)
+        loop_status = 0
+        loop_length = len(ind_remove)
+        for i in range(loop_length):
+            # print status
+            counter = np.floor(i / loop_length * 100)
+            if counter != loop_status:
+                print("clean faces: " + str(counter) + " %")
+                loop_status = counter
+
+            # remove vertex and index
+            self.verts = np.delete(self.verts, ind_remove[i], 0)
+            ind_keep = np.delete(ind_keep, ind_remove[i], 0)
+
+            # sort faces
+            tmp = self.faces[self.faces >= ind_remove[i]] - 1
+            self.faces[self.faces >= ind_remove[i]] = tmp
+
+        ret = (self.verts, self.faces)
+        if create_ind:
+            ret += ind_keep
+
+        return ret
 
     def _f2v(self, nf_arr):
         """Transform face- to vertex-wise expression.
