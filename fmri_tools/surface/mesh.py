@@ -462,6 +462,8 @@ class Mesh:
         ----------
         ind_keep : list
             Index list of vertices to keep.
+        create_ind : bool
+            Return cleaned index list.
 
         Returns
         -------
@@ -481,14 +483,14 @@ class Mesh:
         ind_remove = sorted(ind_remove, reverse=True)
 
         # get new vertices
-        self.verts = self.verts[ind_keep, :]
+        vtx = self.verts[ind_keep, :]
 
         # get new faces
         fac_keep = np.zeros(len(self.faces))
         fac_keep += np.in1d(self.faces[:, 0], ind_keep)
         fac_keep += np.in1d(self.faces[:, 1], ind_keep)
         fac_keep += np.in1d(self.faces[:, 2], ind_keep)
-        self.faces = self.faces[fac_keep == 3, :]
+        fac = self.faces[fac_keep == 3, :]
 
         # reindex faces
         loop_status = 0
@@ -500,12 +502,12 @@ class Mesh:
                 print("sort faces: " + str(counter) + " %")
                 loop_status = counter
 
-            tmp = self.faces[self.faces >= ind_remove[i]] - 1
-            self.faces[self.faces >= ind_remove[i]] = tmp
+            tmp = fac[fac >= ind_remove[i]] - 1
+            fac[fac >= ind_remove[i]] = tmp
 
         # get indices which will be cleaned
-        ind_vtx = np.arange(len(self.verts))
-        ind_fac = list(itertools.chain(*self.faces))
+        ind_vtx = np.arange(len(vtx))
+        ind_fac = list(itertools.chain(*fac))
         ind_fac = list(set(ind_fac))
         ind_remove = list(set(ind_vtx) - set(ind_fac))
         ind_remove = sorted(ind_remove, reverse=True)
@@ -521,18 +523,18 @@ class Mesh:
                 loop_status = counter
 
             # remove vertex and index
-            self.verts = np.delete(self.verts, ind_remove[i], 0)
+            vtx = np.delete(vtx, ind_remove[i], 0)
             ind_keep = np.delete(ind_keep, ind_remove[i], 0)
 
             # sort faces
-            tmp = self.faces[self.faces >= ind_remove[i]] - 1
-            self.faces[self.faces >= ind_remove[i]] = tmp
+            tmp = fac[fac >= ind_remove[i]] - 1
+            fac[fac >= ind_remove[i]] = tmp
 
-        ret = (self.verts, self.faces)
-        if create_ind:
-            ret += ind_keep
-
-        return ret
+        self.verts = np.array(vtx)
+        self.faces = np.array(fac)
+        if not create_ind:
+            return self.verts, self.faces
+        return self.verts, self.faces, ind_keep
 
     def _f2v(self, nf_arr):
         """Transform face- to vertex-wise expression.
