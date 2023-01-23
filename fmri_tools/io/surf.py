@@ -1,25 +1,42 @@
 # -*- coding: utf-8 -*-
 
 # python standard library inputs
+import datetime
 import os
+import shutil as sh
 import sys
 from pathlib import Path
 
 # external inputs
 import numpy as np
 import nibabel as nb
-from nibabel.freesurfer.mghformat import MGHHeader
-from nibabel.freesurfer.io import write_geometry, read_geometry, read_label, \
-    read_morph_data, write_morph_data
-from scipy.spatial import Delaunay
 from gbb.neighbor.nn_2d import nn_2d
+from nibabel.freesurfer.io import (
+    read_geometry,
+    read_label,
+    read_morph_data,
+    write_geometry,
+    write_morph_data,
+)
+from nibabel.freesurfer.mghformat import MGHHeader
+from scipy.spatial import Delaunay
 
 # local inputs
 from .get_filename import get_filename
 
-__all__ = ['write_mgh', 'read_mgh', 'write_label', 'read_patch', 'patch_as_mesh',
-           'mgh_to_patch', 'curv_to_patch', 'label_to_patch', 'write_vector_field',
-           'write_white2pial']
+__all__ = [
+    "write_mgh",
+    "read_mgh",
+    "write_label",
+    "read_patch",
+    "patch_as_mesh",
+    "mgh_to_patch",
+    "curv_to_patch",
+    "label_to_patch",
+    "label_as_patch",
+    "write_vector_field",
+    "write_white2pial",
+]
 
 
 def write_mgh(file_out, arr, affine=None, header=None):
@@ -165,10 +182,10 @@ def write_label(file_out, arr_label):
     n_label = len(arr_label)
 
     with open(file_out, "w") as f:
-        f.write('#!ascii label  , from subject  vox2ras=TkReg\n')
-        f.write(str(n_label) + '\n')
+        f.write("#!ascii label  , from subject  vox2ras=TkReg\n")
+        f.write(str(n_label) + "\n")
         for i in range(n_label):
-            f.write(str(arr_label[i]) + ' 0.000 0.000 0.000 0.000\n')
+            f.write(str(arr_label[i]) + " 0.000 0.000 0.000 0.000\n")
 
 
 def read_patch(file_in):
@@ -341,8 +358,75 @@ def label_to_patch(file_out, file_label, file_patch):
     write_label(file_out, label_new)
 
 
-def write_vector_field(vtx0, vtx1, adjm, file_out, meta_data=None, step_size=100,
-                       shape="line"):
+def label_as_patch(file_ref, file_label, file_out, cleanup=True):
+    """Convert label file to a patch file.
+
+    Uses the FreeSurfer label2patch function to convert a label file into a *.path.3d
+    file. This can be useful for surface flattening of a region defined by a label file.
+
+    Parameters
+    ----------
+    file_ref : str
+        Reference surface file.
+    file_label : str
+        Label file.
+    file_output : str
+        File name of patch file.
+    cleanup : bool, optional
+        Delete intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    """
+
+    # create temporary folder
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = "".join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
+    path_temp = os.path.join(os.path.dirname(file_out), "tmp_" + tmp_string)
+    path_subj = os.path.join(path_temp, "subj")
+    path_surf = os.path.join(path_subj, "surf")
+
+    # make temporary folder
+    if not os.path.exists(path_temp):
+        os.makedirs(path_temp)
+        os.mkdir(path_subj)
+        os.mkdir(path_surf)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
+
+    # get hemisphere from file name
+    hemi = os.path.basename(file_label)[:2]
+
+    # copy reference file into temporary folder
+    sh.copy2(file_ref, os.path.join(path_surf, hemi + "." + "surf"))
+
+    # convert label to patch
+    os.system(
+        "label2patch"
+        + " -sdir "
+        + str(path_temp)
+        + " -surf surf"
+        + " subj"
+        + " "
+        + str(hemi)
+        + " "
+        + str(file_label)
+        + " "
+        + str(file_out)
+    )
+
+    # delete temporary files
+    if cleanup:
+        sh.rmtree(path_temp, ignore_errors=True)
+
+
+def write_vector_field(
+    vtx0, vtx1, adjm, file_out, meta_data=None, step_size=100, shape="line"
+):
     """Write vector field.
 
     This function generates a surface mesh to visualize a vector field as a
@@ -377,14 +461,16 @@ def write_vector_field(vtx0, vtx1, adjm, file_out, meta_data=None, step_size=100
 
     # initialise faces for specific shape
     if shape == "prism":
-        f_new = [[0, 1, 2],
-                 [3, 4, 5],
-                 [0, 1, 4],
-                 [0, 3, 4],
-                 [1, 2, 5],
-                 [1, 4, 5],
-                 [0, 2, 5],
-                 [0, 3, 5]]
+        f_new = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [0, 1, 4],
+            [0, 3, 4],
+            [1, 2, 5],
+            [1, 4, 5],
+            [0, 2, 5],
+            [0, 3, 5],
+        ]
         f_iter = 6
     elif shape == "triangle":
         f_new = [[0, 1, 2]]
@@ -437,8 +523,9 @@ def write_vector_field(vtx0, vtx1, adjm, file_out, meta_data=None, step_size=100
     write_geometry(file_out, v_res, f_res, volume_info=meta_data)
 
 
-def write_white2pial(file_out, file_white, file_pial, adjm, step_size=100,
-                     shape="line"):
+def write_white2pial(
+    file_out, file_white, file_pial, adjm, step_size=100, shape="line"
+):
     """Plot white to pial.
 
     This function generates lines between corresponding vertices at the white
@@ -468,8 +555,7 @@ def write_white2pial(file_out, file_white, file_pial, adjm, step_size=100,
     """
 
     # read geometry
-    vtx_white, fac_white, header_white = read_geometry(file_white,
-                                                       read_metadata=True)
+    vtx_white, fac_white, header_white = read_geometry(file_white, read_metadata=True)
     vtx_pial, fac_pial = read_geometry(file_pial)
 
     # array containing a list of considered vertices
@@ -477,14 +563,16 @@ def write_white2pial(file_out, file_white, file_pial, adjm, step_size=100,
 
     # initialise faces for specific shape
     if shape == "prism":
-        fac_new = [[0, 1, 2],
-                   [3, 4, 5],
-                   [0, 1, 4],
-                   [0, 3, 4],
-                   [1, 2, 5],
-                   [1, 4, 5],
-                   [0, 2, 5],
-                   [0, 3, 5]]
+        fac_new = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [0, 1, 4],
+            [0, 3, 4],
+            [1, 2, 5],
+            [1, 4, 5],
+            [0, 2, 5],
+            [0, 3, 5],
+        ]
         fac_iter = 6
     elif shape == "triangle":
         fac_new = [[0, 1, 2]]

@@ -8,7 +8,7 @@ from gbb.neighbor import nn_2d
 from ..io.affine import vox2ras_tkr
 from ..utils.apply_affine_chunked import apply_affine_chunked
 
-__all__ = ['label_border', 'label_dilation', 'label_erosion', 'roi_fov', 'roi_sphere']
+__all__ = ["label_border", "label_dilation", "label_erosion", "roi_fov", "roi_sphere"]
 
 
 def label_border(arr_label, adjm):
