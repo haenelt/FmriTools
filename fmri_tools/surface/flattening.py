@@ -43,7 +43,7 @@ def label_flattening(file_ref, file_label, path_output, cleanup=True):
     tmp1 = "".join(str(i) for i in tmp1)
     tmp2 = datetime.datetime.now().strftime("%S%f")
     tmp_string = tmp1 + tmp2
-    path_temp = os.path.join(os.path.dirname(file_ref), "tmp_" + tmp_string)
+    path_temp = os.path.join(path_output, "tmp_" + tmp_string)
 
     # make temporary folder
     if not os.path.exists(path_temp):
@@ -51,18 +51,20 @@ def label_flattening(file_ref, file_label, path_output, cleanup=True):
     else:
         raise FileExistsError("Temporary folder already exists!")
 
+    # make output folder
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
     # change to temporary folder
     cwd = os.getcwd()
     os.chdir(path_temp)
 
     # get hemisphere from file name
     hemi = os.path.basename(file_label)[:2]
-    name_patch = os.path.basename(file_label).split(".")[1]
+    name_patch = "." + os.path.basename(file_label).split(".")[1]
 
     # convert label to patch file
-    file_patch = os.path.join(
-        path_temp, os.path.join(hemi + "." + name_patch + ".patch.3d")
-    )
+    file_patch = os.path.join(path_temp, os.path.join(hemi + name_patch + ".patch.3d"))
     label_as_patch(file_ref, file_label, file_patch)
 
     # copy reference file and path into temporary folder
@@ -136,13 +138,17 @@ def surface_flattening(file_ref, file_patch, path_output, cleanup=True):
     tmp1 = "".join(str(i) for i in tmp1)
     tmp2 = datetime.datetime.now().strftime("%S%f")
     tmp_string = tmp1 + tmp2
-    path_temp = os.path.join(os.path.dirname(file_ref), "tmp_" + tmp_string)
+    path_temp = os.path.join(path_output, "tmp_" + tmp_string)
 
     # make temporary folder
     if not os.path.exists(path_temp):
         os.makedirs(path_temp)
     else:
         raise FileExistsError("Temporary folder already exists!")
+
+    # make output folder
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
 
     # change to temporary folder
     cwd = os.getcwd()
