@@ -42,10 +42,12 @@ def hrf_spm(TR, p=(6, 16, 1, 1, 6, 0, 32)):
     dt = TR / fMRI_T
 
     u = np.arange(p[6] / dt + 1) - p[5] / dt
-    hrf = gamma.pdf(u, p[0] / p[2], scale=1.0 / (dt / p[2])) - \
-          gamma.pdf(u, p[1] / p[3], scale=1.0 / (dt / p[3])) / p[4]
+    hrf = (
+        gamma.pdf(u, p[0] / p[2], scale=1.0 / (dt / p[2]))
+        - gamma.pdf(u, p[1] / p[3], scale=1.0 / (dt / p[3])) / p[4]
+    )
 
-    good_pts = np.array(range(np.int(p[6] / TR))) * fMRI_T
+    good_pts = np.array(range(int(p[6] / TR))) * fMRI_T
     good_pts = good_pts.astype(int)  # das habe ich eingefuegt
     hrf = hrf[list(good_pts)]
     # hrf = hrf([0:(p(7)/RT)]*fMRI_T + 1);
