@@ -1,0 +1,9 @@
+- [ ] scripts ersetzen
+- [ ] tests
+- [ ] nighres ersetzen
+- [ ] imports neu
+- [ ] dijkstra
+- [ ] sinc
+- [ ] docker
+- [ ] workflow
+- [ ] phase regression (https://github.com/brettliem/phaseprep)
