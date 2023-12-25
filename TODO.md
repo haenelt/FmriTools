@@ -4,6 +4,7 @@
 - [ ] imports neu
 - [ ] dijkstra
 - [ ] sinc
+- [ ] multiple functions in one module
 - [ ] docker
 - [ ] github workflow
-- [ ] phase regression (https://github.com/brettliem/phaseprep)
+- [ ] phase regression (see REGRESSION.md)

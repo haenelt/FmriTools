@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
 
-# python standard library inputs
 import copy
 
-# external inputs
 import numpy as np
 from scipy.signal import find_peaks
 
-# local inputs
 from ..utils import get_acorr
 
 
-def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5,
-                  nsample=1000):
+def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000):
     """Analyze Autocorrelation.
-    
-    This function computes the normalized autocorrelation (NAC) from a 2D input 
-    array and estimates the width of the central peak and the distance to its 
-    first neighbor peak along a defined projection lines sampled with nearest 
-    neighbor interpolation. The width of the central peak is defined as the 
+
+    This function computes the normalized autocorrelation (NAC) from a 2D input
+    array and estimates the width of the central peak and the distance to its
+    first neighbor peak along a defined projection lines sampled with nearest
+    neighbor interpolation. The width of the central peak is defined as the
     width at zero point.
 
     Parameters
@@ -52,7 +48,7 @@ def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5,
         Lag in mm along projection axis.
     acorr_line : ndarray
         NAC along projection axis.
-    
+
     """
 
     # add one if nsample is an odd integer
@@ -68,8 +64,8 @@ def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5,
     y = (fovy / 2) * np.linspace(-1, 1, y_size)
     y_mesh, x_mesh = np.meshgrid(y, x)
 
-    # get projection line coordinates from pca eigenvector. Because we 
-    # interpolate using nearest neighbors the axis enc point is <size>-1. 
+    # get projection line coordinates from pca eigenvector. Because we
+    # interpolate using nearest neighbors the axis enc point is <size>-1.
     if np.abs(xv) < np.abs(yv):
         y_line = np.linspace(0, y_size - 1, nsample)
         x_line = xv / yv * y_line + y_size / 2
@@ -108,7 +104,7 @@ def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5,
     yy_line = y_mesh[np.round(x_line).astype(int), np.round(y_line).astype(int)]
 
     # get final distances
-    d = np.sqrt(xx_line ** 2 + yy_line ** 2)
+    d = np.sqrt(xx_line**2 + yy_line**2)
 
     # get minimum to shift mid point to origin
     d_min = np.argwhere(np.min(d) == d)
@@ -123,8 +119,7 @@ def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5,
 
     # get autocorrelation
     array_acorr = get_acorr(arr)
-    acorr_line = array_acorr[
-        np.round(x_line).astype(int), np.round(y_line).astype(int)]
+    acorr_line = array_acorr[np.round(x_line).astype(int), np.round(y_line).astype(int)]
 
     # fwhm
     acorr_line_max = np.argwhere(np.max(acorr_line) == acorr_line)
@@ -133,8 +128,8 @@ def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5,
     else:
         acorr_line_max = int(acorr_line_max)
 
-    # FWHM will be defined at half maximum. N.B., this underestimates the 
-    # columnar width in case of pure sinusoidal oscillation where the width 
+    # FWHM will be defined at half maximum. N.B., this underestimates the
+    # columnar width in case of pure sinusoidal oscillation where the width
     # would be determined by taking the FWHM at zero
     acorr_line_middle = copy.deepcopy(acorr_line_max)
     while True:
