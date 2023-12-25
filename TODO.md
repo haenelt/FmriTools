@@ -5,5 +5,5 @@
 - [ ] dijkstra
 - [ ] sinc
 - [ ] docker
-- [ ] workflow
+- [ ] github workflow
 - [ ] phase regression (https://github.com/brettliem/phaseprep)
