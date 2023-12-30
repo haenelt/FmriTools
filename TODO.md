@@ -5,7 +5,6 @@
 - [ ] sort modules (include docstrings, include __all__, try/except if environmental variables are set)
 - [ ] phase regression (see REGRESSION.md)
 - [ ] dijkstra
-- [ ] github workflow
 - [x] remove natsort dependencies
 - [x] update README.md
 - [x] gitignore
