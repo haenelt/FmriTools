@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Interpolaton functions."""
 
-# external inputs
 import numpy as np
 
 __all__ = ["linear_interpolation3d", "nn_interpolation3d"]
@@ -19,13 +19,13 @@ def linear_interpolation3d(x, y, z, arr_c):
         z-coordinates in voxel space.
     arr_c : (U,V,W) np.ndarray
         3D array with input values.
+
     Returns
     -------
     c : (N,) np.ndarray
         Interpolated values for [x,y,z].
 
     """
-
     # corner points
     x0 = np.floor(x).astype(int)
     x1 = np.ceil(x).astype(int)
@@ -83,13 +83,13 @@ def nn_interpolation3d(x, y, z, arr_c):
         z-coordinates in voxel space.
     arr_c : (U,V,W) np.ndarray
         3D array with input values.
+
     Returns
     -------
     c : (N,) np.ndarray
         Interpolated values for [x,y,z].
 
     """
-
     # get nearest neighbour grid points
     x0 = np.round(x).astype(int)
     y0 = np.round(y).astype(int)
@@ -102,5 +102,4 @@ def nn_interpolation3d(x, y, z, arr_c):
 
 def _careful_divide(v, v0, v1):
     """Only divide if v0 and v1 are different from each other."""
-
     return (v - v0) / (v1 - v0) if v1 != v0 else v

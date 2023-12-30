@@ -11,7 +11,8 @@ function ft_deface(file_in, file_other, write_mask)
 % This function defaces an MRI image using the SPM function spm_deface and
 % writes the defaced image into the subfolder deface. The same defacing
 % mask can be applied to a list of other images (e.g. useful if the data
-% set consists of multiple echoes).
+% set consists of multiple echoes). SPM12 has to be in the matlab search
+% path.
 
 % constants
 rtol = 1e-5; % relative tolerance

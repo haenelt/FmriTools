@@ -9,7 +9,7 @@ function ft_lpfilter(input, TR, cutoff_lowpass, order)
 %   cutoff_lowpass - lowpass 1/cutoff frequency in Hz.
 %   order          - order of butterworth filter.
 %
-% This function computes a buterworth lowpass filter and applied it to a
+% This function computes a butterworth lowpass filter and applies it to a
 % functional time series. The output gets a prefix l to the file name.
 
 % get fileparts of input

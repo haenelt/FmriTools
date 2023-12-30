@@ -10,7 +10,7 @@ function ft_biopac_regressor(input, biopac_input, path_output, TR)
 %   TR           - repetition time in s.
 %
 % This function computes nuisance regressors from peripheral cardiac and
-% respiratory data (biopac).
+% respiratory data (biopac) using the SPM PhysIO toolbox.
 
 % add paths to the interpreter's search path
 spm('defaults','FMRI');

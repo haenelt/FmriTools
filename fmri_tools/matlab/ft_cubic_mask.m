@@ -11,7 +11,8 @@ function ft_cubic_mask(input, path_output, name_output, c, r)
 %   r           - array of radius along coordinate axes (rx,ry,rz).
 %
 % This function computes a 3D cubic mask within and input array. The array
-% dimensions are taken from the input nifti file. A binary mask is written.
+% dimensions are taken from the input nifti file. A binary mask is written. 
+% SPM12 needs to be in the matlab search path.
 
 % make output folder
 if ~exist(path_output,'dir') 

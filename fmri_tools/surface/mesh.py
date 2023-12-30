@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
+"""Mesh utilities."""
 
-import itertools
 import functools
-import numpy as np
-import nibabel as nb
-from nibabel.freesurfer.io import read_geometry
-from scipy.sparse import csr_matrix, triu, dia_matrix
+import itertools
 
-# local inputs
+import nibabel as nb
+import numpy as np
+from nibabel.freesurfer.io import read_geometry
+from scipy.sparse import csr_matrix, dia_matrix, triu
+
 from ..io.affine import read_vox2ras_tkr
+from ..registration.transform import apply_affine_chunked
 from ..utils.interpolation import linear_interpolation3d
-from ..utils.apply_affine_chunked import apply_affine_chunked
 
 __all__ = ["Mesh"]
 
@@ -49,7 +50,6 @@ class Mesh:
             points.
 
         """
-
         return self.verts[self.faces]
 
     @property
@@ -65,7 +65,6 @@ class Mesh:
             Sparse adjacency matrix.
 
         """
-
         # number of vertices
         nverts = len(self.verts)
 
@@ -113,7 +112,6 @@ class Mesh:
             Vertex indices of each edge.
 
         """
-
         adjm_upper = triu(self.adjm, 1)
         edge_coords = np.zeros((len(adjm_upper.row), 2), dtype=np.int64)
         edge_coords[:, 0] = adjm_upper.row
@@ -134,7 +132,6 @@ class Mesh:
             Sparse adjacency matrix.
 
         """
-
         # number of vertices and faces
         nverts = len(self.verts)
         nfaces = len(self.faces)
@@ -158,7 +155,6 @@ class Mesh:
             Array of face-wise normal vectors.
 
         """
-
         # calculate the normal for all triangles by taking the cross product of
         # the vectors v1-v0 and v2-v0 in each triangle and normalize
         n = np.cross(
@@ -184,7 +180,6 @@ class Mesh:
         .. [1] https://sites.google.com/site/dlampetest/python/calculating-normals-of-a-triangle-mesh-using-numpy
 
         """
-
         # face normals
         n = self.face_normals
 
@@ -205,7 +200,6 @@ class Mesh:
             Array of face areas.
 
         """
-
         # calculate the normal for all triangles by taking the cross product of
         # the vectors v1-v0 and v2-v0 in each triangle and get face area from
         # length
@@ -227,7 +221,6 @@ class Mesh:
             Cotangent for each vertex in each face.
 
         """
-
         tris10 = self.tris[:, 1] - self.tris[:, 0]
         tris20 = self.tris[:, 2] - self.tris[:, 0]
         cots0 = (tris10 * tris20).sum(1) / np.sqrt(
@@ -272,7 +265,6 @@ class Mesh:
         .. [2] https://gallantlab.github.io/pycortex/generated/cortex.polyutils.Surface.html
 
         """
-
         nverts = len(self.verts)
         cots0, cots1, cots2 = self.cotangent
 
@@ -309,7 +301,6 @@ class Mesh:
         .. [1] https://gallantlab.github.io/pycortex/generated/cortex.polyutils.Surface.html
 
         """
-
         first = np.hstack(
             [
                 self.faces[:, 0],
@@ -360,7 +351,6 @@ class Mesh:
             Average edge length.
 
         """
-
         edge_length = np.sqrt(
             ((self.verts[self.edges[:, 0]] - self.verts[self.edges[:, 1]]) ** 2).sum(
                 axis=1
@@ -383,7 +373,6 @@ class Mesh:
             Array of vertex neighbors.
 
         """
-
         return self.adjm.sum(axis=0) / self.adjm.max()
 
     def neighborhood(self, ind):
@@ -400,7 +389,6 @@ class Mesh:
             Array of neighborhood indices.
 
         """
-
         return self.adjm[ind, :].indices
 
     def transform_coords(self, file_cmap, file_target):
@@ -420,7 +408,6 @@ class Mesh:
             Vertex-wise array.
 
         """
-
         nx, ny, nz = nb.load(file_cmap).header["dim"][1:4]
         _, ras2vox = read_vox2ras_tkr(file_cmap)
         vox2ras, _ = read_vox2ras_tkr(file_target)
@@ -476,7 +463,6 @@ class Mesh:
             keep after vertex cleaning.
 
         """
-
         # get indices which will be removed
         ind_tmp = np.arange(len(self.verts))
         ind_remove = list(set(ind_tmp) - set(ind_keep))
@@ -550,7 +536,6 @@ class Mesh:
             Vertex-wise array.
 
         """
-
         return self.vfm.dot(nf_arr)
 
     @staticmethod
@@ -568,7 +553,6 @@ class Mesh:
             Normalized data array.
 
         """
-
         lens = np.sqrt(arr[:, 0] ** 2 + arr[:, 1] ** 2 + arr[:, 2] ** 2)
         lens[lens == 0] = np.nan
         res = np.zeros_like(arr)
@@ -594,7 +578,6 @@ class Mesh:
         Constructor from file name.
 
         """
-
         vtx, fac = read_geometry(file_surf)
 
         return cls(vtx, fac)

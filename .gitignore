@@ -9,6 +9,7 @@
 *.idea
 
 # compiled bytecode
+__pycache__/
 *.pyc
 
 # packaging
@@ -16,3 +17,6 @@ build/
 dist/
 .eggs/
 *.egg-info/
+
+# testing
+*.pytest_cachepy

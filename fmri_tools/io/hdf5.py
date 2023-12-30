@@ -1,30 +1,25 @@
 # -*- coding: utf-8 -*-
+"""Mesh data saved in Hierarchical Data Format version 5 (HDF5)."""
 
-# python standard library inputs
 import os
 from pathlib import Path
 
-# external inputs
-import numpy as np
 import h5py
+import numpy as np
 from nibabel.freesurfer.mghformat import MGHHeader
 
-# local input
+from .filename import get_filename
 from .surf import write_mgh
-from .get_filename import get_filename
 
 __all__ = ["read_hdf5", "write_hdf5", "extract_mgh_from_hdf5"]
-
 
 # data type for writing hdf5
 DATA_TYPE = np.float64  # np.float16
 
 
 def read_hdf5(file_in):
-    """Read HDF5.
-
-    This function reads an hdf5 file which is expected to contain the datasets
-    array, affine and header.
+    """This function reads an hdf5 file which is expected to contain the datasets array,
+    affine and header.
 
     Parameters
     ----------
@@ -47,7 +42,6 @@ def read_hdf5(file_in):
         Image header.
 
     """
-
     # check filename
     if not isinstance(file_in, str) and not isinstance(file_in, Path):
         raise ValueError("Filename must be a string or a pathlib.Path instance!")
@@ -105,7 +99,6 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     None.
 
     """
-
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
         raise ValueError("Filename must be a string or a pathlib.Path instance!")
@@ -162,10 +155,8 @@ def write_hdf5(file_out, arr, affine=None, header=None):
 
 
 def extract_mgh_from_hdf5(file_in, file_out, t, n=None):
-    """Extract MGH from HDF5.
-
-    This function reads an hdf5 file which is expected to contain a 2D or 3D array with
-    dimensions vertex x time point (x cortical layer) plus some header information
+    """This function reads an hdf5 file which is expected to contain a 2D or 3D array
+    with dimensions vertex x time point (x cortical layer) plus some header information
     (optional) and an affine transformation matrix (optional). The third dimension is
     optional. Data from one time point (and one layer) is extracted and saved as mgh
     file. If no affine matrix or header information exists, an identity matrix and an
@@ -193,7 +184,6 @@ def extract_mgh_from_hdf5(file_in, file_out, t, n=None):
     None.
 
     """
-
     # read file
     data, affine, header = read_hdf5(file_in)
 

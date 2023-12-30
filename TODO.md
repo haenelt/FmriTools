@@ -1,10 +1,13 @@
-- [ ] scripts ersetzen
-- [ ] tests
-- [ ] nighres ersetzen
-- [ ] imports neu
-- [ ] dijkstra
-- [ ] sinc
-- [ ] multiple functions in one module
-- [ ] docker
-- [ ] github workflow
+- [ ] remove nipype dependencies
+- [ ] remove pycortex dependencies
+- [ ] remove gbb dependencies
+- [ ] remove nighres dependencies
+- [ ] sort modules (include docstrings, include __all__, try/except if environmental variables are set)
 - [ ] phase regression (see REGRESSION.md)
+- [ ] dijkstra
+- [ ] github workflow
+- [x] remove natsort dependencies
+- [x] update README.md
+- [x] gitignore
+- [x] imports neu
+- [x] get rid of "__main__"

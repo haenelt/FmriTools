@@ -1,16 +1,55 @@
 # -*- coding: utf-8 -*-
+"""Input/Output Nifti volume utilities."""
 
-# external inputs
+import subprocess
+
 import nibabel as nb
 
-__all__ = ['copy_header']
+from .filename import get_filename
+
+__all__ = ["mri_convert", "copy_header"]
+
+
+def mri_convert(file_in, file_out):
+    """This function converts a volume file from freesurfer mgh/mgz to nifti nii/niigz
+    format or vice versa.
+
+    Parameters
+    ----------
+    file_in : str
+        Full path of the input file.
+    path_output : str
+        Full path of the output file.
+
+    Returns
+    -------
+    None.
+
+    """
+    # get filename
+    _, _, ext_in = get_filename(file_in)
+    _, _, ext_out = get_filename(file_out)
+
+    if ext_in or ext_out not in ["nii", "niigz", "mgh", "mgz"]:
+        raise ValueError("Unknown file extension!")
+
+    # convert volume to nifti format
+    command = "mri_convert"
+    command += " --in_type " + ext_in.replace(".", "")
+    command += " --out_type " + ext_out.replace(".", "")
+    command += " --input_volume " + file_in
+    command += " --output_volume " + file_out
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
 
 def copy_header(file_in):
-    """Copy header.
-
-    The function reads the header information from a nifti file and copies it
-    into an empty header. This is done to omit unnecessary header extensions.
+    """The function reads the header information from a nifti file and copies it into an
+    empty header. This is done to omit unnecessary header extensions.
 
     Parameters
     ----------
@@ -23,7 +62,6 @@ def copy_header(file_in):
         Cleaned nibabel header.
 
     """
-
     # load header
     header = nb.load(file_in).header
 

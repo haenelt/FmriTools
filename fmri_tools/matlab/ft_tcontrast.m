@@ -22,7 +22,8 @@ function ft_tcontrast(cond_input, path_contrast, name_output, ...
 % consideration of the hrf amplitude and its temporal derivative in the
 % design matrix. To mitigate latency-induced amplitude bias in the
 % resulting effect sizes, percent signal changes are also computed based on
-% the method by Calhoun et al. 2004.
+% the method by Calhoun et al. 2004. SPM12 has to be in the matlab search
+% path.
 
 if ~exist('name_output', 'var')  
     name_output = '';

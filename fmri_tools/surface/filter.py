@@ -1,26 +1,29 @@
 # -*- coding: utf-8 -*-
+"""Filter scalar values on surface mesh."""
 
-# python standard library inputs
-import os
 import datetime
-import warnings
-import subprocess
 import functools
+import os
 import shutil as sh
-from shutil import copyfile
+import subprocess
+import warnings
 from abc import ABC, abstractmethod
+from shutil import copyfile
 
-# external inputs
 import numpy as np
-from scipy.stats import norm
 from scipy.sparse.linalg import expm, expm_multiply
+from scipy.stats import norm
 
-# local inputs
+from ..io.filename import get_filename
 from .mesh import Mesh
-from ..io.get_filename import get_filename
 
-__all__ = ['HeatKernel', 'IterativeNN', 'Gaussian', 'LaplacianGaussian',
-           'intracortical_smoothing']
+__all__ = [
+    "HeatKernel",
+    "IterativeNN",
+    "Gaussian",
+    "LaplacianGaussian",
+    "intracortical_smoothing",
+]
 
 
 class Filter(ABC):
@@ -67,14 +70,12 @@ class Filter(ABC):
             Filtered data.
 
         """
-
         # parameters
         weight, neighbor = self.kernel
         res = np.zeros_like(data)
 
         # iterative kernel smoothing
         for _ in range(n_iter):
-
             # add weights
             res = np.zeros_like(data)
             for j in range(self._max_neighbor):
@@ -101,7 +102,6 @@ class Filter(ABC):
             Filtered data.
 
         """
-
         return data - self.apply(data, n_iter)
 
     def apply_noise(self, n_iter=1):
@@ -118,7 +118,6 @@ class Filter(ABC):
             Filtered random noise.
 
         """
-
         return self.apply(self._noise, n_iter)
 
     def apply_inverse_noise(self, n_iter=1):
@@ -136,7 +135,6 @@ class Filter(ABC):
             Filtered random noise.
 
         """
-
         data = self._noise
 
         return data - self.apply(data, n_iter)
@@ -164,7 +162,6 @@ class Filter(ABC):
         1093--1103 (2005).
 
         """
-
         data_filt = self.apply_noise(n_iter)
         edges = self._mesh.edges
         edge_length = self._mesh.avg_edge_length
@@ -173,19 +170,17 @@ class Filter(ABC):
         var_s = np.var(data_filt)
         var_ratio = 1 - var_ds / (2 * var_s)
 
-        return edge_length * np.sqrt(-2*np.log(2) / np.log(var_ratio))
+        return edge_length * np.sqrt(-2 * np.log(2) / np.log(var_ratio))
 
     @property
     def _noise(self):
         """Generate random gaussian noise."""
-
         return np.random.normal(0, 1, len(self.verts))
 
     @property
     @functools.lru_cache()
     def _max_neighbor(self):
         """Maximum number of first order neighbors."""
-
         return np.max(self._mesh.n_neighbors).astype(int)
 
 
@@ -244,7 +239,6 @@ class HeatKernel(Filter):
             Correspond array containing vertex neighbors.
 
         """
-
         # parameters
         # self._max_neighbor + 1 because the current index is included as well
         nverts = len(self.verts)
@@ -252,29 +246,27 @@ class HeatKernel(Filter):
         weight = np.zeros((nverts, self._max_neighbor + 1))
 
         for i in range(nverts):
-
             # vertex neighbors
             nn = self._mesh.neighborhood(i)
             degree = len(nn)
 
             # get distance to vertex neighbors
             distance = [
-                float(np.sum((self.verts[n, :] - self.verts[i, :]) ** 2)) for n
-                in nn]
+                float(np.sum((self.verts[n, :] - self.verts[i, :]) ** 2)) for n in nn
+            ]
             distance.insert(0, 0)
             distance = np.array(distance)
 
             # heat kernel weighting for each neighbor and corresponding
             # neighbors
-            weight[i, :1 + degree] = self._kernel_shape(distance, self.sigma)
-            neighbor[i, :1 + degree] = np.append([i], nn)
+            weight[i, : 1 + degree] = self._kernel_shape(distance, self.sigma)
+            neighbor[i, : 1 + degree] = np.append([i], nn)
 
         return weight, neighbor
 
     @staticmethod
     def _kernel_shape(x, s):
         """Heat kernel shape."""
-
         return np.exp(-x / (2 * s**2)) / np.sum(np.exp(-x / (2 * s**2)))
 
 
@@ -317,7 +309,6 @@ class IterativeNN(Filter):
             Correspond array containing vertex neighbors.
 
         """
-
         # parameters
         # self._max_neighbor + 1 because the current index is included as well
         nverts = len(self.verts)
@@ -325,14 +316,13 @@ class IterativeNN(Filter):
         weight = np.zeros((nverts, self._max_neighbor + 1))
 
         for i in range(nverts):
-
             # vertex neighbors
             nn = self._mesh.neighborhood(i)
             degree = len(nn)
 
             # weighting for each neighbor and corresponding neighbors
-            weight[i, :1 + degree] = 1 / (1 + degree)
-            neighbor[i, :1 + degree] = np.append([i], nn)
+            weight[i, : 1 + degree] = 1 / (1 + degree)
+            neighbor[i, : 1 + degree] = np.append([i], nn)
 
         return weight, neighbor
 
@@ -385,8 +375,7 @@ class Gaussian(Filter):
             Heat diffusion operator.
 
         """
-
-        exponent = -self.t*self._mesh.laplace_beltrami
+        exponent = -self.t * self._mesh.laplace_beltrami
         if not self.full:
             return exponent
 
@@ -411,11 +400,9 @@ class Gaussian(Filter):
             Filtered data.
 
         """
-
         res = data.copy()
         for _ in range(n_iter):
-            res = self.kernel.dot(res) if self.full else \
-                expm_multiply(self.kernel, res)
+            res = self.kernel.dot(res) if self.full else expm_multiply(self.kernel, res)
         return res
 
 
@@ -468,7 +455,6 @@ class LaplacianGaussian(Gaussian):
             Filtered data.
 
         """
-
         res = data.copy()
         laplacian = self._mesh.laplace_beltrami
         for _ in range(n_iter):
@@ -517,7 +503,6 @@ class LaplacianGaussian(Gaussian):
         .. [1] http://www.talkstats.com/threads/convert-mean-and-variance-of-lognormal-to-normal-distribution.2757/
 
         """
-
         indices = np.arange(len(self.verts))
         data_filt = self.apply_noise(n_iter)
 
@@ -543,8 +528,7 @@ class LaplacianGaussian(Gaussian):
                 nn = self._mesh.neighborhood(ind)
                 nn_min = nn[np.argmin(data_filt[nn])]
                 if data_filt[nn_min] < data_filt[ind]:
-                    l_tmp += self._euclidean_dist(self.verts[ind],
-                                                  self.verts[nn_min])
+                    l_tmp += self._euclidean_dist(self.verts[ind], self.verts[nn_min])
                     ind = nn_min
                 else:
                     length[i] = l_tmp
@@ -555,31 +539,36 @@ class LaplacianGaussian(Gaussian):
         data = np.log(length)  # transform to log-normal
         mu, sigma = norm.fit(data)
 
-        mean = np.exp(mu + sigma ** 2 / 2)
-        variance = np.exp(sigma ** 2 + 2 * mu) * (np.exp(sigma ** 2) - 1)
+        mean = np.exp(mu + sigma**2 / 2)
+        variance = np.exp(sigma**2 + 2 * mu) * (np.exp(sigma**2) - 1)
 
-        return {'period': 2 * mean,
-                'freq': 1 / (2 * mean),
-                'mean': mean,
-                'variance': variance,
-                'length': length,
-                }
+        return {
+            "period": 2 * mean,
+            "freq": 1 / (2 * mean),
+            "mean": mean,
+            "variance": variance,
+            "length": length,
+        }
 
     @staticmethod
     def _euclidean_dist(a, b):
         """Calculate euclidean distance between two points."""
-
         return np.sqrt(np.sum((a - b) ** 2))
 
 
-def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
-                            rad_start=0, rad_size=1, tan_weights="gauss",
-                            cleanup=True):
-    """Intracortical smoothing.
-
-    This function applies the freesurfer function mris_smooth_intracortical
-    (available since FreeSurfer 7) which enables simultaneous smoothing in
-    radial and tangential direction of the cortical sheet. [1]
+def intracortical_smoothing(
+    file_surf,
+    file_overlay,
+    file_out,
+    tan_size=0,
+    rad_start=0,
+    rad_size=1,
+    tan_weights="gauss",
+    cleanup=True,
+):
+    """This function applies the freesurfer function mris_smooth_intracortical
+    (available since FreeSurfer 7) which enables simultaneous smoothing in radial and
+    tangential direction of the cortical sheet. [1]
 
     Parameters
     ----------
@@ -627,12 +616,12 @@ def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
     601--614 (2019).
 
     """
-
     # check output file name
     path_output, name_output, ext_output = get_filename(file_out)
     if ext_output not in [".mgh", ".mgz"]:
-        raise ValueError("Output file name is expected to have the file "
-                         "extension mgh or mgz!")
+        raise ValueError(
+            "Output file name is expected to have the file " "extension mgh or mgz!"
+        )
 
     # make output folder
     create_folder = 0
@@ -642,7 +631,7 @@ def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
 
     # create temporary folder
     tmp1 = np.random.randint(0, 10, 5)
-    tmp1 = ''.join(str(i) for i in tmp1)
+    tmp1 = "".join(str(i) for i in tmp1)
     tmp2 = datetime.datetime.now().strftime("%S%f")
     tmp_string = tmp1 + tmp2
     path_temp = os.path.join(path_output, "tmp_" + tmp_string)
@@ -668,19 +657,30 @@ def intracortical_smoothing(file_surf, file_overlay, file_out, tan_size=0,
 
     # unix command
     command = [
-        'mris_smooth_intracortical',
-        '--surf_dir', path_surf,
-        '--surf_name', 'surf_*',
-        '--overlay_dir', path_overlay,
-        '--overlay_name', 'overlay_*.mgh',
-        '--output_dir', path_output,
-        '--output_name', name_output + ext_output,
-        '--tan-size', str(tan_size),
-        '--rad-size', str(rad_size),
-        '--rad-start', str(rad_start),
-        '--tan-weights', str(tan_weights)]
+        "mris_smooth_intracortical",
+        "--surf_dir",
+        path_surf,
+        "--surf_name",
+        "surf_*",
+        "--overlay_dir",
+        path_overlay,
+        "--overlay_name",
+        "overlay_*.mgh",
+        "--output_dir",
+        path_output,
+        "--output_name",
+        name_output + ext_output,
+        "--tan-size",
+        str(tan_size),
+        "--rad-size",
+        str(rad_size),
+        "--rad-start",
+        str(rad_start),
+        "--tan-weights",
+        str(tan_weights),
+    ]
 
-    command = ' '.join(command)
+    command = " ".join(command)
 
     # run smoothing
     try:

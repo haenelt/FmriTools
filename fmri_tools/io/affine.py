@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
+"""Header transformations."""
 
-# python standard library inputs
 from pathlib import Path
 
-# external inputs
-import numpy as np
 import nibabel as nb
+import numpy as np
 from numpy.linalg import inv
 
-__all__ = ['read_vox2vox', 'read_vox2ras_tkr', 'vox2ras_tkr']
+__all__ = ["read_vox2vox", "read_vox2ras_tkr", "vox2ras_tkr"]
 
 
 def read_vox2vox(input_lta):
-    """Read vox2vox.
-
-    This function reads a freesurfer lta file and extracts the vox2vox transformation
+    """This function reads a freesurfer lta file and extracts the vox2vox transformation
     matrix as numpy array.
 
     Parameters
@@ -24,14 +21,13 @@ def read_vox2vox(input_lta):
 
     Returns
     -------
-    M : ndarray
+    trans_formward : ndarray
         forwards affine transformation matrix.
-    Minv : ndarray
+    trans_inverse : ndarray
         inverse of M.
 
     """
-
-    with open(input_lta, "r") as f:
+    with open(input_lta, "r", encoding="utf-8") as f:
         x = f.readlines()
 
         # it is assumed that the vox2vox transformation matrix is found at
@@ -39,26 +35,22 @@ def read_vox2vox(input_lta):
         transformation = x[8:12]
 
     # convert matrix to numpy array
-    M = np.zeros((4, 4))
-    for i in range(len(transformation)):
-        x = transformation[i].split()
-
-        M[i, 0] = float(x[0])
-        M[i, 1] = float(x[1])
-        M[i, 2] = float(x[2])
-        M[i, 3] = float(x[3])
+    trans_forward = np.zeros((4, 4))
+    for i, trans_ in enumerate(transformation):
+        trans_forward[i, 0] = float(trans_.split()[0])
+        trans_forward[i, 1] = float(trans_.split()[1])
+        trans_forward[i, 2] = float(trans_.split()[2])
+        trans_forward[i, 3] = float(trans_.split()[3])
 
         # get inverted transformation matrix (pseudoinverse)
-        Minv = np.linalg.pinv(M)
+        trans_inverse = np.linalg.pinv(trans_forward)
 
-    return M, Minv
+    return trans_forward, trans_inverse
 
 
 def read_vox2ras_tkr(input_vol):
-    """Calculate vox2ras_tkr from header information.
-
-    This function computes the vox2ras-tkr transform from header information of a Nifti
-    or MGH file.
+    """This function computes the vox2ras-tkr transform from header information of a
+    Nifti or MGH file.
 
     Parameters
     ----------
@@ -73,7 +65,6 @@ def read_vox2ras_tkr(input_vol):
         Inverse of v2rtkr.
 
     """
-
     hdr = nb.load(input_vol).header
     ext = Path(input_vol).suffixes
     if ".nii" in ext:
@@ -89,9 +80,7 @@ def read_vox2ras_tkr(input_vol):
 
 
 def vox2ras_tkr(dims, ds):
-    """Calculate vox2ras_tkr transformation.
-
-    This function computes the vox2ras-tkr transform. The calculation follows the
+    """This function computes the vox2ras-tkr transform. The calculation follows the
     implementation found in the MGHHeader class
     (nibabel.freesurfer.mghformat.MGHHeader.get_vox2ras_tkr).
 
@@ -110,13 +99,14 @@ def vox2ras_tkr(dims, ds):
         Inverse of v2rtkr.
 
     """
-
     ns = np.asarray(dims) * np.asarray(ds) / 2.0
     v2rtkr = np.array(
-        [[-ds[0], 0, 0, ns[0]],
-         [0, 0, ds[2], -ns[2]],
-         [0, -ds[1], 0, ns[1]],
-         [0, 0, 0, 1]],
+        [
+            [-ds[0], 0, 0, ns[0]],
+            [0, 0, ds[2], -ns[2]],
+            [0, -ds[1], 0, ns[1]],
+            [0, 0, 0, 1],
+        ],
         dtype=np.float32,
     )
     r2vtkr = inv(v2rtkr)

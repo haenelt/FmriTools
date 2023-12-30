@@ -15,7 +15,7 @@ function ft_regress_physio(input, regressor, TR, cutoff_highpass, ...
 %
 % This function computes nuisance regression of resting-state data from
 % predefined regressors. The output is the residual time series from the
-% GLM.
+% GLM. SPM12 has to be in the matlab search path.
 
 % default parameter
 if ~exist('cleanup','var')  

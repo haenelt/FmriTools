@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
+"""Hemodynamic response function."""
 
-# external inputs
 import numpy as np
 from scipy.stats import gamma
 
+__all__ = ["hrf_spm"]
+
 
 def hrf_spm(TR, p=(6, 16, 1, 1, 6, 0, 32)):
-    """An implementation of spm_hrf.m from the SPM distribution. The code is
-    taken from [1]_.
+    """An implementation of spm_hrf.m from the SPM distribution. The code is taken from
+    [1]_.
 
     Parameters
     ----------
@@ -35,7 +37,6 @@ def hrf_spm(TR, p=(6, 16, 1, 1, 6, 0, 32)):
     .. [1] https://github.com/poldracklab/poldracklab-base/blob/master/fmri/spm_hrf.py
 
     """
-
     p = [float(x) for x in p]
     fMRI_T = 16.0
     TR = float(TR)

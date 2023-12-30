@@ -22,3 +22,12 @@
 ## v1.0.3
 - freeze version for odc manuscript
 - include functions for time series mapping
+
+## v2.0.0
+- major refactoring of modules
+- scripts are rewritten as modules and workflows
+- remove nighres dependency
+- remove nipype dependency
+- remove pycortex dependency
+- remove gbb dependency
+- remove natsort dependency

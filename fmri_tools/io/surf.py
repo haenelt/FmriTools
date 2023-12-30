@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
+"""Input/Output surface utilities."""
 
-# python standard library inputs
 import datetime
 import os
 import shutil as sh
+import subprocess
 import sys
 from pathlib import Path
 
-# external inputs
-import numpy as np
 import nibabel as nb
+import numpy as np
 from gbb.neighbor.nn_2d import nn_2d
 from nibabel.freesurfer.io import (
     read_geometry,
@@ -21,8 +21,7 @@ from nibabel.freesurfer.io import (
 from nibabel.freesurfer.mghformat import MGHHeader
 from scipy.spatial import Delaunay
 
-# local inputs
-from .get_filename import get_filename
+from .filename import get_filename
 
 __all__ = [
     "write_mgh",
@@ -40,10 +39,8 @@ __all__ = [
 
 
 def write_mgh(file_out, arr, affine=None, header=None):
-    """Write MGH.
-
-    This function adds two empty dimensions to an array and saves it as a
-    freesurfer mgh surface file.
+    """This function adds two empty dimensions to an array and saves it as a freesurfer
+    mgh surface file.
 
     Parameters
     ----------
@@ -67,7 +64,6 @@ def write_mgh(file_out, arr, affine=None, header=None):
     None.
 
     """
-
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
         raise ValueError("Filename must be a string or a pathlib.Path instance!")
@@ -96,10 +92,8 @@ def write_mgh(file_out, arr, affine=None, header=None):
 
 
 def read_mgh(file_in):
-    """Read MGH.
-
-    This function reads a surface mgh file and removes empty dimensions from the
-    data array.
+    """This function reads a surface mgh file and removes empty dimensions from the data
+    array.
 
     Parameters
     ----------
@@ -122,7 +116,6 @@ def read_mgh(file_in):
         Image header.
 
     """
-
     # check filename
     if not isinstance(file_in, str) and not isinstance(file_in, Path):
         raise ValueError("Filename must be a string or a pathlib.Path instance!")
@@ -142,10 +135,7 @@ def read_mgh(file_in):
 
 
 def write_label(file_out, arr_label):
-    """Write label.
-
-    This function writes a textfile which can be read as label file in
-    freesurfer.
+    """This function writes a textfile which can be read as label file in freesurfer.
 
     Parameters
     ----------
@@ -165,7 +155,6 @@ def write_label(file_out, arr_label):
     None.
 
     """
-
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
         raise ValueError("Filename must be a string or a pathlib.Path instance!")
@@ -181,7 +170,7 @@ def write_label(file_out, arr_label):
     # number of labels
     n_label = len(arr_label)
 
-    with open(file_out, "w") as f:
+    with open(file_out, "w", encoding="utf-8") as f:
         f.write("#!ascii label  , from subject  vox2ras=TkReg\n")
         f.write(str(n_label) + "\n")
         for i in range(n_label):
@@ -189,11 +178,9 @@ def write_label(file_out, arr_label):
 
 
 def read_patch(file_in):
-    """Read patch.
-
-    This function reads an freesurfer patch saved in binary format. It is an
-    equivalent to the matlab function read_patch in the ./freesurfer/matlab
-    folder. Data is read in big endian order.
+    """This function reads an freesurfer patch saved in binary format. It is an
+    equivalent to the matlab function read_patch in the ./freesurfer/matlab folder. Data
+    is read in big endian order.
 
     Parameters
     ----------
@@ -212,7 +199,6 @@ def read_patch(file_in):
         index of each node.
 
     """
-
     # load data
     data_array_int = np.fromfile(file_in, np.dtype(">i"))
     data_array_float = np.fromfile(file_in, np.dtype(">f"))
@@ -244,9 +230,7 @@ def read_patch(file_in):
 
 
 def patch_as_mesh(file_out, file_patch):
-    """Patch as Mesh.
-
-    This function reads coordinates from a flattened freesurfer patch and creates a
+    """This function reads coordinates from a flattened freesurfer patch and creates a
     triangular surface mesh using Delaunay triangulation.
 
     Parameters
@@ -261,8 +245,7 @@ def patch_as_mesh(file_out, file_patch):
     None.
 
     """
-
-    x, y, _, ind = read_patch(file_patch)
+    x, y, _, _ = read_patch(file_patch)
     coords = np.zeros((len(x), 2))
     coords[:, 0] = x
     coords[:, 1] = y
@@ -278,9 +261,7 @@ def patch_as_mesh(file_out, file_patch):
 
 
 def mgh_to_patch(file_out, file_mgh, file_patch):
-    """MGH to Patch.
-
-    This function reads an MGH overlay and saves only coordinates that match with the
+    """This function reads an MGH overlay and saves only coordinates that match with the
     corresponding freesurfer patch.
 
     Parameters
@@ -297,7 +278,6 @@ def mgh_to_patch(file_out, file_mgh, file_patch):
     None.
 
     """
-
     _, _, _, ind = read_patch(file_patch)
     arr, affine, header = read_mgh(file_mgh)
     arr = arr[ind]
@@ -305,9 +285,7 @@ def mgh_to_patch(file_out, file_mgh, file_patch):
 
 
 def curv_to_patch(file_out, file_curv, file_patch):
-    """Curv to Patch.
-
-    This function reads a freesurfer curvature file and saves only coordinates that
+    """This function reads a freesurfer curvature file and saves only coordinates that
     match with the corresponding freesurfer patch.
 
     Parameters
@@ -324,7 +302,6 @@ def curv_to_patch(file_out, file_curv, file_patch):
     None.
 
     """
-
     _, _, _, ind = read_patch(file_patch)
     curv = read_morph_data(file_curv)
     curv = curv[ind]
@@ -332,9 +309,7 @@ def curv_to_patch(file_out, file_curv, file_patch):
 
 
 def label_to_patch(file_out, file_label, file_patch):
-    """Label to Patch.
-
-    This function reads a freesurfer label file and saves only coordinates that match
+    """This function reads a freesurfer label file and saves only coordinates that match
     with the corresponding freesurfer patch.
 
     Parameters
@@ -351,7 +326,6 @@ def label_to_patch(file_out, file_label, file_patch):
     None.
 
     """
-
     _, _, _, ind = read_patch(file_patch)
     label = read_label(file_label)
     label_new = [np.where(ind == i)[0][0] for i in label]
@@ -359,9 +333,7 @@ def label_to_patch(file_out, file_label, file_patch):
 
 
 def label_as_patch(file_ref, file_label, file_out, cleanup=True):
-    """Convert label file to a patch file.
-
-    Uses the FreeSurfer label2patch function to convert a label file into a *.path.3d
+    """Uses the FreeSurfer label2patch function to convert a label file into a *.path.3d
     file. This can be useful for surface flattening of a region defined by a label file.
 
     Parameters
@@ -380,7 +352,6 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
     None.
 
     """
-
     # create temporary folder
     tmp1 = np.random.randint(0, 10, 5)
     tmp1 = "".join(str(i) for i in tmp1)
@@ -405,19 +376,19 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
     sh.copy2(file_ref, os.path.join(path_surf, hemi + "." + "surf"))
 
     # convert label to patch
-    os.system(
-        "label2patch"
-        + " -sdir "
-        + str(path_temp)
-        + " -surf surf"
-        + " subj"
-        + " "
-        + str(hemi)
-        + " "
-        + str(file_label)
-        + " "
-        + str(file_out)
-    )
+    command = "label2patch"
+    command += " -sdir " + str(path_temp)
+    command += " -surf surf"
+    command += " subj"
+    command += " " + str(hemi)
+    command += " " + str(file_label)
+    command += " " + str(file_out)
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     # delete temporary files
     if cleanup:
@@ -427,9 +398,7 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
 def write_vector_field(
     vtx0, vtx1, adjm, file_out, meta_data=None, step_size=100, shape="line"
 ):
-    """Write vector field.
-
-    This function generates a surface mesh to visualize a vector field as a
+    """This function generates a surface mesh to visualize a vector field as a
     triangular mesh.
 
     Parameters
@@ -455,9 +424,8 @@ def write_vector_field(
     None.
 
     """
-
     # array containing a list of considered vectors
-    t = np.arange(0, len(vtx0), step_size)
+    vectors = np.arange(0, len(vtx0), step_size)
 
     # initialise faces for specific shape
     if shape == "prism":
@@ -481,34 +449,33 @@ def write_vector_field(
 
     v_res = []
     f_res = []
-    for i in range(len(t)):
-
+    for i, vec in enumerate(vectors):
         # get index from nearest neighbour of a given vertex
-        nn = nn_2d(t[i], adjm, 0)
+        nn = nn_2d(vec, adjm, 0)
         nn = nn[:2]
 
         # get all vertex points for specific shape
         if shape == "prism":
-            A = list(vtx0[t[i]])
+            A = list(vtx0[vec])
             B = list(vtx0[nn[0]])
             C = list(vtx0[nn[1]])
-            D = list(vtx1[t[i]])
+            D = list(vtx1[vec])
             E = list(vtx1[nn[0]])
             F = list(vtx1[nn[1]])
             v_new = [A, B, C, D, E, F]
         elif shape == "triangle":
-            A = list(vtx0[t[i]])
+            A = list(vtx0[vec])
             B = list(vtx0[nn[0]])
-            C = list(vtx1[t[i]])
+            C = list(vtx1[vec])
             v_new = [A, B, C]
         elif shape == "line":
-            A = list(vtx0[t[i]])
-            B = list(vtx1[t[i]])
+            A = list(vtx0[vec])
+            B = list(vtx1[vec])
             v_new = [A, B]
 
         # update faces
         if i > 0:
-            for j in range(len(f_new)):
+            for j, _ in enumerate(f_new):
                 f_new[j] = [x + f_iter for x in f_new[j]]
 
         # update resulting vertex and face list
@@ -526,12 +493,9 @@ def write_vector_field(
 def write_white2pial(
     file_out, file_white, file_pial, adjm, step_size=100, shape="line"
 ):
-    """Plot white to pial.
-
-    This function generates lines between corresponding vertices at the white
-    and pial surface to visualize the shift between matched vertices caused by
-    realigning surfaces independently. You can either construct prisms,
-    triangles or lines.
+    """This function generates lines between corresponding vertices at the white and
+    pial surface to visualize the shift between matched vertices caused by realigning
+    surfaces independently. You can either construct prisms, triangles or lines.
 
     Parameters
     ----------
@@ -553,13 +517,12 @@ def write_white2pial(
     None.
 
     """
-
     # read geometry
-    vtx_white, fac_white, header_white = read_geometry(file_white, read_metadata=True)
-    vtx_pial, fac_pial = read_geometry(file_pial)
+    vtx_white, _, header_white = read_geometry(file_white, read_metadata=True)
+    vtx_pial, _ = read_geometry(file_pial)
 
     # array containing a list of considered vertices
-    t = np.arange(0, len(vtx_white), step_size)
+    vectors = np.arange(0, len(vtx_white), step_size)
 
     # initialise faces for specific shape
     if shape == "prism":
@@ -583,34 +546,33 @@ def write_white2pial(
 
     vtx_res = []
     fac_res = []
-    for i in range(len(t)):
-
+    for i, vec in enumerate(vectors):
         # get index from nearest neighbour of a given vertex
-        nn = nn_2d(t[i], adjm, 0)
+        nn = nn_2d(vec, adjm, 0)
         nn = nn[:2]
 
         # get all vertex points for specific shape
         if shape == "prism":
-            A = list(vtx_white[t[i]])
+            A = list(vtx_white[vec])
             B = list(vtx_white[nn[0]])
             C = list(vtx_white[nn[1]])
-            D = list(vtx_pial[t[i]])
+            D = list(vtx_pial[vec])
             E = list(vtx_pial[nn[0]])
             F = list(vtx_pial[nn[1]])
             vtx_new = [A, B, C, D, E, F]
         elif shape == "triangle":
-            A = list(vtx_white[t[i]])
+            A = list(vtx_white[vec])
             B = list(vtx_white[nn[0]])
-            C = list(vtx_pial[t[i]])
+            C = list(vtx_pial[vec])
             vtx_new = [A, B, C]
         elif shape == "line":
-            A = list(vtx_white[t[i]])
-            B = list(vtx_pial[t[i]])
+            A = list(vtx_white[vec])
+            B = list(vtx_pial[vec])
             vtx_new = [A, B]
 
         # update faces
         if i > 0:
-            for j in range(len(fac_new)):
+            for j, _ in enumerate(fac_new):
                 fac_new[j] = [x + fac_iter for x in fac_new[j]]
 
         # update resulting vertex and face list
