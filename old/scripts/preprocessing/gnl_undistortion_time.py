@@ -17,13 +17,13 @@ import shutil as sh
 
 import nibabel as nb
 import numpy as np
-from nipype.interfaces.fsl import ExtractROI
 
 import fmri_tools
 
 from ..io.filename import get_filename
 from ..preprocessing.gnl_correction import gnl_correction
 from ..registration.transform import apply_warp
+from ..utils.roi import extract_vol
 
 # input
 file_in = [
@@ -51,13 +51,7 @@ for file_ in file_in:
     file_out = os.path.join(path_file, name_file + "_gnlcorr" + ext_file)
 
     # extract first volume
-    fslroi = ExtractROI()
-    fslroi.inputs.in_file = file_
-    fslroi.inputs.roi_file = file_vol0
-    fslroi.inputs.output_type = "NIFTI"
-    fslroi.inputs.t_min = 0
-    fslroi.inputs.t_size = 1
-    fslroi.run()
+    extract_vol(file_, file_vol0, 0, 1)
 
     # exexute gnl correction
     gnl_correction(

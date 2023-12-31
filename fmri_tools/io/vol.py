@@ -30,8 +30,8 @@ def mri_convert(file_in, file_out):
     _, _, ext_in = get_filename(file_in)
     _, _, ext_out = get_filename(file_out)
 
-    if ext_in or ext_out not in ["nii", "niigz", "mgh", "mgz"]:
-        raise ValueError("Unknown file extension!")
+    if ext_in or ext_out not in [".nii", ".nii.gz", ".mgh", ".mgz"]:
+        raise ValueError("Invalid file extension!")
 
     # convert volume to nifti format
     command = "mri_convert"
