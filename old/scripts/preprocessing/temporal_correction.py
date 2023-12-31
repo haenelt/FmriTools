@@ -7,7 +7,7 @@ time series. The script needs an installation of afni.
 
 """
 
-from ..preprocessing.slice_timing_correction import slice_timing_correction
+from ..preprocessing.timeseries import slice_timing_correction
 
 # input
 file_in = [

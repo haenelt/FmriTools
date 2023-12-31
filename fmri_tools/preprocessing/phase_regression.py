@@ -44,6 +44,10 @@
     - the sigma_S and sigma_phase estimates were derived from the SD of the time series 
       by notch filtering S(i) and phase(i) at the paradigm frequency and its first four 
       harmonics, and assuming the remaining variation was due to noise
+    - sigma_phi and sigma_m are determined individually for each voxel by taking the FT 
+      of the time series, setting the task frequency and its first four harmonics to 
+      zero, and then calculating the variance of the filtered time series after taking 
+      the IFT
     - it is clear that increase or decrease of BOLD signal magnitude can give rise to 
       phase changes of either sign, presumably depending on the voxel's vascular 
       orientation with respect to the field
