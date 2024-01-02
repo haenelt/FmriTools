@@ -24,11 +24,11 @@ import os
 import nibabel as nb
 import numpy as np
 from nighres.intensity import phase_unwrapping
-from nipype.interfaces import afni
 
 from ..io.filename import get_filename
 from ..matlab import MatlabCommand
 from ..preprocessing.deweight_mask import deweight_mask
+from ..preprocessing.moco import volreg_afni
 from ..utils.get_mean import get_mean
 from ..utils.get_std import get_std
 
@@ -53,17 +53,16 @@ if not os.path.exists(path_moco):
     os.makedirs(path_moco)
 
 # motion correction of magnitude data
-moco = afni.Volreg()
-moco.inputs.in_file = os.path.join(path_magn, name_magn + ext_magn)
-moco.inputs.out_file = os.path.join(path_magn, "u" + name_magn + ext_magn)
-moco.inputs.args = "-base 0 -twopass -float -clipit"
-moco.inputs.zpad = 4
-moco.inputs.interp = "Fourier"
-moco.inputs.outputtype = "NIFTI"
-moco.inputs.md1d_file = os.path.join(path_moco, "max_disp.1D")
-moco.inputs.oned_file = os.path.join(path_moco, "moco_params.1D")
-moco.inputs.oned_matrix_save = os.path.join(path_moco, "moco_matrix.1D")
-moco.run()
+volreg_afni(os.path.join(path_magn, name_magn + ext_magn))
+os.rename(
+    os.path.join(path_magn, "max_disp.1D"), os.path.join(path_moco, "max_disp.1D")
+)
+os.rename(
+    os.path.join(path_magn, "moco_params.1D"), os.path.join(path_moco, "moco_params.1D")
+)
+os.rename(
+    os.path.join(path_magn, "moco_matrix.1D"), os.path.join(path_moco, "moco_matrix.1D")
+)
 
 # plot motion parameters
 matlab = MatlabCommand(
