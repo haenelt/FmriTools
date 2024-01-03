@@ -9,7 +9,9 @@ import numpy as np
 import numpy.linalg as npl
 from numpy.matlib import repmat
 
-__all__ = ["apply_affine_chunked", "scanner_transform", "apply_warp"]
+from ..io.filename import get_filename
+
+__all__ = ["apply_affine_chunked", "scanner_transform", "apply_warp", "apply_header"]
 
 
 def apply_affine_chunked(aff, pts, chunk_size=10000):
@@ -180,6 +182,43 @@ def apply_warp(file_in, file_field, file_out):
     command += " --out=" + str(file_out)
     command += " --warp=" + str(file_field)
     command += " --interp=spline --rel"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def apply_header(file_source, file_target, file_out, interp_method="nearest"):
+    """Apply transformation to target image based on header information using
+    FreeSurfer.
+
+    Parameters
+    ----------
+    file_source : str
+        File name of input image.
+    file_target : str
+        File name of target image.
+    file_out : str
+        File name of output image.
+    interp_method : str, optional
+        Interpolation method (nearest, trilin, cubic), by default "nearest"
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "mri_vol2vol"
+    command += " --no-save-reg"
+    command += f" --interp {interp_method}"
+    command += " --regheader"
+    command += f" --mov {file_source}"
+    command += f" --targ {file_target}"
+    command += f" --o {file_out}"
 
     print("Execute: " + command)
     try:

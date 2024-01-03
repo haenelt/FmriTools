@@ -32,7 +32,6 @@ import shutil as sh
 
 import nibabel as nb
 from nighres.registration import apply_coordinate_mappings, embedded_antsreg
-from nipype.interfaces.freesurfer import ApplyVolTransform
 from sh import gunzip
 
 from ..io.vol import mri_convert
@@ -40,7 +39,7 @@ from ..registration.clean_ana import clean_ana
 from ..registration.cmap import clean_coordinate_mapping, expand_coordinate_mapping
 from ..registration.mask_ana import mask_ana
 from ..registration.mask_epi import mask_epi
-from ..registration.transform import scanner_transform
+from ..registration.transform import apply_header, scanner_transform
 from ..utils.bias import remove_bias_ants
 
 # input data
@@ -134,13 +133,12 @@ output = nb.Nifti1Image(mask_array, mask.affine, mask.header)
 nb.save(output, os.path.join(path_t1, "mask.nii"))
 
 # transform to mp2rage space via scanner coordinates
-applyreg = ApplyVolTransform()
-applyreg.inputs.source_file = os.path.join(path_t1, "mask.nii")
-applyreg.inputs.target_file = os.path.join(path_t1, "T1.nii")
-applyreg.inputs.transformed_file = os.path.join(path_t1, "mask.nii")
-applyreg.inputs.reg_header = True
-applyreg.inputs.interp = "nearest"
-applyreg.run()
+apply_header(
+    os.path.join(path_t1, "mask.nii"),
+    os.path.join(path_t1, "T1.nii"),
+    os.path.join(path_t1, "mask.nii"),
+    interp_method="nearest",
+)
 
 # convert orig to nifti
 mri_convert(os.path.join(path_orig, "orig.mgz"), os.path.join(path_orig, "orig.nii"))

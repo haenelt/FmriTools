@@ -40,12 +40,12 @@ import os
 
 from cortex.polyutils import Surface
 from nibabel.freesurfer.io import read_geometry
-from nipype.interfaces.freesurfer import ApplyVolTransform
 
 from ..layer.calc_equivol_surf import calc_equivol_surf
 from ..mapping.map2grid import map2grid
 from ..mapping.morph2dense import morph2dense
 from ..matlab import MatlabCommand
+from ..registration.transform import apply_header
 from ..segmentation.get_ribbon_fsurf import get_ribbon_fsurf
 from ..segmentation.get_thickness_fsurf import get_thickness_fsurf
 from ..segmentation.include_pial_correction import include_pial_correction
@@ -149,16 +149,12 @@ if part == 1:
     matlab.run()
 
     # bring skullstrip_mask in conformed space (mri_vol2vol, NN)
-    transmask = ApplyVolTransform()
-    transmask.inputs.source_file = os.path.join(path_skull, "skullstrip_mask.nii")
-    transmask.inputs.target_file = os.path.join(path, sub, "mri", "orig.mgz")
-    transmask.inputs.reg_header = True
-    transmask.inputs.interp = "nearest"
-    transmask.inputs.transformed_file = os.path.join(
-        path, sub, "mri", "skullstrip_mask.nii"
+    apply_header(
+        os.path.join(path_skull, "skullstrip_mask.nii"),
+        os.path.join(path, sub, "mri", "orig.mgz"),
+        os.path.join(path, sub, "mri", "skullstrip_mask.nii"),
+        interp_method="nearest",
     )
-    transmask.inputs.args = "--no-save-reg"
-    transmask.run()
 
     # apply skullstrip mask to T1 and save as brainmask
     multiply_images(

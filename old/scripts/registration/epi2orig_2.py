@@ -25,7 +25,6 @@ import shutil as sh
 
 import nibabel as nb
 from nighres.registration import apply_coordinate_mappings, embedded_antsreg
-from nipype.interfaces.freesurfer import ApplyVolTransform
 from sh import gunzip
 
 from ..io.filename import get_filename
@@ -34,6 +33,7 @@ from ..registration.clean_ana import clean_ana
 from ..registration.cmap import clean_coordinate_mapping, expand_coordinate_mapping
 from ..registration.mask_ana import mask_ana
 from ..registration.mask_epi import mask_epi
+from ..registration.transform import apply_header
 from ..utils.bias import remove_bias_ants
 
 # input data
@@ -148,13 +148,12 @@ for i in range(len(path_t1)):
     nb.save(output, os.path.join(path_t1[i], "mask.nii"))
 
     # transform to mp2rage space via scanner coordinates
-    applyreg = ApplyVolTransform()
-    applyreg.inputs.source_file = os.path.join(path_t1[i], "mask.nii")
-    applyreg.inputs.target_file = os.path.join(path_t1[i], "T1.nii")
-    applyreg.inputs.transformed_file = os.path.join(path_t1[i], "mask.nii")
-    applyreg.inputs.reg_header = True
-    applyreg.inputs.interp = "nearest"
-    applyreg.run()
+    apply_header(
+        os.path.join(path_t1[i], "mask.nii"),
+        os.path.join(path_t1[i], "T1.nii"),
+        os.path.join(path_t1[i], "mask.nii"),
+        interp_method="nearest",
+    )
 
 # bias field correction to epi
 for i in range(len(path_epi)):

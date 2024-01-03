@@ -9,8 +9,9 @@ from nipype.interfaces import fsl
 from ..io.filename import get_filename
 from ..registration.cmap import generate_coordinate_mapping
 from ..registration.fsl import flirt
-from ..skullstrip.skullstrip_epi import skullstrip_epi
+from ..segmentation.skullstrip import skullstrip_epi
 from ..surface.deform_surface import deform_surface
+from ..utils.roi import erode_fsl
 
 
 def apply_fieldmap(
@@ -117,11 +118,10 @@ def apply_fieldmap(
 
     # erode skullstrip mask
     for _ in range(nerode):
-        erode = fsl.ErodeImage()
-        erode.inputs.in_file = os.path.join(path_udata, "mask_median_" + name_udata)
-        erode.inputs.output_type = "NIFTI"
-        erode.inputs.out_file = os.path.join(path_udata, "mask_median_" + name_udata)
-        erode.run()
+        erode_fsl(
+            os.path.join(path_udata, "mask_median_" + name_udata),
+            os.path.join(path_udata, "mask_median_" + name_udata),
+        )
 
     # register fmap1 to median epi (FLIRT)
     flirt(
