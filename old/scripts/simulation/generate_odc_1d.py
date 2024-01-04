@@ -11,7 +11,7 @@ import numpy as np
 from numpy.fft import fft
 from scipy.signal import correlate
 
-from ..simulation.odc import odc_1d
+from ..utils.simulation import odc_1d
 
 # 1D parameters
 N_sim = 1024

@@ -11,7 +11,7 @@ import numpy as np
 from numpy.fft import fft
 from scipy.signal import correlate
 
-from ..simulation.pattern import pattern_1d
+from ..utils.simulation import pattern_1d
 
 # 1D parameters
 N_sim = 1024

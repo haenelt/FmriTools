@@ -11,7 +11,7 @@ import numpy as np
 from numpy.fft import fft2, fftshift
 from scipy.signal import correlate
 
-from ..simulation.pattern import pattern_2d
+from ..utils.simulation import pattern_2d
 
 # 2D parameters
 Nx_sim = 1024
