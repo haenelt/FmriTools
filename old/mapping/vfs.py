@@ -7,6 +7,8 @@ import shutil as sh
 import nibabel as nb
 import numpy as np
 
+from ..surface.filter import mris_fwhm
+
 __all__ = ["get_vfs", "get_weighted_vfs"]
 
 
@@ -114,20 +116,12 @@ def get_vfs(
     # smooth surface
     input_data = ["ecc_real", "ecc_imag", "pol_real", "pol_imag"]
     input_fwhm = [fwhm_ecc, fwhm_ecc, fwhm_pol, fwhm_pol]
-    for i in range(len(input_data)):
-        os.system(
-            "mris_fwhm"
-            + " --s "
-            + sub
-            + " --hemi "
-            + hemi
-            + " --smooth-only "
-            + " --fwhm "
-            + str(input_fwhm[i])
-            + " --i "
-            + os.path.join(path_surf, hemi + "." + input_data[i] + ".mgh")
-            + " --o "
-            + os.path.join(path_surf, hemi + "." + input_data[i] + "_smooth.mgh")
+    for i, _ in enumerate(input_data):
+        mris_fwhm(
+            os.path.join(path_surf, hemi + "." + input_data[i] + ".mgh"),
+            os.path.join(path_surf, hemi + "." + input_data[i] + "_smooth.mgh"),
+            sub,
+            input_fwhm[i],
         )
 
     # file names of smoothed eccentricity and polar angle files

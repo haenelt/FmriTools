@@ -23,6 +23,7 @@ __all__ = [
     "Gaussian",
     "LaplacianGaussian",
     "intracortical_smoothing",
+    "mris_fwhm",
 ]
 
 
@@ -694,3 +695,53 @@ def intracortical_smoothing(
     # delete temporary files
     if cleanup:
         sh.rmtree(path_temp, ignore_errors=True)
+
+
+def mris_fwhm(file_in, file_out, sub, fwhm):
+    """Smooth surface overlay using FreeSurfer.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of input file.
+    file_out : str
+        File name of output file.
+    sub : str
+        FreeSurfer subject name.
+    fwhm : float
+        Filter size.
+
+    Raises
+    ------
+    ValueError
+        Wrong file extension.
+    ValueError
+        Unknown hemisphere.
+    """
+    _, name_in, ext_in = get_filename(file_in)
+    path_out, _, _ = get_filename(file_out)
+
+    if ext_in != ".mgh":
+        raise ValueError("File extension should be *.mgh!")
+
+    hemi = name_in[:2]
+    if hemi not in ["lh", "rh"]:
+        raise ValueError("Unknown hemisphere!")
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "mris_fwhm"
+    command += f" --s {sub}"
+    command += f" --hemi {hemi}"
+    command += " --smooth-only"
+    command += f" --fwhm {fwhm}"
+    command += f" --i {file_in}"
+    command += f" --o {file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")

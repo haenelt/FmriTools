@@ -12,8 +12,7 @@ import os
 
 import numpy as np
 
-from ..img.get_gif import get_gif
-from ..img.get_retinotopy_images import get_retinotopy_images
+from ..utils.img import get_gif, get_retinotopy_images
 
 # input files
 input_patch = "/data/pt_01880/V2STRIPES/p6/anatomy/dense/lh.occip3.patch.flat"
