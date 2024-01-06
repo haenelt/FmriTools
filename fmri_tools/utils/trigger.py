@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Check correct synchronization with trigger signal."""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,10 +7,8 @@ import scipy.io as sio
 
 
 def check_trigger(input_biopac):
-    """Check trigger.
-
-    This function loads the digital input from a saved biopac mat-file and
-    checks the number of sent triggers and the time difference between triggers.
+    """This function loads the digital input from a saved biopac mat-file and checks the
+    number of sent triggers and the time difference between triggers.
 
     Parameters
     ----------
@@ -21,7 +20,6 @@ def check_trigger(input_biopac):
     None.
 
     """
-
     # load digital input from biopac mat-file
     data = sio.loadmat(input_biopac)
     trigger = data["data"][:, 3]
