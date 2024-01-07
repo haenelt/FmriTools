@@ -21,7 +21,7 @@ from ..io.filename import get_filename
 from ..registration.clean_ana import clean_ana
 from ..registration.mask_ana import mask_ana
 from ..registration.mask_epi import mask_epi
-from ..utils.get_mean import get_mean
+from ..utils.metrics import calc_mean
 
 input_epi = [
     "/data/pt_01880/Experiment1_ODC/p4/retinotopy3/pol_anticlock/uadata.nii",
@@ -67,7 +67,7 @@ for i in range(len(input_epi)):
     sh.copyfile(input_mask[i], os.path.join(path_temp, "mask" + ext_mask))
 
     # get mean time series
-    get_mean(input_epi[i], path_temp, "epi", method="mean")
+    calc_mean(input_epi[i], path_temp, "epi", method="mean")
 
     # new filenames
     file_epi_mean = os.path.join(path_temp, "mean_epi" + ext_epi)

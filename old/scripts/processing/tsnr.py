@@ -15,7 +15,7 @@ import numpy as np
 
 from ..io.filename import get_filename
 from ..matlab import MatlabCommand
-from ..utils.get_tsnr import get_tsnr
+from ..utils.metrics import calc_tsnr
 
 # input data
 img_input = [
@@ -80,7 +80,7 @@ for i in range(len(img_input)):
         name_file = "b" + name_file
 
     # sum volumes for each run
-    mean_tsnr += get_tsnr(
+    mean_tsnr += calc_tsnr(
         os.path.join(path_file, name_file + ext_file),
         tsnr_max=tsnr_threshold,
         write_output=True,

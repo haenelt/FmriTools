@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
+"""Noise utilities."""
 
 import os
 
 import nibabel as nb
 import numpy as np
 
+__all__ = ["make_gaussian"]
 
-def get_gaussian(input_file, path_output, mu=0, sigma=1):
-    """Get gaussian.
 
-    Creates a NIfTI volume with Gaussian noise as voxel intensities and saves a
-    nifti volume with matrix size and header information taken from the input
-    image.
+def make_gaussian(input_file, path_output, mu=0, sigma=1):
+    """Creates a NIfTI volume with Gaussian noise as voxel intensities and saves a nifti
+    volume with matrix size and header information taken from the input image.
 
     Parameters
     ----------
@@ -29,7 +29,6 @@ def get_gaussian(input_file, path_output, mu=0, sigma=1):
     None.
 
     """
-
     # load img
     img = nb.load(input_file)
 

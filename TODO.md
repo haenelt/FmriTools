@@ -2,10 +2,11 @@
 - [ ] remove pycortex dependencies
 - [ ] remove gbb dependencies
 - [ ] remove nighres dependencies
-- [ ] sort modules (include docstrings, include __all__, try/except if environmental variables are set)
+- [ ] sort modules (include docstrings, include __all__)
 - [ ] phase regression (.preprocessing.phase_regression)
 - [ ] simplify mesh (.surface.simplify)
 - [ ] dijkstra
+- [ ] tests
 - [x] remove natsort dependencies
 - [x] update README.md
 - [x] gitignore

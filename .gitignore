@@ -19,4 +19,6 @@ dist/
 *.egg-info/
 
 # testing
-*.pytest_cachepy
+*.pytest_cache
+*.coverage
+htmlcov/

@@ -17,7 +17,7 @@ from nighres.registration import apply_coordinate_mappings
 from ..mapping.map2surface import map2surface
 from ..matlab import MatlabCommand
 from ..preprocessing.timeseries import ScaleTimeseries
-from ..utils.get_mean4d import get_mean4d
+from ..utils.metrics import calc_mean4d
 
 input_series = [
     "/data/pt_01880/Experiment1_ODC/p3/odc/GE_EPI2/Run_1/udata.nii",
@@ -95,7 +95,7 @@ for i in range(len(input_series)):
     input_series[i] = os.path.join(path_series, str(i + 1) + ".nii")
 
 # get demeaned mean time series
-data = get_mean4d(input_series, path_output="", name_output="", write_output=False)
+data = calc_mean4d(input_series, path_output="", name_output="", write_output=False)
 data_array = data.get_fdata()
 data_array = ScaleTimeseries(data_array).demean()
 

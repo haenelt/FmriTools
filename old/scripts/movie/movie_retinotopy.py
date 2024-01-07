@@ -10,8 +10,7 @@ travelling waves on a flattened patch.
 import glob
 import os
 
-import numpy as np
-
+from ..io.filename import natsort
 from ..utils.img import get_gif, get_retinotopy_images
 
 # input files
@@ -37,27 +36,6 @@ duration = 0.025
 # do not edit below
 
 
-def _natsort(file_list):
-    """Sort a list of file names based on their first natural number in the file name.
-    This sorting is equivalent to the natsorted() function in the natsort package.
-
-    Parameters
-    ----------
-    file_list : list
-        List of file names.
-
-    Returns
-    -------
-    list
-        Sorted list of file names.
-    """
-    file_number = []
-    for file_ in file_list:
-        file_number.append([int(i) for i in file_.split() if i.isdigit()][0])
-    file_ind = np.argsort(file_number)
-    return [file_list[i] for i in file_ind]
-
-
 # get single frames of the travelling wave
 get_retinotopy_images(
     input_patch,
@@ -78,5 +56,5 @@ get_retinotopy_images(
 
 # make gif
 img_files = glob.glob(os.path.join(path_output, "img", "*"))
-img_files = _natsort(img_files)
+img_files = natsort(img_files)
 get_gif(img_files, path_output, name_output, nsteps, duration)

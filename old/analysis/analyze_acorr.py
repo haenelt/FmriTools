@@ -5,7 +5,7 @@ import copy
 import numpy as np
 from scipy.signal import find_peaks
 
-from ..utils import get_acorr
+from ..utils.metrics import calc_acorr
 
 
 def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000):
@@ -118,7 +118,7 @@ def analyze_acorr(arr, fovx, fovy, xv, yv, p_min=0.01, p_max=0.5, nsample=1000):
     d[:d_min] = -d[:d_min]
 
     # get autocorrelation
-    array_acorr = get_acorr(arr)
+    array_acorr = calc_acorr(arr)
     acorr_line = array_acorr[np.round(x_line).astype(int), np.round(y_line).astype(int)]
 
     # fwhm

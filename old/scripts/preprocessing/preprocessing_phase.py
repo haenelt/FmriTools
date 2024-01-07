@@ -29,8 +29,7 @@ from ..io.filename import get_filename
 from ..matlab import MatlabCommand
 from ..preprocessing.deweight_mask import deweight_mask
 from ..preprocessing.moco import volreg_afni
-from ..utils.get_mean import get_mean
-from ..utils.get_std import get_std
+from ..utils.metrics import calc_mean, calc_std
 
 # input data
 input_magn = "/data/pt_01880/temp_phase/data.nii"
@@ -153,13 +152,13 @@ output = nb.Nifti1Image(phase_array, phase_img.affine, phase_img.header)
 nb.save(output, os.path.join(path_phase, name_phase_temp + ext_phase))
 
 # get mean time series
-get_mean(
+calc_mean(
     os.path.join(path_magn, name_magn_temp + ext_magn),
     path_magn,
     name_magn,
     method="mean",
 )
-get_mean(
+calc_mean(
     os.path.join(path_phase, name_phase_temp + ext_phase),
     path_phase,
     name_phase,
@@ -167,7 +166,7 @@ get_mean(
 )
 
 # phase variance over time
-get_std(os.path.join(path_phase, name_phase_temp + ext_phase), path_phase, name_phase)
+calc_std(os.path.join(path_phase, name_phase_temp + ext_phase), path_phase, name_phase)
 
 # rescale phase data
 phase_img = nb.load(os.path.join(path_phase, "mean_" + name_phase + ext_phase))

@@ -2,8 +2,11 @@
 """File name utilities."""
 
 import os
+import re
 
-__all__ = ["get_filename"]
+import numpy as np
+
+__all__ = ["get_filename", "natsort"]
 
 
 def get_filename(file_in):
@@ -47,3 +50,24 @@ def get_filename(file_in):
             exit_loop = 1
 
     return path, name_file, ext_file
+
+
+def natsort(file_list):
+    """Sort a list of file names based on their first natural number in the file name.
+    This sorting is equivalent to the natsorted() function in the natsort package.
+
+    Parameters
+    ----------
+    file_list : list
+        List of file names.
+
+    Returns
+    -------
+    list
+        Sorted list of file names.
+    """
+    file_number = []
+    for file_ in file_list:
+        file_number.append(int(re.findall(r"\d+", file_)[0]))
+    file_ind = np.argsort(file_number)
+    return [file_list[i] for i in file_ind]
