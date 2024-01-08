@@ -26,12 +26,11 @@ import nibabel as nb
 import numpy as np
 from nighres.registration import apply_coordinate_mappings
 from nipype.interfaces.fsl import ConvertXFM
-from nipype.interfaces.fsl.preprocess import ApplyXFM
 
 from ..matlab import MatlabCommand
 from ..registration.cmap import expand_coordinate_mapping, generate_coordinate_mapping
 from ..registration.fsl import flirt
-from ..registration.transform import scanner_transform
+from ..registration.transform import apply_flirt, scanner_transform
 
 # input files
 file_mpm_r1 = (
@@ -198,27 +197,21 @@ generate_coordinate_mapping(
 )
 
 # get coordinate mapping from flirt
-applyxfm = ApplyXFM()
-applyxfm.inputs.in_file = os.path.join(path_deformation, "cmap_source.nii")
-applyxfm.inputs.reference = os.path.join(path_mp2rage, "mp2rage_t1.nii")
-applyxfm.inputs.in_matrix_file = os.path.join(path_deformation, "flirt_matrix.mat")
-applyxfm.inputs.interp = "trilinear"
-applyxfm.inputs.padding_size = 0
-applyxfm.inputs.output_type = "NIFTI_GZ"
-applyxfm.inputs.out_file = os.path.join(path_deformation, "flirt.nii.gz")
-applyxfm.inputs.apply_xfm = True
-applyxfm.run()
+apply_flirt(
+    os.path.join(path_deformation, "cmap_source.nii"),
+    os.path.join(path_mp2rage, "mp2rage_t1.nii"),
+    os.path.join(path_deformation, "flirt_matrix.mat"),
+    os.path.join(path_deformation, "flirt.nii.gz"),
+    "trilinear",
+)
 
-applyxfm = ApplyXFM()
-applyxfm.inputs.in_file = os.path.join(path_deformation, "cmap_target.nii")
-applyxfm.inputs.reference = os.path.join(path_mpm, "scanner_def-img.nii.gz")
-applyxfm.inputs.in_matrix_file = os.path.join(path_deformation, "flirt_inv_matrix.mat")
-applyxfm.inputs.interp = "trilinear"
-applyxfm.inputs.padding_size = 0
-applyxfm.inputs.output_type = "NIFTI_GZ"
-applyxfm.inputs.out_file = os.path.join(path_deformation, "flirt_inv.nii.gz")
-applyxfm.inputs.apply_xfm = True
-applyxfm.run()
+apply_flirt(
+    os.path.join(path_deformation, "cmap_target.nii"),
+    os.path.join(path_mpm, "scanner_def-img.nii.gz"),
+    os.path.join(path_deformation, "flirt_inv_matrix.mat"),
+    os.path.join(path_deformation, "flirt_inv.nii.gz"),
+    "trilinear",
+)
 
 # merge coordinate mappings
 apply_coordinate_mappings(

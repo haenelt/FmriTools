@@ -11,7 +11,7 @@ script needs an installation of freesurfer.
 import os
 from os.path import basename, join
 
-from ..surface.deform_surface import deform_surface
+from ..registration.surf import deform_surface
 
 # input files
 input_surf = [

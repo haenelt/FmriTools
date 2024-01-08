@@ -23,8 +23,8 @@ import shutil as sh
 
 from nighres.registration import apply_coordinate_mappings
 from nipype.interfaces.fsl import ConvertXFM
-from nipype.interfaces.fsl.preprocess import ApplyXFM
 
+from ..registation.transform import apply_flirt
 from ..registration.clean_ana import clean_ana
 from ..registration.cmap import expand_coordinate_mapping, generate_coordinate_mapping
 from ..registration.fsl import flirt
@@ -158,27 +158,21 @@ generate_coordinate_mapping(
 )
 
 # apply flirt to cmap
-applyxfm = ApplyXFM()
-applyxfm.inputs.in_file = os.path.join(path_flirt, "cmap_target.nii")
-applyxfm.inputs.reference = os.path.join(path_epi_source, "bepi.nii")
-applyxfm.inputs.in_matrix_file = os.path.join(path_flirt, "flirt_matrix.mat")
-applyxfm.inputs.interp = "trilinear"
-applyxfm.inputs.padding_size = 0
-applyxfm.inputs.output_type = "NIFTI_GZ"
-applyxfm.inputs.out_file = os.path.join(path_output, "target2source.nii.gz")
-applyxfm.inputs.apply_xfm = True
-applyxfm.run()
+apply_flirt(
+    os.path.join(path_flirt, "cmap_target.nii"),
+    os.path.join(path_epi_source, "bepi.nii"),
+    os.path.join(path_flirt, "flirt_matrix.mat"),
+    os.path.join(path_output, "target2source.nii.gz"),
+    "trilinear",
+)
 
-applyxfm = ApplyXFM()
-applyxfm.inputs.in_file = os.path.join(path_flirt, "cmap_source.nii")
-applyxfm.inputs.reference = os.path.join(path_epi_target, "bepi.nii")
-applyxfm.inputs.in_matrix_file = os.path.join(path_flirt, "flirt_inv_matrix.mat")
-applyxfm.inputs.interp = "trilinear"
-applyxfm.inputs.padding_size = 0
-applyxfm.inputs.output_type = "NIFTI_GZ"
-applyxfm.inputs.out_file = os.path.join(path_output, "source2target.nii.gz")
-applyxfm.inputs.apply_xfm = True
-applyxfm.run()
+apply_flirt(
+    os.path.join(path_flirt, "cmap_source.nii"),
+    os.path.join(path_epi_target, "bepi.nii"),
+    os.path.join(path_flirt, "flirt_inv_matrix.mat"),
+    os.path.join(path_output, "source2target.nii.gz"),
+    "trilinear",
+)
 
 # expand deformation
 if expand_cmap:

@@ -4,12 +4,11 @@ import os
 import shutil as sh
 
 from nighres.registration import apply_coordinate_mappings
-from nipype.interfaces.fsl.preprocess import ApplyXFM
 
 from ..io.vol import mri_convert
 from ..registration.cmap import generate_coordinate_mapping
 from ..registration.fsl import flirt
-from ..registration.transform import scanner_transform
+from ..registration.transform import apply_flirt, scanner_transform
 
 
 def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False):
@@ -107,18 +106,13 @@ def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False)
     )
 
     # apply flirt to flash cmap
-    applyxfm = ApplyXFM()
-    applyxfm.inputs.in_file = os.path.join(path_temp, "cmap_flash.nii")
-    applyxfm.inputs.reference = os.path.join(path_temp, "flash.nii")
-    applyxfm.inputs.in_matrix_file = os.path.join(path_temp, "flirt_matrix.txt")
-    applyxfm.inputs.interp = "trilinear"
-    applyxfm.inputs.padding_size = 0
-    applyxfm.inputs.output_type = "NIFTI_GZ"
-    applyxfm.inputs.out_file = os.path.join(
-        path_temp, "cmap_apply_flirt_def-img.nii.gz"
+    apply_flirt(
+        os.path.join(path_temp, "cmap_flash.nii"),
+        os.path.join(path_temp, "flash.nii"),
+        os.path.join(path_temp, "flirt_matrix.txt"),
+        os.path.join(path_temp, "cmap_apply_flirt_def-img.nii.gz"),
+        "trilinear",
     )
-    applyxfm.inputs.apply_xfm = True
-    applyxfm.run()
 
     # apply scanner transform to flash cmap
     apply_coordinate_mappings(

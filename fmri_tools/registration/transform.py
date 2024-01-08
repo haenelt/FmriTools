@@ -11,7 +11,14 @@ from numpy.matlib import repmat
 
 from ..io.filename import get_filename
 
-__all__ = ["apply_affine_chunked", "scanner_transform", "apply_warp", "apply_header"]
+__all__ = [
+    "apply_affine_chunked",
+    "scanner_transform",
+    "apply_warp",
+    "apply_flirt",
+    "apply_header",
+    "apply_fugue",
+]
 
 
 def apply_affine_chunked(aff, pts, chunk_size=10000):
@@ -190,6 +197,46 @@ def apply_warp(file_in, file_field, file_out):
         print("Execuation failed!")
 
 
+def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"):
+    """Apply transformation from flirt registration to image.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of input file.
+    file_ref : str
+        File name of reference file.
+    file_mat : str
+        File name of 4x4 affine matrix saved as *.txt or *.mat file.
+    file_out : str
+        File name of transformed input file.
+    interp_method : str, optional
+        Interpolation method (trilinear, nearestneighbor, sinc, spline), by default
+        "trilinear"
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "flirt"
+    command += f" -in {file_in}"
+    command += f" -ref {file_ref}"
+    command += f" -out {file_out}"
+    command += " -omat inn_flirt.mat -applyxfm"
+    command += f" -init {file_mat}"
+    command += f" -interp {interp_method}"
+    command += " -paddingsize 0"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
 def apply_header(file_source, file_target, file_out, interp_method="nearest"):
     """Apply transformation to target image based on header information using
     FreeSurfer.
@@ -219,6 +266,39 @@ def apply_header(file_source, file_target, file_out, interp_method="nearest"):
     command += f" --mov {file_source}"
     command += f" --targ {file_target}"
     command += f" --o {file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def apply_fugue(file_in, file_shift, udir, forward_warping=False):
+    """Apply field map deformation to image using FSL.
+
+    Parameters
+    ----------
+    file_in : _type_
+        File name of input file.
+    file_shift : _type_
+        File name of shift file containing deformation.
+    udir : _type_
+        Unwarping direction (x, y, z, x-, y-, or z-).
+    forward_warping : bool, optional
+        Apply forward warping instead of unwarping, by default False
+    """
+    # output file name
+    _, name_in, ext_in = get_filename(file_in)
+
+    command = "fugue"
+    command += f" --in={file_in}"
+    command += f" --loadshift={file_shift}"
+    command += f" --unwarpdir={udir}"
+    if forward_warping:
+        command += f" --warp={name_in}_warped{ext_in}"
+    else:
+        command += f" --unwarp={name_in}_unwarped{ext_in}"
 
     print("Execute: " + command)
     try:
