@@ -6,6 +6,7 @@
 - [ ] phase regression (.preprocessing.phase_regression)
 - [ ] simplify mesh (.surface.simplify)
 - [ ] dijkstra
+- [ ] spatial highpass filtering of complex data to remove phase artifacts
 - [ ] tests
 - [x] remove natsort dependencies
 - [x] update README.md
