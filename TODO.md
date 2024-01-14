@@ -1,5 +1,5 @@
+- [ ] segmentation.mask
 - [ ] remove nipype dependencies
-- [ ] remove pycortex dependencies
 - [ ] remove gbb dependencies
 - [ ] remove nighres dependencies
 - [ ] sort modules (include docstrings, include __all__)
