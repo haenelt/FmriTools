@@ -27,9 +27,7 @@ import os
 import nibabel as nb
 import numpy as np
 
-from ..analysis.analyze_acorr import analyze_acorr
-from ..analysis.analyze_fft import analyze_fft
-from ..analysis.get_pca import get_pca
+from ..utils.analysis import analyze_acorr, analyze_fft, get_pca
 
 # parameters
 file_in = "/data/pt_01880/odc_temp/sampled/ge_epi2/refined_enhanced/grid_small/lh.spmT_left_right_GE_EPI2_upsampled_layer0_sigma0_grid.nii"

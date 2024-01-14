@@ -10,3 +10,4 @@ sh
 h5py
 nilearn
 pydicom
+pycortex

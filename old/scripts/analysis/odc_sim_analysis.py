@@ -31,9 +31,7 @@ import os
 
 import numpy as np
 
-from ..analysis.analyze_acorr import analyze_acorr
-from ..analysis.analyze_fft import analyze_fft
-from ..analysis.get_pca import get_pca
+from ..utils.analysis import analyze_acorr, analyze_fft, get_pca
 from ..utils.simulation import odc_2d
 
 # parameters for ODC image matrix

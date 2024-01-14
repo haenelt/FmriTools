@@ -10,7 +10,7 @@ freesurfer.
 
 import os
 
-from ..mapping.vfs import get_vfs
+from ..processing.vfs import get_vfs
 
 # input files
 hemi = "lh"

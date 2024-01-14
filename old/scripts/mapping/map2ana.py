@@ -14,7 +14,7 @@ import os
 from nighres.registration import apply_coordinate_mappings
 
 from ..io.filename import get_filename
-from ..mapping.map2surface import map2surface
+from ..registration.mapping import map2surface
 
 # input
 file_in = [

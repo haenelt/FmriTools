@@ -41,15 +41,15 @@ import os
 from cortex.polyutils import Surface
 from nibabel.freesurfer.io import read_geometry
 
-from ..layer.calc_equivol_surf import calc_equivol_surf
-from ..mapping.map2grid import map2grid
-from ..mapping.morph2dense import morph2dense
 from ..matlab import MatlabCommand
+from ..registration.maping import map2grid
+from ..registration.mapping import morph2dense
 from ..registration.transform import apply_header
 from ..segmentation.flat import orthographic_projection
 from ..segmentation.get_ribbon_fsurf import get_ribbon_fsurf
 from ..segmentation.get_thickness_fsurf import get_thickness_fsurf
 from ..segmentation.include_pial_correction import include_pial_correction
+from ..segmentation.layer import calc_equivol_surf
 from ..segmentation.shift_white import shift_white
 from ..surface.flattening import surface_flattening
 from ..surface.get_curvature import get_curvature

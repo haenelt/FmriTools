@@ -17,7 +17,7 @@ import os
 import numpy as np
 from nibabel.freesurfer.io import read_geometry, write_geometry
 
-from ..layer.get_meshlines import get_meshlines
+from ..segmentation.layer import get_meshlines
 from ..surface.inflate_surf_mesh import inflate_surf_mesh
 from ..surface.match_vertex_number import match_vertex_number
 from ..surface.simplify import extract_main_component

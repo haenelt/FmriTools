@@ -28,7 +28,7 @@ from nibabel.freesurfer.io import read_geometry
 from scipy.interpolate import griddata
 from scipy.ndimage.filters import gaussian_filter
 
-from ..mapping.map2grid import map2grid
+from ..registration.mapping import map2grid
 
 # input
 input_white = "/data/pt_01880/V2STRIPES/p6/anatomy/dense/rh.white"

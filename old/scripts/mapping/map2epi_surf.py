@@ -9,7 +9,7 @@ space and map those data to the surface in conformed freesurfer space.
 
 import os
 
-from ..mapping.map2surface import map2surface
+from ..registration.mapping import map2surface
 
 # input files
 path_input = "/data/pt_01880/Experiment1_ODC/p3/deformation/odc/GE_EPI1_rigid/epi_surf"

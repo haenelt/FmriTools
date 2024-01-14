@@ -17,10 +17,9 @@ import nibabel as nb
 import numpy as np
 from nighres.registration import apply_coordinate_mappings
 
-from ..mapping.map2stack import map2stack
-from ..mapping.map2surface import map2surface
 from ..matlab import MatlabCommand
 from ..preprocessing.timeseries import ScaleTimeseries
+from ..registration.mapping import map2stack, map2surface
 
 input_series = "/nobackup/actinium2/haenelt/V2STRIPES/p6/psf/multipol_14/udata.nii"
 input_deformation = (

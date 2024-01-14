@@ -9,7 +9,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from ..analysis.analyze_alff_between_conditions import analyze_alff_between_conditions
+from ..utils.analysis import analyze_alff_between_conditions
 
 # input paths
 input_label = "/media/haenelt/6CFE-5CB9/p6_resting_state/v2/lh.v2.label"

@@ -11,8 +11,8 @@ from sh import gunzip
 
 from ..io.filename import get_filename
 from ..io.surf import write_mgh
-from ..mapping.map2surface import map2surface
 from ..registration.cmap import generate_coordinate_mapping
+from ..registration.mapping import map2surface
 from ..registration.surf import deform_surface
 from ..utils.resample_volume import resample_volume
 

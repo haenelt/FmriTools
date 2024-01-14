@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+"""Visual field sign utilities."""
 
 import datetime
 import os
 import shutil as sh
+import subprocess
 
 import nibabel as nb
 import numpy as np
@@ -28,16 +30,13 @@ def get_vfs(
     fwhm_vfs=8.0,
     cleanup=True,
 ):
-    """Get VFS.
-
-    The purpose of the following function is to calculate the visual field sign
-    (vfs) map from retinotopy data. The FREESURFER environment has to be set.
-    The function was only tested with an annotation file not converted to the
-    upsampled dense format. However, results seem to be correct and for the
-    moment, nothing is changed. Different smoothing kernels can be set for
-    eccentricity and polar angle. Eccentricity is much smoother and higher
-    filters can be applied. The final visual fieldsign map is saved as
-    <hemi>.fieldsign in the output folder.
+    """The purpose of the following function is to calculate the visual field sign (vfs)
+    map from retinotopy data. The FREESURFER environment has to be set. The function was
+    only tested with an annotation file not converted to the upsampled dense format.
+    However, results seem to be correct and for the moment, nothing is changed.
+    Different smoothing kernels can be set for eccentricity and polar angle.
+    Eccentricity is much smoother and higher filters can be applied. The final visual
+    fieldsign map is saved as <hemi>.fieldsign in the output folder.
 
     Parameters
     ----------
@@ -75,7 +74,6 @@ def get_vfs(
     None.
 
     """
-
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
 
@@ -131,27 +129,21 @@ def get_vfs(
     pol_imag = os.path.join(path_surf, hemi + "." + input_data[3] + "_smooth.mgh")
 
     # create fiedsign map
-    os.system(
-        "mri_fieldsign"
-        + " --s "
-        + sub
-        + " --hemi "
-        + hemi
-        + " --patch occip.patch.flat"
-        + " --new "
-        + " --eccen "
-        + ecc_real
-        + " "
-        + ecc_imag
-        + " --polar "
-        + pol_real
-        + " "
-        + pol_imag
-        + " --fs "
-        + os.path.join(path_output, hemi + ".fieldsign.mgh")
-        + " --fwhm "
-        + str(fwhm_vfs)
-    )
+    command = "mri_fieldsign"
+    command += f" --s {sub}"
+    command += f" --hemi {hemi}"
+    command += " --patch occip.patch.flat" 
+    command += " --new"
+    command += f" --eccen {ecc_real} {ecc_imag}"
+    command += f" --polar {pol_real} {pol_imag}"
+    command += f" --fs {os.path.join(path_output, hemi + ".fieldsign.mgh")}"
+    command += f" --fwhm {fwhm_vfs}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     # delete intermediate files
     if cleanup:
@@ -159,9 +151,7 @@ def get_vfs(
 
 
 def get_weighted_vfs(input_vfs, input_snr, hemi, path_output):
-    """Get weighted VFS.
-
-    This function scales the visual fieldsign assignments using a given snr
+    """This function scales the visual fieldsign assignments using a given snr
     estimate.
 
     Parameters
@@ -180,7 +170,6 @@ def get_weighted_vfs(input_vfs, input_snr, hemi, path_output):
     None.
 
     """
-
     # load visual fieldsign map
     vfs_img = nb.load(input_vfs)
     vfs_array = vfs_img.get_fdata()

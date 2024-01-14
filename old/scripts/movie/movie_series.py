@@ -14,9 +14,9 @@ import nibabel as nb
 import numpy as np
 from nighres.registration import apply_coordinate_mappings
 
-from ..mapping.map2surface import map2surface
 from ..matlab import MatlabCommand
 from ..preprocessing.timeseries import ScaleTimeseries
+from ..registration.mapping import map2surface
 from ..utils.metrics import calc_mean4d
 
 input_series = [
