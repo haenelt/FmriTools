@@ -30,8 +30,7 @@ from nighres.registration import apply_coordinate_mappings, embedded_antsreg
 
 from ..registration.clean_ana import clean_ana
 from ..registration.cmap import clean_coordinate_mapping, expand_coordinate_mapping
-from ..registration.mask_ana import mask_ana
-from ..registration.mask_epi import mask_epi
+from ..segmentation.mask import mask_ana, mask_epi
 from ..segmentation.skullstrip import skullstrip_refined
 from ..utils.bias import remove_bias_ants
 

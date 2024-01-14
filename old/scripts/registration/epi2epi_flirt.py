@@ -28,8 +28,7 @@ from ..registation.transform import apply_flirt
 from ..registration.clean_ana import clean_ana
 from ..registration.cmap import expand_coordinate_mapping, generate_coordinate_mapping
 from ..registration.fsl import flirt
-from ..registration.mask_ana import mask_ana
-from ..registration.mask_epi import mask_epi
+from ..segmentation.mask import mask_ana, mask_epi
 from ..utils.bias import remove_bias_ants
 
 # input data

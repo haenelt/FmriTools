@@ -37,9 +37,8 @@ from sh import gunzip
 from ..io.vol import mri_convert
 from ..registration.clean_ana import clean_ana
 from ..registration.cmap import clean_coordinate_mapping, expand_coordinate_mapping
-from ..registration.mask_ana import mask_ana
-from ..registration.mask_epi import mask_epi
 from ..registration.transform import apply_header, scanner_transform
+from ..segmentation.mask import mask_ana, mask_epi
 from ..utils.bias import remove_bias_ants
 
 # input data
