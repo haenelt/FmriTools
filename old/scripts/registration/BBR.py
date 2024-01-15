@@ -30,8 +30,7 @@ from ..registration.cmap import generate_coordinate_mapping
 from ..registration.transform import apply_affine_chunked
 from ..segmentation.mask import mask_ana, mask_epi
 from ..utils.bias import remove_bias_ants
-from ..utils.multiply_images import multiply_images
-from ..utils.remove_nans import remove_nans
+from ..utils.calc import multiply_images, remove_nans
 
 # input
 input_white = [

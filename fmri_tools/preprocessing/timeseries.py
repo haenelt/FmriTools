@@ -13,7 +13,7 @@ from scipy.ndimage import gaussian_filter
 
 from ..io.filename import get_filename
 
-__all__ = ["ScaleTimeseries", "FilterTimeseries", "slice_timing_correction"]
+__all__ = ["ScaleTimeseries", "FilterTimeseries", "slice_timing_correction", "average"]
 
 
 class ScaleTimeseries:
@@ -528,3 +528,47 @@ def _set_tr(img, tr):
     header.set_zooms(zooms)
 
     return img.__class__(img.get_fdata().copy(), img.affine, header)
+
+
+# -*- coding: utf-8 -*-
+
+import os
+
+import nibabel as nb
+import numpy as np
+
+
+def average(img_input, path_output, name_output):
+    """This function computes the element-wise average of multiple nifti files.
+
+    Parameters
+    ----------
+    img_input : str
+        List of nifti input paths.
+    path_output : str
+        Path where output is saved.
+    name_output : str
+        Basename of output files.
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    if not os.path.exists(path_output):
+        os.mkdir(path_output)
+
+    # load first dataset to initialize final time series
+    res = nb.load(img_input[0])
+    res_array = np.zeros_like(res.get_fdata())
+
+    for i in range(len(img_input)):
+        res_array += nb.load(img_input[i]).get_fdata()
+
+    # divide summed time series by number of time series
+    res_array = res_array / len(img_input)
+
+    # write output
+    output = nb.Nifti1Image(res_array, res.affine, res.header)
+    nb.save(output, os.path.join(path_output, name_output + ".nii"))

@@ -55,7 +55,7 @@ from ..surface.get_curvature import get_curvature
 from ..surface.smooth import mris_smooth
 from ..surface.upsample_surf_mesh import upsample_surf_mesh
 from ..utils.bias import robust_combination
-from ..utils.multiply_images import multiply_images
+from ..utils.calc import multiply_images
 from ..utils.volume_threshold import volume_threshold
 
 # input data
