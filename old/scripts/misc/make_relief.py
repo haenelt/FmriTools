@@ -9,8 +9,9 @@ surface mesh. The contrast data is filtered by a sigmoid function.
 
 import nibabel as nb
 import numpy as np
-from gbb.normal.get_normal import get_normal
 from nibabel.freesurfer.io import read_geometry, write_geometry
+
+from ..surface.mesh import Mesh
 
 file_surf = (
     "/home/daniel/source/BlenderCBS-master/Haenelt/data/lh.refined_enhanced_inflated"
@@ -36,7 +37,7 @@ data[:, 1] = nb.load(file_data).get_fdata()[:, 0, 0]
 data[:, 2] = nb.load(file_data).get_fdata()[:, 0, 0]
 
 # get normals
-normal = get_normal(vtx, fac)
+normal = Mesh(vtx, fac).vertex_normals
 
 # make relief
 vtx += scale_factor * sigmoid(data) * normal

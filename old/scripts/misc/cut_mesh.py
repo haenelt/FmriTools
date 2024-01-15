@@ -13,13 +13,10 @@ import sys
 
 import nibabel as nb
 import numpy as np
-from gbb.neighbor.nn_2d import nn_2d
-from gbb.neighbor.nn_3d import nn_3d
-from gbb.normal.get_normal import get_normal
-from gbb.utils.get_adjm import get_adjm
 from nibabel.freesurfer.io import read_geometry, read_label, write_geometry
 from numpy.linalg import norm
 
+from ..surface.mesh import Mesh
 from ..surface.smooth import mris_smooth
 
 # input files
@@ -229,7 +226,7 @@ def remove_face(face, index_keep, index_remove):
     return face_new
 
 
-def get_edge(index_keep, adjacency_matrix):
+def get_edge(index_keep, vtx, fac):
     """After the surface mesh is cut, vertex indices lying at the surface mesh border
     are listed.
 
@@ -237,8 +234,10 @@ def get_edge(index_keep, adjacency_matrix):
     ----------
     index_keep: list
         Index array of vertex indices to keep.
-    adjacency_matrix: scipy.sparse.csr.csr_matrix
-        Adjacency matrix of the full surface mesh.
+    vtx: ndarray
+        Vertex array.
+    fac: ndarray
+        Corresponding face array.
 
     Returns
     -------
@@ -254,7 +253,7 @@ def get_edge(index_keep, adjacency_matrix):
         print("search edges: " + str(i) + " of " + str(n))
 
         # get first order neighbors
-        nn = nn_2d(index_keep[i], adjacency_matrix, 0)
+        nn = Mesh(vtx, fac).neighborhood(index_keep[i])
 
         j = 0
         while True:
@@ -268,6 +267,39 @@ def get_edge(index_keep, adjacency_matrix):
             j += 1
 
     return index_edge
+
+
+def nn_3d(vtx0, vtx, r_size):
+    """This function computes all nearest neighbors found within a sphere with a radius
+    defined in ras coordinates. Note that the defined neighborhood does not have to be
+    fully connected in this case. Vertex coordinates are in ras space.
+
+    Parameters
+    ----------
+    vtx0 : ndarray
+        Vertex point.
+    vtx : ndarray
+        Array of vertices.
+    r_size : float
+        Radius of sphere in ras coordinates.
+
+    Returns
+    -------
+    nn : ndarray
+        Array of neighbor indices.
+    r[nn] : ndarray
+        Euclidean distance to neighbors.
+
+    """
+    rx = (vtx[:, 0] - vtx0[0]) ** 2
+    ry = (vtx[:, 1] - vtx0[1]) ** 2
+    rz = (vtx[:, 2] - vtx0[2]) ** 2
+
+    r = np.sqrt(rx + ry + rz)
+
+    nn = np.where(r < r_size)[0]
+
+    return nn, r[nn]
 
 
 # make output folder
@@ -289,8 +321,7 @@ file_overlay = os.path.join(path_output, "overlay.mgh")
 
 # load input
 vtx0, fac0 = read_geometry(file_in)
-adjm = get_adjm(vtx0, fac0)
-n = get_normal(vtx0, fac0)
+n = Mesh(vtx0, fac0).vertex_normals
 nlayer = len(file_contrast)
 
 if file_in2:
@@ -353,7 +384,7 @@ write_geometry(file_out0_cut, vtx0_new, fac_new)
 write_geometry(file_out1_cut, vtx1_new, fac_new)
 
 # get edge vertices
-ind_edge = get_edge(ind_keep, adjm)
+ind_edge = get_edge(ind_keep, vtx0, fac0)
 
 # label edges in overlay
 arr_edge = np.zeros_like(vtx0_new[:, 0])
@@ -364,9 +395,6 @@ arr_edge = np.expand_dims(arr_edge, axis=1)
 arr_edge = np.expand_dims(arr_edge, axis=1)
 output = nb.Nifti1Image(arr_edge, affine, header)
 nb.save(output, file_edge)
-
-# new adjacency matrix
-adjm_new = get_adjm(vtx0_new, fac_new)
 
 # sort edge indices
 ind_edge_sorted = [ind_edge[0]]
@@ -383,7 +411,7 @@ while True:
     # boundary. This has to be accounted for in the cortical depth filling
     # procedure.
     if nn_2d_found:
-        nn = nn_2d(ind_edge_sorted[-1], adjm_new, 0)
+        nn = Mesh(vtx0_new, fac_new).neighborhood(ind_edge_sorted[-1])
     else:
         hole.append(c)
         nn, _ = nn_3d(vtx0_new[ind_edge_sorted[-1]], vtx0_new, 100)
@@ -398,7 +426,10 @@ while True:
     # the neighbor vertex with least own neighbors will be finally stored in the
     # sorted edge array. This ensures that no vertex will be missed when we move
     # along the edge.
-    tmp = [len(nn_2d(nn_edge[i], adjm_new, 0)) for i in range(len(nn_edge))]
+    tmp = [
+        len(Mesh(vtx0_new, fac_new).neighborhood(nn_edge[i]))
+        for i in range(len(nn_edge))
+    ]
 
     # if no neighbor is found, search again within the sphere.
     if not nn_edge:
@@ -486,8 +517,7 @@ for i in range(np.shape(ind_array)[0] - 1):
 write_geometry(file_out_merge2, vtx_merge, fac_merge)
 
 # final edge sorting
-adjm_new2 = get_adjm(vtx_merge, fac_merge)
-for i in range(len(hole)):
+for i, _ in enumerate(hole):
     # Neighbors in a sphere around the current hole vertex are found. The hole
     # index itself is then removed from the array. Furthermore, only vertices
     # which are at the edge are kept.
@@ -505,7 +535,9 @@ for i in range(len(hole)):
         tmp = norm(vtx0_new[indd] - vtx0_new[nn], axis=1)
         index = np.where(tmp == np.min(tmp))[0][0]
         neighbor = np.where(ind_array[0, :] == nn[index])[0][0]
-        nn_check = nn_2d(ind_array[int(nlayer / 2), neighbor], adjm_new2, 0)
+        nn_check = Mesh(vtx_merge, fac_merge).neighborhood(
+            ind_array[int(nlayer / 2), neighbor]
+        )
 
         if ind_array[int(nlayer / 2), hole[i]] in nn_check:
             nn.remove(nn[index])

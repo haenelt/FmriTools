@@ -1,6 +1,5 @@
 - [ ] segmentation.mask
 - [ ] remove nipype dependencies
-- [ ] remove gbb dependencies
 - [ ] remove nighres dependencies
 - [ ] sort modules (include docstrings, include __all__)
 - [ ] phase regression (.preprocessing.phase_regression)
@@ -8,6 +7,7 @@
 - [ ] dijkstra
 - [ ] spatial highpass filtering of complex data to remove phase artifacts
 - [ ] tests
+- [x] remove gbb dependencies
 - [x] remove natsort dependencies
 - [x] update README.md
 - [x] gitignore

@@ -10,7 +10,6 @@ from pathlib import Path
 
 import nibabel as nb
 import numpy as np
-from gbb.neighbor.nn_2d import nn_2d
 from nibabel.freesurfer.io import (
     read_geometry,
     read_label,
@@ -21,6 +20,7 @@ from nibabel.freesurfer.io import (
 from nibabel.freesurfer.mghformat import MGHHeader
 from scipy.spatial import Delaunay
 
+from ..surface.mesh import Mesh
 from .filename import get_filename
 
 __all__ = [
@@ -396,7 +396,7 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
 
 
 def write_vector_field(
-    vtx0, vtx1, adjm, file_out, meta_data=None, step_size=100, shape="line"
+    vtx0, vtx1, fac, file_out, meta_data=None, step_size=100, shape="line"
 ):
     """This function generates a surface mesh to visualize a vector field as a
     triangular mesh.
@@ -407,8 +407,8 @@ def write_vector_field(
         Array of vector start points.
     vtx1 : ndarray
         Array of vector end points.
-    adjm : ndarray
-        Adjacency matrix.
+    fac : ndarray
+        Array of corresponding faces.
     file_out : str
         Filename of output surface mesh.
     meta_data : dict-like or None
@@ -451,7 +451,7 @@ def write_vector_field(
     f_res = []
     for i, vec in enumerate(vectors):
         # get index from nearest neighbour of a given vertex
-        nn = nn_2d(vec, adjm, 0)
+        nn = Mesh(vtx0, fac).neighborhood(vec)
         nn = nn[:2]
 
         # get all vertex points for specific shape
@@ -490,9 +490,7 @@ def write_vector_field(
     write_geometry(file_out, v_res, f_res, volume_info=meta_data)
 
 
-def write_white2pial(
-    file_out, file_white, file_pial, adjm, step_size=100, shape="line"
-):
+def write_white2pial(file_out, file_white, file_pial, step_size=100, shape="line"):
     """This function generates lines between corresponding vertices at the white and
     pial surface to visualize the shift between matched vertices caused by realigning
     surfaces independently. You can either construct prisms, triangles or lines.
@@ -505,8 +503,6 @@ def write_white2pial(
         Filename of white surface.
     file_pial : str
         Filename of pial surface.
-    adjm : obj
-        Adjacency matrix.
     step_size : int, optional
         Subset of vertices.
     shape : str, optional
@@ -518,7 +514,7 @@ def write_white2pial(
 
     """
     # read geometry
-    vtx_white, _, header_white = read_geometry(file_white, read_metadata=True)
+    vtx_white, fac_white, header_white = read_geometry(file_white, read_metadata=True)
     vtx_pial, _ = read_geometry(file_pial)
 
     # array containing a list of considered vertices
@@ -548,7 +544,7 @@ def write_white2pial(
     fac_res = []
     for i, vec in enumerate(vectors):
         # get index from nearest neighbour of a given vertex
-        nn = nn_2d(vec, adjm, 0)
+        nn = Mesh(vtx_white, fac_white).neighborhood(vec)
         nn = nn[:2]
 
         # get all vertex points for specific shape

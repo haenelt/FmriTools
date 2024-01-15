@@ -33,10 +33,10 @@ ind["white_2"] = dict()  # index file from second deformation
 ind["pial_1"] = dict()
 ind["pial_2"] = dict()
 
-mesh["white"]["lh"] = "/data/pt_01880/test/gbb/lh.white_def2_refined"
-mesh["white"]["rh"] = "/data/pt_01880/test/gbb/rh.white_def2_refined"
-mesh["pial"]["lh"] = "/data/pt_01880/test/gbb/lh.pial_def2_refined"
-mesh["pial"]["rh"] = "/data/pt_01880/test/gbb/rh.pial_def2_refined"
+mesh["white"]["lh"] = "/data/pt_01880/test/lh.white_def2_refined"
+mesh["white"]["rh"] = "/data/pt_01880/test/rh.white_def2_refined"
+mesh["pial"]["lh"] = "/data/pt_01880/test/lh.pial_def2_refined"
+mesh["pial"]["rh"] = "/data/pt_01880/test/rh.pial_def2_refined"
 
 ind["white_1"][
     "lh"
@@ -44,16 +44,16 @@ ind["white_1"][
 ind["white_1"][
     "rh"
 ] = "/data/pt_01880/Experiment2_Rivalry/p1/anatomy/dense_epi/rh.white_def2_ind"
-ind["white_2"]["lh"] = "/data/pt_01880/test/gbb/lh.white_def2_refined_ind.txt"
-ind["white_2"]["rh"] = "/data/pt_01880/test/gbb/rh.white_def2_refined_ind.txt"
+ind["white_2"]["lh"] = "/data/pt_01880/test/lh.white_def2_refined_ind.txt"
+ind["white_2"]["rh"] = "/data/pt_01880/test/rh.white_def2_refined_ind.txt"
 ind["pial_1"][
     "lh"
 ] = "/data/pt_01880/Experiment2_Rivalry/p1/anatomy/dense_epi/lh.pial_def2_ind"
 ind["pial_1"][
     "rh"
 ] = "/data/pt_01880/Experiment2_Rivalry/p1/anatomy/dense_epi/rh.pial_def2_ind"
-ind["pial_2"]["lh"] = "/data/pt_01880/test/gbb/lh.pial_def2_refined_ind.txt"
-ind["pial_2"]["rh"] = "/data/pt_01880/test/gbb/rh.pial_def2_refined_ind.txt"
+ind["pial_2"]["lh"] = "/data/pt_01880/test/lh.pial_def2_refined_ind.txt"
+ind["pial_2"]["rh"] = "/data/pt_01880/test/rh.pial_def2_refined_ind.txt"
 
 path_output = "/data/pt_01880/test/blablabla2"
 niter_inflate = 30
