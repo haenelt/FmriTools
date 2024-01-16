@@ -13,8 +13,7 @@ __all__ = ["load_volume", "save_volume", "mri_convert", "copy_header", "surface_
 
 
 def load_volume(volume):
-    """Load volumetric data into a
-    `Nibabel SpatialImage <http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage>`_
+    """Load volumetric data into a Nibabel SpatialImage.
 
     Parameters
     ----------
@@ -28,13 +27,9 @@ def load_volume(volume):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_ .
+    Taken from nighres.io.load_volume for use with
+    fmri_tools.registration.ants.embedded_antsreg.
 
-    References
-    -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-       depth-resolved analysis of high-resolution brain imaging data in
-       Python. DOI: 10.3897/rio.3.e12346
     """
     # if input is a filename, try to load it
     # python 2 version if isinstance(volume, basestring):
@@ -54,13 +49,11 @@ def load_volume(volume):
 
 
 def save_volume(filename, volume, dtype="float32", overwrite_file=True):
-    """Save volumetric data that is a
-    `Nibabel SpatialImage <http://nipy.org/nibabel/reference/nibabel.spatialimages.html#nibabel.spatialimages.SpatialImage>`_
-    to a file
+    """Save volumetric data that is a Nibabel SpatialImage to a file.
 
     Parameters
     ----------
-    filename: str
+    File name: str
         Full path and filename under which volume should be saved. The
         extension determines the file format (must be supported by Nibabel)
     volume: Nibabel SpatialImage
@@ -72,14 +65,10 @@ def save_volume(filename, volume, dtype="float32", overwrite_file=True):
 
     Notes
     ----------
-    Originally created as part of Laminar Python [1]_ .
+    Taken from nighres.io.load_volume for use with
+    fmri_tools.registration.ants.embedded_antsreg.
 
-    References
-    -----------
-    .. [1] Huntenburg et al. (2017), Laminar Python: Tools for cortical
-       depth-resolved analysis of high-resolution brain imaging data in
-       Python. DOI: 10.3897/rio.3.e12346
-    """  # noqa
+    """
     if dtype is not None:
         volume.set_data_dtype(dtype)
     if os.path.isfile(filename) and overwrite_file is False:
@@ -89,7 +78,7 @@ def save_volume(filename, volume, dtype="float32", overwrite_file=True):
     else:
         try:
             volume.to_filename(filename)
-            print("\nSaving {0}".format(filename))
+            print(f"\nSaving {filename}")
         except AttributeError:
             print("\nInput volume must be a Nibabel SpatialImage.")
 

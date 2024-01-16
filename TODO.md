@@ -9,6 +9,7 @@
 - [ ] dijkstra
 - [ ] spatial highpass filtering of complex data to remove phase artifacts
 - [ ] tests
+- [x] solve execution in init
 - [x] remove gbb dependencies
 - [x] remove natsort dependencies
 - [x] update README.md

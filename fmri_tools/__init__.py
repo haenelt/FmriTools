@@ -25,26 +25,28 @@ class SoftwareName:
     MATLAB = "matlab"
 
 
-print(70 * "-")
-print("FmriTools " + "(v" + str(__version__) + ")")
-print("author: " + str(__author__))
-print(70 * "-")
+def check_software():
+    """Check if third-party software is installed."""
+    print(70 * "-")
+    print("FmriTools " + "(v" + str(__version__) + ")")
+    print("author: " + str(__author__))
+    print(70 * "-")
 
-software = SoftwareName()
-members = [
-    attr
-    for attr in dir(software)
-    if not callable(getattr(software, attr)) and not attr.startswith("__")
-]
+    software = SoftwareName()
+    members = [
+        attr
+        for attr in dir(software)
+        if not callable(getattr(software, attr)) and not attr.startswith("__")
+    ]
 
-print("\nCheck installations:")
-print(20 * "-")
-for member in members:
-    name = SoftwareName.__dict__[member]
-    if os.environ["PATH"].find(name) != -1:
-        print(f"{name:<14}: found".upper())
-    else:
-        print(f"{name:<14}: not found".upper())
+    print("\nCheck installations:")
+    print(20 * "-")
+    for member in members:
+        name = SoftwareName.__dict__[member]
+        if os.environ["PATH"].find(name) != -1:
+            print(f"{name:<14}: found".upper())
+        else:
+            print(f"{name:<14}: not found".upper())
 
 
 def check_installation(command):
