@@ -2,6 +2,8 @@
 """Python package for the analysis of high-resolution fMRI data."""
 
 import os
+import subprocess
+import sys
 
 # meta infos
 __author__ = "Daniel Haenelt"
@@ -9,7 +11,7 @@ __license__ = "GPL v3"
 __version__ = "2.0.0-alpha"
 __status__ = "Development"
 
-__all__ = ["SoftwareName"]
+__all__ = ["SoftwareName", "check_installation"]
 
 
 class SoftwareName:
@@ -43,3 +45,14 @@ for member in members:
         print(f"{name:<14}: found".upper())
     else:
         print(f"{name:<14}: not found".upper())
+
+
+def check_installation(command):
+    """Check if command can be executed from the command line."""
+    try:
+        subprocess.run([command], stdout=subprocess.DEVNULL, check=False)
+    except FileNotFoundError:
+        sys.exit(
+            f"\nCould not find '{command}'. Make sure all required software is \
+                installed and can be executed from the command line."
+        )

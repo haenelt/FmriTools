@@ -6,13 +6,13 @@ import shutil as sh
 
 import nibabel as nb
 import numpy as np
-from nighres.registration import apply_coordinate_mappings, embedded_antsreg
 from scipy.ndimage import binary_fill_holes, gaussian_filter
 from scipy.ndimage.morphology import binary_dilation
 
 from ..io.filename import get_filename
+from ..registration.ants import embedded_antsreg
 from ..registration.cmap import expand_coordinate_mapping
-from ..registration.transform import scanner_transform
+from ..registration.transform import apply_coordinate_mapping, scanner_transform
 
 __all__ = ["mask_ana", "clean_ana", "mask_epi"]
 
@@ -119,22 +119,15 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
         )
 
     # scanner transform peeled t1 to epi
-    ana_reg = apply_coordinate_mappings(
-        file_t1,  # input
-        file_cmap_reg,  # cmap
-        interpolation="linear",  # nearest or linear
-        padding="zero",  # closest, zero or max
-        save_data=False,
-        overwrite=False,
-        output_dir=None,
-        file_name=None,
+    apply_coordinate_mapping(
+        file_t1, file_cmap_reg, file_ana_reg, interpolation="linear"
     )
-    nb.save(ana_reg["result"], file_ana_reg)
 
     # rigid registration
     embedded_antsreg(
         file_ana_reg,  # source image
         file_epi,  # target image
+        output_dir=path_t1,  # output directory
         run_rigid=True,  # whether or not to run a rigid registration first
         rigid_iterations=1000,  # number of iterations in the rigid step
         run_affine=False,  # whether or not to run an affine registration first
@@ -148,10 +141,6 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
         convergence=1e-6,  # threshold for convergence (can make algorithm very slow)
         ignore_affine=True,  # ignore the affine matrix information extracted from the image header
         ignore_header=True,  # ignore the orientation information and affine matrix information extracted from the image header
-        save_data=True,  # save output data to file
-        overwrite=True,  # overwrite existing results
-        output_dir=path_t1,  # output directory
-        file_name="syn",  # output basename
     )
 
     # remove unnecessary files
@@ -185,20 +174,12 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     )
 
     # apply ants cmap to header transformation
-    cmap_def = apply_coordinate_mappings(
-        file_cmap_reg,  # input
-        file_cmap_ants,
-        interpolation="linear",  # nearest or linear
-        padding="zero",  # closest, zero or max
-        save_data=False,
-        overwrite=False,
-        output_dir=None,
-        file_name=None,
+    cmap_def = apply_coordinate_mapping(
+        file_cmap_reg, file_cmap_ants, file_cmap_def, interpolation="linear"
     )
-    nb.save(cmap_def["result"], file_cmap_def)
 
     # remove outliers and expand
-    arr_cmap = cmap_def["result"].get_fdata()
+    arr_cmap = cmap_def.get_fdata()
 
     pts_cmap0 = arr_cmap[0, 0, 0, 0]
     pts_cmap1 = arr_cmap[0, 0, 0, 1]
@@ -222,32 +203,15 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     )
 
     # apply final cmap to t1 and mask
-    ana_def = apply_coordinate_mappings(
-        file_t1,  # input
-        file_cmap_def,
-        interpolation="linear",  # nearest or linear
-        padding="zero",  # closest, zero or max
-        save_data=False,
-        overwrite=False,
-        output_dir=None,
-        file_name=None,
+    apply_coordinate_mapping(
+        file_t1, file_cmap_def, file_ana_def, interpolation="linear"
     )
-    nb.save(ana_def["result"], file_ana_def)
-
-    mask_def = apply_coordinate_mappings(
-        file_mask,  # input
-        file_cmap_def,
-        interpolation="nearest",  # nearest or linear
-        padding="zero",  # closest, zero or max
-        save_data=False,
-        overwrite=False,
-        output_dir=None,
-        file_name=None,
+    mask_def = apply_coordinate_mapping(
+        file_mask, file_cmap_def, file_mask_def, interpolation="nearest"
     )
-    nb.save(mask_def["result"], file_mask_def)
 
     # finalise mask
-    arr_mask = mask_def["result"].get_fdata()
+    arr_mask = mask_def.get_fdata()
     arr_mask = binary_fill_holes(arr_mask).astype(int)  # fill holes in mask
     arr_mask = binary_dilation(arr_mask, iterations=niter).astype(
         np.float
@@ -255,9 +219,7 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     arr_mask = gaussian_filter(arr_mask, sigma=sigma)  # apply gaussian filter
 
     # write final epi mask
-    out_img = nb.Nifti1Image(
-        arr_mask, mask_def["result"].affine, mask_def["result"].header
-    )
+    out_img = nb.Nifti1Image(arr_mask, mask_def.affine, mask_def.header)
     nb.save(out_img, file_mask_def2)
 
     # multiply epi and binary mask
