@@ -40,7 +40,10 @@ def embedded_antsreg(
 ):
     """Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and formats
     the output deformations into voxel coordinate mappings as used in CBSTools
-    registration and transformation routines.
+    registration and transformation routines. Three files are writte to disk:
+    (1) transformed source file (suffix: _ants-def), (2) forward cmap (suffix:
+    _ants-map) and inverse cmap (suffix: _ants.invmap) with file extension of the source
+    image.
 
     Parameters
     ----------
@@ -256,16 +259,22 @@ def embedded_antsreg(
     src_map = load_volume(src_map_file)
     trg_map = load_volume(trg_map_file)
 
+    srcfile = source.get_filename()
+    trgfile = target.get_filename()
+
     # run the main ANTS software: here we directly build the command line call
-    reg = "antsRegistration --collapse-output-transforms 1 --dimensionality 3"
+    reg = "antsRegistration --collapse-output-transforms 1 --dimensionality 3 --float 0"
     reg += " --initialize-transforms-per-stage 0 --interpolation Linear"
+    reg += " --use-histogram-matching 0"
+    reg += " --winsorize-image-intensities [0.001,0.999]"
+    reg += f" --initial-moving-transform [{srcfile},{trgfile},1]"
+    reg += " --write-composite-transform 0"
 
     # output with basename antsreg
     output_name = "syn"
-    reg += f" --output {output_name}"
+    file_out = os.path.join(output_dir, f"{output_name}.nii.gz")
+    reg += f" --output [{output_dir}/{output_name},{file_out}]"
 
-    srcfile = source.get_filename()
-    trgfile = target.get_filename()
     print(f"registering {srcfile} to {trgfile}")
 
     # figure out the number of scales, going with a factor of two
@@ -292,28 +301,24 @@ def embedded_antsreg(
     if run_rigid is True:
         reg += " --transform Rigid[0.1]"
         if cost_function == "CrossCorrelation":
-            reg += f" --metric CC[ {trgfile}, {srcfile}, 1.000, 5, Random, 0.3 ]"
+            reg += f" --metric CC[{trgfile},{srcfile},1.000,5,Random,0.3]"
         else:
-            reg += f" --metric MI[ {trgfile}, {srcfile}, 1.000, 32, Random, 0.3 ]"
+            reg += f" --metric MI[{trgfile},{srcfile},1.000,32,Random,0.3]"
 
-        reg += f" --convergence [ {iter_rigid}, {convergence}, 10 ]"
+        reg += f" --convergence [{iter_rigid},{convergence},10]"
         reg += f" --smoothing-sigmas {smooth}"
         reg += f" --shrink-factors {shrink}"
-        reg += " --use-histogram-matching 0"
-        reg += " --winsorize-image-intensities [ 0.001, 0.999 ]"
 
     if run_affine is True:
         reg += " --transform Affine[0.1]"
         if cost_function == "CrossCorrelation":
-            reg += f" --metric CC[ {trgfile}, {srcfile}, 1.000, 5, Random, 0.3 ]"
+            reg += f" --metric CC[{trgfile},{srcfile},1.000,5,Random,0.3]"
         else:
-            reg += " --metric MI[ {trgfile}, {srcfile}, 1.000, 32, Random, 0.3 ]"
+            reg += f" --metric MI[{trgfile},{srcfile},1.000,32,Random,0.3]"
 
-        reg += f" --convergence [ {iter_affine}, {convergence}, 10 ]"
+        reg += f" --convergence [{iter_affine},{convergence},10]"
         reg += f" --smoothing-sigmas {smooth}"
         reg += f" --shrink-factors {shrink}"
-        reg += " --use-histogram-matching 0"
-        reg += " --winsorize-image-intensities [ 0.001, 0.999 ]"
 
     if run_syn is True:
         # Regularization preset for the SyN deformation
@@ -321,46 +326,42 @@ def embedded_antsreg(
         syn_param = [0.2, 3.0, 0.0]  # Regularization Medium
         # syn_param = [0.2, 4.0, 3.0] # Regularization High
 
-        reg = f" --transform SyN {syn_param}"
+        reg += f" --transform SyN{syn_param}"
         if cost_function == "CrossCorrelation":
-            reg += f" --metric CC[ {trgfile}, {srcfile}, 1.000, 5, Random, 0.3 ]"
+            reg += f" --metric CC[{trgfile},{srcfile},1.000,5,Random,0.3]"
         else:
-            reg += f" --metric MI[ {trgfile}, {srcfile}, 1.000, 32, Random, 0.3 ]"
+            reg += f" --metric MI[{trgfile},{srcfile},1.000,32,Random,0.3]"
 
-        reg += f" --convergence [ {iter_syn}, {convergence}, 5 ]"
+        reg += f" --convergence [{iter_syn},{convergence},5]"
         reg += f" --smoothing-sigmas {smooth}"
         reg += f" --shrink-factors {shrink}"
-        reg += " --use-histogram-matching 0"
-        reg += " --winsorize-image-intensities [ 0.001, 0.999 ]"
 
     if run_rigid is False and run_affine is False and run_syn is False:
         reg += " --transform Rigid[0.1]"
-        reg += f" --metric CC[ {trgfile}, {srcfile}, 1.000, 5, Random, 0.3 ]"
-        reg += " --convergence [ 0, 1.0, 2 ]"
+        reg += f" --metric CC[{trgfile},{srcfile},1.000,5,Random,0.3]"
+        reg += " --convergence [0,1.0,2]"
         reg += " --smoothing-sigmas 0.0"
         reg += " --shrink-factors 1"
-        reg += " --use-histogram-matching 0"
-        reg += " --winsorize-image-intensities [ 0.001, 0.999 ]"
-
-    reg += " --write-composite-transform 0"
 
     # run the ANTs command directly
     print(reg)
     try:
-        subprocess.check_output(reg, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = f"execution failed (error code {e.returncode})\nOutput: {e.output}"
-        raise subprocess.CalledProcessError(returncode=e.returncode, cmd=msg)
+        subprocess.run([reg], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     # output file names
-    results = sorted(glob(f"{output_name}*"))
+    results = sorted(glob(os.path.join(output_dir, f"{output_name}*")))
     forward = []
     flag = []
     for res in results:
+        print("hallo")
         if res.endswith("GenericAffine.mat"):
+            print("enter here")
             forward.append(res)
             flag.append(False)
         elif res.endswith("Warp.nii.gz") and not res.endswith("InverseWarp.nii.gz"):
+            print("or enter here")
             forward.append(res)
             flag.append(False)
 
@@ -388,15 +389,14 @@ def embedded_antsreg(
 
     print(at)
     try:
-        subprocess.check_output(at, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = f"execution failed (error code {e.returncode})\nOutput: {e.output}"
-        raise subprocess.CalledProcessError(returncode=e.returncode, cmd=msg)
+        subprocess.run([at], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     # Create coordinate mappings
     src_at = "antsApplyTransforms --dimensionality 3 --input-image-type 3"
     src_at += f" --input {src_map.get_filename()}"
-    src_at += f" --reference-image {target.get_filenames()}"
+    src_at += f" --reference-image {target.get_filename()}"
     src_at += " --interpolation Linear"
     for idx, transform in enumerate(forward):
         if flag[idx]:
@@ -407,10 +407,9 @@ def embedded_antsreg(
 
     print(src_at)
     try:
-        subprocess.check_output(src_at, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = f"execution failed (error code {e.returncode})\nOutput: {e.output}"
-        raise subprocess.CalledProcessError(returncode=e.returncode, cmd=msg)
+        subprocess.run([src_at], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     trg_at = "antsApplyTransforms --dimensionality 3 --input-image-type 3"
     trg_at += f" --input {trg_map.get_filename()}"
@@ -425,12 +424,13 @@ def embedded_antsreg(
 
     print(trg_at)
     try:
-        subprocess.check_output(trg_at, shell=True, stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError as e:
-        msg = f"execution failed (error code {e.returncode})\nOutput: {e.output}"
-        raise subprocess.CalledProcessError(returncode=e.returncode, cmd=msg)
+        subprocess.run([trg_at], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     # clean-up intermediate files
+    if os.path.exists(file_out):
+        os.remove(file_out)
     if os.path.exists(src_map_file):
         os.remove(src_map_file)
     if os.path.exists(trg_map_file):

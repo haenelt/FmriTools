@@ -1,9 +1,9 @@
-- [ ] test embedded_antsreg
 - [ ] test segmentation.mask
 - [ ] remove nipype dependencies
 - [ ] remove nighres dependencies
 - [ ] sort modules (include docstrings, include __all__)
 - [ ] load modules in inits
+- [ ] make subprocess as in embedded_antsreg
 - [ ] phase regression (.preprocessing.phase_regression)
 - [ ] simplify mesh (.surface.simplify)
 - [ ] dijkstra
