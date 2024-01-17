@@ -355,13 +355,10 @@ def embedded_antsreg(
     forward = []
     flag = []
     for res in results:
-        print("hallo")
         if res.endswith("GenericAffine.mat"):
-            print("enter here")
             forward.append(res)
             flag.append(False)
         elif res.endswith("Warp.nii.gz") and not res.endswith("InverseWarp.nii.gz"):
-            print("or enter here")
             forward.append(res)
             flag.append(False)
 

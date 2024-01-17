@@ -144,11 +144,12 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     )
 
     # remove unnecessary files
-    os.remove(os.path.join(path_t1, "syn_ants-def0.nii.gz"))
-    os.remove(os.path.join(path_t1, "syn_ants-invmap.nii.gz"))
+    _, name_ana_reg, _ = get_filename(file_ana_reg)
+    os.remove(os.path.join(path_t1, f"{name_ana_reg}_ants-def.nii.gz"))
+    os.remove(os.path.join(path_t1, f"{name_ana_reg}_ants-invmap.nii.gz"))
 
     # rename cmap
-    os.rename(os.path.join(path_t1, "syn_ants-map.nii.gz"), file_cmap_ants)
+    os.rename(os.path.join(path_t1, f"{name_ana_reg}_ants-map.nii.gz"), file_cmap_ants)
 
     # remove outliers and expand
     cmap = nb.load(file_cmap_ants)
@@ -190,9 +191,7 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     arr_cmap[arr_cmap == pts_cmap1] = 0
     arr_cmap[arr_cmap == pts_cmap2] = 0
 
-    output = nb.Nifti1Image(
-        arr_cmap, cmap_def["result"].affine, cmap_def["result"].header
-    )
+    output = nb.Nifti1Image(arr_cmap, cmap_def.affine, cmap_def.header)
     nb.save(output, file_cmap_def)
 
     expand_coordinate_mapping(
@@ -214,7 +213,7 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
     arr_mask = mask_def.get_fdata()
     arr_mask = binary_fill_holes(arr_mask).astype(int)  # fill holes in mask
     arr_mask = binary_dilation(arr_mask, iterations=niter).astype(
-        np.float
+        np.float64
     )  # dilate mask
     arr_mask = gaussian_filter(arr_mask, sigma=sigma)  # apply gaussian filter
 

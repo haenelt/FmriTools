@@ -1,4 +1,3 @@
-- [ ] test segmentation.mask
 - [ ] remove nipype dependencies
 - [ ] remove nighres dependencies
 - [ ] sort modules (include docstrings, include __all__)

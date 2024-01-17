@@ -62,6 +62,7 @@ def apply_coordinate_mapping(file_in, cmap_in, file_out, interpolation="linear")
     x_dim_source = data.header["dim"][1]
     y_dim_source = data.header["dim"][2]
     z_dim_source = data.header["dim"][3]
+    t_dim_source = data.header["dim"][4]
     x_dim_target = cmap.header["dim"][1]
     y_dim_target = cmap.header["dim"][2]
     z_dim_target = cmap.header["dim"][3]
@@ -95,13 +96,24 @@ def apply_coordinate_mapping(file_in, cmap_in, file_out, interpolation="linear")
     arr_c_y = arr_c_y[ind_keep]
     arr_c_z = arr_c_z[ind_keep]
 
-    # do the interpolation
-    arr_sampled = _sampler[interpolation](arr_c_x, arr_c_y, arr_c_z, arr)
+    # get dummy fourth dimension for 3d volumes to have support for 3D and 4D volumes.
+    if t_dim_source == 1:
+        arr = np.expand_dims(arr, axis=-1)
 
-    # reshape to output array
-    res = np.zeros_like(arr_sum)
-    res[ind_keep] = arr_sampled
-    res = np.reshape(res, (x_dim_target, y_dim_target, z_dim_target))
+    # do the interpolation
+    res = np.zeros((x_dim_target, y_dim_target, z_dim_target, t_dim_source))
+    for i in range(t_dim_source):
+        arr_sampled = _sampler[interpolation](
+            arr_c_x, arr_c_y, arr_c_z, arr[:, :, :, i]
+        )
+
+        # reshape to output array
+        tmp = np.zeros_like(arr_sum)
+        tmp[ind_keep] = arr_sampled
+        res[:, :, :, i] = np.reshape(tmp, (x_dim_target, y_dim_target, z_dim_target))
+
+    # remove dummy dimensions in the case of 3D volume
+    res = np.squeeze(res)
 
     output = nb.Nifti1Image(res, cmap.affine, cmap.header)
     nb.save(output, file_out)
@@ -201,12 +213,12 @@ def scanner_transform(input_source, input_target, path_output, compress_file=Fal
     coordinate_mapping = np.zeros((x_size, y_size, z_size, 3), dtype="float")
 
     # coordinate mapping in x-direction
-    X = np.array(np.arange(0, x_size, 1), dtype="float")
+    X = np.array(np.arange(0, x_size, 1), dtype=np.float64)
     X = np.transpose(repmat(X, y_size, 1))
     X = np.dstack([X] * z_size)
 
     # coordinate mapping in y-direction
-    Y = np.array(np.arange(0, y_size), dtype="float")
+    Y = np.array(np.arange(0, y_size), dtype=np.float64)
     Y = repmat(Y, x_size, 1)
     Y = np.dstack([Y] * z_size)
 
@@ -225,7 +237,7 @@ def scanner_transform(input_source, input_target, path_output, compress_file=Fal
     # write coordinate map
     target_img.header["dim"][0] = 4
     target_img.header["dim"][4] = 3
-    target_img.set_data_dtype(np.float)
+    target_img.set_data_dtype(np.float64)
 
     # get filenames
     if os.path.splitext(os.path.basename(input_source))[1] == ".gz":
