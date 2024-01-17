@@ -41,9 +41,9 @@ def embedded_antsreg(
     """Runs the rigid and/or Symmetric Normalization (SyN) algorithm of ANTs and formats
     the output deformations into voxel coordinate mappings as used in CBSTools
     registration and transformation routines. Three files are writte to disk:
-    (1) transformed source file (suffix: _ants-def), (2) forward cmap (suffix:
-    _ants-map) and inverse cmap (suffix: _ants.invmap) with file extension of the source
-    image.
+    (1) transformed source file (suffix: <file_source>_ants-def), (2) forward cmap
+    (suffix: <file_source>_ants-map) and (3) inverse cmap (suffix:
+    <file_source>_ants-invmap) with file extension of the source image.
 
     Parameters
     ----------
