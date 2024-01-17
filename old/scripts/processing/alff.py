@@ -20,7 +20,7 @@ import nibabel as nb
 from ..matlab import MatlabCommand
 from ..preprocessing.get_nuisance_mask import get_nuisance_mask
 from ..preprocessing.get_nuisance_regressor import get_nuisance_regressor
-from ..processing.get_alff import get_alff
+from ..processing.rest import get_alff
 
 # input
 anatomy = ""  # T1w full brain anatomy (e.g. orig)

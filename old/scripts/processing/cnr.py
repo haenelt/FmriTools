@@ -25,7 +25,7 @@ import numpy as np
 
 from ..io.filename import get_filename
 from ..matlab import MatlabCommand
-from ..processing.get_onset_vols import get_onset_vols
+from ..processing.behavior import get_onset_vols
 
 # input data
 img_input = [

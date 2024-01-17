@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
+"""Behavioral measures."""
 
 import sys
 
 import numpy as np
 from scipy.io import loadmat
 
+__all__ = ["get_onset_vols"]
+
 
 def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):
-    """Get onset vols.
-
-    This function returns all the volume indices corresponding to an
-    experimental condition in from a block design.
+    """This function returns all the volume indices corresponding to an experimental
+    condition in from a block design.
 
     Parameters
     ----------
@@ -31,7 +32,6 @@ def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):
         sorted volumes of experimental condition.
 
     """
-
     # load condition file
     cond = loadmat(cond_input)
 
@@ -41,7 +41,7 @@ def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):
     durations = np.concatenate(np.concatenate(np.concatenate(cond["durations"])))
 
     # check if condition names exist
-    if not name_condition in names:
+    if name_condition not in names:
         sys.exit("The condition is not found in the condition_file")
 
     # index of condition
@@ -66,7 +66,7 @@ def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):
         outlier_regressor = np.where(outlier_regressor == 1)[0]
 
         # look for outliers in onset arrays
-        for i in range(len(onsets)):
+        for i, _ in enumerate(onsets):
             if np.any(onsets[i] == outlier_regressor):
                 onsets[i] = -1
 

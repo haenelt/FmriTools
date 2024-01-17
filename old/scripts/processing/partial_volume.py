@@ -20,7 +20,7 @@ from nighres.registration import apply_coordinate_mappings
 from nighres.surface import probability_to_levelset
 from nipype.interfaces import afni
 
-from ..processing.estimate_pv import estimate_pv
+from ..processing.bias import estimate_pv
 
 # input
 file_wm = "/data/pt_01880/Experiment1_ODC/p4/anatomy/layer/left/wm_label.nii"

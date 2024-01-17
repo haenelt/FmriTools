@@ -2,6 +2,7 @@
 """Time-series manipulation."""
 
 import os
+import subprocess
 from math import prod
 
 import nibabel as nb
@@ -13,7 +14,13 @@ from scipy.ndimage import gaussian_filter
 
 from ..io.filename import get_filename
 
-__all__ = ["ScaleTimeseries", "FilterTimeseries", "slice_timing_correction", "average"]
+__all__ = [
+    "ScaleTimeseries",
+    "FilterTimeseries",
+    "slice_timing_correction",
+    "average",
+    "bandpass_afni",
+]
 
 
 class ScaleTimeseries:
@@ -530,14 +537,6 @@ def _set_tr(img, tr):
     return img.__class__(img.get_fdata().copy(), img.affine, header)
 
 
-# -*- coding: utf-8 -*-
-
-import os
-
-import nibabel as nb
-import numpy as np
-
-
 def average(img_input, path_output, name_output):
     """This function computes the element-wise average of multiple nifti files.
 
@@ -563,7 +562,7 @@ def average(img_input, path_output, name_output):
     res = nb.load(img_input[0])
     res_array = np.zeros_like(res.get_fdata())
 
-    for i in range(len(img_input)):
+    for i, _ in enumerate(img_input):
         res_array += nb.load(img_input[i]).get_fdata()
 
     # divide summed time series by number of time series
@@ -572,3 +571,32 @@ def average(img_input, path_output, name_output):
     # write output
     output = nb.Nifti1Image(res_array, res.affine, res.header)
     nb.save(output, os.path.join(path_output, name_output + ".nii"))
+
+
+def bandpass_afni(file_in, file_out, TR, lp_freq, hp_freq):
+    """Bandpass filter time series using AFNI.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of input file.
+    file_out : str
+        File name of output file.
+    TR : float
+        Repetition time in s.
+    lp_freq : float
+        Lowpass filter frequencyin Hz.
+    hp_freq : float
+        Highpass filter frequency in Hz.
+    """
+    command = "3dBandpass"
+    command += f" -prefix {file_out}"
+    command += f" -dt {TR:.6f}"
+    command += f" {hp_freq:.6f} {lp_freq:.6f}"
+    command += f" {file_in}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
