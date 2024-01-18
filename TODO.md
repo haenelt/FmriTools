@@ -3,11 +3,8 @@
 - [ ] sort modules (include docstrings, include __all__)
 - [ ] load modules in inits
 - [ ] make subprocess as in embedded_antsreg
-- [ ] phase regression (.preprocessing.phase_regression)
-- [ ] simplify mesh (.surface.simplify)
-- [ ] dijkstra
-- [ ] spatial highpass filtering of complex data to remove phase artifacts
-- [ ] tests
+- [ ] sort functions in modules and get rid of useless stuff
+- [ ] tests (mesh)
 - [x] solve execution in init
 - [x] remove gbb dependencies
 - [x] remove natsort dependencies

@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Mesh simplification
-ADD
-- edge collapse
-- remove edges which are longer than a defined threshold
-- both vertices are merged into one location at the mid-point of the removed edge
-"""
+"""Mesh simplification."""
 
 import os
 import subprocess

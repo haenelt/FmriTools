@@ -51,7 +51,7 @@ from ..segmentation.get_thickness_fsurf import get_thickness_fsurf
 from ..segmentation.include_pial_correction import include_pial_correction
 from ..segmentation.layer import calc_equivol_surf
 from ..segmentation.shift_white import shift_white
-from ..surface.get_curvature import get_curvature
+from ..segmentation.surf import mris_curvature
 from ..surface.smooth import mris_smooth
 from ..surface.upsample_surf_mesh import upsample_surf_mesh
 from ..utils.bias import robust_combination
@@ -254,12 +254,12 @@ elif part == 4:
 
     # generate new curvature, thickness and ribbon files
     print("Compute new morphological files")
-    for i in range(len(hemi)):
-        file_in = os.path.join(path, sub, "surf", hemi[i] + ".curv")
-        file_out = os.path.join(path_trash, hemi[i] + ".curv_backup_" + date)
+    for _h in hemi:
+        file_in = os.path.join(path, sub, "surf", _h + ".curv")
+        file_out = os.path.join(path_trash, _h + ".curv_backup_" + date)
         os.rename(file_in, file_out)
-        get_curvature(
-            os.path.join(path, sub, "surf", hemi[i] + ".white"),
+        mris_curvature(
+            os.path.join(path, sub, "surf", _h + ".white"),
             os.path.join(path, sub, "surf"),
         )
 

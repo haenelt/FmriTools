@@ -4,7 +4,9 @@ import datetime
 import os
 import shutil
 
-from nipype.interfaces.freesurfer import Curvature, MRIsExpand, MRIsInflate
+from nipype.interfaces.freesurfer import MRIsExpand, MRIsInflate
+
+from ..segmentation.surf import mris_curvature
 
 
 def shift_white(path, sub, w_shift=-0.5):
@@ -85,27 +87,19 @@ def shift_white(path, sub, w_shift=-0.5):
         inflate.run()
 
     # get new curvature file
-    for i in range(len(hemi)):
+    for _h in hemi:
         # copy the input file to not overwrite existing files
-        file_in = os.path.join(path, sub, "surf", hemi[i] + ".white")
-        file_out = os.path.join(path, sub, "surf", hemi[i] + ".temp")
+        file_in = os.path.join(path, sub, "surf", _h + ".white")
+        file_out = os.path.join(path, sub, "surf", _h + ".temp")
         shutil.copy(file_in, file_out)
 
-        curv = Curvature()
-        curv.inputs.in_file = os.path.join(path, sub, "surf", hemi[i] + ".temp")
-        curv.inputs.save = True
-        curv.inputs.distances = curv_distance
-        curv.inputs.threshold = curv_threshold
-        curv.inputs.averages = curv_average
-        curv.inputs.n = True
-        curv.inputs.save = True
-        curv.run()
-
-        # rename output file (mean curvature file hemi.temp.H as hemi.curv)
-        file_in = os.path.join(path, sub, "surf", hemi[i] + ".temp.H")
-        file_out = os.path.join(path, sub, "surf", hemi[i] + ".curv")
-        os.rename(file_in, file_out)
+        mris_curvature(
+            os.path.join(path, sub, "surf", _h + ".temp"),
+            os.path.join(path, sub, "surf"),
+            curv_average,
+            curv_distance,
+            curv_threshold,
+        )
 
         # delete intermediate files afterwards
-        os.remove(os.path.join(path, sub, "surf", hemi[i] + ".temp"))
-        os.remove(os.path.join(path, sub, "surf", hemi[i] + ".temp.K"))
+        os.remove(os.path.join(path, sub, "surf", _h + ".temp"))
