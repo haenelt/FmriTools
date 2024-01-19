@@ -14,7 +14,7 @@ from ..io.surf import write_mgh
 from ..registration.cmap import generate_coordinate_mapping
 from ..registration.mapping import map2surface
 from ..registration.surf import deform_surface
-from ..utils.resample_volume import resample_volume
+from ..registration.transform import resample_volume
 
 
 def _rescale_cmap(file_cmap, dim, dim_upsampled):

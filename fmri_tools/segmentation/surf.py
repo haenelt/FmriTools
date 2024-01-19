@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Surface utilities."""
 
+import datetime
 import os
 import subprocess
 import sys
@@ -9,7 +10,56 @@ import numpy as np
 
 from ..io.filename import get_filename
 
-__all__ = ["mris_curvature", "inflate_surf_mesh"]
+__all__ = ["mris_thickness", "mris_curvature", "inflate_surf_mesh"]
+
+
+def mris_thickness(path, sub):
+    """This function calculates the cortical thickness using freesurfer. Old files are
+    moved to the freesurfer trash folder tagged with a date string as suffix.
+
+    Parameters
+    ----------
+    path : str
+        Path to the freesurfer segmentation folder.
+    sub : str
+        Name of the freesurfer segmentation folder.
+
+    Returns
+    -------
+    None.
+
+    """
+    # parameters
+    hemi = ["lh", "rh"]  # hemisphere prefix
+    max_thickness = 10  # maximum thickness cut in mm
+
+    # set subject environment here for mris_thickness
+    os.environ["SUBJECTS_DIR"] = path
+
+    # output folder (freesurfer trash folder)
+    path_trash = os.path.join(path, sub, "trash")
+
+    # get date string for moved files
+    date = datetime.datetime.now().strftime("%Y%m%d%H%M")
+
+    # move old surfaces and morphological files to trash folder
+    for _h in hemi:
+        file_in = os.path.join(path, sub, "surf", f"{_h}.thickness")
+        file_out = os.path.join(path_trash, f"{_h}.thickness_backup_{date}")
+        os.rename(file_in, file_out)
+
+        # get new thickness file
+        command = "mris_thickness"
+        command += f" -max {max_thickness}"
+        command += f" {sub}"
+        command += f" {_h}"
+        command += f" {_h}.thickness"
+
+        print("Execute: " + command)
+        try:
+            subprocess.run([command], shell=True, check=False)
+        except subprocess.CalledProcessError:
+            print("Execuation failed!")
 
 
 def mris_curvature(file_in, path_output, a=10, dist=(10, 10), thresh=0.999):

@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 """Apply transformations."""
 
+import datetime
 import os
 import subprocess
+from shutil import copyfile
 
 import nibabel as nb
 import numpy as np
 import numpy.linalg as npl
 from numpy.matlib import repmat
+from sh import gunzip
 
 from ..io.filename import get_filename
 from ..utils.interpolation import linear_interpolation3d, nn_interpolation3d
@@ -20,6 +23,7 @@ __all__ = [
     "apply_flirt",
     "apply_header",
     "apply_fugue",
+    "resample_volume",
 ]
 
 
@@ -417,3 +421,60 @@ def _set_max(arr, max_val):
     """Remove coordinates above the matrix size."""
     arr[np.ceil(arr) > max_val] = None
     return arr
+
+
+def resample_volume(file_in, file_out, dxyz=(0.4, 0.4, 0.4), rmode="Cu"):
+    """This function resamples a nifti volume using the afni function 3dresample. Before
+    running the function, set the afni environment by calling AFNI in the terminal.
+
+    Parameters
+    ----------
+    file_in : str
+        Nifti input filename.
+    file_out : str
+        Nifti output filename.
+    dxyz : tuple, optional
+        Array of target resolution in single dimensions. The default is
+        (0.4, 0.4, 0.4).
+    rmode : str, optional
+        Interpolation methods (Linear, NN, Cu, Bk). The default is "Cu".
+
+    Returns
+    -------
+    None.
+
+    """
+    # get path and file extension of input file
+    path_in, _, ext_in = get_filename(file_in)
+
+    # make temporary copy of input file
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = "".join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
+    file_tmp = os.path.join(path_in, "tmp_" + tmp_string + ext_in)
+
+    if not os.path.exists(file_tmp) and not os.path.exists(file_tmp[:-3]):
+        copyfile(file_in, file_tmp)
+    else:
+        raise FileExistsError("Temporary file already exists!")
+
+    if os.path.splitext(file_tmp)[1] == ".gz":
+        gunzip(file_tmp)
+        file_tmp = os.path.splitext(file_tmp)[0]
+
+    # resample volume
+    command = "3dresample"
+    command += f" -dxyz {dxyz[0]} {dxyz[1]} {dxyz[2]}"
+    command += f" -rmode {rmode}"
+    command += f" -inset {file_tmp}"
+    command += f" -prefix {file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+    # remove temporary copy
+    os.remove(file_tmp)
