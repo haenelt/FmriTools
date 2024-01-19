@@ -14,7 +14,7 @@ from ..registration.ants import embedded_antsreg
 from ..registration.cmap import expand_coordinate_mapping
 from ..registration.transform import apply_coordinate_mapping, scanner_transform
 
-__all__ = ["mask_ana", "clean_ana", "mask_epi"]
+__all__ = ["mask_ana", "clean_ana", "mask_epi", "deweight_mask"]
 
 
 def mask_ana(t1, mask, background_bright=False):
@@ -283,3 +283,73 @@ def clean_ana(file_in, min_value, new_range, overwrite=True):
         else:
             basename = os.path.splitext(os.path.basename(file_in))[0]
             nb.save(output, os.path.join(path, basename + "_clean.nii"))
+
+
+def deweight_mask(
+    file_in,
+    mask_in,
+    mask_max=0.25,
+    sigma_gaussian=10.0,
+    write_output=False,
+    path_output=None,
+):
+    """This function computes a binary mask by pooling all voxels above a given
+    threshold and replaces all image voxels by its gaussian filtered image voxels within
+    this binary mask.
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input image.
+    mask_in : str
+        Filename of input mask.
+    mask_max : float, optional
+        Cutoff threshold. The default is 0.25.
+    sigma_gaussian : float, optional
+        Sigma for gaussian filter. The default is 10.0.
+    write_output : bool, optional
+        Write output image The default is None.
+    path_output : str, optional
+        Path where output is written. The default is None.
+
+    Returns
+    -------
+    data_array : np.ndarray
+        Image matrix with filtered voxels.
+
+    """
+    # get basename of phase file
+    _, name_file, ext_file = get_filename(file_in)
+
+    # load unwrapped phase data
+    data = nb.load(file_in)
+    data_array = data.get_fdata()
+
+    # load standard deviation data
+    mask = nb.load(mask_in)
+    mask_array = mask.get_fdata()
+
+    # threshold standard deviation
+    mask_array[mask_array < mask_max] = 0
+    mask_array[mask_array != 0] = 1
+
+    # apply gaussian filter to phase data
+    data_array_gaussian = gaussian_filter(
+        data_array,
+        sigma_gaussian,
+        order=0,
+        output=None,
+        mode="reflect",
+        cval=0.0,
+        truncate=4.0,
+    )
+
+    # replace data
+    data_array[mask_array == 1] = data_array_gaussian[mask_array == 1]
+
+    # write output
+    if write_output:
+        output = nb.Nifti1Image(data_array, data.affine, data.header)
+        nb.save(output, os.path.join(path_output, name_file + "_filtered" + ext_file))
+
+    return data_array

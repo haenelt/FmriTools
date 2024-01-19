@@ -27,8 +27,8 @@ from nighres.intensity import phase_unwrapping
 
 from ..io.filename import get_filename
 from ..matlab import MatlabCommand
-from ..preprocessing.deweight_mask import deweight_mask
 from ..preprocessing.moco import volreg_afni
+from ..segmentation.mask import deweight_mask
 from ..utils.metrics import calc_mean, calc_std
 
 # input data
