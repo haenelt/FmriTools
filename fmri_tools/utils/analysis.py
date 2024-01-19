@@ -4,11 +4,13 @@
 import copy
 import os
 import random
+import re
 
+import matplotlib.pyplot as plt
 import nibabel as nb
 import numpy as np
 from nibabel.freesurfer.io import read_label
-from numpy.fft import fft2, fftshift
+from numpy.fft import fft, fft2, fftshift
 from numpy.random import shuffle
 from scipy.signal import find_peaks
 from scipy.stats import levene, ttest_ind
@@ -22,6 +24,8 @@ __all__ = [
     "analyze_fft",
     "get_pca",
     "get_fft",
+    "get_bandpass",
+    "get_rf_pulse_bw",
 ]
 
 
@@ -602,3 +606,280 @@ def get_fft(
         nb.save(output, os.path.join(path_output, name_output + "_fft.nii"))
 
     return array_fft
+
+
+def get_bandpass(
+    nx,
+    ny,
+    fovx,
+    fovy,
+    kcut_low=0,
+    kcut_high=1,
+    apply_fftshift=False,
+    k_fwhm=0,
+    theta_fwhm=0,
+    theta1=0,
+    theta2=180,
+):
+    """This function generates a bandpass filter for an input image defined by lower and
+    upper cutoff frequencies. Additionally, Gaussian attenuation of border can be appled
+    and the filter can be only defined to a specific k-space region defined by lower and
+    upper angle thresholds.
+
+    Parameters
+    ----------
+    nx : int
+        Matrix size of input array in x-direction.
+    ny : int
+        Matrix size of input array in y-direction.
+    fovx : float
+        Field of view of input array in x-direction in mm.
+    fovy : float
+        Field of view of input array in y-direction in mm.
+    kcut_low : float, optional
+        Lower spatial cutoff frequency in cycles/mm. The default is 0.
+    kcut_high : föpat, optional
+        Upper spatial cutoff frequency in cycles/mm. The default is 1.
+    apply_fftshift : bool, optional
+        FFTshift to stay in the convention of spatial frequencies in numpy
+        arrays. The default is False.
+    k_fwhm : float, optional
+        Full-width at half maximum of gaussian filter in frequency direction.
+        The default is 0.
+    theta_fwhm : float, optional
+        Full-width at half maximum of gaussian filter in angle direction. The
+        default is 0.
+    theta1 : float, optional
+        Lower cutoff angle in deg [0,180]. The default is 0.
+    theta2 : float, optional
+        Higher cutoff angle in deg [0,180]. The default is 180.
+
+    Returns
+    -------
+    B : ndarray
+        Spatial frequency filter.
+
+    """
+    # parameters of gaussian
+    beta = 1
+    k_sigma = k_fwhm / (2 * np.sqrt(2 * np.log(2)))
+    theta_sigma = theta_fwhm / (2 * np.sqrt(2 * np.log(2)))
+
+    # get maximum k-space coordinate in x- and y-direction
+    kx_max = nx / (2 * fovx)
+    ky_max = ny / (2 * fovy)
+
+    # get k-space axes
+    kx = np.linspace(-kx_max, kx_max, nx)
+    ky = np.linspace(-ky_max, ky_max, ny)
+
+    # define two-dimensional k-space grid
+    kx_grid, ky_grid = np.meshgrid(kx, ky)
+
+    # convert to polar coordinates
+    k_r = np.sqrt(kx_grid**2 + ky_grid**2)
+
+    k_pol = np.arctan2(ky_grid, kx_grid)
+    k_pol[k_pol < 0] = k_pol[k_pol < 0] + np.pi
+    k_pol = k_pol / np.pi * 180
+
+    # frequency filter
+    b_r = k_r.copy()
+    b_r[np.where(np.logical_and(b_r >= kcut_low, b_r <= kcut_high))] = np.nan
+    b_r[~np.isnan(b_r)] = 0
+    b_r[b_r != 0] = 1
+
+    # angle filter
+    b_pol = k_pol.copy()
+    if theta2 > theta1:
+        b_pol[np.where(np.logical_and(b_pol >= theta1, b_pol <= theta2))] = np.nan
+        b_pol[~np.isnan(b_pol)] = 0
+        b_pol[b_pol != 0] = 1
+    else:
+        b_pol[np.where(np.logical_and(b_pol <= theta1, b_pol >= theta2))] = np.nan
+        b_pol[np.isnan(b_pol)] = 0
+        b_pol[b_pol != 0] = 1
+        b_pol[k_pol == 0] = 1  # important to also fill the phase gap
+
+    # filter edges
+    if k_fwhm != 0:
+        b1 = (
+            beta
+            / (np.sqrt(2 * np.pi) * k_sigma)
+            * np.exp(-((k_r - kcut_low) ** 2) / (2 * k_sigma**2))
+        )
+        b2 = (
+            beta
+            / (np.sqrt(2 * np.pi) * k_sigma)
+            * np.exp(-((k_r - kcut_high) ** 2) / (2 * k_sigma**2))
+        )
+
+        b_temp = b1 + b2
+        b_temp2 = b_temp.copy()
+        b_temp2[b_r == 1] = 0
+        b_max = np.max(b_temp2)
+        b_temp[b_r == 1] = b_max
+        b_r = b_temp.copy()
+
+        # normalize filter
+        b_r = (b_r - np.min(b_r)) / (np.max(b_r) - np.min(b_r))
+
+    if theta_fwhm != 0 and theta2 - theta1 < 180:
+        angle1 = np.mod(k_pol - theta1, 180)
+        angle2 = np.mod(theta1 - k_pol, 180)
+        angle3 = np.mod(k_pol - theta2, 180)
+        angle4 = np.mod(theta2 - k_pol, 180)
+
+        b_pol1a = (
+            beta
+            / (np.sqrt(2 * np.pi) * theta_sigma)
+            * np.exp(-(angle1**2) / (2 * theta_sigma**2))
+        )
+        b_pol1b = (
+            beta
+            / (np.sqrt(2 * np.pi) * theta_sigma)
+            * np.exp(-(angle2**2) / (2 * theta_sigma**2))
+        )
+        b_pol2a = (
+            beta
+            / (np.sqrt(2 * np.pi) * theta_sigma)
+            * np.exp(-(angle3**2) / (2 * theta_sigma**2))
+        )
+        b_pol2b = (
+            beta
+            / (np.sqrt(2 * np.pi) * theta_sigma)
+            * np.exp(-(angle4**2) / (2 * theta_sigma**2))
+        )
+
+        b_temp = b_pol1a + b_pol1b + b_pol2a + b_pol2b
+        b_temp2 = b_temp.copy()
+        b_temp2[b_pol == 1] = 0
+        b_max = np.max(b_temp2)
+        b_temp[b_pol == 1] = b_max
+        b_pol = b_temp.copy()
+
+        # normalize filter
+        b_pol = (b_pol - np.min(b_pol)) / (np.max(b_pol) - np.min(b_pol))
+
+    # compose frequency and angle filter
+    b = b_r * b_pol
+
+    # shift zero k-space line to the left border to match the numpy fft
+    # convention
+    if apply_fftshift is True:
+        b = fftshift(b)
+
+    return b
+
+
+def get_rf_pulse_bw(file_in, npad=1000, ninterp=1000000):
+    """This function computes the bandwidth in Hz of an RF pulse. The RF pulse shape has 
+    to be exported from the POET simulation. This can be done by clicking on the wanted 
+    pulse in the pulse sequence diagram and saving the event block as textfile. The 
+    bandwidth is calculated as the width at the threshold value of the normalized 
+    frequency magnitude.
+
+    Parameters
+    ----------
+    file_in : str
+        Textfile of one event block.
+    npad : int, optional
+        Pad zeros before and after pulse. The default is 1000.
+    ninterp : int, optional
+        Number of frequency steps for spline interpolation. The default is
+        1000000.
+
+    Returns
+    -------
+    rf : float
+        Pulse shape in time domain (microseconds).
+    rf_fft : float
+        Pulse shape in frequency domain (cycles/second).
+    bw : float
+        Bandwidth (Hz).
+
+    """
+    # read file
+    file = []
+    with open(file_in) as fp:
+        line = fp.readline()
+        while line:
+            line = fp.readline()
+            file.append(line)
+
+    # remove header from array
+    file = file[9:]
+
+    # get rf-pulse shape from array
+    rf = []
+    for i in range(len(file)):
+        temp = [float(s) for s in re.findall(r"-?\d+\.?\d*", file[i])]
+        if len(temp) > 0:
+            rf.append(temp[0])
+
+    # remove zeros at the beginning
+    exit_loop = 0
+    cnt = 0
+    while exit_loop == 0:
+        if rf[cnt] == 0:
+            cnt += 1
+        else:
+            exit_loop = 1
+    rf = rf[cnt:]
+
+    # remove zeros at the end
+    exit_loop = 0
+    cnt = -1
+    while exit_loop == 0:
+        if rf[cnt] == 0:
+            cnt -= 1
+        else:
+            exit_loop = 1
+    rf = rf[: cnt + 1]
+
+    # pad beginning and ending with zeros
+    rf = np.pad(rf, npad, "constant")
+
+    # get magnitude fft
+    rf_fft = np.abs(fft(rf))
+
+    # get frequency axis
+    freq = np.fft.fftfreq(len(rf), 1e-6)  # timesteps in seconds
+
+    # shift center frequency to center and normalize magnitude
+    freq = fftshift(freq)
+    rf_fft = fftshift(rf_fft)
+    rf_fft = rf_fft / np.max(rf_fft)
+
+    # get spline interpolation of fft
+    freq_spline = np.linspace(np.min(freq), np.max(freq), ninterp)
+    rf_fft_spline = np.interp(freq_spline, freq, rf_fft)
+
+    threshold = 0.1
+    for i in range(len(rf_fft_spline) - 1):
+        if rf_fft_spline[i] <= threshold < rf_fft_spline[i + 1]:
+            freq1 = freq_spline[i]
+
+        if rf_fft_spline[i] > threshold >= rf_fft_spline[i + 1]:
+            freq2 = freq_spline[i]
+
+    # bandwidth in Hz
+    bw = freq2 - freq1
+    print("Pulse bandwidth in Hz: " + str(bw))
+
+    # plot pulse and corresponding fft
+    fig, ax = plt.subplots()
+    ax.plot(np.linspace(0, len(rf), len(rf)), rf)
+    ax.set_xlabel("Time in microseconds")
+    ax.set_ylabel("Amplitude in a.u.")
+    ax.set_title("Pulse shape in time domain")
+    plt.show()
+
+    fig, ax = plt.subplots()
+    ax.plot(freq_spline, rf_fft_spline)
+    ax.set_xlabel("frequency in cycles/second")
+    ax.set_ylabel("Normalized amplitude in a.u.")
+    ax.set_title("Pulse shape in frequency domain")
+    plt.show()
+
+    return rf, rf_fft, bw

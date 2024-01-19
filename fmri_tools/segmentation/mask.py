@@ -3,18 +3,29 @@
 
 import os
 import shutil as sh
+import subprocess
 
 import nibabel as nb
 import numpy as np
 from scipy.ndimage import binary_fill_holes, gaussian_filter
-from scipy.ndimage.morphology import binary_dilation
+from scipy.ndimage.morphology import binary_dilation, binary_erosion
 
 from ..io.filename import get_filename
+from ..io.vol import mri_convert
+from ..matlab import MatlabCommand
 from ..registration.ants import embedded_antsreg
 from ..registration.cmap import expand_coordinate_mapping
 from ..registration.transform import apply_coordinate_mapping, scanner_transform
+from ..segmentation.skullstrip import skullstrip_bet
 
-__all__ = ["mask_ana", "clean_ana", "mask_epi", "deweight_mask"]
+__all__ = [
+    "mask_ana",
+    "clean_ana",
+    "mask_epi",
+    "deweight_mask",
+    "mask_nuisance",
+    "mask_ribbon",
+]
 
 
 def mask_ana(t1, mask, background_bright=False):
@@ -353,3 +364,164 @@ def deweight_mask(
         nb.save(output, os.path.join(path_output, name_file + "_filtered" + ext_file))
 
     return data_array
+
+
+def mask_nuisance(
+    orig_in,
+    deformation,
+    path_output,
+    nerode_white=1,
+    nerode_csf=1,
+    segmentation=True,
+    cleanup=True,
+):
+    """This function calculates WM and CSF masks in space of the functional time series.
+    It uses SPM to compute WM and CSF probability maps. These maps are masked with a
+    skullstrip mask and transformed to native epi space.
+
+    Parameters
+    ----------
+    orig_in : str
+        Input anatomy (orig.mgz).
+    deformation : str
+        Coordinate mapping for ana to epi transformation.
+    path_output : str
+        Path where output is saved.
+    nerode_white : int, optional
+        Number of wm mask eroding steps. The default is 1.
+    nerode_csf : int, optional
+        Number of csf mask eroding steps. The default is 1.
+    segmentation : bool, optional
+        Do not calculate new masks to not rerun everything. The default is True.
+    cleanup : bool, optional
+        Delete intermediate files. The default is True.
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    if not os.path.exists(path_output):
+        os.mkdir(path_output)
+
+    # get filename without file extension of input file
+    file = os.path.splitext(os.path.basename(orig_in))[0]
+
+    # convert to nifti format
+    mri_convert(orig_in, os.path.join(path_output, file + ".nii"))
+
+    # bet skullstrip mask
+    skullstrip_bet(
+        os.path.join(path_output, file + ".nii"), os.path.join(path_output, "_mask.nii")
+    )
+
+    # segmentation
+    if segmentation:
+        matlab = MatlabCommand(
+            "ft_skullstrip_spm12", os.path.join(path_output, file + ".nii"), path_output
+        )
+        matlab.run()
+
+    # load tissue maps
+    wm_array = nb.load(
+        os.path.join(path_output, "skull", "c2" + file + ".nii")
+    ).get_fdata()
+    csf_array = nb.load(
+        os.path.join(path_output, "skull", "c3" + file + ".nii")
+    ).get_fdata()
+    mask_array = nb.load(os.path.join(path_output, "bet_mask.nii")).get_fdata()
+
+    # binarize
+    wm_array[wm_array > 0] = 1
+    csf_array[csf_array > 0] = 1
+
+    # apply brain mask
+    wm_array = wm_array * mask_array
+    csf_array = csf_array * mask_array
+
+    # erode wm
+    wm_array = binary_erosion(
+        wm_array,
+        structure=None,
+        iterations=nerode_white,
+        mask=None,
+        output=None,
+        border_value=0,
+        origin=0,
+        brute_force=False,
+    )
+
+    # erode csf
+    csf_array = binary_erosion(
+        csf_array,
+        structure=None,
+        iterations=nerode_csf,
+        mask=None,
+        output=None,
+        border_value=0,
+        origin=0,
+        brute_force=False,
+    )
+
+    # write wm and csf mask
+    data_img = nb.load(orig_in)
+    wm_out = nb.Nifti1Image(wm_array, data_img.affine, data_img.header)
+    nb.save(wm_out, os.path.join(path_output, "wm_mask_orig.nii"))
+    csf_out = nb.Nifti1Image(csf_array, data_img.affine, data_img.header)
+    nb.save(csf_out, os.path.join(path_output, "csf_mask_orig.nii"))
+
+    # apply deformation to mask
+    apply_coordinate_mapping(
+        os.path.join(path_output, "wm_mask_orig.nii"),
+        deformation,
+        os.path.join(path_output, "wm_mask.nii.gz"),
+        interpolation="nearest",
+    )
+
+    apply_coordinate_mapping(
+        os.path.join(path_output, "csf_mask_orig.nii"),
+        deformation,
+        os.path.join(path_output, "csf_mask.nii.gz"),
+        interpolation="nearest",
+    )
+
+    # cleanup
+    if cleanup:
+        os.remove(os.path.join(path_output, "bet_mask.nii"))
+        os.remove(os.path.join(path_output, "csf_mask_orig.nii"))
+        os.remove(os.path.join(path_output, "wm_mask_orig.nii"))
+        os.remove(os.path.join(path_output, "orig.nii"))
+        sh.rmtree(os.path.join(path_output, "skull"), ignore_errors=True)
+
+
+def mask_ribbon(subjects_dir, sub):
+    """Computes a ribbon mask, based on a freesurfer segmentation.
+
+    Parameters
+    ----------
+    subjects_dir : str
+        Path of subjects directory.
+    sub : str
+        Subjects name.
+    """
+    left_whitelabel = 2
+    left_ribbonlabel = 3
+    right_whitelabel = 41
+    right_ribbonlabel = 42
+
+    # set freesurfer path environment
+    os.environ["SUBJECTS_DIR"] = subjects_dir
+
+    command = "mris_volmask"
+    command += f" --label_left_ribbon {left_ribbonlabel}"
+    command += f" --label_left_white {left_whitelabel}"
+    command += f" --label_right_ribbon {right_ribbonlabel}"
+    command += f" --label_right_white {right_whitelabel}"
+    command += f" --save_ribbon {sub}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")

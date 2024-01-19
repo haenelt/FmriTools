@@ -21,7 +21,7 @@ import numpy as np
 import fmri_tools
 
 from ..io.filename import get_filename
-from ..preprocessing.gnl_correction import gnl_correction
+from ..preprocessing.gradient import gnl_correction
 from ..registration.transform import apply_warp
 from ..utils.roi import extract_vol
 

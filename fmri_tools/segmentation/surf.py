@@ -3,6 +3,7 @@
 
 import datetime
 import os
+import shutil
 import subprocess
 import sys
 
@@ -10,7 +11,15 @@ import numpy as np
 
 from ..io.filename import get_filename
 
-__all__ = ["mris_thickness", "mris_curvature", "inflate_surf_mesh"]
+__all__ = [
+    "mris_thickness",
+    "mris_curvature",
+    "inflate_surf_mesh",
+    "upsample_surf_mesh",
+    "mris_expand",
+    "mris_inflate",
+    "shift_white",
+]
 
 
 def mris_thickness(path, sub):
@@ -135,13 +144,16 @@ def inflate_surf_mesh(file_in, file_out, n_iter):
         os.makedirs(path_output)
 
     # inflate surface
+    command = "mris_inflate"
+    command += f" -n {n_iter}"
+    command += f" -no-save-sulc"
+    command += f" {file_in} {file_out}"
+
+    print("Execute: " + command)
     try:
-        subprocess.run(
-            ["mris_inflate", "-n", str(n_iter), "-no-save-sulc", file_in, file_out],
-            check=True,
-        )
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
-        sys.exit("Surface inflation failed!")
+        print("Execuation failed!")
 
 
 def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
@@ -241,3 +253,197 @@ def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
     ind_white = ind_white[c_white == 0]
 
     return vtx_white, vtx_pial, fac_new, ind_white
+
+
+def upsample_surf_mesh(file_in, file_out, n_iter, method):
+    """The scripts takes generated FreeSurfer surfaces and upsamples them using Jon
+    Polimeni's function mris_mesh_subdivide.
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input surface.
+    file_out : str
+        Filename of output surface.
+    n_iter : int
+        Number of upsampling iterations.
+    method : str
+        Upsampling method (linear, loop, butterfly).
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # subdivide surface
+    command = "mris_mesh_subdivide"
+    command += f" --surf {file_in}"
+    command += f" --out {file_out}"
+    command += f" --method {method}"
+    command += f" --iter {n_iter}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def mris_expand(file_in, file_out, shift=-0.5):
+    """Expand surface map using FreeSurfer. Negative shift values create an inward
+    shrinkage.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of input surface.
+    file_out : str
+        File name of output surface.
+    shift : float, optional
+        Size of expansion in mm, by default -0.5.
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # expand surface
+    command = "mris_expand"
+    command += f" {file_in}"
+    command += f" {shift}"
+    command += f" {file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def mris_inflate(file_in, file_out, n_inflate=20):
+    """Inflate surface using FreeSurfer.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of input surface.
+    file_out : str
+        File name of inflated output surface.
+    n_inflate : int, optional
+        Number of inflation iterations, by default 20
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # inflate surface
+    command = "mris_inflate"
+    command += f" -n {n_inflate}"
+    command += f" {file_in}"
+    command += f" {file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def shift_white(path, sub, w_shift=-0.5):
+    """This function shifts the white matter surface inwards (if negative values are
+    applied). This step is included since the white matter surface is biased and lies
+    somewhat within grey matter for MP2RAGE segmentations. A shift of -0.5 mm seems to
+    be a reasonable value. After applying the shift, some measurements are updated
+    including hemi.inflated, hemi.sulc and hemi.curv. Old files are moved to the
+    freesurfer trash folder tagged with a date string as suffix. The curvature file is
+    computed as mean curvature (not Gaussian curvature).
+
+    Parameters
+    ----------
+    path : str
+        Path to the freesurfer segmentation folder.
+    sub : str
+        Name of the freesurfer segmentation folder.
+    w_shift : float, optional
+        Inward shift (negative) of white surface in mm. The default is -0.5.
+
+    Returns
+    -------
+    None.
+
+    """
+    # parameters
+    hemi = ["lh", "rh"]  # hemisphere prefix
+    n_inflate = 50  # number of iterations for surface inflation
+    curv_distance = (
+        10,
+        10,
+    )  # number of neighbours within distance in mm for curvature estimate
+    curv_threshold = 0.999  # input threhold for curvature estimate
+    curv_average = 5  # number of smoothing iterations for curvature estimate
+
+    # output folder (freesurfer trash folder)
+    path_trash = os.path.join(path, sub, "trash")
+
+    # filenames to be moved
+    filename = ["white", "inflated", "curv", "sulc"]
+
+    # get date string for moved files
+    date = datetime.datetime.now().strftime("%Y%m%d%H%M")
+
+    # move old surfaces and morphological files to trash folder
+    for _h in hemi:
+        for _fname in filename:
+            file_in = os.path.join(path, sub, "surf", f"{_h}.{_fname}")
+            file_out = os.path.join(path_trash, f"{_h}.{_fname}_backup_{date}")
+            os.rename(file_in, file_out)
+
+    # shift white matter surface inwards
+    for _h in hemi:
+        mris_expand(
+            os.path.join(path_trash, f"{_h}.white_backup_{date}"),
+            os.path.join(path, sub, "surf", f"{_h}.white"),
+            w_shift,
+        )
+
+    # get new inflation and sulc file
+    for _h in hemi:
+        mris_inflate(
+            os.path.join(path, sub, "surf", f"{_h}.white"),
+            os.path.join(path, sub, "surf", f"{_h}.inflated"),
+            n_inflate,
+        )
+
+    # get new curvature file
+    for _h in hemi:
+        # copy the input file to not overwrite existing files
+        file_in = os.path.join(path, sub, "surf", _h + ".white")
+        file_out = os.path.join(path, sub, "surf", _h + ".temp")
+        shutil.copy(file_in, file_out)
+
+        mris_curvature(
+            os.path.join(path, sub, "surf", _h + ".temp"),
+            os.path.join(path, sub, "surf"),
+            curv_average,
+            curv_distance,
+            curv_threshold,
+        )
+
+        # delete intermediate files afterwards
+        os.remove(os.path.join(path, sub, "surf", _h + ".temp"))

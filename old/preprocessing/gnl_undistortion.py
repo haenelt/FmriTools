@@ -17,7 +17,7 @@ import os
 import fmri_tools
 
 from ..io.filename import get_filename
-from ..preprocessing.gnl_correction import gnl_correction
+from ..preprocessing.gradient import gnl_correction
 
 # input
 file_in = [

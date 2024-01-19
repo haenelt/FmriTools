@@ -2,6 +2,7 @@
 """Skull stripping tools."""
 
 import os
+import subprocess
 
 import nibabel as nb
 import numpy as np
@@ -13,7 +14,7 @@ from ..registration.transform import apply_header
 from ..utils.bias import remove_bias_ants
 from ..utils.roi import dilate_fsl, erode_fsl
 
-__all__ = ["skullstrip_flash", "skullstrip_epi", "skullstrip_refined"]
+__all__ = ["skullstrip_flash", "skullstrip_epi", "skullstrip_refined", "skullstrip_bet"]
 
 
 def skullstrip_flash(
@@ -295,3 +296,33 @@ def skullstrip_refined(file_mask1, file_mask2):
     os.remove(file_temp)
 
     return file_out
+
+
+def skullstrip_bet(file_in, file_out):
+    """Apply skull stripping using FSL BET.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of
+    file_out : str
+        File name of skull strip mask.
+    """
+    # make output folder
+    path_out, name_out, ext_out = get_filename(file_out)
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    # bet
+    command = "bet"
+    command += f" {file_in}"
+    command += f" {file_out}"
+    command += " -f 0.50 -m -n"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+    os.rename(os.path.join(path_out, f"{name_out}_mask{ext_out}"), file_out)

@@ -2,11 +2,13 @@
 """Different image manipulation tools."""
 
 import os
+import subprocess
 import sys
 
 import nibabel as nb
 import numpy as np
 
+from ..io.filename import get_filename
 from ..utils.bias import remove_bias_ants
 
 __all__ = [
@@ -16,6 +18,9 @@ __all__ = [
     "multiply_images",
     "average_layer",
     "laminar_profile",
+    "volume_threshold",
+    "mean_image",
+    "create_series",
 ]
 
 
@@ -299,3 +304,97 @@ def laminar_profile(file_in, path_output, hemi, name_output, mode):
     # write output image
     output = nb.Nifti1Image(data, data_img.affine, data_img.header)
     nb.save(output, os.path.join(path_output, f"{hemi}.{name_output}.mgh"))
+
+
+def volume_threshold(file_in, prefix, data_max):
+    """Takes a nifti volume and sets a maximum threshold value. All values above the
+    threshold are replaced by the threshold value. The output image is saved in the same
+    folder. A prefix is added to the file name.
+
+    Parameters
+    ----------
+    file_in : str
+        Path of input image.
+    prefix : str
+        Defined prefix for the output image.
+    data_max : float
+        Set maximum threshold value.
+
+    Returns
+    -------
+    None.
+
+    """
+    # load data
+    data_img = nb.load(file_in)
+    data_array = data_img.get_fdata()
+
+    # set maximum threshold
+    data_array[data_array > data_max] = data_max
+
+    # write output data
+    filename_out = os.path.join(
+        os.path.dirname(file_in), prefix + os.path.basename(file_in)
+    )
+    output = nb.Nifti1Image(data_array, data_img.affine, data_img.header)
+    nb.save(output, filename_out)
+
+
+def mean_image(file_in, file_out):
+    """Compute temporal mean of time series using FSL.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of input time series.
+    file_out : str
+        File name of temporal mean image.
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "fslmaths"
+    command += f" {file_in}"
+    command += " -Tmean"
+    command += f" {file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def create_series(file_in, path_out, name_output):
+    """This function creates a 4D nifti time series from a set of 3D nifti files.
+
+    Parameters
+    ----------
+    file_in : list
+        Array of filenames containing single 3D nifti volumes.
+    path_out : str
+        Path where output is saved.
+    name_output : str
+        Basename of output 4D nifti file.
+
+    Returns
+    -------
+    None.
+
+    """
+    # load 3D nifti to get array size
+    data = nb.load(os.path.join(file_in[0]))
+    data.header["dim"][0] = 4
+    data.header["dim"][4] = len(file_in)
+
+    res = np.zeros(data.header["dim"][1:5])
+    for i in range(len(file_in)):
+        img = nb.load(os.path.join(file_in[i])).get_fdata()
+        res[:, :, :, i] = img
+
+    output = nb.Nifti1Image(res, data.affine, data.header)
+    nb.save(output, os.path.join(path_out, name_output + ".nii"))

@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
+"""Gradient nonlinearity correction."""
 
 import os
 import shutil as sh
+import subprocess
 
 import nibabel as nb
 import numpy as np
-from nipype.interfaces.fsl import ConvertWarp, Merge
-from nipype.interfaces.fsl.maths import MeanImage
 
 from ..io.filename import get_filename
 from ..registration.cmap import generate_coordinate_mapping
-from ..registration.transform import apply_warp
+from ..registration.transform import apply_warp, combine_warp, convert_warp
+from ..utils.calc import mean_image
 
 
 def gnl_correction(
     file_in, file_bash, file_coeff, python3_env, python2_env, path_output, cleanup=True
 ):
-    """GNL correction.
-
-    The purpose of the following function is to correct for gradient
-    nonlinearities. A corrected file is written using spline interpolation. The
-    function needs FSL to be included in the search path.
+    """The purpose of the following function is to correct for gradient nonlinearities.
+    A corrected file is written using spline interpolation. The function needs FSL to be
+    included in the search path.
 
     Parameters
     ----------
@@ -44,9 +43,8 @@ def gnl_correction(
     None.
 
     """
-
     # get fileparts
-    path, name, ext = get_filename(file_in)
+    _, name, ext = get_filename(file_in)
 
     # make subfolders
     path_grad = os.path.join(path_output, "grad")
@@ -59,39 +57,32 @@ def gnl_correction(
     file_jacobian = os.path.join(path_grad, "warp_jacobian.nii.gz")
 
     # run gradient unwarp
-    os.system(
-        "bash "
-        + file_bash
-        + " "
-        + python3_env
-        + " "
-        + python2_env
-        + " "
-        + path_grad
-        + " "
-        + file_in
-        + " trilinear.nii.gz"
-        + " "
-        + file_coeff
-    )
+    command = "bash"
+    command += f" {file_bash}"
+    command += f" {python3_env}"
+    command += f" {python2_env}"
+    command += f" {path_grad}"
+    command += f" {file_in}"
+    command += " trilinear.nii.gz"
+    command += f" {file_coeff}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     # now create an appropriate warpfield output (relative convention)
-    convertwarp = ConvertWarp()
-    convertwarp.inputs.reference = os.path.join(path_grad, "trilinear.nii.gz")
-    convertwarp.inputs.warp1 = os.path.join(path_grad, "fullWarp_abs.nii.gz")
-    convertwarp.inputs.abswarp = True
-    convertwarp.inputs.out_relwarp = True
-    convertwarp.inputs.out_file = file_warp
-    convertwarp.inputs.args = "--jacobian=" + file_jacobian
-    convertwarp.run()
+    convert_warp(
+        os.path.join(path_grad, "trilinear.nii.gz"),
+        os.path.join(path_grad, "fullWarp_abs.nii.gz"),
+        file_jacobian,
+        os.path.join(path_grad, "fullWarp_abs.nii.gz"),
+    )
 
     # convertwarp's jacobian output has 8 frames, each combination of one-sided
     # differences, so average them
-    calcmean = MeanImage()
-    calcmean.inputs.in_file = file_jacobian
-    calcmean.inputs.dimension = "T"
-    calcmean.inputs.out_file = file_jacobian
-    calcmean.run()
+    mean_image(file_jacobian, file_jacobian)
 
     # apply warp to first volume
     apply_warp(file_in, file_warp, file_output)
@@ -111,24 +102,23 @@ def gnl_correction(
     nb.save(output, file_output)
 
     # calculate gradient deviations
-    os.system(
-        "calc_grad_perc_dev"
-        + " --fullwarp="
-        + file_warp
-        + " -o "
-        + os.path.join(path_grad, "grad_dev")
-    )
+    command = "calc_grad_perc_dev"
+    command += f" --fulwarp={file_warp}"
+    command += f" -o {os.path.join(path_grad, 'grad_dev')}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     # merge directions
-    merger = Merge()
-    merger.inputs.in_files = [
+    combine_warp(
         os.path.join(path_grad, "grad_dev_x.nii.gz"),
         os.path.join(path_grad, "grad_dev_y.nii.gz"),
         os.path.join(path_grad, "grad_dev_z.nii.gz"),
-    ]
-    merger.inputs.dimension = "t"
-    merger.inputs.merged_file = os.path.join(path_grad, "grad_dev.nii.gz")
-    merger.run()
+        os.path.join(path_grad, "grad_dev.nii.gz"),
+    )
 
     # convert from % deviation to absolute
     data_img = nb.load(os.path.join(path_grad, "grad_dev.nii.gz"))

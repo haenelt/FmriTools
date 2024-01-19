@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Utilities for time series noise removal."""
 
 import os
 
@@ -6,12 +7,12 @@ import matplotlib.pyplot as plt
 import nibabel as nb
 import numpy as np
 
+__all__ = ["nuisance_regressor"]
 
-def get_nuisance_regressor(file_in, wm_mask, csf_mask, path_output):
-    """Get nuisance regressor.
 
-    This function creates nuisance regressors from a functional time series
-    using wm and csf masks.
+def nuisance_regressor(file_in, wm_mask, csf_mask, path_output):
+    """This function creates nuisance regressors from a functional time series using wm
+    and csf masks.
 
     Parameters
     ----------
@@ -29,7 +30,6 @@ def get_nuisance_regressor(file_in, wm_mask, csf_mask, path_output):
     None.
 
     """
-
     # make output folder
     if not os.path.exists(path_output):
         os.mkdir(path_output)

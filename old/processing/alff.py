@@ -18,9 +18,9 @@ import os
 import nibabel as nb
 
 from ..matlab import MatlabCommand
-from ..preprocessing.get_nuisance_mask import get_nuisance_mask
-from ..preprocessing.get_nuisance_regressor import get_nuisance_regressor
+from ..preprocessing.noise import nuisance_regressor
 from ..processing.rest import get_alff
+from ..segmentation.mask import mask_nuisance
 
 # input
 anatomy = ""  # T1w full brain anatomy (e.g. orig)
@@ -74,7 +74,7 @@ if nuisance_regression:
 
     else:
         # get wm and csf mask
-        get_nuisance_mask(
+        mask_nuisance(
             anatomy,
             deformation,
             path_output,
@@ -101,7 +101,7 @@ if nuisance_regression:
         nb.save(output, os.path.join(path_output, "csf_mask.nii.gz"))
 
         # get nuisance regressor
-        get_nuisance_regressor(
+        nuisance_regressor(
             os.path.join(path, bfile),
             os.path.join(path_output, "wm_mask.nii.gz"),
             os.path.join(path_output, "csf_mask.nii.gz"),

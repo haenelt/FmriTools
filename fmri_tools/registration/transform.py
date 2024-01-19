@@ -21,6 +21,8 @@ __all__ = [
     "scanner_transform",
     "apply_warp",
     "apply_flirt",
+    "convert_warp",
+    "combine_warp",
     "apply_header",
     "apply_fugue",
     "resample_volume",
@@ -286,6 +288,11 @@ def apply_warp(file_in, file_field, file_out):
         File name of deformation field.
     file_out : str
         File name of deformed image.
+
+    Returns
+    -------
+    None.
+
     """
     command = "applywarp"
     command += " --in=" + str(file_in)
@@ -317,6 +324,11 @@ def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"
     interp_method : str, optional
         Interpolation method (trilinear, nearestneighbor, sinc, spline), by default
         "trilinear"
+
+    Returns
+    -------
+    None.
+
     """
     # get filename
     path_out, _, _ = get_filename(file_out)
@@ -341,6 +353,86 @@ def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"
         print("Execuation failed!")
 
 
+def convert_warp(file_ref, file_warp, file_jacobian, file_out):
+    """Conversion of warp field using using FSL to get Jacobian output.
+
+    Parameters
+    ----------
+    file_ref : str
+        File name of reference image.
+    file_warp : str
+        File name of initlal warp.
+    file_jacobian : str
+        Calculate and save jacobian of final warp field.
+    file_out : str
+        File name of output warp image.
+
+    Returns
+    -------
+    None.
+
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "convertwarp"
+    command += f" --ref={file_ref}"
+    command += " --abs"
+    command += f" --jacobian={file_jacobian}"
+    command += " --relout"
+    command += f" --warp1={file_warp}"
+    command += f" --out={file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def combine_warp(file_x, file_y, file_z, file_out):
+    """Concatenate single warps in x-, y-, and z-direction into one warp file by
+    contatenating in the fourth (time) dimension using FSL.
+
+    Parameters
+    ----------
+    file_x : str
+        File name of war in x-direction.
+    file_y : str
+        File name of warp in y-direction.
+    file_z : str
+        File name of warp in z-direction.
+    file_out : str
+        File name of merged warp file.
+
+    Returns
+    -------
+    None.
+
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "fslmerge"
+    command += " -t"
+    command += f" {file_out}"
+    command += f" {file_x} {file_y} {file_z}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
 def apply_header(file_source, file_target, file_out, interp_method="nearest"):
     """Apply transformation to target image based on header information using
     FreeSurfer.
@@ -354,7 +446,12 @@ def apply_header(file_source, file_target, file_out, interp_method="nearest"):
     file_out : str
         File name of output image.
     interp_method : str, optional
-        Interpolation method (nearest, trilin, cubic), by default "nearest"
+        Interpolation method (nearest, trilin, cubic), by default "nearest".
+
+    Returns
+    -------
+    None.
+
     """
     # get filename
     path_out, _, _ = get_filename(file_out)
@@ -391,6 +488,11 @@ def apply_fugue(file_in, file_shift, udir, forward_warping=False):
         Unwarping direction (x, y, z, x-, y-, or z-).
     forward_warping : bool, optional
         Apply forward warping instead of unwarping, by default False
+
+    Returns
+    -------
+    None.
+
     """
     # output file name
     _, name_in, ext_in = get_filename(file_in)

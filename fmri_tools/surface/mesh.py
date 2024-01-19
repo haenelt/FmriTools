@@ -1,13 +1,22 @@
 # -*- coding: utf-8 -*-
 """Mesh utilities."""
 
+import datetime
 import functools
 import itertools
 import os
+import subprocess
+import sys
+from shutil import copyfile
 
 import nibabel as nb
 import numpy as np
-from nibabel.freesurfer.io import read_geometry, read_label, write_morph_data
+from nibabel.freesurfer.io import (
+    read_geometry,
+    read_label,
+    write_geometry,
+    write_morph_data,
+)
 from numpy.linalg import norm
 from scipy.sparse import csr_matrix, dia_matrix, triu
 
@@ -15,6 +24,7 @@ from ..io.affine import read_vox2ras_tkr
 from ..io.filename import get_filename
 from ..io.surf import read_mgh, write_mgh
 from ..registration.transform import apply_affine_chunked
+from ..surface.inflate_surf_mesh import inflate_surf_mesh
 from ..utils.interpolation import linear_interpolation3d
 
 __all__ = [
@@ -24,6 +34,7 @@ __all__ = [
     "b0_orientation",
     "clip_surface",
     "clip_mgh",
+    "make_sphere",
 ]
 
 
@@ -918,3 +929,78 @@ def clip_mgh(mgh_in, label_in, mgh_out):
     arr, affine, header = read_mgh(mgh_in)
     label = read_label(label_in)
     write_mgh(mgh_out, arr[label], affine, header)
+
+
+def make_sphere(file_in, file_out, n_inflate=100, radius=None):
+    """The scripts takes a generated FreeSurfer mesh and transformes it into a sphere
+    with defined radius.
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input surface.
+    file_out : str
+        Filename of output surface.
+    n_inflate : int, optional
+        Number of inflating iterations (if > 0). The default is 100.
+    radius : float, optional
+        Radius of final sphere in mm (if not None). The default is None.
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # temporary file
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = "".join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
+    file_tmp = os.path.join(path_output, tmp_string)
+
+    if os.path.exists(file_tmp):
+        raise FileExistsError("Temporary file already exists!")
+
+    # inflate surface mesh
+    if n_inflate:
+        inflate_surf_mesh(file_in, file_tmp, n_inflate)
+    else:
+        copyfile(file_in, file_tmp)
+
+    # inflate surface
+    try:
+        subprocess.run(["mris_sphere", "-q", file_tmp, file_out], check=True)
+    except subprocess.CalledProcessError:
+        sys.exit("Sphere computation failed!")
+
+    # change radius
+    if radius:
+        vtx, fac = read_geometry(file_out)
+        r, phi, theta = _cart2pol(vtx[:, 0], vtx[:, 1], vtx[:, 2])
+        r[:] = radius
+        vtx[:, 0], vtx[:, 1], vtx[:, 2] = _pol2cart(r, phi, theta)
+        write_geometry(file_out, vtx, fac)
+
+    # remove temporary file
+    os.remove(file_tmp)
+
+
+def _cart2pol(x, y, z):
+    """Helper function for transformation cartesian to polar coordinates."""
+    r = np.sqrt(x**2 + y**2 + z**2)
+    phi = np.arctan2(y, x)
+    theta = np.arccos(z / r)
+    return r, phi, theta
+
+
+def _pol2cart(r, phi, theta):
+    """Helper function for transformation from polar to cartesian coordinates."""
+    x = r * np.sin(theta) * np.cos(phi)
+    y = r * np.sin(theta) * np.sin(phi)
+    z = r * np.cos(theta)
+    return x, y, z

@@ -46,16 +46,17 @@ from ..registration.maping import map2grid
 from ..registration.mapping import morph2dense
 from ..registration.transform import apply_header
 from ..segmentation.flat import orthographic_projection, surface_flattening
-from ..segmentation.get_ribbon_fsurf import get_ribbon_fsurf
 from ..segmentation.layer import calc_equivol_surf
-from ..segmentation.shift_white import shift_white
-from ..segmentation.surf import mris_curvature, mris_thickness
+from ..segmentation.mask import mask_ribbon
+from ..segmentation.surf import (
+    mris_curvature,
+    mris_thickness,
+    shift_white,
+    upsample_surf_mesh,
+)
 from ..segmentation.vol import include_pial_correction
-from ..surface.smooth import mris_smooth
-from ..surface.upsample_surf_mesh import upsample_surf_mesh
 from ..utils.bias import robust_combination
-from ..utils.calc import multiply_images
-from ..utils.volume_threshold import volume_threshold
+from ..utils.calc import multiply_images, volume_threshold
 
 # input data
 fileUNI = "/data/pt_01880/Experiment1_ODC/p1/anatomy/S6_MP2RAGE_0p7_UNI_Images_2.45.nii"
@@ -262,8 +263,8 @@ elif part == 4:
             os.path.join(path, sub, "surf"),
         )
 
-    get_thickness_fsurf(path, sub)
-    get_ribbon_fsurf(path, sub)
+    mris_thickness(path, sub)
+    mask_ribbon(path, sub)
 
     # upsample surface mesh
     print("Upsample surface mesh")
