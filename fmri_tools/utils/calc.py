@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """Different image manipulation tools."""
 
+import os
+import sys
+
 import nibabel as nb
 import numpy as np
 
 from ..utils.bias import remove_bias_ants
 
-__all__ = ["estimate_t1w", "mip", "remove_nans", "multiply_images"]
+__all__ = ["estimate_t1w", "mip", "remove_nans", "multiply_images", "average_layer"]
 
 
 def estimate_t1w(file_bold, file_vaso, file_out, apply_bias):
@@ -181,3 +184,53 @@ def multiply_images(file1, file2, file_out):
     # write output image
     output = nb.Nifti1Image(file_out_array, file1_img.affine, file1_img.header)
     nb.save(output, file_out)
+
+
+def average_layer(img_input, path_output, basename_output, mode="mean"):
+    """This averages data across different layers or sessions. Input arrays should be in
+    mgh format. The output gets the suffix of the chosen mode.
+
+    Parameters
+    ----------
+    img_input : list
+        List of input layers.
+    path_output : str
+        Path where output is saved.
+    basename_output : str
+        Basename of written output file.
+    mode : str, optional
+        Average mode (mean or median). The default is "mean".
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # initialise array
+    data = nb.load(img_input[0])
+    data_size = data.header["dims"][0]
+    data_res = np.zeros((data_size, len(img_input)))
+
+    # collect input arrays
+    for i, img in enumerate(img_input):
+        data_res[:, i] = nb.load(img).get_fdata()[:, 0, 0]
+
+    # average
+    if mode == "mean":
+        data_res = np.mean(data_res, axis=1)
+    elif mode == "median":
+        data_res = np.median(data_res, axis=1)
+    else:
+        sys.exit("Choose a valid mode!")
+
+    # expand dimensions to match with input array
+    data_res = np.expand_dims(data_res, axis=1)
+    data_res = np.expand_dims(data_res, axis=1)
+
+    # write output file
+    output = nb.Nifti1Image(data_res, data.affine, data.header)
+    nb.save(output, os.path.join(path_output, basename_output + "_" + mode + ".mgh"))

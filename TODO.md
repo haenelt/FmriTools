@@ -4,6 +4,7 @@
 - [ ] load modules in inits
 - [ ] make subprocess as in embedded_antsreg
 - [ ] sort functions in modules and get rid of useless stuff
+- [ ] get rid of all warning
 - [ ] tests (mesh)
 - [x] solve execution in init
 - [x] remove gbb dependencies

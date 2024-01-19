@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+"""BOLD correction for VASO."""
 
 import os
+import subprocess
 
 import nibabel as nb
 import numpy as np
@@ -11,11 +13,9 @@ from ..io.filename import get_filename
 
 
 def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_remove=0):
-    """Regrid time series.
-
-    This function interpolates the time series onto a new time grid using cubic
-    interpolation. Only for writing the new TR in the header of the output time
-    series, AFNI has to be included in the search path.
+    """This function interpolates the time series onto a new time grid using cubic
+    interpolation. Only for writing the new TR in the header of the output time series,
+    AFNI has to be included in the search path.
 
     Parameters
     ----------
@@ -37,7 +37,6 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_rem
     None.
 
     """
-
     # get filename
     _, name_input, ext_input = get_filename(file_in)
 
@@ -106,21 +105,21 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_rem
     nb.save(output, os.path.join(path_output, name_input + "_upsampled" + ext_input))
 
     # change TR in header
-    os.system(
-        "3drefit "
-        + "-TR "
-        + str(tr_new)
-        + " "
-        + os.path.join(path_output, name_input + "_upsampled" + ext_input)
-    )
+    command = "3drefit"
+    command += f" -TR {tr_new}"
+    command += f" {os.path.join(path_output, name_input + '_upsampled' + ext_input)}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
 
 def regrid_time_series_afni(file_in, n=2):
-    """Regrid time series afni.
-
-    This function upsamples a time series using the afni function 3dUpsample.
-    Before running the function, set the afni environment by calling AFNI in the
-    terminal. Output is an upsampled nifti time series.
+    """This function upsamples a time series using the afni function 3dUpsample. Before
+    running the function, set the afni environment by calling AFNI in the terminal.
+    Output is an upsampled nifti time series.
 
     Parameters
     ----------
@@ -134,7 +133,6 @@ def regrid_time_series_afni(file_in, n=2):
     None.
 
     """
-
     clean_unzip = 0
     if os.path.splitext(file_in)[1] == ".gz":
         gunzip(file_in)
@@ -146,15 +144,16 @@ def regrid_time_series_afni(file_in, n=2):
     name_file = os.path.splitext(os.path.basename(file_in))[0]
 
     # upsample vaso and bold time series
-    os.system(
-        "3dUpsample -overwrite -datum short "
-        + "-prefix "
-        + os.path.join(path_file, name_file + "_upsampled.nii")
-        + " -n "
-        + str(n)
-        + " -input "
-        + file_in
-    )
+    command = "3dUpsample -overwrite -datum short "
+    command += f" -prefix {os.path.join(path_file, name_file + '_upsampled.nii')}"
+    command += f" -n {n}"
+    command += f" -input {file_in}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
     if clean_unzip:
         os.remove(file_in)

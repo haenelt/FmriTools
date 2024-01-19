@@ -15,7 +15,7 @@ import nibabel as nb
 import numpy as np
 
 from ..io.filename import get_filename
-from ..utils.regrid_time_series import regrid_time_series
+from ..preprocessing.boco import regrid_time_series
 
 # input data
 img_vaso = [
