@@ -8,8 +8,8 @@ import nibabel as nb
 import numpy as np
 from numpy.matlib import repmat
 
+from ..io.affine import apply_affine_chunked
 from ..io.filename import get_filename
-from .transform import apply_affine_chunked
 
 __all__ = [
     "clean_coordinate_mapping",

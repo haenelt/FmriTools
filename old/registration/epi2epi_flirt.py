@@ -24,7 +24,7 @@ import shutil as sh
 from nighres.registration import apply_coordinate_mappings
 from nipype.interfaces.fsl import ConvertXFM
 
-from ..registation.transform import apply_flirt
+from ..registation.fsl import apply_flirt
 from ..registration.clean_ana import clean_ana
 from ..registration.cmap import expand_coordinate_mapping, generate_coordinate_mapping
 from ..registration.fsl import flirt

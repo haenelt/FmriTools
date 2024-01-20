@@ -3,8 +3,7 @@
 
 import numpy as np
 
-from ..io.affine import vox2ras_tkr
-from ..registration.transform import apply_affine_chunked
+from ..io.affine import apply_affine_chunked, vox2ras_tkr
 from ..surface.mesh import Mesh
 
 __all__ = ["label_border", "label_dilation", "label_erosion", "roi_fov", "roi_sphere"]

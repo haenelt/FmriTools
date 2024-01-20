@@ -2,19 +2,18 @@
 """FSL registration algorithms."""
 
 import os
-import shutil as sh
 import subprocess
 
 from ..io.filename import get_filename
-from ..io.vol import mri_convert
-from ..registration.cmap import generate_coordinate_mapping
-from ..registration.transform import (
-    apply_coordinate_mapping,
-    apply_flirt,
-    scanner_transform,
-)
 
-__all__ = ["flirt", "get_flash2orig"]
+__all__ = [
+    "flirt",
+    "apply_warp",
+    "apply_flirt",
+    "convert_warp",
+    "combine_warp",
+    "apply_fugue",
+]
 
 
 def flirt(
@@ -74,136 +73,195 @@ def flirt(
         print("Execuation failed!")
 
 
-def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False):
-    """This function computes the deformation field for the registration between a
-    partial coverage GRE image and the freesurfer orig file. The following steps are
-    performed: (1) set output folder structure, (2) get scanner transform GRE <-> inv2
-    and inv2 -> orig, (3) generate flash cmap, (4) apply scanner transform inv2 -> GRE,
-    (5) get flirt registration GRE -> inv2, (6) apply flirt to GRE cmap, (7) apply
-    scanner transform to GRE cmap, (8) apply final deformation to GRE. The function
-    needs the FSL environment set.
+def apply_warp(file_in, file_field, file_out):
+    """Applies an FSL deformation field to a nifti image.
 
     Parameters
     ----------
-    file_flash : str
-        Input path for GRE image.
-    file_inv2 : str
-        Input path for MP2RAGE INV2 image.
-    file_orig : str
-        Input path for freesurfer orig image.
-    path_output : str
-        Path where output is saved.
-    cleanup : bool, optional
-        Delete intermediate files. The default is False.
+    file_in : str
+        File name of input image.
+    file_field : str
+        File name of deformation field.
+    file_out : str
+        File name of deformed image.
 
     Returns
     -------
     None.
 
     """
-    # set folder structure
-    path_temp = os.path.join(path_output, "temp")
+    command = "applywarp"
+    command += " --in=" + str(file_in)
+    command += " --ref=" + str(file_in)
+    command += " --out=" + str(file_out)
+    command += " --warp=" + str(file_field)
+    command += " --interp=spline --rel"
 
-    if not os.path.exists(path_output):
-        os.makedirs(path_output)
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
-    if not os.path.exists(path_temp):
-        os.makedirs(path_temp)
 
-    # copy input files
-    sh.copyfile(file_inv2, os.path.join(path_temp, "inv2.nii"))
-    sh.copyfile(file_flash, os.path.join(path_temp, "flash.nii"))
+def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"):
+    """Apply transformation from flirt registration to image.
 
-    # convert orig to nifti
-    mri_convert(file_orig, os.path.join(path_temp, "orig.nii"))
+    Parameters
+    ----------
+    file_in : str
+        File name of input file.
+    file_ref : str
+        File name of reference file.
+    file_mat : str
+        File name of 4x4 affine matrix saved as *.txt or *.mat file.
+    file_out : str
+        File name of transformed input file.
+    interp_method : str, optional
+        Interpolation method (trilinear, nearestneighbor, sinc, spline), by default
+        "trilinear"
 
-    # scanner transformation
-    scanner_transform(
-        os.path.join(path_temp, "inv2.nii"),
-        os.path.join(path_temp, "flash.nii"),
-        path_temp,
-        False,
-    )
-    scanner_transform(
-        os.path.join(path_temp, "flash.nii"),
-        os.path.join(path_temp, "inv2.nii"),
-        path_temp,
-        False,
-    )
-    scanner_transform(
-        os.path.join(path_temp, "inv2.nii"),
-        os.path.join(path_temp, "orig.nii"),
-        path_temp,
-        False,
-    )
+    Returns
+    -------
+    None.
 
-    # generate coordinate mapping
-    generate_coordinate_mapping(
-        os.path.join(path_temp, "flash.nii"), 0, path_temp, "flash", False, True
-    )
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
 
-    # scanner transform inv2 to flash
-    apply_coordinate_mapping(
-        os.path.join(path_temp, "inv2.nii"),
-        os.path.join(path_temp, "inv2_2_flash_scanner.nii"),
-        os.path.join(path_temp, "inv2_apply_scanner_def-img.nii.gz"),
-        interpolation="linear",
-    )
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
 
-    # flirt flash to inv2
-    os.chdir(path_temp)
-    flirt(
-        os.path.join(path_temp, "flash.nii"),
-        os.path.join(path_temp, "inv2_apply_scanner_def-img.nii.gz"),
-        os.path.join(path_temp, "flash_apply_flirt_def-img.nii.gz"),
-        os.path.join(path_temp, "flirt_matrix.txt"),
-        cost_func="mutualinfo",
-        interp_method="trilinear",
-    )
+    command = "flirt"
+    command += f" -in {file_in}"
+    command += f" -ref {file_ref}"
+    command += f" -out {file_out}"
+    command += " -omat inn_flirt.mat -applyxfm"
+    command += f" -init {file_mat}"
+    command += f" -interp {interp_method}"
+    command += " -paddingsize 0"
 
-    # apply flirt to flash cmap
-    apply_flirt(
-        os.path.join(path_temp, "cmap_flash.nii"),
-        os.path.join(path_temp, "flash.nii"),
-        os.path.join(path_temp, "flirt_matrix.txt"),
-        os.path.join(path_temp, "cmap_apply_flirt_def-img.nii.gz"),
-        "trilinear",
-    )
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
 
-    # concatenate cmaps
-    apply_coordinate_mapping(
-        os.path.join(path_temp, "flash_2_inv2_scanner.nii"),
-        os.path.join(path_temp, "inv2_2_orig_scanner.nii"),
-        os.path.join(path_temp, "flash_2_orig_scanner.nii"),
-        interpolation="linear",
-    )
 
-    # apply scanner transform to flash cmap
-    apply_coordinate_mapping(
-        os.path.join(path_temp, "cmap_apply_flirt_def-img.nii.gz"),
-        os.path.join(path_temp, "flash_2_orig_scanner.nii"),
-        os.path.join(path_temp, "cmap_apply_scanner_def-img.nii.gz"),
-        interpolation="linear",
-    )
+def convert_warp(file_ref, file_warp, file_jacobian, file_out):
+    """Conversion of warp field using using FSL to get Jacobian output.
 
-    # apply deformation to source image
-    apply_coordinate_mapping(
-        os.path.join(path_temp, "flash.nii"),  # input
-        os.path.join(path_temp, "cmap_apply_scanner_def-img.nii.gz"),
-        os.path.join(path_temp, "flash_apply_deformation_def-img.nii.gz"),
-        interpolation="linear",  # nearest or linear
-    )
+    Parameters
+    ----------
+    file_ref : str
+        File name of reference image.
+    file_warp : str
+        File name of initlal warp.
+    file_jacobian : str
+        Calculate and save jacobian of final warp field.
+    file_out : str
+        File name of output warp image.
 
-    # rename final deformation examples
-    os.rename(
-        os.path.join(path_temp, "cmap_apply_scanner_def-img.nii.gz"),
-        os.path.join(path_output, "flash2orig.nii.gz"),
-    )
-    os.rename(
-        os.path.join(path_temp, "flash_apply_deformation_def-img.nii.gz"),
-        os.path.join(path_output, "flash2orig_example.nii.gz"),
-    )
+    Returns
+    -------
+    None.
 
-    # clean intermediate files
-    if cleanup:
-        sh.rmtree(path_temp, ignore_errors=True)
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "convertwarp"
+    command += f" --ref={file_ref}"
+    command += " --abs"
+    command += f" --jacobian={file_jacobian}"
+    command += " --relout"
+    command += f" --warp1={file_warp}"
+    command += f" --out={file_out}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def combine_warp(file_x, file_y, file_z, file_out):
+    """Concatenate single warps in x-, y-, and z-direction into one warp file by
+    contatenating in the fourth (time) dimension using FSL.
+
+    Parameters
+    ----------
+    file_x : str
+        File name of war in x-direction.
+    file_y : str
+        File name of warp in y-direction.
+    file_z : str
+        File name of warp in z-direction.
+    file_out : str
+        File name of merged warp file.
+
+    Returns
+    -------
+    None.
+
+    """
+    # get filename
+    path_out, _, _ = get_filename(file_out)
+
+    # make output folder
+    if not os.path.exists(path_out):
+        os.makedirs(path_out)
+
+    command = "fslmerge"
+    command += " -t"
+    command += f" {file_out}"
+    command += f" {file_x} {file_y} {file_z}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def apply_fugue(file_in, file_shift, udir, forward_warping=False):
+    """Apply field map deformation to image using FSL.
+
+    Parameters
+    ----------
+    file_in : _type_
+        File name of input file.
+    file_shift : _type_
+        File name of shift file containing deformation.
+    udir : _type_
+        Unwarping direction (x, y, z, x-, y-, or z-).
+    forward_warping : bool, optional
+        Apply forward warping instead of unwarping, by default False
+
+    Returns
+    -------
+    None.
+
+    """
+    # output file name
+    _, name_in, ext_in = get_filename(file_in)
+
+    command = "fugue"
+    command += f" --in={file_in}"
+    command += f" --loadshift={file_shift}"
+    command += f" --unwarpdir={udir}"
+    if forward_warping:
+        command += f" --warp={name_in}_warped{ext_in}"
+    else:
+        command += f" --unwarp={name_in}_unwarped{ext_in}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")

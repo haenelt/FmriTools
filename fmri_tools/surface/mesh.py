@@ -20,11 +20,10 @@ from nibabel.freesurfer.io import (
 from numpy.linalg import norm
 from scipy.sparse import csr_matrix, dia_matrix, triu
 
-from ..io.affine import read_vox2ras_tkr
+from ..io.affine import apply_affine_chunked, read_vox2ras_tkr
 from ..io.filename import get_filename
 from ..io.surf import read_mgh, write_mgh
-from ..registration.transform import apply_affine_chunked
-from ..surface.inflate_surf_mesh import inflate_surf_mesh
+from ..segmentation.surf import inflate_surf_mesh
 from ..utils.interpolation import linear_interpolation3d
 
 __all__ = [

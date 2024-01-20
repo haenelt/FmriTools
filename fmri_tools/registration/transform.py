@@ -12,19 +12,14 @@ import numpy.linalg as npl
 from numpy.matlib import repmat
 from sh import gunzip
 
+from ..io.affine import apply_affine_chunked
 from ..io.filename import get_filename
 from ..utils.interpolation import linear_interpolation3d, nn_interpolation3d
 
 __all__ = [
     "apply_coordinate_mapping",
-    "apply_affine_chunked",
     "scanner_transform",
-    "apply_warp",
-    "apply_flirt",
-    "convert_warp",
-    "combine_warp",
     "apply_header",
-    "apply_fugue",
     "resample_volume",
 ]
 
@@ -127,56 +122,6 @@ def apply_coordinate_mapping(file_in, cmap_in, file_out, interpolation="linear")
     return output
 
 
-def apply_affine_chunked(aff, pts, chunk_size=10000):
-    """Apply an affine matrix to points in chunks.
-
-    This function is a copy of the routine `apply_affine` from the `affines` module of
-    the `nibabel` package and applies an affine matrix to points in chunks. The only
-    difference is that this function applies the affine transformation in chunks to
-    prevent memory errors when working with large arrays. More information about this
-    function can be found in the docstring of the aforementioned nibabel function.
-
-    Parameters
-    ----------
-    aff : (N, N) np.ndarray
-        Homogenous affine, for 3D points, will be 4 by 4. Contrary to first
-        appearance, the affine will be applied on the left of `pts`.
-    pts : (..., N-1) np.ndarray
-        Points, where the last dimension contains the coordinates of each
-        point. For 3D, the last dimension will be length 3.
-    chunk_size : int, optional
-        Chunk size for large arrays.
-
-    Returns
-    -------
-    (..., N-1) np.ndarray
-        Transformed points.
-
-    """
-    aff = np.asarray(aff)
-    pts = np.asarray(pts)
-    shape = pts.shape
-    pts = pts.reshape((-1, shape[-1]))
-    # rzs == rotations, zooms, shears
-    rzs = aff[:-1, :-1]
-    trans = aff[:-1, -1]
-
-    # chunk intervals
-    chunk = np.arange(0, len(pts), chunk_size)
-    chunk[-1] = len(pts)
-    if chunk[0] == 0:
-        chunk = np.delete(chunk, 0)
-
-    # apply affine transformation piecewise
-    j1 = 0
-    res = np.zeros_like(pts)
-    for _, j2 in enumerate(chunk):
-        res[j1:j2, :] = np.dot(pts[j1:j2, :], rzs.T) + trans[None, :]
-        j1 = j2
-
-    return res.reshape(shape)
-
-
 def scanner_transform(input_source, input_target, path_output, compress_file=False):
     """This function uses the scanner coordinates to create a coordinate map between
     two images in the same scanner coordinate system. The orientation matrices written
@@ -277,162 +222,6 @@ def scanner_transform(input_source, input_target, path_output, compress_file=Fal
         )
 
 
-def apply_warp(file_in, file_field, file_out):
-    """Applies an FSL deformation field to a nifti image.
-
-    Parameters
-    ----------
-    file_in : str
-        File name of input image.
-    file_field : str
-        File name of deformation field.
-    file_out : str
-        File name of deformed image.
-
-    Returns
-    -------
-    None.
-
-    """
-    command = "applywarp"
-    command += " --in=" + str(file_in)
-    command += " --ref=" + str(file_in)
-    command += " --out=" + str(file_out)
-    command += " --warp=" + str(file_field)
-    command += " --interp=spline --rel"
-
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], check=True)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
-
-
-def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"):
-    """Apply transformation from flirt registration to image.
-
-    Parameters
-    ----------
-    file_in : str
-        File name of input file.
-    file_ref : str
-        File name of reference file.
-    file_mat : str
-        File name of 4x4 affine matrix saved as *.txt or *.mat file.
-    file_out : str
-        File name of transformed input file.
-    interp_method : str, optional
-        Interpolation method (trilinear, nearestneighbor, sinc, spline), by default
-        "trilinear"
-
-    Returns
-    -------
-    None.
-
-    """
-    # get filename
-    path_out, _, _ = get_filename(file_out)
-
-    # make output folder
-    if not os.path.exists(path_out):
-        os.makedirs(path_out)
-
-    command = "flirt"
-    command += f" -in {file_in}"
-    command += f" -ref {file_ref}"
-    command += f" -out {file_out}"
-    command += " -omat inn_flirt.mat -applyxfm"
-    command += f" -init {file_mat}"
-    command += f" -interp {interp_method}"
-    command += " -paddingsize 0"
-
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], check=True)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
-
-
-def convert_warp(file_ref, file_warp, file_jacobian, file_out):
-    """Conversion of warp field using using FSL to get Jacobian output.
-
-    Parameters
-    ----------
-    file_ref : str
-        File name of reference image.
-    file_warp : str
-        File name of initlal warp.
-    file_jacobian : str
-        Calculate and save jacobian of final warp field.
-    file_out : str
-        File name of output warp image.
-
-    Returns
-    -------
-    None.
-
-    """
-    # get filename
-    path_out, _, _ = get_filename(file_out)
-
-    # make output folder
-    if not os.path.exists(path_out):
-        os.makedirs(path_out)
-
-    command = "convertwarp"
-    command += f" --ref={file_ref}"
-    command += " --abs"
-    command += f" --jacobian={file_jacobian}"
-    command += " --relout"
-    command += f" --warp1={file_warp}"
-    command += f" --out={file_out}"
-
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], check=True)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
-
-
-def combine_warp(file_x, file_y, file_z, file_out):
-    """Concatenate single warps in x-, y-, and z-direction into one warp file by
-    contatenating in the fourth (time) dimension using FSL.
-
-    Parameters
-    ----------
-    file_x : str
-        File name of war in x-direction.
-    file_y : str
-        File name of warp in y-direction.
-    file_z : str
-        File name of warp in z-direction.
-    file_out : str
-        File name of merged warp file.
-
-    Returns
-    -------
-    None.
-
-    """
-    # get filename
-    path_out, _, _ = get_filename(file_out)
-
-    # make output folder
-    if not os.path.exists(path_out):
-        os.makedirs(path_out)
-
-    command = "fslmerge"
-    command += " -t"
-    command += f" {file_out}"
-    command += f" {file_x} {file_y} {file_z}"
-
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], check=True)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
-
-
 def apply_header(file_source, file_target, file_out, interp_method="nearest"):
     """Apply transformation to target image based on header information using
     FreeSurfer.
@@ -467,44 +256,6 @@ def apply_header(file_source, file_target, file_out, interp_method="nearest"):
     command += f" --mov {file_source}"
     command += f" --targ {file_target}"
     command += f" --o {file_out}"
-
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], check=True)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
-
-
-def apply_fugue(file_in, file_shift, udir, forward_warping=False):
-    """Apply field map deformation to image using FSL.
-
-    Parameters
-    ----------
-    file_in : _type_
-        File name of input file.
-    file_shift : _type_
-        File name of shift file containing deformation.
-    udir : _type_
-        Unwarping direction (x, y, z, x-, y-, or z-).
-    forward_warping : bool, optional
-        Apply forward warping instead of unwarping, by default False
-
-    Returns
-    -------
-    None.
-
-    """
-    # output file name
-    _, name_in, ext_in = get_filename(file_in)
-
-    command = "fugue"
-    command += f" --in={file_in}"
-    command += f" --loadshift={file_shift}"
-    command += f" --unwarpdir={udir}"
-    if forward_warping:
-        command += f" --warp={name_in}_warped{ext_in}"
-    else:
-        command += f" --unwarp={name_in}_unwarped{ext_in}"
 
     print("Execute: " + command)
     try:

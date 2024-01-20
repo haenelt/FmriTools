@@ -11,7 +11,6 @@ from pathlib import Path
 import nibabel as nb
 import numpy as np
 from nibabel.freesurfer.io import (
-    read_geometry,
     read_label,
     read_morph_data,
     write_geometry,
@@ -20,7 +19,6 @@ from nibabel.freesurfer.io import (
 from nibabel.freesurfer.mghformat import MGHHeader
 from scipy.spatial import Delaunay
 
-from ..surface.mesh import Mesh
 from .filename import get_filename
 
 __all__ = [
@@ -33,8 +31,6 @@ __all__ = [
     "curv_to_patch",
     "label_to_patch",
     "label_as_patch",
-    "write_vector_field",
-    "write_white2pial",
 ]
 
 
@@ -393,191 +389,3 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
     # delete temporary files
     if cleanup:
         sh.rmtree(path_temp, ignore_errors=True)
-
-
-def write_vector_field(
-    vtx0, vtx1, fac, file_out, meta_data=None, step_size=100, shape="line"
-):
-    """This function generates a surface mesh to visualize a vector field as a
-    triangular mesh.
-
-    Parameters
-    ----------
-    vtx0 : ndarray
-        Array of vector start points.
-    vtx1 : ndarray
-        Array of vector end points.
-    fac : ndarray
-        Array of corresponding faces.
-    file_out : str
-        Filename of output surface mesh.
-    meta_data : dict-like or None
-        Header information. See documentation of argument volume_info in
-        nibabel.freesurfer.io.write_geometry for more information. The default is None.
-    step_size : int, optional
-        Vector subset which will be visualized. The default is 100.
-    shape : str, optional
-        Line, triangle, prism. The default is "line".
-
-    Returns
-    -------
-    None.
-
-    """
-    # array containing a list of considered vectors
-    vectors = np.arange(0, len(vtx0), step_size)
-
-    # initialise faces for specific shape
-    if shape == "prism":
-        f_new = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [0, 1, 4],
-            [0, 3, 4],
-            [1, 2, 5],
-            [1, 4, 5],
-            [0, 2, 5],
-            [0, 3, 5],
-        ]
-        f_iter = 6
-    elif shape == "triangle":
-        f_new = [[0, 1, 2]]
-        f_iter = 3
-    elif shape == "line":
-        f_new = [[0, 1, 0]]
-        f_iter = 2
-
-    v_res = []
-    f_res = []
-    for i, vec in enumerate(vectors):
-        # get index from nearest neighbour of a given vertex
-        nn = Mesh(vtx0, fac).neighborhood(vec)
-        nn = nn[:2]
-
-        # get all vertex points for specific shape
-        if shape == "prism":
-            A = list(vtx0[vec])
-            B = list(vtx0[nn[0]])
-            C = list(vtx0[nn[1]])
-            D = list(vtx1[vec])
-            E = list(vtx1[nn[0]])
-            F = list(vtx1[nn[1]])
-            v_new = [A, B, C, D, E, F]
-        elif shape == "triangle":
-            A = list(vtx0[vec])
-            B = list(vtx0[nn[0]])
-            C = list(vtx1[vec])
-            v_new = [A, B, C]
-        elif shape == "line":
-            A = list(vtx0[vec])
-            B = list(vtx1[vec])
-            v_new = [A, B]
-
-        # update faces
-        if i > 0:
-            for j, _ in enumerate(f_new):
-                f_new[j] = [x + f_iter for x in f_new[j]]
-
-        # update resulting vertex and face list
-        v_res.extend(v_new)
-        f_res.extend(f_new)
-
-    # vertices and faces as array
-    v_res = np.array(v_res)
-    f_res = np.array(f_res)
-
-    # write output geometry
-    write_geometry(file_out, v_res, f_res, volume_info=meta_data)
-
-
-def write_white2pial(file_out, file_white, file_pial, step_size=100, shape="line"):
-    """This function generates lines between corresponding vertices at the white and
-    pial surface to visualize the shift between matched vertices caused by realigning
-    surfaces independently. You can either construct prisms, triangles or lines.
-
-    Parameters
-    ----------
-    file_out : str
-        Filename of output surface.
-    file_white : str
-        Filename of white surface.
-    file_pial : str
-        Filename of pial surface.
-    step_size : int, optional
-        Subset of vertices.
-    shape : str, optional
-        line, triangle, prism.
-
-    Returns
-    -------
-    None.
-
-    """
-    # read geometry
-    vtx_white, fac_white, header_white = read_geometry(file_white, read_metadata=True)
-    vtx_pial, _ = read_geometry(file_pial)
-
-    # array containing a list of considered vertices
-    vectors = np.arange(0, len(vtx_white), step_size)
-
-    # initialise faces for specific shape
-    if shape == "prism":
-        fac_new = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [0, 1, 4],
-            [0, 3, 4],
-            [1, 2, 5],
-            [1, 4, 5],
-            [0, 2, 5],
-            [0, 3, 5],
-        ]
-        fac_iter = 6
-    elif shape == "triangle":
-        fac_new = [[0, 1, 2]]
-        fac_iter = 3
-    elif shape == "line":
-        fac_new = [[0, 1, 0]]
-        fac_iter = 2
-
-    vtx_res = []
-    fac_res = []
-    for i, vec in enumerate(vectors):
-        # get index from nearest neighbour of a given vertex
-        nn = Mesh(vtx_white, fac_white).neighborhood(vec)
-        nn = nn[:2]
-
-        # get all vertex points for specific shape
-        if shape == "prism":
-            A = list(vtx_white[vec])
-            B = list(vtx_white[nn[0]])
-            C = list(vtx_white[nn[1]])
-            D = list(vtx_pial[vec])
-            E = list(vtx_pial[nn[0]])
-            F = list(vtx_pial[nn[1]])
-            vtx_new = [A, B, C, D, E, F]
-        elif shape == "triangle":
-            A = list(vtx_white[vec])
-            B = list(vtx_white[nn[0]])
-            C = list(vtx_pial[vec])
-            vtx_new = [A, B, C]
-        elif shape == "line":
-            A = list(vtx_white[vec])
-            B = list(vtx_pial[vec])
-            vtx_new = [A, B]
-
-        # update faces
-        if i > 0:
-            for j, _ in enumerate(fac_new):
-                fac_new[j] = [x + fac_iter for x in fac_new[j]]
-
-        # update resulting vertex and face list
-        vtx_res.extend(vtx_new)
-        fac_res.extend(fac_new)
-
-    # vertices and faces as array
-    vtx_res = np.array(vtx_res)
-    fac_res = np.array(fac_res)
-
-    # write output geometry
-    write_geometry(file_out, vtx_res, fac_res, volume_info=header_white)

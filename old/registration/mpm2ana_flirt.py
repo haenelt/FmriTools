@@ -29,8 +29,8 @@ from nipype.interfaces.fsl import ConvertXFM
 
 from ..matlab import MatlabCommand
 from ..registration.cmap import expand_coordinate_mapping, generate_coordinate_mapping
-from ..registration.fsl import flirt
-from ..registration.transform import apply_flirt, scanner_transform
+from ..registration.fsl import apply_flirt, flirt
+from ..registration.transform import scanner_transform
 
 # input files
 file_mpm_r1 = (

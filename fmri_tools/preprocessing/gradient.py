@@ -10,7 +10,7 @@ import numpy as np
 
 from ..io.filename import get_filename
 from ..registration.cmap import generate_coordinate_mapping
-from ..registration.transform import apply_warp, combine_warp, convert_warp
+from ..registration.fsl import apply_warp, combine_warp, convert_warp
 from ..utils.calc import mean_image
 
 

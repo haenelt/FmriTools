@@ -13,8 +13,8 @@ from scipy.ndimage.morphology import binary_dilation, binary_erosion
 from ..io.filename import get_filename
 from ..io.vol import mri_convert
 from ..matlab import MatlabCommand
-from ..registration.ants import embedded_antsreg
 from ..registration.cmap import expand_coordinate_mapping
+from ..registration.nonrigid import embedded_antsreg
 from ..registration.transform import apply_coordinate_mapping, scanner_transform
 from ..segmentation.skullstrip import skullstrip_bet
 
