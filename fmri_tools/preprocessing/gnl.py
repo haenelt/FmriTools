@@ -17,9 +17,9 @@ from ..utils.calc import mean_image
 def gnl_correction(
     file_in, file_bash, file_coeff, python3_env, python2_env, path_output, cleanup=True
 ):
-    """The purpose of the following function is to correct for gradient nonlinearities.
-    A corrected file is written using spline interpolation. The function needs FSL to be
-    included in the search path.
+    """The purpose of the following function is to correct for gradient nonlinearities
+    using the HCP gradunwarp toolbox. A corrected file is written using spline
+    interpolation. The function needs FSL to be included in the search path.
 
     Parameters
     ----------
@@ -45,6 +45,11 @@ def gnl_correction(
     """
     # get fileparts
     _, name, ext = get_filename(file_in)
+
+    # get path of bash file
+    file_bash = os.path.join(
+        os.path.dirname(__file__), "preprocessing", "apply_grad.sh"
+    )
 
     # make subfolders
     path_grad = os.path.join(path_output, "grad")

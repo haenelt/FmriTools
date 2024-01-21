@@ -1,12 +1,100 @@
 # -*- coding: utf-8 -*-
 """Behavioral measures."""
 
+import os
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import rc
 from scipy.io import loadmat
 
-__all__ = ["get_onset_vols"]
+__all__ = ["analysis_fixation", "get_onset_vols"]
+
+# font parameters for plots
+rc("font", **{"family": "serif", "serif": ["Palatino"]})
+rc("text", usetex=True)
+
+
+# mat condition file
+def analysis_fixation(file_in):
+    """Analysis of the behavioural performance of the dummy fixation task during
+    scanning. The script essentially performs the same calculation as directly done
+    automatically after single functional runs.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of condition file in mat format containing the key FixationData.
+
+    Returns
+    -------
+    None.
+
+    """
+    # get output folder
+    path_output = os.path.join(os.path.dirname(os.path.dirname(file_in)), "behavior")
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # get mat-file
+    FixationData = loadmat(file_in)["FixationData"]
+
+    # number of responses
+    response = 0
+    change = 0
+    for j in range(len(FixationData)):
+        if FixationData[j, 0] == 3:
+            response += 1
+        else:
+            change += 1
+
+    # number of hits, misses and rt
+    change_miss = 0
+    change_hit = 0
+    rt = []
+    for j in range(len(FixationData) - 1):
+        if FixationData[j, 0] != 3 and FixationData[j + 1, 0] != 3:
+            change_miss += 1
+        elif FixationData[j, 0] != 3 and FixationData[j + 1, 0] == 3:
+            change_hit += 1
+            rt.append((FixationData[j + 1, 1] - FixationData[j, 1]) * 1000)
+
+    # add a miss if the run does not end with a response
+    if FixationData[-1, 0] != 3:
+        change_miss += 1
+
+    # compute error rate
+    error_rate = change_miss / change * 100
+
+    # reaction time mean and std
+    mean_rt = np.mean(rt)
+    std_rt = np.std(rt)
+
+    # output
+    file_id = open(
+        os.path.join(path_output, "fixation_task_summary.txt"), "w", encoding="utf-8"
+    )
+    file_id.write(f"Number of changes: {change}\n")
+    file_id.write(f"Number of responses: {response}\n")
+    file_id.write(f"Number of hits: {change_hit}\n")
+    file_id.write(f"Number of misses: {change_miss}\n")
+    file_id.write(f"Error rate: {error_rate:.2f} %\n")
+    file_id.write(f"Mean RT: {mean_rt:.2f} ms\n")
+    file_id.write(f"Corresponding SD: {std_rt:.2f} ms")
+    file_id.close()
+
+    # hist plot
+    fig, ax = plt.subplots()
+    ax.hist(rt)
+    ax.set_xlabel("RT in ms")
+    ax.set_ylabel("Number of responses")
+    ax.set_title("Dummy fixation task reaction times")
+    fig.savefig(
+        os.path.join(path_output, "fixation_task_hist.png"),
+        format="png",
+        bbox_inches="tight",
+    )
 
 
 def get_onset_vols(cond_input, outlier_input, name_condition, TR, skip_vol):

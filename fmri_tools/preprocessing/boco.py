@@ -11,6 +11,275 @@ from sh import gunzip
 
 from ..io.filename import get_filename
 
+__all__ = [
+    "split_vaso",
+    "boco_vaso_regrid",
+    "boco_vaso",
+    "regrid_time_series",
+    "regrid_time_series_afni",
+]
+
+
+def split_vaso(file_in, start_vol=2, end_vol=5, first_bold=True):
+    """This function splits the vaso and bold time series into separate files. Splitted
+    time series are names as bold (not-nulled) and vaso (nulled), respectively.
+    Additionally, volumes at the beginning (non steady-state volumes) can be overwritten
+    by following steady-state volumes. Furthermore, volumes at the end of the scan can
+    be discarded. Note that the number of volumes refers here to the individual volumes
+    in the bold+vaso time series.
+
+    Parameters
+    ----------
+    file_in : _type_
+        File name of SS-SI VASO time series.
+    start_vol : int, optional
+        Overwrite volumes at the beginning, by default 2.
+    end_vol : int, optional
+        Discard volumes at the end, by default 5.
+    first_bold : bool, optional
+        If True, time series starts with (not-nulled) bold volume, by default True.
+
+    Returns
+    -------
+    None.
+
+    """
+    # load data
+    data = nb.load(file_in)
+    data_array = data.get_fdata()
+
+    # overwrite non steady-state volumes
+    data_array[:, :, :, 0:start_vol] = data_array[:, :, :, start_vol : 2 * start_vol]
+
+    # discard volumes at the end
+    if end_vol != 0:
+        data_array = data_array[:, :, :, :-end_vol]
+
+    # split into even and odd runs
+    t_even = np.arange(0, np.shape(data_array)[3], 2)
+    t_odd = np.arange(1, np.shape(data_array)[3], 2)
+
+    if first_bold:
+        bold_array = data_array[:, :, :, t_even]
+        vaso_array = data_array[:, :, :, t_odd]
+    else:
+        bold_array = data_array[:, :, :, t_odd]
+        vaso_array = data_array[:, :, :, t_even]
+
+    # new array length
+    data.header["dim"][4] = np.shape(vaso_array)[3]
+
+    output = nb.Nifti1Image(vaso_array, data.affine, data.header)
+    nb.save(output, os.path.join(os.path.dirname(file_in), "vaso.nii"))
+
+    output = nb.Nifti1Image(bold_array, data.affine, data.header)
+    nb.save(output, os.path.join(os.path.dirname(file_in), "bold.nii"))
+
+
+def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
+    """This scripts corrects a vaso time series for bold contamination. First, both time
+    series are upsampled and the vaso time series is shifted by one time step. BOLD
+    correction is performed by dividing both time series. In the end, unrealistic vaso
+    values are removed. The script needs an installation of afni.
+
+    Parameters
+    ----------
+    file_vaso : str
+        File name of nulled time series.
+    file_bold : str
+        File name of not-nulled time series.
+    TR : float
+        Repetition time of single volumes in s.
+    vaso_threshold : float, optional
+        Threshold unrealistic values, by default 6.
+
+    Returns
+    -------
+    None.
+
+    """
+    # prepare path and filename
+    path_vaso, name_vaso, ext_vaso = get_filename(file_vaso)
+    path_bold, name_bold, ext_bold = get_filename(file_bold)
+
+    file_vaso_upsampled = os.path.join(path_vaso, f"{name_vaso}_upsampled.{ext_vaso}")
+    file_bold_upsampled = os.path.join(path_bold, f"{name_bold}_upsampled.{ext_bold}")
+
+    # upsample vaso and bold time series
+    command = "3dUpsample -overwrite -datum short"
+    command += f" -prefix {file_vaso_upsampled}"
+    command += " -n 2"
+    command += f" -input {file_vaso}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+    command = "3dUpsample -overwrite -datum short"
+    command += f" -prefix {file_bold_upsampled}"
+    command += " -n 2"
+    command += f" -input {file_bold}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+    # load vaso data and shift in time
+    vaso = nb.load(file_vaso_upsampled)
+    vaso_array = vaso.get_fdata()
+    vaso_array = vaso_array[:, :, :, :-1]
+    vaso_array = np.concatenate(
+        (np.expand_dims(vaso_array[:, :, :, 0], axis=3), vaso_array), axis=3
+    )
+
+    # load bold data
+    bold = nb.load(file_bold_upsampled)
+    bold_array = bold.get_fdata()
+
+    # bold correction
+    vaso_array = np.divide(vaso_array, bold_array)
+
+    # remove nans and infs
+    vaso_array[np.isnan(vaso_array)] = 0
+    vaso_array[np.isinf(vaso_array)] = 0
+
+    # clean vaso data that are unrealistic
+    vaso_array[vaso_array < 0] = 0
+    vaso_array[vaso_array >= vaso_threshold] = vaso_threshold
+
+    output = nb.Nifti1Image(vaso_array, vaso.affine, vaso.header)
+    file_vaso_corrected = os.path.join(
+        path_vaso, f"{name_vaso}_upsampled_corrected.{ext_vaso}"
+    )
+    nb.save(output, file_vaso_corrected)
+
+    # change TR in header
+    command = "3drefit"
+    command += f" -TR {TR}"
+    command += f" {file_bold_upsampled}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+    command = "3drefit"
+    command += f" -TR {TR}"
+    command += f" {file_vaso_upsampled}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+    command = "3drefit"
+    command += f" -TR {TR}"
+    command += f" {file_vaso_corrected}"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], check=True)
+    except subprocess.CalledProcessError:
+        print("Execuation failed!")
+
+
+def boco_vaso_regrid(
+    file_vaso,
+    file_bold,
+    TR_old,
+    TR_new,
+    start_bold,
+    start_vaso,
+    nvol_remove=0,
+    vaso_threshold=6.0,
+):
+    """This scripts corrects a vaso time series for bold contamination. First, both time
+    series are upsampled to a common time grid. BOLD correction is performed by dividing
+    both time series. In the end, unrealistic vaso values are removed. The script needs
+    an installation of afni.
+
+    Parameters
+    ----------
+    file_vaso : str
+        File name of nulled time series.
+    file_bold : str
+        File name of not-nulled time series.
+    TR_old : float
+        Original effective repetition time in s (nulled + not-nulled).
+    TR_new : float
+        New repetition time after BOLD correction in s.
+    start_bold : float
+        Start of not-nulled block in s.
+    start_vaso : float
+        Start of nulled block in s.
+    nvol_remove : int, optional
+        Number of volumes removed at the end of the time series, by default 0.
+    vaso_threshold : float, optional
+        Threshold unrealistic values, by default 6.
+
+    Returns
+    -------
+    None.
+
+    """
+    # get filenames
+    path_bold, name_bold, ext_bold = get_filename(file_bold)
+    path_vaso, name_vaso, ext_vaso = get_filename(file_vaso)
+
+    # upsample time series
+    regrid_time_series(
+        file_bold,
+        path_bold,
+        TR_old,
+        TR_new,
+        t_start=start_bold,
+        nvol_remove=nvol_remove,
+    )
+    regrid_time_series(
+        file_vaso,
+        path_vaso,
+        TR_old,
+        TR_new,
+        t_start=start_vaso,
+        nvol_remove=nvol_remove,
+    )
+
+    # new filenames
+    file_bold = os.path.join(path_bold, name_bold + "_upsampled" + ext_bold)
+    file_vaso = os.path.join(path_vaso, name_vaso + "_upsampled" + ext_vaso)
+    file_vaso_corrected = os.path.join(
+        path_vaso, name_vaso + "_upsampled_corrected" + ext_vaso
+    )
+
+    # load bold data
+    bold_data = nb.load(file_bold)
+    bold_array = bold_data.get_fdata()
+
+    # load vaso data
+    vaso_data = nb.load(file_vaso)
+    vaso_array = vaso_data.get_fdata()
+
+    # bold correction
+    vaso_array = np.divide(vaso_array, bold_array)
+
+    # remove nans and infs
+    vaso_array[np.isnan(vaso_array)] = 0
+    vaso_array[np.isinf(vaso_array)] = 0
+
+    # clean vaso data that are unrealistic
+    vaso_array[vaso_array < 0] = 0
+    vaso_array[vaso_array >= vaso_threshold] = vaso_threshold
+
+    # write output
+    output = nb.Nifti1Image(vaso_array, vaso_data.affine, vaso_data.header)
+    nb.save(output, file_vaso_corrected)
+
 
 def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_remove=0):
     """This function interpolates the time series onto a new time grid using cubic
