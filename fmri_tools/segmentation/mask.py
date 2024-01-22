@@ -40,11 +40,6 @@ def mask_ana(t1, mask, background_bright=False):
         Corresponding binary mask.
     background_bright : bool, optional
         Set values outside mask to maximum value. The default is False.
-
-    Returns
-    -------
-    None.
-
     """
     # get path and filename of anatomy
     path_t1 = os.path.dirname(t1)
@@ -95,11 +90,6 @@ def mask_epi(file_epi, file_t1, file_mask, niter, sigma, file_reg=""):
         Gaussian smoothing kernel.
     file_reg : str, optional
         Filename of ana -> epi coordinate mapping. The default is "".
-
-    Returns
-    -------
-    None.
-
     """
     # get paths and filenames
     path_t1, name_t1, _ = get_filename(file_t1)
@@ -259,11 +249,6 @@ def clean_ana(file_in, min_value, new_range, overwrite=True):
     overwrite : bool, optional
         If set, the input image is overwritten with the cleaned data set. The
         default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # load data
     data = nb.load(file_in)
@@ -395,11 +380,6 @@ def mask_nuisance(
         Do not calculate new masks to not rerun everything. The default is True.
     cleanup : bool, optional
         Delete intermediate files. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):

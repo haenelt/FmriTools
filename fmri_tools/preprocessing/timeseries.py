@@ -412,11 +412,6 @@ def slice_timing_correction(
         Sequence type (siemens, cmrr).
     prefix : str, optional
         Prefix of output time series basename. The default is "a".
-
-    Returns
-    -------
-    None.
-
     """
     if not mb:
         mb = 1
@@ -548,11 +543,6 @@ def average(img_input, path_output, name_output):
         Path where output is saved.
     name_output : str
         Basename of output files.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):
@@ -597,6 +587,6 @@ def bandpass_afni(file_in, file_out, TR, lp_freq, hp_freq):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")

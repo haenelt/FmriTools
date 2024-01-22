@@ -86,11 +86,6 @@ def calc_mean(file_in, path_output, name_output, method="mean"):
     ------
     ValueError
         If `method` is invalid.
-
-    Returns
-    -------
-    None.
-
     """
     # make subfolders
     if not os.path.exists(path_output):
@@ -201,11 +196,6 @@ def calc_std(file_in, path_output, name_output, set_outlier=None):
         Output file name without file extension.
     set_outlier : float, optional
         Can be nan, zero or None. The default is None.
-
-    Returns
-    -------
-    None.
-
     """
     # make subfolders
     if not os.path.exists(path_output):

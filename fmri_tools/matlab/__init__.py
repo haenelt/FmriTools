@@ -52,7 +52,7 @@ class MatlabCommand:
 
         print("Execute: " + command)
         try:
-            subprocess.run([command], check=True)
+            subprocess.run([command], shell=True, check=False)
         except subprocess.CalledProcessError:
             print("Execuation failed!")
         os.chdir(path_current)

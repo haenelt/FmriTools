@@ -3,6 +3,7 @@
 
 import datetime
 import os
+import shutil as sh
 import subprocess
 from shutil import copyfile
 
@@ -21,6 +22,7 @@ __all__ = [
     "scanner_transform",
     "apply_header",
     "resample_volume",
+    "transform_timeseries",
 ]
 
 
@@ -139,11 +141,6 @@ def scanner_transform(input_source, input_target, path_output, compress_file=Fal
         Path where output is saved.
     compress_file : bool, optional
         GZIP output. The default is False.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):
@@ -236,11 +233,6 @@ def apply_header(file_source, file_target, file_out, interp_method="nearest"):
         File name of output image.
     interp_method : str, optional
         Interpolation method (nearest, trilin, cubic), by default "nearest".
-
-    Returns
-    -------
-    None.
-
     """
     # get filename
     path_out, _, _ = get_filename(file_out)
@@ -259,7 +251,7 @@ def apply_header(file_source, file_target, file_out, interp_method="nearest"):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -291,11 +283,6 @@ def resample_volume(file_in, file_out, dxyz=(0.4, 0.4, 0.4), rmode="Cu"):
         (0.4, 0.4, 0.4).
     rmode : str, optional
         Interpolation methods (Linear, NN, Cu, Bk). The default is "Cu".
-
-    Returns
-    -------
-    None.
-
     """
     # get path and file extension of input file
     path_in, _, ext_in = get_filename(file_in)
@@ -331,3 +318,74 @@ def resample_volume(file_in, file_out, dxyz=(0.4, 0.4, 0.4), rmode="Cu"):
 
     # remove temporary copy
     os.remove(file_tmp)
+
+
+def transform_timeseries(file_in, file_cmap, interpolation):
+    """Epi time series in native space are transformed to a target space using a
+    deformation field. The transformed time series get the prefix r. Because of heap
+    size limits, the time series is split and the deformation is applied separately to
+    each volume.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of time series.
+    file_cmap : str
+        File name of coordinate mapping.
+    interpolation : str
+        Interpolation method (linear or nearest).
+
+    Raises
+    ------
+    FileExistsError
+        If temporary folder already exists.
+    """
+    # make temporary output folder
+    tmp1 = np.random.randint(0, 10, 5)
+    tmp1 = "".join(str(i) for i in tmp1)
+    tmp2 = datetime.datetime.now().strftime("%S%f")
+    tmp_string = tmp1 + tmp2
+    path_tmp = os.path.join(os.path.dirname(file_in), "tmp_" + tmp_string)
+
+    if not os.path.exists(path_tmp):
+        os.mkdir(path_tmp)
+    else:
+        raise FileExistsError("Temporary folder already exists!")
+
+    # get length of time series
+    data = nb.load(file_in)
+    data_array = data.get_fdata()
+    nt = nb.load(file_in).header["dim"][4]
+    data.header["dim"][4] = 1  # change header for single 3d volumes
+
+    for j in range(nt):
+        # save single time frame
+        output = nb.Nifti1Image(data_array[:, :, :, j], data.affine, data.header)
+        nb.save(output, os.path.join(path_tmp, f"{j}.nii"))
+
+        apply_coordinate_mapping(
+            os.path.join(path_tmp, f"{j}.nii"),
+            file_cmap,
+            os.path.join(path_tmp, f"{j}_def.nii"),
+            interpolation=interpolation,
+        )
+
+    # merge final deformed time series
+    data = nb.load(os.path.join(path_tmp, "0_def.nii"))
+    data.header["dim"][4] = nt
+    data_res = np.zeros(data.header["dim"][1:5])
+
+    for j in range(nt):
+        data_res[:, :, :, j] = nb.load(
+            os.path.join(path_tmp, str(j) + "_def.nii")
+        ).get_fdata()
+
+        # time series path and basename
+    path = os.path.dirname(file_in)
+    file_ = os.path.splitext(os.path.basename(file_in))[0]
+
+    output = nb.Nifti1Image(data_res, data.affine, data.header)
+    nb.save(output, os.path.join(path, f"r{file_}_linear.nii"))
+
+    # delete intermediate files
+    sh.rmtree(path_tmp, ignore_errors=True)

@@ -68,7 +68,7 @@ def flirt(
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -84,11 +84,6 @@ def apply_warp(file_in, file_field, file_out):
         File name of deformation field.
     file_out : str
         File name of deformed image.
-
-    Returns
-    -------
-    None.
-
     """
     command = "applywarp"
     command += " --in=" + str(file_in)
@@ -99,7 +94,7 @@ def apply_warp(file_in, file_field, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -120,11 +115,6 @@ def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"
     interp_method : str, optional
         Interpolation method (trilinear, nearestneighbor, sinc, spline), by default
         "trilinear"
-
-    Returns
-    -------
-    None.
-
     """
     # get filename
     path_out, _, _ = get_filename(file_out)
@@ -144,7 +134,7 @@ def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -162,11 +152,6 @@ def convert_warp(file_ref, file_warp, file_jacobian, file_out):
         Calculate and save jacobian of final warp field.
     file_out : str
         File name of output warp image.
-
-    Returns
-    -------
-    None.
-
     """
     # get filename
     path_out, _, _ = get_filename(file_out)
@@ -185,7 +170,7 @@ def convert_warp(file_ref, file_warp, file_jacobian, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -204,11 +189,6 @@ def combine_warp(file_x, file_y, file_z, file_out):
         File name of warp in z-direction.
     file_out : str
         File name of merged warp file.
-
-    Returns
-    -------
-    None.
-
     """
     # get filename
     path_out, _, _ = get_filename(file_out)
@@ -224,7 +204,7 @@ def combine_warp(file_x, file_y, file_z, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -242,11 +222,6 @@ def apply_fugue(file_in, file_shift, udir, forward_warping=False):
         Unwarping direction (x, y, z, x-, y-, or z-).
     forward_warping : bool, optional
         Apply forward warping instead of unwarping, by default False
-
-    Returns
-    -------
-    None.
-
     """
     # output file name
     _, name_in, ext_in = get_filename(file_in)
@@ -262,6 +237,6 @@ def apply_fugue(file_in, file_shift, udir, forward_warping=False):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")

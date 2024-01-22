@@ -25,9 +25,10 @@
 
 ## v2.0.0
 - major refactoring of modules
+- remove if __name__ == "__main__" in some modules
 - scripts are rewritten as modules and workflows
 - remove nighres dependency
 - remove nipype dependency
-- remove pycortex dependency
 - remove gbb dependency
 - remove natsort dependency
+- use subprocess.run instead of os.system

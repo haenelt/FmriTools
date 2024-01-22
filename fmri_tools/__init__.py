@@ -52,7 +52,7 @@ def check_software():
 def check_installation(command):
     """Check if command can be executed from the command line."""
     try:
-        subprocess.run([command], stdout=subprocess.DEVNULL, check=False)
+        subprocess.run([command], shell=True, check=False)
     except FileNotFoundError:
         sys.exit(
             f"\nCould not find '{command}'. Make sure all required software is \

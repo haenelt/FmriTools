@@ -140,11 +140,6 @@ def crop_coordinate_mapping(file_in, pad=0, overwrite_file=True, path_output="")
     path_output : str, optional
         Path where output is saved if input file is not overwritten. The
         default is "".
-
-    Returns
-    -------
-    None.
-
     """
     # define output folder
     if path_output is not None:
@@ -432,11 +427,6 @@ def remove_edge_cmap(input_cmap, edge_threshold=5, min_threshold=5):
         is 5.
     min_threshold : float, optional
         Minimum cmap value in all dimensions (in voxel units). The default is 5.
-
-    Returns
-    -------
-    None.
-
     """
     # load input
     cmap = nb.load(input_cmap)

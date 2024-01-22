@@ -1,30 +1,18 @@
+function ft_vasa_calibration(img_input, contrast_input, spm_mat_input)
 % VASA estimation
 %
-% This script computes baseline corrected contrast files using the VasA
+% ft_vasa_calibration(img_input, contrast_input, spm_mat_input)
+% 
+% Inputs:
+%   img_input      - cell array of filenames of input time series.
+%   contrast_input - cell array of SPM contrasts.
+%   spm_mat_input  - filename of SPM.mat file.
+% 
+% This function computes baseline corrected contrast files using the VasA
 % fMRI approach for task-based data.
 %
 % Dependencies (should be installed as SPM toolbox):
 % - VASA toolbox: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5573956/
-
-% input data
-img_input = {
-    '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_1/udata.nii',...
-    '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_2/udata.nii',...
-    '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_3/udata.nii',...
-    '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_4/udata.nii',...
-    '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_5/udata.nii',...
-    '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_6/udata.nii',...
-    '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/Run_7/udata.nii',...
-    };
-
-contrast_input = {
-    '/data/pt_01880/MonocularBlindness/p1/flicker/results/spmT/native/spmT_off_on_GE_EPI2.nii',...
-    '/data/pt_01880/MonocularBlindness/p1/flicker/results/spmT/native/spmT_on_off_GE_EPI2.nii',...
-    };
-
-spm_mat_input = '/data/pt_01880/MonocularBlindness/p1/flicker/GE_EPI2/contrast/SPM.mat';
-
-%%% do not edit below %%%
 
 % add paths to the interpreter's search path
 spm('defaults','FMRI');

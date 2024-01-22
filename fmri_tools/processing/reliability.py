@@ -10,6 +10,8 @@ import numpy as np
 from nibabel.freesurfer.io import read_label, read_morph_data
 from scipy.stats import pearsonr
 
+__all__ = ["estimate_reliability"]
+
 
 def estimate_reliability(
     file_sess1,

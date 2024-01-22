@@ -11,7 +11,7 @@ import numpy as np
 from ..io.affine import apply_affine_chunked, read_vox2vox
 from ..io.vol import copy_header, mri_convert
 from ..segmentation.mask import clean_ana, mask_ana, mask_epi
-from ..utils.bias import remove_bias_ants
+from ..segmentation.vol import remove_bias_ants
 from ..utils.calc import multiply_images, remove_nans
 from .cmap import generate_coordinate_mapping
 from .fsl import apply_flirt, flirt
@@ -46,11 +46,6 @@ def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False)
         Path where output is saved.
     cleanup : bool, optional
         Delete intermediate files. The default is False.
-
-    Returns
-    -------
-    None.
-
     """
     # set folder structure
     path_temp = os.path.join(path_output, "temp")
@@ -311,7 +306,7 @@ def boundary_based_registration(
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 

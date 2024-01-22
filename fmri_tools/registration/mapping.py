@@ -82,7 +82,7 @@ def mri_vol2surf(file_in, file_out, sub, interp_method="nearest"):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -389,11 +389,6 @@ def map2stack(file_data, file_grid, sigma, path_output):
         Standard deviation of Gaussian kernel.
     path_output : str
         Path where output is saved.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):
@@ -460,11 +455,6 @@ def morph2dense(source_sphere, target_sphere, input_morph, path_output):
         Morphological input file.
     path_output : str
         Path where output is saved.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):
@@ -669,11 +659,6 @@ def deform_surface(
         Reverse normal direction of mesh. The default is False.
     cleanup : bool, optional
         Remove intermediate files. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
@@ -815,11 +800,6 @@ def remove_vertex_outliers(input_surf, input_ind, n=5, overwrite=True):
         Threshold parameter. The default is 5.
     overwrite : bool, optional
         Overwrite input surface. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # load geometry
     vtx, fac = read_geometry(input_surf)
@@ -943,11 +923,6 @@ def apply_fieldmap(
         Number of skullstrip mask eroding iterations. The default is 1.
     cleanup : bool, optional
         Removes temporary files at the end of the script. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # prepare path and filename
     path_fmap0, name_fmap0, ext_fmap0 = get_filename(file_fmap_magn)

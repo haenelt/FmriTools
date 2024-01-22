@@ -38,11 +38,6 @@ def calc_equivol_surf(file_white, file_pial, n_surfs, factor, niter, hemi, path_
         Declare hemisphere for output file.
     path_output : str
         Path where output is saved.
-
-    Returns
-    ------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):

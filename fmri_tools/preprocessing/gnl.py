@@ -13,6 +13,8 @@ from ..registration.cmap import generate_coordinate_mapping
 from ..registration.fsl import apply_warp, combine_warp, convert_warp
 from ..utils.calc import mean_image
 
+__all__ = ["gnl_correction"]
+
 
 def gnl_correction(
     file_in, file_bash, file_coeff, python3_env, python2_env, path_output, cleanup=True
@@ -37,11 +39,6 @@ def gnl_correction(
         Path where output is written.
     cleanup : bool, optional
         Delete intermediate files. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # get fileparts
     _, name, ext = get_filename(file_in)
@@ -73,7 +70,7 @@ def gnl_correction(
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -113,7 +110,7 @@ def gnl_correction(
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 

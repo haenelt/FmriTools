@@ -6,7 +6,6 @@ import functools
 import itertools
 import os
 import subprocess
-import sys
 from shutil import copyfile
 
 import nibabel as nb
@@ -918,11 +917,6 @@ def clip_mgh(mgh_in, label_in, mgh_out):
         Path to input label file.
     mgh_out : str
         Path to output mgh file.
-
-    Returns
-    -------
-    None.
-
     """
 
     arr, affine, header = read_mgh(mgh_in)
@@ -944,11 +938,6 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
         Number of inflating iterations (if > 0). The default is 100.
     radius : float, optional
         Radius of final sphere in mm (if not None). The default is None.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     path_output, _, _ = get_filename(file_out)
@@ -972,10 +961,16 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
         copyfile(file_in, file_tmp)
 
     # inflate surface
+    command = "mris_sphere"
+    command += " -q"
+    command += f" {file_tmp}"
+    command += f" {file_out}"
+
+    print("Execute: " + command)
     try:
-        subprocess.run(["mris_sphere", "-q", file_tmp, file_out], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
-        sys.exit("Sphere computation failed!")
+        print("Execuation failed!")
 
     # change radius
     if radius:

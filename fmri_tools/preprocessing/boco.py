@@ -38,11 +38,6 @@ def split_vaso(file_in, start_vol=2, end_vol=5, first_bold=True):
         Discard volumes at the end, by default 5.
     first_bold : bool, optional
         If True, time series starts with (not-nulled) bold volume, by default True.
-
-    Returns
-    -------
-    None.
-
     """
     # load data
     data = nb.load(file_in)
@@ -92,11 +87,6 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
         Repetition time of single volumes in s.
     vaso_threshold : float, optional
         Threshold unrealistic values, by default 6.
-
-    Returns
-    -------
-    None.
-
     """
     # prepare path and filename
     path_vaso, name_vaso, ext_vaso = get_filename(file_vaso)
@@ -113,7 +103,7 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -124,7 +114,7 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -164,7 +154,7 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -174,7 +164,7 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -184,7 +174,7 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -222,11 +212,6 @@ def boco_vaso_regrid(
         Number of volumes removed at the end of the time series, by default 0.
     vaso_threshold : float, optional
         Threshold unrealistic values, by default 6.
-
-    Returns
-    -------
-    None.
-
     """
     # get filenames
     path_bold, name_bold, ext_bold = get_filename(file_bold)
@@ -300,11 +285,6 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_rem
         Shift time series in s (t_start >= 0 and <= TR_old). The default is 0.
     nvol_remove : int, optional
         Remove volumes at the end of the time series.
-
-    Returns
-    -------
-    None.
-
     """
     # get filename
     _, name_input, ext_input = get_filename(file_in)
@@ -380,7 +360,7 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_rem
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -396,11 +376,6 @@ def regrid_time_series_afni(file_in, n=2):
         Time series filename.
     n : int, optional
         Upsampling factor. The default is 2.
-
-    Returns
-    -------
-    None.
-
     """
     clean_unzip = 0
     if os.path.splitext(file_in)[1] == ".gz":
@@ -420,7 +395,7 @@ def regrid_time_series_afni(file_in, n=2):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 

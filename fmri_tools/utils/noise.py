@@ -23,11 +23,6 @@ def make_gaussian(input_file, path_output, mu=0, sigma=1):
         Mean of Gaussian noise. The default is 0.
     sigma : float, optional
         Standard deviation of Gaussian noise. The default is 1.
-
-    Returns
-    -------
-    None.
-
     """
     # load img
     img = nb.load(input_file)

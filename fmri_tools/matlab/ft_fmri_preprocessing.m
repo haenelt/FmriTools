@@ -31,6 +31,41 @@ function ft_fmri_preprocessing(img_input, slice_params, field_params, ...
 % In the outlier summary, the percentage of within-run outliers are printed
 % out. Additionally, regressors of no interest for neglecting outlier
 % volumes are created.
+%
+% Example input
+%
+% array of of input time series
+%img_input = {
+%    '/data/pt_01880/temp_p5/Run_1/data.nii',...
+%    '/data/pt_01880/temp_p5/Run_2/data.nii',...
+%    };
+%
+% slice timing parameters
+%slice_params.slice_timing = false; % run slice timing correction
+%slice_params.TR = 3; % repetition time in seconds
+%slice_params.slice_order = 'descending'; % slice ordering (ascending or descending)
+%
+% fieldmap parameters
+%field_params.fieldmap_undistortion = false; % run fieldmap undistortion
+%field_params.fmap_magn = '';
+%field_params.fmap_phase = '';
+%field_params.fmap_te1 = 6.0; % shorter echo time in ms
+%field_params.fmap_te2 = 7.02; % longer echo time in ms
+%field_params.fmap_blipdir = -1; % phase-encoding direction
+%field_params.fmap_BandwidthPerPixelPhaseEncode = 16.304; % phase-encoding BW Hz/px
+%
+% realignment parameters
+%realign_params.unwarp = false;
+%realign_params.mask = false;
+%realign_params.c = [95 130 25];
+%realign_params.r = [35 25 20];
+%
+% outlier parameters
+%outlier_params.moco_out_mm_short = 0.4; % in mm
+%outlier_params.moco_out_mm_long = 0.8; % in mm
+%outlier_params.moco_out_deg_short = 0.5; % in deg
+%outlier_params.moco_out_deg_long = 1.0; % in deg
+%outlier_params.int_out_z = 2; % in z-score
 
 % set spm default parameters
 spm('defaults','FMRI');

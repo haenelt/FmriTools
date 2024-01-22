@@ -52,7 +52,7 @@ def read_hdf5(file_in):
     with h5py.File(file_in, "r") as hf:
         # read data array
         if "array" in hf.keys():
-            data = hf["array"][:]
+            data = np.array(hf["array"][:])
         else:
             raise ValueError("No dataset found with name array!")
 
@@ -93,11 +93,6 @@ def write_hdf5(file_out, arr, affine=None, header=None):
     ValueError
         If `file_out` is not a string or has a file extension which is not
         supported.
-
-    Returns
-    -------
-    None.
-
     """
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
@@ -178,11 +173,6 @@ def extract_mgh_from_hdf5(file_in, file_out, t, n=None):
     ------
     ValueError
         If the read 'data' array has not the right number of dimensions.
-
-    Returns
-    -------
-    None.
-
     """
     # read file
     data, affine, header = read_hdf5(file_in)

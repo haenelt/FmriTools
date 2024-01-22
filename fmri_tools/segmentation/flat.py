@@ -290,11 +290,6 @@ def label_flattening(file_ref, file_label, path_output, cleanup=True):
         Path where output is saved.
     cleanup : bool, optional
         Delete intermediate files. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # create temporary folder
     tmp1 = np.random.randint(0, 10, 5)
@@ -340,7 +335,7 @@ def label_flattening(file_ref, file_label, path_output, cleanup=True):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -378,11 +373,6 @@ def surface_flattening(file_ref, file_patch, path_output, cleanup=True):
         Path where output is saved.
     cleanup : bool, optional
         Delete intermediate files. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # create temporary folder
     tmp1 = np.random.randint(0, 10, 5)
@@ -429,7 +419,7 @@ def surface_flattening(file_ref, file_patch, path_output, cleanup=True):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 

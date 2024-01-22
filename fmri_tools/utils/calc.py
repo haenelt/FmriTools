@@ -9,7 +9,7 @@ import nibabel as nb
 import numpy as np
 
 from ..io.filename import get_filename
-from ..utils.bias import remove_bias_ants
+from ..segmentation.vol import remove_bias_ants
 
 __all__ = [
     "estimate_t1w",
@@ -39,11 +39,6 @@ def estimate_t1w(file_bold, file_vaso, file_out, apply_bias):
         File name of T1-weighted image.
     apply_bias : bool
         Apply a bias field correction.
-
-    Returns
-    -------
-    None.
-
     """
 
     print("Compute T1-weighted image from")
@@ -102,11 +97,6 @@ def mip(file_in, file_out, size, axis=2, mode="min"):
         Axis along which to compute the intensity projection.
     mode : str, optional
         Mode (min, max).
-
-    Returns
-    -------
-    None.
-
     """
     if axis < 0 or axis > 2:
         raise ValueError("Axis must be between 0 and 2.")
@@ -148,11 +138,6 @@ def remove_nans(file_in, file_out):
         Filename of input volume.
     file_out : str
         Filename of output volume.
-
-    Returns
-    -------
-    None.
-
     """
     # load data
     data_img = nb.load(file_in)
@@ -178,11 +163,6 @@ def multiply_images(file1, file2, file_out):
         Filename of second input image.
     file_out : str
         Filename of the output image.
-
-    Returns
-    -------
-    None.
-
     """
     # load both images
     file1_img = nb.load(file1)
@@ -212,11 +192,6 @@ def average_layer(img_input, path_output, basename_output, mode="mean"):
         Basename of written output file.
     mode : str, optional
         Average mode (mean or median). The default is "mean".
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):
@@ -264,11 +239,6 @@ def laminar_profile(file_in, path_output, hemi, name_output, mode):
         Output file name without file extension.
     mode : str
         mean, median, max, min.
-
-    Returns
-    -------
-    None.
-
     """
     # make subfolders
     if not os.path.exists(path_output):
@@ -319,11 +289,6 @@ def volume_threshold(file_in, prefix, data_max):
         Defined prefix for the output image.
     data_max : float
         Set maximum threshold value.
-
-    Returns
-    -------
-    None.
-
     """
     # load data
     data_img = nb.load(file_in)
@@ -364,7 +329,7 @@ def mean_image(file_in, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -380,11 +345,6 @@ def create_series(file_in, path_out, name_output):
         Path where output is saved.
     name_output : str
         Basename of output 4D nifti file.
-
-    Returns
-    -------
-    None.
-
     """
     # load 3D nifti to get array size
     data = nb.load(os.path.join(file_in[0]))

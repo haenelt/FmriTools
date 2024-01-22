@@ -33,6 +33,6 @@ def mris_smooth(file_in, file_out, n_iter):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")

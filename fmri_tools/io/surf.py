@@ -54,11 +54,6 @@ def write_mgh(file_out, arr, affine=None, header=None):
     ValueError
         If `file_out` is not a string or has a file extension which is not
         supported.
-
-    Returns
-    -------
-    None.
-
     """
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
@@ -145,11 +140,6 @@ def write_label(file_out, arr_label):
     ValueError
         If `file_out` is not a string or has a file extension which is not
         supported.
-
-    Returns
-    -------
-    None.
-
     """
     # check filename
     if not isinstance(file_out, str) and not isinstance(file_out, Path):
@@ -235,11 +225,6 @@ def patch_as_mesh(file_out, file_patch):
         Filename of output surface mesh.
     file_patch : str
         Filename of freesurfer patch file.
-
-    Returns
-    -------
-    None.
-
     """
     x, y, _, _ = read_patch(file_patch)
     coords = np.zeros((len(x), 2))
@@ -268,11 +253,6 @@ def mgh_to_patch(file_out, file_mgh, file_patch):
         Filename of mgh overlay.
     file_patch : str
         Filename of freesurfer patch file.
-
-    Returns
-    -------
-    None.
-
     """
     _, _, _, ind = read_patch(file_patch)
     arr, affine, header = read_mgh(file_mgh)
@@ -292,11 +272,6 @@ def curv_to_patch(file_out, file_curv, file_patch):
         Filename of freesurfer curvature file.
     file_patch : str
         Filename of freesurfer patch file.
-
-    Returns
-    -------
-    None.
-
     """
     _, _, _, ind = read_patch(file_patch)
     curv = read_morph_data(file_curv)
@@ -316,11 +291,6 @@ def label_to_patch(file_out, file_label, file_patch):
         Filename of freesurfer label file.
     file_patch : str
         Filename of freesurfer patch file.
-
-    Returns
-    -------
-    None.
-
     """
     _, _, _, ind = read_patch(file_patch)
     label = read_label(file_label)
@@ -342,11 +312,6 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
         File name of patch file.
     cleanup : bool, optional
         Delete intermediate files. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # create temporary folder
     tmp1 = np.random.randint(0, 10, 5)
@@ -382,7 +347,7 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 

@@ -1,6 +1,22 @@
+function ft_tdm(img_input, cond_input, TR, stim_duration, sigma, mask_threshold, ...
+    fir_steps, basename, output_folder)
 % TDM analysis
 %
-% This script executes the TDM method developed by Kendrick Kay et al.
+% ft_tdm(img_input, cond_input, TR, stim_duration, sigma, mask_threshold, ...
+%    fir_steps, basename, output_folder)
+%
+% Inputs:
+%   img_input      - cell array of filenames of input time series.
+%   cond_input     - cell array of condition files in *.mat format.
+%   TR             - repetition time in s.
+%   stim_duration  - stimulus duration in s.
+%   sigma          - sigma for gaussian blurring (bias field corrected epi).
+%   mask_threshold - masking threshold for implicit mask.
+%   fir_steps      - number of time steps for fir model.
+%   basename       - basename of output files.
+%   output_folder  - name of folder where glm output is saved.
+% 
+% This function executes the TDM method developed by Kendrick Kay et al.
 % (2019) to separate early and late BOLD contributions within an fmri
 % timeseries. In this script, a simple block design with one experimental
 % and one baseline condition is expected. Furthermore, the onset times and
@@ -11,34 +27,6 @@
 % - knkutils: https://github.com/kendrickkay/knkutils
 % - GLMdenoise: https://github.com/kendrickkay/GLMdenoise
 % - TDM: https://github.com/kendrickkay/TDM
-
-% input data
-img_input = {
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_1/uadata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_2/uadata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_3/uadata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_4/uadata.nii',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_5/uadata.nii',...
-    };
-
-cond_input = {
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_1/logfiles/p1_GE_EPI1_Run1_flicker_Cond.mat',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_2/logfiles/p1_GE_EPI1_Run2_flicker_Cond.mat',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_3/logfiles/p1_GE_EPI1_Run3_flicker_Cond.mat',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_4/logfiles/p1_GE_EPI1_Run4_flicker_Cond.mat',...
-    '/data/pt_01983/func/flicker/GE_EPI1/Run_5/logfiles/p1_GE_EPI1_Run5_flicker_Cond.mat',...
-    };
-
-% parameters
-TR = 1; % repetition time in s
-stim_duration = 30; % stimulus duration in s
-sigma = 2; % sigma for gaussian blurring (bias corrected epi)
-mask_threshold = 0.8; % masking threshold for implicit mask
-fir_steps = 60; % number of time steps for fir model
-basename = 'on'; % basename of output files
-output_folder = 'contrast_tdm'; % name of folder where glm output is saved
-
-%%% do not edit below %%%
 
 % output folder is taken from the first entry of the input list
 if length(img_input) > 1

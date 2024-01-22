@@ -91,10 +91,6 @@ def embedded_antsreg(
         Ignore the orientation information and affine matrix information extracted from
         the image header (default is False).
 
-    Returns
-    ----------
-    None.
-
     Notes
     ----------
     The code was mainly taken from nighres.registration.embedded_antsreg and was

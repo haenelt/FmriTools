@@ -36,10 +36,6 @@ def get_alff(file_in, TR, path_output, hp_freq=0.01, lp_freq=0.08, cleanup=True)
     cleanup : bool, optional
         Delete intermediate files. The default is True.
 
-    Returns
-    -------
-    None.
-
     References
     -------
     .. [1] https://github.com/FCP-INDI/C-PAC/blob/master/CPAC/alff/alff.py
@@ -116,7 +112,7 @@ def _divide_afni(file_in1, file_in2, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -138,6 +134,6 @@ def _std_afni(file_in, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")

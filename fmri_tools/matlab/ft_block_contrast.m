@@ -1,6 +1,31 @@
+function ft_block_contrast(img_input, cond_input, TR, name_output, name_sess, ...
+output_folder, null_input, multi_input, cutoff_highpass, microtime_onset, hrf_cbv, ...
+hrf_derivative, lowpass, cutoff_lowpass, order_lowpass)
 % GLM analysis
 %
-% This script computes a fixed-effects GLM for one or multiple runs within 
+% ft_block_contrast(img_input, cond_input, TR, name_output, name_sessoutput_folder, ...
+%    null_input, multi_input, cutoff_highpass, microtime_onset, hrf_cbv, ...
+%    hrf_derivative, lowpass, cutoff_lowpass, order_lowpass)
+%
+% Inputs:
+%   img_input       - cell array of filenames of input time series.
+%   cond_input      - cell array of condition files in *.mat format.
+%   TR              - repetition time in s.
+%   cutoff_highpass - 1/cutoff_highpass frequency in Hz.
+%   name_output     - basename of output contrasts. 
+%   name_sess       - name of session (if multiple sessions exist).
+%   output_folder   - name of folder where SPM-mat is saved.
+%   null_input      - cell array of nulling regressors.
+%   multi_input     - cell array of regressors of no interest.
+%   microtime_onset - only change 1 (default: 8) if reference slice in 
+%                     slice timing is first slice.
+%   hrf_cbv         - use an HRF designed for CBV responses.
+%   hrf_derivative  - include HRF derivative in model.
+%   lowpass         - lowpass filter fMRI time series.
+%   cutoff_lowpass  - cutoff frequency for lowpass filtering in Hz.
+%   order_lowpass   - order of lowpass filter.
+%
+% This function computes a fixed-effects GLM for one or multiple runs within 
 % one session. The script is designed for paradigms with 2-4 experimental 
 % conditions. However, for more than 2 conditions, not all contrasts are 
 % computed:) Stimulus parameters are read from a spm12 compatible *.mat 
@@ -10,53 +35,32 @@
 % loaded as textfile containing one column with either zeroes for valid 
 % time points or ones for outliers in different rows.
 
-% input data
-img_input = {
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_1/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_2/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_3/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_4/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_5/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_6/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_7/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_8/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_9/udata.nii',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_10/udata.nii',...
-    };
+% default parameter
+if ~exist('null_input','var')  
+    null_input = {};
+end
 
-cond_input = {
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_1/logfiles/p4_GE_EPI2_Run1_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_2/logfiles/p4_GE_EPI2_Run2_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_3/logfiles/p4_GE_EPI2_Run3_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_4/logfiles/p4_GE_EPI2_Run4_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_5/logfiles/p4_GE_EPI2_Run5_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_6/logfiles/p4_GE_EPI2_Run6_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_7/logfiles/p4_GE_EPI2_Run7_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_8/logfiles/p4_GE_EPI2_Run8_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_9/logfiles/p4_GE_EPI2_Run9_odc_Cond.mat',...
-    '/data/pt_01880/Experiment1_ODC/p4/odc/GE_EPI2/Run_10/logfiles/p4_GE_EPI2_Run10_odc_Cond.mat',...
-    };
+if ~exist('multi_input','var')  
+    multi_input = {};
+end
 
-null_input = {};
+if ~exist('microtime_onset','var')  
+    microtime_onset = 8;
+end
 
-multi_input = {};
+if ~exist('hrf_cbv','var')  
+    hrf_cbv = false;
+end
 
-% parameters
-TR = 3; % repetition time  in s
-cutoff_highpass = 270; % 1/cutoff_highpass frequency in Hz (odc: 270, localiser: 96)
-microtime_onset = 8; % only change to 1 if reference slice in slice timing is first slice
-hrf_cbv = false; % use an hrf designed for CBV responses
-hrf_derivative = false; % include hrf derivative in model
-name_sess = 'GE_EPI2'; % name of session (if multiple sessions exist)
-name_output = ''; % basename of output contrasts
-output_folder = 'contrast'; % name of folder where spm.mat is saved
+if ~exist('hrf_derivative','var')  
+    hrf_derivative = false;
+end
 
-% lowpass filter of time series
-lowpass = false;
-cutoff_lowpass = 10;
-order_lowpass = 1;
-
-%%% do not edit below %%%
+if ~exist('lowpass','var')  
+    lowpass = false;
+    cutoff_lowpass = 10;
+    order_lowpass = 1;
+end
 
 % add paths to the interpreter's search path
 spm('defaults','FMRI');

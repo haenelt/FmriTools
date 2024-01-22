@@ -24,11 +24,6 @@ def nuisance_regressor(file_in, wm_mask, csf_mask, path_output):
         CSF mask registered to the time series.
     path_output : str
         Path where output is saved.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     if not os.path.exists(path_output):

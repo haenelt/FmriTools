@@ -11,7 +11,7 @@ from scipy.signal import argrelextrema
 
 from ..io.filename import get_filename
 from ..registration.transform import apply_header
-from ..utils.bias import remove_bias_ants
+from ..segmentation.vol import remove_bias_ants
 from ..utils.roi import dilate_fsl, erode_fsl
 
 __all__ = ["skullstrip_flash", "skullstrip_epi", "skullstrip_refined", "skullstrip_bet"]
@@ -51,11 +51,6 @@ def skullstrip_flash(
         Apply flood filling of binary mask. The default is False.
     cleanup : bool, optional
         Delete intermediate files. The default is False.
-
-    Returns
-    -------
-    None.
-
     """
     # prepare path and filename
     path = os.path.dirname(file_in)
@@ -130,11 +125,6 @@ def skullstrip_epi(
         Save mask time series. The default is False.
     cleanup : bool, optional
         Delete intermediate files after running. The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # prepare path and filename
     path = os.path.split(file_in)[0]
@@ -321,7 +311,7 @@ def skullstrip_bet(file_in, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 

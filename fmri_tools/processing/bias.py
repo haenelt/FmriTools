@@ -8,7 +8,7 @@ import numpy as np
 
 from ..io.filename import get_filename
 from ..matlab import MatlabCommand
-from ..utils.bias import remove_bias_ants
+from ..segmentation.vol import remove_bias_ants
 
 __all__ = ["estimate_pv", "static_susceptibility"]
 
@@ -30,11 +30,6 @@ def estimate_pv(input_target, input_border, path_output, name_output):
         Path where output is saved.
     name_output : str
         Basename of output image.
-
-    Returns
-    -------
-    None.
-
     """
     # load data
     target = nb.load(input_target)
@@ -174,11 +169,6 @@ def static_susceptibility(
         Mode for temporal average (mean or median).
     apply_bias : bool, optional
         Apply bias field correction on temporal mean.
-
-    Returns
-    -------
-    None.
-
     """
     if mode not in ["mean", "median"]:
         raise ValueError("Average mode must be either mean or median!")

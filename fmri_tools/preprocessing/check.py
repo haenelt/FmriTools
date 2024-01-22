@@ -40,11 +40,6 @@ def check_preprocessing(files_in, file_mask, r_threshold=0.95, show_plots=False)
         Pearson correlation threshold for outlier detection, by default 0.95.
     show_plots : bool, optional
         Show sanity plots, by default False.
-
-    Returns
-    -------
-    None.
-
     """
     # get filename from first input entry
     _, name_file, _ = get_filename(files_in[0])
@@ -347,7 +342,7 @@ def check_preprocessing_afni(
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -375,13 +370,13 @@ def check_preprocessing_afni(
     )
 
     # make summary textfile
-    file = open(
+    file_id = open(
         os.path.join(path_output, "outlier_afni_summary.txt"), "w", encoding="utf-8"
     )
-    file.write("qthr: " + str(qthr) + "\n")
-    file.write("pthr: " + str(pthr) + "\n")
-    file.write("Number of outliers: " + str(np.sum(log_outlier)))
-    file.close()
+    file_id.write("qthr: " + str(qthr) + "\n")
+    file_id.write("pthr: " + str(pthr) + "\n")
+    file_id.write("Number of outliers: " + str(np.sum(log_outlier)))
+    file_id.close()
 
     # clean intermediate files
     if cleanup:

@@ -68,11 +68,6 @@ def get_vfs(
         Smoothing kernel for vfs calculation input in mm. The default is 8.0.
     cleanup : bool, optional
         Delete intermediate files.  The default is True.
-
-    Returns
-    -------
-    None.
-
     """
     # set freesurfer path environment
     os.environ["SUBJECTS_DIR"] = path_output
@@ -132,16 +127,16 @@ def get_vfs(
     command = "mri_fieldsign"
     command += f" --s {sub}"
     command += f" --hemi {hemi}"
-    command += " --patch occip.patch.flat" 
+    command += " --patch occip.patch.flat"
     command += " --new"
     command += f" --eccen {ecc_real} {ecc_imag}"
     command += f" --polar {pol_real} {pol_imag}"
-    command += f" --fs {os.path.join(path_output, hemi + ".fieldsign.mgh")}"
+    command += f" --fs {os.path.join(path_output, hemi + '.fieldsign.mgh')}"
     command += f" --fwhm {fwhm_vfs}"
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -164,11 +159,6 @@ def get_weighted_vfs(input_vfs, input_snr, hemi, path_output):
         Hemisphere.
     path_output : str
         Output folder where output is saved.
-
-    Returns
-    -------
-    None.
-
     """
     # load visual fieldsign map
     vfs_img = nb.load(input_vfs)

@@ -26,11 +26,6 @@ def analysis_fixation(file_in):
     ----------
     file_in : str
         File name of condition file in mat format containing the key FixationData.
-
-    Returns
-    -------
-    None.
-
     """
     # get output folder
     path_output = os.path.join(os.path.dirname(os.path.dirname(file_in)), "behavior")

@@ -33,11 +33,6 @@ def mris_thickness(path, sub):
         Path to the freesurfer segmentation folder.
     sub : str
         Name of the freesurfer segmentation folder.
-
-    Returns
-    -------
-    None.
-
     """
     # parameters
     hemi = ["lh", "rh"]  # hemisphere prefix
@@ -90,11 +85,6 @@ def mris_curvature(file_in, path_output, a=10, dist=(10, 10), thresh=0.999):
         (10,10).
     thresh : float, optional
         Input threhold for curvature estimate, by default 0.999.
-
-    Returns
-    -------
-    None.
-
     """
     # get hemi from filename
     hemi = os.path.splitext(os.path.basename(file_in))[0]
@@ -133,11 +123,6 @@ def inflate_surf_mesh(file_in, file_out, n_iter):
         Filename of output surface.
     n_iter : int
         Number of inflating iterations.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     path_output, _, _ = get_filename(file_out)
@@ -270,11 +255,6 @@ def upsample_surf_mesh(file_in, file_out, n_iter, method):
         Number of upsampling iterations.
     method : str
         Upsampling method (linear, loop, butterfly).
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     path_output, _, _ = get_filename(file_out)
@@ -307,11 +287,6 @@ def mris_expand(file_in, file_out, shift=-0.5):
         File name of output surface.
     shift : float, optional
         Size of expansion in mm, by default -0.5.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     path_output, _, _ = get_filename(file_out)
@@ -342,11 +317,6 @@ def mris_inflate(file_in, file_out, n_inflate=20):
         File name of inflated output surface.
     n_inflate : int, optional
         Number of inflation iterations, by default 20
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     path_output, _, _ = get_filename(file_out)
@@ -383,11 +353,6 @@ def shift_white(path, sub, w_shift=-0.5):
         Name of the freesurfer segmentation folder.
     w_shift : float, optional
         Inward shift (negative) of white surface in mm. The default is -0.5.
-
-    Returns
-    -------
-    None.
-
     """
     # parameters
     hemi = ["lh", "rh"]  # hemisphere prefix
@@ -460,11 +425,6 @@ def extract_main_component(file_in, file_out):
         Filename of input surface.
     file_out : str
         Filename of output surface.
-
-    Returns
-    -------
-    None.
-
     """
     # make output folder
     path_output, _, _ = get_filename(file_out)
@@ -472,7 +432,12 @@ def extract_main_component(file_in, file_out):
         os.makedirs(path_output)
 
     # extract main component
+    command = "mris_extract_main_component"
+    command += f" {file_in}"
+    command += f" {file_out}"
+
+    print("Execute: " + command)
     try:
-        subprocess.run(["mris_extract_main_component", file_in, file_out], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
-        sys.exit("Main component extraction failed!")
+        print("Execuation failed!")

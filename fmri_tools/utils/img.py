@@ -32,11 +32,6 @@ def get_gif(img_file, path_output, name_output, nsteps, duration):
         Number of generated transition images.
     duration : float
         Duration for each frame in seconds.
-
-    Returns
-    -------
-    None.
-
     """
     # append first list item to the end of the list
     img_file.append(img_file[0])
@@ -86,11 +81,6 @@ def get_movie(file_in, path_output, name_output, coord, axis=0, fps=10, transpos
     ------
     ValueError
         If `axis` number is invalid.
-
-    Returns
-    -------
-    None.
-
     """
     # make sub-folder
     if not os.path.exists(path_output):
@@ -192,11 +182,6 @@ def get_retinotopy_images(
     ------
     FileExistsError
         If the temporary folder already exists.
-
-    Returns
-    -------
-    None.
-
     """
     # phase step for single images
     phase_step = np.arange(-180, 181, 1)

@@ -1,6 +1,15 @@
-% SPMT contrast transformation
+function ft_spmT2x(spm_mat_in, path_output, name_output, name_sess)
+% SPM contrast transformation.
 %
-% This script transforms t-maps to p, -log(p), r (correlation coefficient),
+% ft_spmT2x(spm_mat_in, path_output, name_output, name_sess)
+%
+% Inputs:
+%   spm_mat_in  - filename of SPM.mat file.
+%   path_output - path where output is written.
+%   name_output - basename of output contrasts.
+%   name:sess   - name of session (if multiple sessions exist)
+%
+% This function transforms t-maps to p, -log(p), r (correlation coefficient), 
 % d-maps (effect size) or z-maps. 
 %
 % The following formulas are used:
@@ -46,14 +55,6 @@
 %
 % The script was taken from cg_spmT2x.m v1.25 by Christian Gaser and
 % adapted to my own purposes.
-
-% input
-spm_mat_in = '/data/pt_01880/Experiment10_Mono/pilot4/odc/odc/contrast_vaso/SPM.mat'; % SPM.mat
-path_output = '/data/pt_01880/Experiment10_Mono/pilot4/odc/results/'; % path where output is written
-name_output = 'vaso'; % basename of output contrasts
-name_sess = 'odc'; % name of session (if multiple sessions exist)
-
-%%% do not edit below %%%
 
 % load spm.mat
 load(spm_mat_in);

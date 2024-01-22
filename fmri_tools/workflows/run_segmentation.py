@@ -90,9 +90,8 @@ from ..segmentation.surf import (
     shift_white,
     upsample_surf_mesh,
 )
-from ..segmentation.vol import include_pial_correction
+from ..segmentation.vol import include_pial_correction, robust_combination
 from ..surface.smooth import mris_smooth
-from ..utils.bias import robust_combination
 from ..utils.calc import multiply_images, volume_threshold
 
 # parameters
@@ -130,7 +129,7 @@ def _get_parser():
         "--help",
         action="help",
         default=SUPPRESS,
-        help="show this help message and exit",
+        help="Show this help message and exit.",
     )
     required.add_argument(
         "--uni",
@@ -202,7 +201,7 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
     Raises
     ------
     ValueError
-        _description_
+        If incorrect part is entered.
     """
     # check part
     if part < 1 or part > 5:
@@ -254,7 +253,7 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
 
         print("Execute: " + command)
         try:
-            subprocess.run([command], check=True)
+            subprocess.run([command], shell=True, check=False)
         except subprocess.CalledProcessError:
             print("Execuation failed!")
 
@@ -295,7 +294,7 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
 
         print("Execute: " + command)
         try:
-            subprocess.run([command], check=True)
+            subprocess.run([command], shell=True, check=False)
         except subprocess.CalledProcessError:
             print("Execuation failed!")
 
@@ -320,7 +319,7 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
 
         print("Execute: " + command)
         try:
-            subprocess.run([command], check=True)
+            subprocess.run([command], shell=True, check=False)
         except subprocess.CalledProcessError:
             print("Execuation failed!")
 
@@ -340,7 +339,7 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
 
         print("Execute: " + command)
         try:
-            subprocess.run([command], check=True)
+            subprocess.run([command], shell=True, check=False)
         except subprocess.CalledProcessError:
             print("Execuation failed!")
 

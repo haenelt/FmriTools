@@ -605,10 +605,6 @@ def intracortical_smoothing(
     FileExistsError
         If `path_temp` already exists.
 
-    Returns
-    -------
-    None.
-
     References
     -------
     .. [1] Blazejewska, AI, et al., Intracortical smoothing of small-voxel fMRI
@@ -742,6 +738,6 @@ def mris_fwhm(file_in, file_out, sub, fwhm):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")

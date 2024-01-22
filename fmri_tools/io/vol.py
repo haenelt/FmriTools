@@ -93,11 +93,6 @@ def mri_convert(file_in, file_out):
         Full path of the input file.
     path_output : str
         Full path of the output file.
-
-    Returns
-    -------
-    None.
-
     """
     # get filename
     _, _, ext_in = get_filename(file_in)
@@ -115,7 +110,7 @@ def mri_convert(file_in, file_out):
 
     print("Execute: " + command)
     try:
-        subprocess.run([command], check=True)
+        subprocess.run([command], shell=True, check=False)
     except subprocess.CalledProcessError:
         print("Execuation failed!")
 
@@ -199,10 +194,6 @@ def surface_voxel(file_in, path_output):
         Input image.
     path_output : str
         Path where to write output image.
-
-    Returns
-    -------
-    None.
 
     References
     -------
