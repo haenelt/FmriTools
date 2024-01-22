@@ -9,12 +9,14 @@ import re
 import matplotlib.pyplot as plt
 import nibabel as nb
 import numpy as np
+import pydicom
 from nibabel.freesurfer.io import read_label
 from numpy.fft import fft, fft2, fftshift
 from numpy.random import shuffle
 from scipy.signal import find_peaks
 from scipy.stats import levene, ttest_ind
 
+from ..io.filename import get_filename
 from ..utils.metrics import calc_acorr
 
 __all__ = [
@@ -26,6 +28,7 @@ __all__ = [
     "get_fft",
     "get_bandpass",
     "get_rf_pulse_bw",
+    "get_bandwidth_per_px",
 ]
 
 
@@ -773,10 +776,10 @@ def get_bandpass(
 
 
 def get_rf_pulse_bw(file_in, npad=1000, ninterp=1000000):
-    """This function computes the bandwidth in Hz of an RF pulse. The RF pulse shape has 
-    to be exported from the POET simulation. This can be done by clicking on the wanted 
-    pulse in the pulse sequence diagram and saving the event block as textfile. The 
-    bandwidth is calculated as the width at the threshold value of the normalized 
+    """This function computes the bandwidth in Hz of an RF pulse. The RF pulse shape has
+    to be exported from the POET simulation. This can be done by clicking on the wanted
+    pulse in the pulse sequence diagram and saving the event block as textfile. The
+    bandwidth is calculated as the width at the threshold value of the normalized
     frequency magnitude.
 
     Parameters
@@ -883,3 +886,37 @@ def get_rf_pulse_bw(file_in, npad=1000, ninterp=1000000):
     plt.show()
 
     return rf, rf_fft, bw
+
+
+def get_bandwidth_per_px(file_in, file_out):
+    """This function reads the bandwidth per pixel phase encode from siemens dicom data.
+    This parameter is needed for fieldmap undistortion.
+
+    Parameters
+    ----------
+    file_in : str
+        File name of dicom file.
+    file_out : str
+        File name of output text file.
+
+    Raises
+    ------
+    ValueError
+        If input file does not have the right file extension.
+    """
+    # make output folder
+    out = get_filename(file_out)
+    if not os.path.exists(out[0]):
+        os.makedirs(out[0])
+
+    # read dicom
+    with open(file_out, "w", encoding="utf-8") as f:
+        if not (file_in.endswith(".ima") or file_in.endswith(".dcm")):
+            raise ValueError("Input file should have *.ima or *.dcm extension!")
+        data = pydicom.dcmread(file_in)
+        if ["0019", "1028"] in data:
+            f.write(
+                f"{data.SeriesNumber}\t{data.SeriesDescription}\t{data['0019', '1028']}"
+            )
+        else:
+            print("Dicom tag not found.")
