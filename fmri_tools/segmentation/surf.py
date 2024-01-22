@@ -19,6 +19,7 @@ __all__ = [
     "mris_expand",
     "mris_inflate",
     "shift_white",
+    "extract_main_component",
 ]
 
 
@@ -447,3 +448,31 @@ def shift_white(path, sub, w_shift=-0.5):
 
         # delete intermediate files afterwards
         os.remove(os.path.join(path, sub, "surf", _h + ".temp"))
+
+
+def extract_main_component(file_in, file_out):
+    """This function removes unconnected parts found in a surface mesh and returns
+    the main component.
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of input surface.
+    file_out : str
+        Filename of output surface.
+
+    Returns
+    -------
+    None.
+
+    """
+    # make output folder
+    path_output, _, _ = get_filename(file_out)
+    if not os.path.exists(path_output):
+        os.makedirs(path_output)
+
+    # extract main component
+    try:
+        subprocess.run(["mris_extract_main_component", file_in, file_out], check=True)
+    except subprocess.CalledProcessError:
+        sys.exit("Main component extraction failed!")

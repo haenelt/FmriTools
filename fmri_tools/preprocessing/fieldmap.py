@@ -22,6 +22,11 @@ def prepare_fieldmap_fsl(file_magn, file_phase, file_out, delta_te):
         File name of fieldmap image (in rad/s).
     delta_te : float
         Delta TE in ms.
+
+    Returns
+    -------
+    None.
+
     """
     # make output folder
     path_out, _, _ = get_filename(file_out)
@@ -58,7 +63,12 @@ def fugue_fsl(file_in, file_fmap, file_shift, dwell_time, gaussian_sigma, udir):
     gaussian_sigma : float
         Apply Gaussian smoothing of sigma (in mm).
     udir : str
-        Unwarping direction (x, y, z, x-, y-, or z-)
+        Unwarping direction (x, y, z, x-, y-, or z-).
+
+    Returns
+    -------
+    None.
+
     """
     # output file name
     _, name_in, ext_in = get_filename(file_in)

@@ -17,11 +17,12 @@ from .cmap import generate_coordinate_mapping
 from .fsl import apply_flirt, flirt
 from .transform import apply_coordinate_mapping, scanner_transform
 
+__all__ = ["get_flash2orig", "boundary_based_registration"]
+
+
 # parameters for orig skullstrip
 NITER_MASK = 3
 SIGMA_MASK = 3
-
-__all__ = ["get_flash2orig", "boundary_based_registration"]
 
 
 def get_flash2orig(file_flash, file_inv2, file_orig, path_output, cleanup=False):
