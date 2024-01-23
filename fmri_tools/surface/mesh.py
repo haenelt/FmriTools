@@ -393,7 +393,7 @@ class Mesh:
             Array of vertex neighbors.
 
         """
-        return self.adjm.sum(axis=0) / self.adjm.max()
+        return np.array(self.adjm.sum(axis=0) / self.adjm.max()).squeeze()
 
     def neighborhood(self, ind):
         """Compute 1-ring neighborhood for one vertex.
