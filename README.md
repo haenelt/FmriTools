@@ -3,6 +3,7 @@ FmriTools
 
 [![Python](https://img.shields.io/badge/Python-3.6%2B-blue)](https://github.com/haenelt/FmriTools)
 [![License](https://img.shields.io/github/license/haenelt/FmriTools)](https://www.gnu.org/licenses/gpl-3.0)
+[![DOI](https://zenodo.org/badge/172737126.svg)](https://zenodo.org/doi/10.5281/zenodo.10573041)
 
 Python package for processing and analyzing high-resolution fMRI data. Please be aware that all functions are written for my own convenience and are under continuous development.
 
