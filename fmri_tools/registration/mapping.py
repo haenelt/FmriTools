@@ -9,12 +9,8 @@ import sys
 
 import nibabel as nb
 import numpy as np
-from nibabel.freesurfer.io import (
-    read_geometry,
-    read_morph_data,
-    write_geometry,
-    write_morph_data,
-)
+from nibabel.freesurfer.io import (read_geometry, read_morph_data,
+                                   write_geometry, write_morph_data)
 from scipy.interpolate import griddata
 from scipy.ndimage.filters import gaussian_filter
 from sh import gunzip
@@ -50,13 +46,15 @@ __all__ = [
 _sampler = {"linear": linear_interpolation3d, "nearest": nn_interpolation3d}
 
 
-def mri_vol2surf(file_in, file_out, sub, interp_method="nearest"):
+def mri_vol2surf(file_in, file_surf, file_out, sub, interp_method="nearest"):
     """Use freesurfer mri_vol2surf to sample volume data onto a surface mesh.
 
     Parameters
     ----------
     file_in : str
         File name of input volume file.
+    file_surf : str
+        File name of target surface.
     file_out : str
         File name of output overlay file.
     sub : str
@@ -65,7 +63,7 @@ def mri_vol2surf(file_in, file_out, sub, interp_method="nearest"):
         Interpolation method (nearest or trilinear), by default "nearest"
     """
     # get hemisphere
-    _, _, hemi = get_filename(file_in)
+    _, hemi, _ = get_filename(file_in)
     hemi = hemi.replace(".", "")
     if hemi not in ["lh", "rh"]:
         raise ValueError("No hemisphere specified in file name!")
@@ -78,7 +76,7 @@ def mri_vol2surf(file_in, file_out, sub, interp_method="nearest"):
     command += f" --regheader {sub}"
     command += " --projdist 0.000"
     command += f" --mov {file_in}"
-    command += " --surf source"
+    command += f" --surf {file_surf}"
 
     print("Execute: " + command)
     try:

@@ -9,7 +9,12 @@ import numpy as np
 
 from ..io.filename import get_filename
 
-__all__ = ["remove_bias_ants", "robust_combination", "include_pial_correction"]
+__all__ = [
+    "remove_bias_ants",
+    "robust_combination",
+    "include_pial_correction",
+    "estimate_pv",
+]
 
 
 def remove_bias_ants(file_in, file_out, save_bias=True):
@@ -209,3 +214,31 @@ def include_pial_correction(path, sub):
     # save brainmask as brain.finalsurfs.manedit.mgz
     output = nb.Nifti1Image(brainmask_array, brainmask_img.affine, brainmask_img.header)
     nb.save(output, os.path.join(path, sub, "mri", "brain.finalsurfs.manedit.mgz"))
+
+
+def estimate_pv(dir_out, subjects_dir, sub):
+    """Use freesurfer mri_compute_volume_fractions to estimate partial volume
+    contributions.
+
+    Parameters
+    ----------
+    dir_out : str
+        Output directory.
+    subjects_dir : str
+        Path to subject.
+    sub : str
+        Freesurfer subject name.
+    """
+    os.environ["SUBJECTS_DIR"] = subjects_dir
+
+    command = "mri_compute_volume_fractions"
+    command += f" --o {dir_out}/pv"
+    command += " --regheader"
+    command += f" {sub}"
+    command += f" {subjects_dir}/{sub}/mri/brain.mgz"
+
+    print("Execute: " + command)
+    try:
+        subprocess.run([command], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execution failed!")
