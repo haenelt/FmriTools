@@ -49,7 +49,7 @@ In the following, I list all necessary steps to install the [gradunwarp toolbox]
 5. change to the cloned gradunwarp repository.
 6. install the repository with `python setup.py install` while the conda environment is still activated.
 7. `wget "https://github.com/Washington-University/HCPpipelines/raw/stable/global/scripts/GradientDistortionUnwarp.sh"`.
-- N.B. call the module `gradient_unwarp.py` with arguments `--numpoints 128` and `--interp_order 2` to have good accuracy when working with high resolution data.
+- N.B. call the module `gradient_unwarp.py` with arguments `--numpoints 128` and `--interp_order 2` to have good accuracy when working with high-resolution data.
 
 ## Contact
 If you have questions, problems or suggestions regarding the FmriTools package, please feel free to contact [me](mailto:daniel.haenelt@gmail.com).
