@@ -63,7 +63,7 @@ def mri_vol2surf(file_in, file_surf, file_out, sub, interp_method="nearest"):
         Interpolation method (nearest or trilinear), by default "nearest"
     """
     # get hemisphere
-    _, hemi, _ = get_filename(file_in)
+    _, hemi, _ = get_filename(file_surf)
     hemi = hemi.replace(".", "")
     if hemi not in ["lh", "rh"]:
         raise ValueError("No hemisphere specified in file name!")
