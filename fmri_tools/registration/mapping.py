@@ -47,7 +47,7 @@ _sampler = {"linear": linear_interpolation3d, "nearest": nn_interpolation3d}
 
 
 def mri_vol2surf(
-    file_in, file_surf, file_out, subjects_dir, sub, interp_method="nearest"
+    file_in, file_out, subjects_dir, sub, hemi, surf="white", interp_method="nearest"
 ):
     """Use freesurfer mri_vol2surf to sample volume data onto a surface mesh.
 
@@ -55,23 +55,20 @@ def mri_vol2surf(
     ----------
     file_in : str
         File name of input volume file.
-    file_surf : str
-        File name of target surface.
     file_out : str
         File name of output overlay file.
     subjects_dir : str
         Path to subject.
     sub : str
         Name of freesurfer subject.
+    hemi : str
+        Hemisphere.
+    surf : str
+        Surface name.
     interp_method : str, optional
         Interpolation method (nearest or trilinear), by default "nearest"
     """
     os.environ["SUBJECTS_DIR"] = subjects_dir
-    # get hemisphere
-    _, hemi, _ = get_filename(file_surf)
-    hemi = hemi.replace(".", "")
-    if hemi not in ["lh", "rh"]:
-        raise ValueError("No hemisphere specified in file name!")
 
     command = "mri_vol2surf"
     command += f" --hemi {hemi}"
@@ -81,7 +78,7 @@ def mri_vol2surf(
     command += f" --regheader {sub}"
     command += " --projdist 0.000"
     command += f" --mov {file_in}"
-    command += f" --surf {file_surf}"
+    command += f" --surf {surf}"
 
     print("Execute: " + command)
     try:
