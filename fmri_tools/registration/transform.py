@@ -10,7 +10,6 @@ from shutil import copyfile
 import nibabel as nb
 import numpy as np
 import numpy.linalg as npl
-from numpy.matlib import repmat
 from sh import gunzip
 
 from ..io.affine import apply_affine_chunked
@@ -162,12 +161,12 @@ def scanner_transform(input_source, input_target, path_output, compress_file=Fal
 
     # coordinate mapping in x-direction
     X = np.array(np.arange(0, x_size, 1), dtype=np.float64)
-    X = np.transpose(repmat(X, y_size, 1))
+    X = np.transpose(np.tile(X, (y_size, 1)))
     X = np.dstack([X] * z_size)
 
     # coordinate mapping in y-direction
     Y = np.array(np.arange(0, y_size), dtype=np.float64)
-    Y = repmat(Y, x_size, 1)
+    Y = np.tile(Y, (x_size, 1))
     Y = np.dstack([Y] * z_size)
 
     # coordinate mapping in z-direction

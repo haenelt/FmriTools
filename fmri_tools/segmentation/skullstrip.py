@@ -6,7 +6,7 @@ import subprocess
 
 import nibabel as nb
 import numpy as np
-from scipy.ndimage.morphology import binary_fill_holes
+from scipy.ndimage import binary_fill_holes
 from scipy.signal import argrelextrema
 
 from ..io.filename import get_filename

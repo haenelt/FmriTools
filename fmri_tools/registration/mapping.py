@@ -12,7 +12,7 @@ import numpy as np
 from nibabel.freesurfer.io import (read_geometry, read_morph_data,
                                    write_geometry, write_morph_data)
 from scipy.interpolate import griddata
-from scipy.ndimage.filters import gaussian_filter
+from scipy.ndimage import gaussian_filter
 from sh import gunzip
 
 from ..io.affine import apply_affine_chunked, read_vox2ras_tkr, vox2ras_tkr

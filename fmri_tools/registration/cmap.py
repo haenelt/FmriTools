@@ -6,7 +6,6 @@ import random
 
 import nibabel as nb
 import numpy as np
-from numpy.matlib import repmat
 
 from ..io.affine import apply_affine_chunked
 from ..io.filename import get_filename
@@ -228,12 +227,12 @@ def generate_coordinate_mapping(
 
     # coordinate mapping in x-direction
     x = np.array(np.arange(-pad, x_size - pad, 1), dtype="float")
-    x = np.transpose(repmat(x, y_size, 1))
+    x = np.transpose(np.tile(x, (y_size, 1)))
     x = np.dstack([x] * z_size)
 
     # coordinate mapping in y-direction
     y = np.array(np.arange(-pad, y_size - pad), dtype="float")
-    y = repmat(y, x_size, 1)
+    y = np.tile(y, (x_size, 1))
     y = np.dstack([y] * z_size)
 
     # coordinate mapping in z-direction

@@ -7,15 +7,16 @@ import subprocess
 
 import nibabel as nb
 import numpy as np
-from scipy.ndimage import binary_fill_holes, gaussian_filter
-from scipy.ndimage.morphology import binary_dilation, binary_erosion
+from scipy.ndimage import (binary_dilation, binary_erosion, binary_fill_holes,
+                           gaussian_filter)
 
 from ..io.filename import get_filename
 from ..io.vol import mri_convert
 from ..matlab import MatlabCommand
 from ..registration.cmap import expand_coordinate_mapping
 from ..registration.nonrigid import embedded_antsreg
-from ..registration.transform import apply_coordinate_mapping, scanner_transform
+from ..registration.transform import (apply_coordinate_mapping,
+                                      scanner_transform)
 from ..segmentation.skullstrip import skullstrip_bet
 
 __all__ = [
