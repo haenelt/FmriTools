@@ -504,7 +504,7 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
     # interpolation
     data = nb.load(file_in)
     nx, ny, nz, nt = data.header["dim"][1:5]
-    arr = np.zeros((nx, ny, nz, nt))
+    arr = np.zeros((nx, ny, nz, nt + 2))
     arr[:, :, :, 0] = data.get_fdata()[:, :, :, 0]
     arr[:, :, :, -1] = data.get_fdata()[:, :, :, -1]
     arr[:, :, :, 1:-1] = data.get_fdata()
@@ -513,7 +513,7 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
     if ta is None:
         ta = tr_old
     if sequence is None:
-        sequence = np.ones((nz, 2))
+        sequence = np.ones((nz, 2), dtype=int)
         sequence[:, 0] = np.arange(nz)
 
     tt = tr_old * nt  # total acquisition time
