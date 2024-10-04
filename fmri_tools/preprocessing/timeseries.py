@@ -424,16 +424,7 @@ def slice_timing_correction(
 
     # load data
     data = nb.load(file_in)
-    nx = data.header["dim"][1]
-    ny = data.header["dim"][2]
     nz = data.header["dim"][3]
-    nt = data.header["dim"][4]
-
-    # load array with appended volumes
-    data_array = np.zeros((nx, ny, nz, nt + 2))
-    data_array[:, :, :, 0] = data.get_fdata()[:, :, :, 0]
-    data_array[:, :, :, -1] = data.get_fdata()[:, :, :, -1]
-    data_array[:, :, :, 1:-1] = data.get_fdata()
 
     # effective number of sequentially acquired slices
     mb_package = nz / mb
@@ -478,49 +469,91 @@ def slice_timing_correction(
     print("Spatial order of slices: " + str(slice_order))
     print("Temporal order of slices: " + str(temporal_order))
 
-    # some parameters
-    TA = TR_old / mb_package  # acquisition time needed for one slice
-    TT = TR_old * nt  # total acquisition time
-    TR_append = (
-        np.floor(TR_old / TR_new).astype(int) * TR_new
-    )  # number of appended TRs in output array
-    t_new = np.arange(-TR_append, TT + TR_append, TR_new)  # grid points of output array
-
     # temporal interpolation
-    data_array_corrected = np.zeros((nx, ny, nz, len(t_new)))
+    TA = TR_old / mb_package  # acquisition time needed for one slice
+    sequence = np.column_stack((slice_order, temporal_order))
+    file_out = os.path.join(path_file, prefix + name_file + ext_file)
+    interpolate(file_in, file_out, TR_old, TR_new, TA, sequence)
+
+
+def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
+    """This function performs temporal interpolation of voxel time courses using cubic
+    interpolation and samples data with a new repetition time.
+
+    Parameters
+    ----------
+    file_in : str
+        Filename of nifti time series.
+    file_out : str
+        Filename of output nifti time series.
+    tr_old : float
+        TR of time series in seconds.
+    tr_new : float
+        TR of interpolated time series in s.
+    ta : float
+        Time for a single slice (z-direction) to acknowledge multiband acquisitions.
+        ta=tr_old is not set. The default is "None".
+    sequence : str
+        Sequence of acquired slices. This parameter is a numpy array with dimensions
+        (number of slices, 2). sequence(:, 0) indicates the sampled z-slice and
+        sequence(:, 1) the corresponding time. This parameter acknowledges differences
+        in slice timinings in 2D acqisitions. If not set, it is assumed that all slices
+        were acquired at the same time. The default is "None".
+    """
+    # load data and temporarilly add volumes at the beginning and add for cubic
+    # interpolation
+    data = nb.load(file_in)
+    nx, ny, nz, nt = data.header["dim"][1:5]
+    arr = np.zeros((nx, ny, nz, nt))
+    arr[:, :, :, 0] = data.get_fdata()[:, :, :, 0]
+    arr[:, :, :, -1] = data.get_fdata()[:, :, :, -1]
+    arr[:, :, :, 1:-1] = data.get_fdata()
+
+    # default parameters
+    if ta is None:
+        ta = tr_old
+    if sequence is None:
+        sequence = np.ones((nz, 2))
+        sequence[:, 0] = np.arange(nz)
+
+    tt = tr_old * nt  # total acquisition time
+    tr_append = np.floor(tr_old / tr_new).astype(int) * tr_new  # number of appended TRs
+    t_new = np.arange(-tr_append, tt + tr_append, tr_new)  # grid points of output array
+
+    # loop over voxels and apply cubic interpolation
+    arr_corrected = np.zeros((nx, ny, nz, len(t_new)))
     for z in range(nz):
-        print("Slice timing correction for slice: " + str(z + 1) + "/" + str(nz))
         for x in range(nx):
             for y in range(ny):
                 t = np.arange(
-                    temporal_order[z] * TA - TR_old,
-                    temporal_order[z] * TA + (nt + 1) * TR_old,
-                    TR_old,
+                    sequence[z, 1] * ta - tr_old,
+                    sequence[z, 1] * ta + (nt + 1) * tr_old,
+                    tr_old,
                 )
-                cubic_interper = Interp(t, data_array[x, y, slice_order[z], :], k=3)
-                data_array_corrected[x, y, slice_order[z], :] = cubic_interper(t_new)
+                cubic_interper = Interp(t, arr[x, y, sequence[z, 0], :], k=3)
+                arr_corrected[x, y, sequence[z, 0], :] = cubic_interper(t_new)
 
     # delete appended volumes
     vols_keep1 = t_new >= 0
-    vols_keep2 = t_new < TT
+    vols_keep2 = t_new < tt
     vols_keep = vols_keep1 * vols_keep2
-    data_array_corrected = data_array_corrected[:, :, :, vols_keep]
+    arr_corrected = arr_corrected[:, :, :, vols_keep]
 
-    # clean corrected array
-    data_min = np.min(data.get_fdata())
-    data_max = np.max(data.get_fdata())
-    data_array_corrected[np.isnan(data_array_corrected)] = 0
-    data_array_corrected[data_array_corrected < data_min] = data_min
-    data_array_corrected[data_array_corrected > data_max] = data_max
+    # clean corrected data
+    arr_min = np.min(data.get_fdata())
+    arr_max = np.max(data.get_fdata())
+    arr_corrected[np.isnan(arr_corrected)] = 0.0
+    arr_corrected[arr_corrected < arr_min] = 0.0
+    arr_corrected[arr_corrected > arr_max] = arr_max
 
-    # update data header
-    data.header["dim"][4] = np.shape(data_array_corrected)[3]
+    # update header
+    data.header["dim"][4] = np.shape(arr_corrected)[3]
     data.header["datatype"] = 16
 
     # write output
-    output = nb.Nifti1Image(data_array_corrected, data.affine, data.header)
-    output = _set_tr(output, TR_new)
-    nb.save(output, os.path.join(path_file, prefix + name_file + ext_file))
+    output = nb.Nifti1Image(arr_corrected, data.affine, data.header)
+    output = _set_tr(output, tr_new)
+    nb.save(output, file_out)
 
 
 def _set_tr(img, tr):
