@@ -18,6 +18,7 @@ __all__ = [
     "ScaleTimeseries",
     "FilterTimeseries",
     "slice_timing_correction",
+    "interpolate",
     "average",
     "bandpass_afni",
 ]
