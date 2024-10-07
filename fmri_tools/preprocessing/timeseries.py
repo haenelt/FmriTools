@@ -531,8 +531,8 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
                     sequence[z, 1] * ta + (nt + 1) * tr_old,
                     tr_old,
                 )
-                cubic_interper = Interp(t, arr[x, y, sequence[z, 0], :], k=3)
-                arr_corrected[x, y, sequence[z, 0], :] = cubic_interper(t_new)
+                cubic_interper = Interp(t, arr[x, y, int(sequence[z, 0]), :], k=3)
+                arr_corrected[x, y, int(sequence[z, 0]), :] = cubic_interper(t_new)
 
     # delete appended volumes
     vols_keep1 = t_new >= 0
