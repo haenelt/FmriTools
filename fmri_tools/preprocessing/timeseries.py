@@ -531,6 +531,7 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
                     sequence[z, 1] * ta + (nt + 1) * tr_old,
                     tr_old,
                 )
+                t = t[:nt+2]  # ensure same size of arrays
                 cubic_interper = Interp(t, arr[x, y, int(sequence[z, 0]), :], k=3)
                 arr_corrected[x, y, int(sequence[z, 0]), :] = cubic_interper(t_new)
 
