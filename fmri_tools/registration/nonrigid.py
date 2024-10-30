@@ -356,6 +356,7 @@ def embedded_antsreg(
 
     # output file names
     results = sorted(glob(os.path.join(output_dir, f"{output_name}*")))
+    print(results)
     forward = []
     flag = []
     for res in results:
