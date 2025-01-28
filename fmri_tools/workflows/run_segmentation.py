@@ -160,6 +160,13 @@ def _get_parser():
         required=True,
     )
     optional.add_argument(
+        "--flair",
+        dest="flair",
+        type=str,
+        help="File name of FLAIR image (default: %(default)s)",
+        default="",
+    )
+    optional.add_argument(
         "--patch",
         dest="name_patch",
         type=str,
@@ -180,7 +187,7 @@ def _get_parser():
     return parser
 
 
-def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
+def segmentation_workflow(uni, inv1, inv2, part, flair, name_patch, n_layer):
     """Workflow for MP2RAGE segmentation.
 
     Parameters
@@ -193,6 +200,8 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
         File name of MP2RAGE INV2 image.
     part : int
         Part of segmentation that should be run.
+    flair : str
+        File name of FLAIR image.
     name_patch : str
         Name of flat patch.
     n_layer : int
@@ -250,6 +259,8 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
         command += f" -sd {path_uni}"
         command += f" -s {SUB}"
         command += " -parallel"
+        if flair:
+            command += f" -FLAIR {flair} -FLAIRpial"
 
         print("Execute: " + command)
         try:
@@ -291,6 +302,8 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
         command += f" -s {SUB}"
         command += f" -expert {os.path.join(PATH_EXPERT, 'expert.opts')}"
         command += " -xopts-overwrite -parallel"
+        if flair:
+            command += f" -FLAIR {flair} -FLAIRpial"
 
         print("Execute: " + command)
         try:
@@ -316,6 +329,8 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
         command += f" -s {SUB}"
         command += f" -expert {os.path.join(PATH_EXPERT, 'expert.opts')}"
         command += " -xopts-overwrite -parallel"
+        if flair:
+            command += f" -FLAIR {flair} -FLAIRpial"
 
         print("Execute: " + command)
         try:
@@ -336,6 +351,8 @@ def segmentation_workflow(uni, inv1, inv2, part, name_patch, n_layer):
         command += f" -s {SUB}"
         command += f" -expert {os.path.join(PATH_EXPERT, 'expert.opts')}"
         command += " -xopts-overwrite -parallel"
+        if flair:
+            command += f" -FLAIR {flair} -FLAIRpial"
 
         print("Execute: " + command)
         try:
