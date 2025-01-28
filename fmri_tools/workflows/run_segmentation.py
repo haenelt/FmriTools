@@ -2,18 +2,18 @@
 """Full cortex reconstruction
 
 The purpose of the following workflow is to compute the segmentation for hires MP2RAGE
-data and bring the resulting surface data of the cortical boundaries into a regular grid
-representation. The script is divided into five parts. Single steps of each part are
-stated below:
+(or MEMPRAGE) data and bring the resulting surface data of the cortical boundaries into
+a regular grid representation. The script is divided into five parts. Single steps of of
+each part are stated below:
 
 The workflow needs an installation of freesurfer.
 
 Part 1 (Run recon-all pipeline)
-    *flat image background denoising
+    *flat image background denoising (only for MP2RAGE)
     *bias field correction of the flat image
     *volume thresholding
     *recon1 without skullstripping
-    *compute skullstrip mask (inv2)
+    *compute skullstrip mask (MP2RAGE: inv2, MEMPRAGE: T1)
     *recon23
 Part 2 (Manual correction of white surface)
     *how to apply manual corrections is explained further below.
@@ -135,21 +135,7 @@ def _get_parser():
         "--uni",
         dest="uni",
         type=str,
-        help="File name of UNI image.",
-        required=True,
-    )
-    required.add_argument(
-        "--inv1",
-        dest="inv1",
-        type=str,
-        help="File name of INV1 image",
-        required=True,
-    )
-    required.add_argument(
-        "--inv2",
-        dest="inv2",
-        type=str,
-        help="File name of INV2 image",
+        help="File name of UNI of T1 image.",
         required=True,
     )
     required.add_argument(
@@ -158,6 +144,20 @@ def _get_parser():
         type=int,
         help="Which part to run.",
         required=True,
+    )
+    optional.add_argument(
+        "--inv1",
+        dest="inv1",
+        type=str,
+        help="File name of INV1 image",
+        default="",
+    )
+    optional.add_argument(
+        "--inv2",
+        dest="inv2",
+        type=str,
+        help="File name of INV2 image",
+        default="",
     )
     optional.add_argument(
         "--flair",
@@ -187,24 +187,24 @@ def _get_parser():
     return parser
 
 
-def segmentation_workflow(uni, inv1, inv2, part, flair, name_patch, n_layer):
+def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
     """Workflow for MP2RAGE segmentation.
 
     Parameters
     ----------
     uni : str
-        File name of MP2RAGE UNI image.
-    inv1 : str
-        File name of MP2RAGE INV1 image.
-    inv2 : str
-        File name of MP2RAGE INV2 image.
+        File name of MP2RAGE UNI or MEMPRAGE T1 image.
     part : int
         Part of segmentation that should be run.
-    flair : str
+    inv1 : str, optional
+        File name of MP2RAGE INV1 image.
+    inv2 : str, optional
+        File name of MP2RAGE INV2 image.
+    flair : str, optional
         File name of FLAIR image.
-    name_patch : str
+    name_patch : str, optional
         Name of flat patch.
-    n_layer : int
+    n_layer : int, optional
         Number of layers.
 
     Raises
@@ -237,8 +237,9 @@ def segmentation_workflow(uni, inv1, inv2, part, flair, name_patch, n_layer):
 
     if part == 1:
         # background noise removal
-        print("Background noise removal")
-        robust_combination(uni, inv1, inv2, REG_BACKGROUND, path_bias)
+        if inv1 and inv2:
+            print("Background noise removal")
+            robust_combination(uni, inv1, inv2, REG_BACKGROUND, path_bias)
 
         # bias field correction
         print("Bias field correction")
@@ -269,8 +270,12 @@ def segmentation_workflow(uni, inv1, inv2, part, flair, name_patch, n_layer):
             print("Execuation failed!")
 
         # skullstrip anatomy
-        print("Skullstrip INV2")
-        matlab = MatlabCommand("ft_skullstrip_spm12", inv2, path_uni)
+        if inv2:
+            print("Skullstrip INV2")
+            matlab = MatlabCommand("ft_skullstrip_spm12", inv2, path_uni)
+        else:
+            print("Skullstrip T1")
+            matlab = MatlabCommand("ft_skullstrip_spm12", uni, path_uni)
         matlab.run()
 
         # bring skullstrip_mask in conformed space (mri_vol2vol, NN)
