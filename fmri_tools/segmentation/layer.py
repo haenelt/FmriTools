@@ -4,7 +4,6 @@
 import os
 
 import numpy as np
-from cortex.polyutils import Surface
 from nibabel.freesurfer.io import read_geometry, write_geometry
 
 from ..surface.mesh import calculate_area
@@ -12,15 +11,14 @@ from ..surface.mesh import calculate_area
 __all__ = ["calc_equivol_surf", "get_meshlines"]
 
 
-def calc_equivol_surf(file_white, file_pial, n_surfs, factor, niter, hemi, path_output):
+def calc_equivol_surf(file_white, file_pial, n_surfs, hemi, path_output):
     """The script calculates intracortical surfaces based on equi-volumetric layering.
     It is an adaption of Konrad Wagstyl's function in surface_tools. Here, the io_mesh
     is not used anymore and the call to a freesurfer function is omitted. Instead,
     vertex-wise area is calculated in a separate function and we use the nibabel to read
     the surface geometry. First, vertex-wise area is calculated from both input
-    geometries. Smoothing to the areas is optional and done if factor is set to a
-    non-zero value. Then, based on vertex-wise area, equi-volumetric surfaces are
-    computed.
+    geometries. Surface smoothing is omitted. Then, based on vertex-wise area,
+    equi-volumetric surfaces are computed.
 
     Parameters
     ----------
@@ -30,10 +28,6 @@ def calc_equivol_surf(file_white, file_pial, n_surfs, factor, niter, hemi, path_
         Input of GM/CSF surface.
     n_surfs : int
         Number of output surfaces (returns input surfaces as 0 and 1).
-    factor : float
-        Amount of smoothing.
-    niter : int
-        Number of smoothing iterations.
     hemi : str
         Declare hemisphere for output file.
     path_output : str
@@ -44,19 +38,10 @@ def calc_equivol_surf(file_white, file_pial, n_surfs, factor, niter, hemi, path_
         os.makedirs(path_output)
 
     # load geometry and area data
-    wm_vtx, wm_fac = read_geometry(file_white)
+    wm_vtx, _ = read_geometry(file_white)
     pial_vtx, pial_fac = read_geometry(file_pial)
     wm_vertexareas = calculate_area(file_white)
     pial_vertexareas = calculate_area(file_pial)
-
-    # smoothing area files (optional)
-    if factor != 0:
-        wm_vertexareas = Surface(wm_vtx, wm_fac).smooth(
-            wm_vertexareas, factor=factor, iterations=niter
-        )
-        pial_vertexareas = Surface(pial_vtx, pial_fac).smooth(
-            pial_vertexareas, factor=factor, iterations=niter
-        )
 
     # number of equally space intracortical surfaces
     vectors = wm_vtx - pial_vtx
@@ -149,6 +134,4 @@ def _beta(alpha, aw, ap):
     if alpha == 1:
         return np.ones_like(aw)
 
-    return 1 - (
-        1 / (ap - aw) * (-aw + np.sqrt((1 - alpha) * ap**2 + alpha * aw**2))
-    )
+    return 1 - (1 / (ap - aw) * (-aw + np.sqrt((1 - alpha) * ap**2 + alpha * aw**2)))

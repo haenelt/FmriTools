@@ -82,8 +82,12 @@ from ..registration.transform import apply_header
 from ..segmentation.flat import orthographic_projection, surface_flattening
 from ..segmentation.layer import calc_equivol_surf
 from ..segmentation.mask import mask_ribbon
-from ..segmentation.surf import (mris_curvature, mris_thickness, shift_white,
-                                 upsample_surf_mesh)
+from ..segmentation.surf import (
+    mris_curvature,
+    mris_thickness,
+    shift_white,
+    upsample_surf_mesh,
+)
 from ..segmentation.vol import include_pial_correction, robust_combination
 from ..surface.mesh import Mesh
 from ..surface.smooth import mris_smooth
@@ -98,8 +102,6 @@ W_SHIFT = 0.0  # white surface shift (part 4)
 NITER_SMOOTH = 2  # number of smoothing iterations for white and pial surface (part 4)
 NITER_UPSAMPLE = 1  # number of upsampling iterations (part 4)
 METHOD_UPSAMPLE = "linear"  # upsampling method (part 4)
-FACTOR_LAYER = 0  # smoothing of area surfaces (part 4)
-NITER_LAYER = 0  # number of smoothing iterations (part 4)
 IMRES_ORTHO = 0.25  # isotropic image resolution of the regular grid in mm (part 5)
 THETA_ORTHO = [0, 0]  # rotation of the regular grid in deg for each hemisphere (part 5)
 ALPHA_ORTHO = 2  # alpha shape value for concave hull computation (part 5)
@@ -449,8 +451,6 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
                     file_white,
                     file_pial,
                     n_layer,
-                    FACTOR_LAYER,
-                    NITER_LAYER,
                     HEMI[i],
                     path_layer,
                 )
@@ -483,8 +483,6 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
             f"Average edge length in dense surface (right): {dense_params[3]}\n"
         )
         file_id.write(f"Number of volumetric surfaces: {n_layer}\n")
-        file_id.write(f"Smoothing factor for layering: {FACTOR_LAYER}\n")
-        file_id.write(f"Number of smoothing iterations for layering: {NITER_LAYER}\n")
         file_id.close()
 
     elif part == 5:
