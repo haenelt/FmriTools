@@ -72,10 +72,8 @@ import os
 import subprocess
 from argparse import SUPPRESS, ArgumentParser
 
-from cortex.polyutils import Surface
-from nibabel.freesurfer.io import read_geometry
-
 import fmri_tools
+from nibabel.freesurfer.io import read_geometry
 
 from ..io.filename import get_filename
 from ..matlab import MatlabCommand
@@ -84,13 +82,10 @@ from ..registration.transform import apply_header
 from ..segmentation.flat import orthographic_projection, surface_flattening
 from ..segmentation.layer import calc_equivol_surf
 from ..segmentation.mask import mask_ribbon
-from ..segmentation.surf import (
-    mris_curvature,
-    mris_thickness,
-    shift_white,
-    upsample_surf_mesh,
-)
+from ..segmentation.surf import (mris_curvature, mris_thickness, shift_white,
+                                 upsample_surf_mesh)
 from ..segmentation.vol import include_pial_correction, robust_combination
+from ..surface.mesh import Mesh
 from ..surface.smooth import mris_smooth
 from ..utils.calc import multiply_images, volume_threshold
 
@@ -419,10 +414,10 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
                 if i == 0:
                     vtx, fac = read_geometry(file_in)
                     vtx_dense, fac_dense = read_geometry(file_out)
-                    orig = [len(vtx[:, 0]), Surface(vtx, fac).avg_edge_length]
+                    orig = [len(vtx[:, 0]), Mesh(vtx, fac).avg_edge_length]
                     dense = [
                         len(vtx_dense[:, 0]),
-                        Surface(vtx_dense, fac_dense).avg_edge_length,
+                        Mesh(vtx_dense, fac_dense).avg_edge_length,
                     ]
                     orig_params.extend(orig)
                     dense_params.extend(dense)
