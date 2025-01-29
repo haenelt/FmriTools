@@ -94,7 +94,7 @@ from ..surface.smooth import mris_smooth
 from ..utils.calc import multiply_images, volume_threshold
 
 # parameters
-SUB = "FREESURFER"
+SUB = "freesurfer"
 HEMI = ["lh", "rh"]
 PATH_EXPERT = os.path.join(os.path.dirname(fmri_tools.__file__), "segmentation")
 REG_BACKGROUND = 8  # parameter for background noise removal (part 1)
