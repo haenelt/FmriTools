@@ -234,26 +234,29 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
 
     if part == 1:
         # background noise removal
+        if not os.path.exists(path_bias):
+            os.mkdir(path_bias)
         if inv1 and inv2:
-            file_uni = "n" + file_uni
             print("Background noise removal")
             robust_combination(uni, inv1, inv2, REG_BACKGROUND, path_bias)
+        else:
+            os.symlink(uni, os.path.join(path_bias, "n" + file_uni))
 
         # bias field correction
         print("Bias field correction")
         matlab = MatlabCommand(
-            "ft_bias_field_correction", os.path.join(path_bias, file_uni)
+            "ft_bias_field_correction", os.path.join(path_bias, "n" + file_uni)
         )
         matlab.run()
 
         # volume threshold
         print("Volume threshold")
-        volume_threshold(os.path.join(path_bias, "m" + file_uni), "", 4095)
+        volume_threshold(os.path.join(path_bias, "mn" + file_uni), "", 4095)
 
         # autorecon1 without skullstrip removal
         print("Autorecon1")
         command = "recon-all"
-        command += f" -i {os.path.join(path_bias, 'm' + file_uni)}"
+        command += f" -i {os.path.join(path_bias, 'mn' + file_uni)}"
         command += " -hires -autorecon1 -noskullstrip"
         command += f" -sd {path_uni}"
         command += f" -s {SUB}"
