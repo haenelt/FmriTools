@@ -235,12 +235,12 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
     if part == 1:
         # background noise removal
         if inv1 and inv2:
+            file_uni = "n" + file_uni
             print("Background noise removal")
             robust_combination(uni, inv1, inv2, REG_BACKGROUND, path_bias)
 
         # bias field correction
         print("Bias field correction")
-        file_uni = "n" + file_uni
         matlab = MatlabCommand(
             "ft_bias_field_correction", os.path.join(path_bias, file_uni)
         )
