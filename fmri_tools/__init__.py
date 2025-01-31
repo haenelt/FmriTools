@@ -11,7 +11,7 @@ __license__ = "GPL v3"
 __version__ = "2.0.0-alpha"
 __status__ = "Development"
 
-__all__ = ["SoftwareName", "check_installation"]
+__all__ = ["SoftwareName", "check_installation", "execute_command"]
 
 
 class SoftwareName:
@@ -58,3 +58,12 @@ def check_installation(command):
             f"\nCould not find '{command}'. Make sure all required software is \
                 installed and can be executed from the command line."
         )
+
+
+def execute_command(command):
+    """Execute command from the command line."""
+    print(f"Execute: {command}")
+    try:
+        subprocess.run([command], shell=True, check=False)
+    except subprocess.CalledProcessError:
+        print("Execution failed!")
