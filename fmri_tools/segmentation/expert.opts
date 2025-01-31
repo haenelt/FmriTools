@@ -1,1 +1,2 @@
 mris_inflate -n 100
+bbregister --init-header
