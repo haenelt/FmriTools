@@ -260,7 +260,7 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         command += " -hires -autorecon1 -noskullstrip"
         command += f" -sd {path_uni}"
         command += f" -s {SUB}"
-        command += " -parallel"
+        command += " -parallel -openmp 4"
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
@@ -307,7 +307,7 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         command += f" -sd {path_uni}"
         command += f" -s {SUB}"
         command += f" -expert {os.path.join(PATH_EXPERT, 'expert.opts')}"
-        command += " -xopts-overwrite -parallel"
+        command += " -xopts-overwrite -parallel -openmp 4"
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
@@ -334,7 +334,7 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         command += f" -sd {path_uni}"
         command += f" -s {SUB}"
         command += f" -expert {os.path.join(PATH_EXPERT, 'expert.opts')}"
-        command += " -xopts-overwrite -parallel"
+        command += " -xopts-overwrite -parallel -openmp 4"
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
@@ -356,7 +356,7 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         command += f" -sd {path_uni}"
         command += f" -s {SUB}"
         command += f" -expert {os.path.join(PATH_EXPERT, 'expert.opts')}"
-        command += " -xopts-overwrite -parallel"
+        command += " -xopts-overwrite -parallel -openmp 4"
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
