@@ -126,7 +126,7 @@ class MotionCorrection:
             prepare_header(file_in)
             file_out = self.path_moco(i) / "out.nii"
             volreg(file_in, file_out, self.file_ref)
-            allineate(file_in, self.file_res, self.file_ref, self.file_moco(i))
+            allineate(file_in, self.file_res(i), self.file_ref, self.file_moco(i))
 
     def apply(self):
         """Apply estimated motion parameters to input time series with final
