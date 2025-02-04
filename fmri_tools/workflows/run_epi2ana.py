@@ -53,6 +53,9 @@ FINE_ITERATIONS = 100
 COST_FUNCTION = "CrossCorrelation"
 INTERPOLATION = "Linear"
 
+# compress output files
+COMPRESS_FILE = False
+
 
 def _get_parser():
     """Parse command line inputs.
@@ -211,41 +214,40 @@ def epi2ana_workflow(file_epi, file_t1, file_mask, path_output, file_mask2, clea
         ignore_header=False,  # ignore the orientation information and affine matrix information extracted from the image header
     )
 
+    # output file names
+    fout_epi2ana = os.path.join(path_output, "epi2ana.nii")
+    fout_epi2ana_example = os.path.join(path_output, "epi2ana_example.nii")
+    fout_ana2epi = os.path.join(path_output, "ana2epi.nii")
+    fout_ana2epi_example = os.path.join(path_output, "ana2epi_example.nii")
+    fout_mask = os.path.join(path_output, "epi2ana_mask.nii")
+
     # rename final deformations
-    os.rename(
-        os.path.join(path_syn, "pT1_ants-map.nii.gz"),
-        os.path.join(path_output, "ana2epi.nii.gz"),
-    )
-    os.rename(
-        os.path.join(path_syn, "pT1_ants-invmap.nii.gz"),
-        os.path.join(path_output, "epi2ana.nii.gz"),
-    )
+    os.rename(os.path.join(path_syn, "pT1_ants-map.nii"), fout_ana2epi)
+    os.rename(os.path.join(path_syn, "pT1_ants-invmap.nii"), fout_epi2ana)
 
     # clean deformation
     if CLEAN_CMAP:
         epi2ana_cleaned = clean_coordinate_mapping(
-            os.path.join(path_output, "ana2epi.nii.gz"),
-            os.path.join(path_output, "epi2ana.nii.gz"),
+            fout_ana2epi,
+            fout_epi2ana,
             overwrite_file=True,
             save_mask=False,
         )
 
         # write mask
-        nb.save(
-            epi2ana_cleaned["mask"], os.path.join(path_output, "epi2ana_mask.nii.gz")
-        )
+        nb.save(epi2ana_cleaned["mask"], fout_mask)
 
     # expand deformation
     if EXPAND_CMAP:
         _ = expand_coordinate_mapping(
-            os.path.join(path_output, "ana2epi.nii.gz"),
+            fout_ana2epi,
             path_output,
             name_output="ana2epi",
             write_output=True,
         )
 
         _ = expand_coordinate_mapping(
-            os.path.join(path_output, "epi2ana.nii.gz"),
+            fout_epi2ana,
             path_output,
             name_output="epi2ana",
             write_output=True,
@@ -255,18 +257,31 @@ def epi2ana_workflow(file_epi, file_t1, file_mask, path_output, file_mask2, clea
     # ana -> epi
     apply_coordinate_mapping(
         file_t1,  # input
-        os.path.join(path_output, "ana2epi.nii.gz"),  # cmap
-        os.path.join(path_output, "ana2epi_example.nii.gz"),
+        fout_ana2epi,  # cmap
+        fout_ana2epi_example,
         interpolation="linear",  # nearest or linear
     )
 
     # epi -> ana
     apply_coordinate_mapping(
         file_epi,  # input
-        os.path.join(path_output, "epi2ana.nii.gz"),  # cmap
-        os.path.join(path_output, "epi2ana_example.nii.gz"),
+        fout_epi2ana,  # cmap
+        fout_epi2ana_example,
         interpolation="linear",  # nearest or linear
     )
+
+    if COMPRESS_FILE:
+        nb.save(nb.load(fout_ana2epi), f"{fout_ana2epi}.gz")
+        nb.save(nb.load(fout_epi2ana), f"{fout_epi2ana}.gz")
+        nb.save(nb.load(fout_ana2epi_example), f"{fout_ana2epi_example}.gz")
+        nb.save(nb.load(fout_epi2ana_example), f"{fout_epi2ana_example}.gz")
+        nb.save(nb.load(fout_mask), f"{fout_mask}.gz")
+
+        os.remove(fout_ana2epi)
+        os.remove(fout_epi2ana)
+        os.remove(fout_ana2epi_example)
+        os.remove(fout_epi2ana_example)
+        os.remove(fout_mask)
 
     # clean intermediate files
     if cleanup:
