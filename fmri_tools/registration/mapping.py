@@ -4,17 +4,21 @@
 import datetime
 import os
 import shutil as sh
-import subprocess
 import sys
 
 import nibabel as nb
 import numpy as np
-from nibabel.freesurfer.io import (read_geometry, read_morph_data,
-                                   write_geometry, write_morph_data)
+from nibabel.freesurfer.io import (
+    read_geometry,
+    read_morph_data,
+    write_geometry,
+    write_morph_data,
+)
 from scipy.interpolate import griddata
 from scipy.ndimage import gaussian_filter
 from sh import gunzip
 
+from .. import execute_command
 from ..io.affine import apply_affine_chunked, read_vox2ras_tkr, vox2ras_tkr
 from ..io.filename import get_filename
 from ..io.surf import read_mgh, write_mgh
@@ -80,11 +84,8 @@ def mri_vol2surf(
     command += f" --mov {file_in}"
     command += f" --surf {surf}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def map2surface(

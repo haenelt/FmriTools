@@ -2,11 +2,11 @@
 """Input/Output Nifti volume utilities."""
 
 import os
-import subprocess
 
 import nibabel as nb
 import numpy as np
 
+from .. import execute_command
 from .filename import get_filename
 
 __all__ = ["load_volume", "save_volume", "mri_convert", "copy_header", "surface_voxel"]
@@ -109,11 +109,8 @@ def mri_convert(file_in, file_out):
     command += " --input_volume " + file_in
     command += " --output_volume " + file_out
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def copy_header(file_in):

@@ -4,11 +4,11 @@
 import datetime
 import os
 import shutil as sh
-import subprocess
 
 import nibabel as nb
 import numpy as np
 
+from .. import execute_command
 from ..surface.filter import mris_fwhm
 
 __all__ = ["get_vfs", "get_weighted_vfs"]
@@ -134,11 +134,8 @@ def get_vfs(
     command += f" --fs {os.path.join(path_output, hemi + '.fieldsign.mgh')}"
     command += f" --fwhm {fwhm_vfs}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # delete intermediate files
     if cleanup:

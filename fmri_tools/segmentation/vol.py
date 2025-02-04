@@ -2,11 +2,11 @@
 """Volume utilities."""
 
 import os
-import subprocess
 
 import nibabel as nb
 import numpy as np
 
+from .. import execute_command
 from ..io.filename import get_filename
 
 __all__ = [
@@ -41,11 +41,8 @@ def remove_bias_ants(file_in, file_out, save_bias=True):
     else:
         command += f" --output {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def robust_combination(fileUNI, fileINV1, fileINV2, regularisation, path_output):
@@ -237,8 +234,5 @@ def estimate_pv(dir_out, subjects_dir, sub):
     command += f" {sub}"
     command += f" {subjects_dir}/{sub}/mri/brain.mgz"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execution failed!")
+    # run
+    execute_command(command)

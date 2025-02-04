@@ -2,8 +2,8 @@
 """Region of interest (ROI) manipulations."""
 
 import os
-import subprocess
 
+from .. import execute_command
 from ..io.filename import get_filename
 
 __all__ = ["extract_vol", "erode_fsl", "dilate_fsl"]
@@ -40,11 +40,8 @@ def extract_vol(file_in, file_out, t_min, t_size):
     command += f" {t_min}"
     command += f" {t_size}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def erode_fsl(file_in, file_out):
@@ -69,11 +66,8 @@ def erode_fsl(file_in, file_out):
     command += " -ero"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def dilate_fsl(file_in, file_out):
@@ -98,8 +92,5 @@ def dilate_fsl(file_in, file_out):
     command += " -dilM"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

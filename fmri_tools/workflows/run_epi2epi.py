@@ -18,9 +18,9 @@ The script needs an installation of freesurfer and ants (or fsl).
 
 import os
 import shutil as sh
-import subprocess
 from argparse import SUPPRESS, ArgumentParser
 
+from .. import execute_command
 from ..registration.cmap import expand_coordinate_mapping, generate_coordinate_mapping
 from ..registration.fsl import apply_flirt, flirt
 from ..registration.nonrigid import embedded_antsreg
@@ -337,11 +337,8 @@ def _apply_flirt(source_in, target_in, dir_out):
     command += f" -omat {os.path.join(dir_out, 'flirt_inv_matrix.mat')}"
     command += f" -inverse {os.path.join(dir_out, 'flirt_matrix.mat')}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # get cmap
     generate_coordinate_mapping(

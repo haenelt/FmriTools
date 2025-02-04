@@ -2,8 +2,8 @@
 """FSL registration algorithms."""
 
 import os
-import subprocess
 
+from .. import execute_command
 from ..io.filename import get_filename
 
 __all__ = [
@@ -66,11 +66,8 @@ def flirt(
     command += " -dof 6"
     command += f" -interp {interp_method}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def apply_warp(file_in, file_field, file_out):
@@ -92,11 +89,8 @@ def apply_warp(file_in, file_field, file_out):
     command += " --warp=" + str(file_field)
     command += " --interp=spline --rel"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"):
@@ -132,11 +126,8 @@ def apply_flirt(file_in, file_ref, file_mat, file_out, interp_method="trilinear"
     command += f" -interp {interp_method}"
     command += " -paddingsize 0"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def convert_warp(file_ref, file_warp, file_jacobian, file_out):
@@ -168,11 +159,8 @@ def convert_warp(file_ref, file_warp, file_jacobian, file_out):
     command += f" --warp1={file_warp}"
     command += f" --out={file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def combine_warp(file_x, file_y, file_z, file_out):
@@ -202,11 +190,8 @@ def combine_warp(file_x, file_y, file_z, file_out):
     command += f" {file_out}"
     command += f" {file_x} {file_y} {file_z}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def apply_fugue(file_in, file_shift, udir, forward_warping=False):
@@ -235,8 +220,5 @@ def apply_fugue(file_in, file_shift, udir, forward_warping=False):
     else:
         command += f" --unwarp={name_in}_unwarped{ext_in}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

@@ -3,20 +3,23 @@
 
 import os
 import shutil as sh
-import subprocess
 
 import nibabel as nb
 import numpy as np
-from scipy.ndimage import (binary_dilation, binary_erosion, binary_fill_holes,
-                           gaussian_filter)
+from scipy.ndimage import (
+    binary_dilation,
+    binary_erosion,
+    binary_fill_holes,
+    gaussian_filter,
+)
 
+from .. import execute_command
 from ..io.filename import get_filename
 from ..io.vol import mri_convert
 from ..matlab import MatlabCommand
 from ..registration.cmap import expand_coordinate_mapping
 from ..registration.nonrigid import embedded_antsreg
-from ..registration.transform import (apply_coordinate_mapping,
-                                      scanner_transform)
+from ..registration.transform import apply_coordinate_mapping, scanner_transform
 from ..segmentation.skullstrip import skullstrip_bet
 
 __all__ = [
@@ -501,8 +504,5 @@ def mask_ribbon(subjects_dir, sub):
     command += f" --label_right_white {right_whitelabel}"
     command += f" --save_ribbon {sub}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

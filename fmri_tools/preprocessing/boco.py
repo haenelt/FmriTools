@@ -2,13 +2,13 @@
 """BOLD correction for VASO."""
 
 import os
-import subprocess
 
 import nibabel as nb
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline as Interp
 from sh import gunzip
 
+from .. import execute_command
 from ..io.filename import get_filename
 
 __all__ = [
@@ -101,22 +101,16 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
     command += " -n 2"
     command += f" -input {file_vaso}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     command = "3dUpsample -overwrite -datum short"
     command += f" -prefix {file_bold_upsampled}"
     command += " -n 2"
     command += f" -input {file_bold}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # load vaso data and shift in time
     vaso = nb.load(file_vaso_upsampled)
@@ -152,31 +146,22 @@ def boco_vaso(file_vaso, file_bold, TR, vaso_threshold=6.0):
     command += f" -TR {TR}"
     command += f" {file_bold_upsampled}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     command = "3drefit"
     command += f" -TR {TR}"
     command += f" {file_vaso_upsampled}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     command = "3drefit"
     command += f" -TR {TR}"
     command += f" {file_vaso_corrected}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def boco_vaso_regrid(
@@ -358,11 +343,8 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_rem
     command += f" -TR {tr_new}"
     command += f" {os.path.join(path_output, name_input + '_upsampled' + ext_input)}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def regrid_time_series_afni(file_in, n=2):
@@ -393,11 +375,8 @@ def regrid_time_series_afni(file_in, n=2):
     command += f" -n {n}"
     command += f" -input {file_in}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     if clean_unzip:
         os.remove(file_in)

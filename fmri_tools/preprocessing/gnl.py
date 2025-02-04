@@ -3,11 +3,11 @@
 
 import os
 import shutil as sh
-import subprocess
 
 import nibabel as nb
 import numpy as np
 
+from .. import execute_command
 from ..io.filename import get_filename
 from ..registration.cmap import generate_coordinate_mapping
 from ..registration.fsl import apply_warp, combine_warp, convert_warp
@@ -68,11 +68,8 @@ def gnl_correction(
     command += " trilinear.nii.gz"
     command += f" {file_coeff}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # now create an appropriate warpfield output (relative convention)
     convert_warp(
@@ -108,11 +105,8 @@ def gnl_correction(
     command += f" --fulwarp={file_warp}"
     command += f" -o {os.path.join(path_grad, 'grad_dev')}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # merge directions
     combine_warp(

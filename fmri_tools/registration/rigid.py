@@ -3,11 +3,11 @@
 
 import os
 import shutil as sh
-import subprocess
 
 import nibabel as nb
 import numpy as np
 
+from .. import execute_command
 from ..io.affine import apply_affine_chunked, read_vox2vox
 from ..io.vol import copy_header, mri_convert
 from ..segmentation.mask import clean_ana, mask_ana, mask_epi
@@ -304,11 +304,8 @@ def boundary_based_registration(
     command += f" --no-cortex-label --6 {bbr_var}"
     command += f" --nocleanup --tmp {path_bbr}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # get transformation matrix from freesurfer lta file
     M, Minv = read_vox2vox(os.path.join(path_bbr, "transformation.lta"))

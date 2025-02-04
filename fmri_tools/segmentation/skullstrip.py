@@ -2,13 +2,13 @@
 """Skull stripping tools."""
 
 import os
-import subprocess
 
 import nibabel as nb
 import numpy as np
 from scipy.ndimage import binary_fill_holes
 from scipy.signal import argrelextrema
 
+from .. import execute_command
 from ..io.filename import get_filename
 from ..registration.transform import apply_header
 from ..segmentation.vol import remove_bias_ants
@@ -309,10 +309,7 @@ def skullstrip_bet(file_in, file_out):
     command += f" {file_out}"
     command += " -f 0.50 -m -n"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     os.rename(os.path.join(path_out, f"{name_out}_mask{ext_out}"), file_out)

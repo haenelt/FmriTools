@@ -14,6 +14,7 @@ import numpy as np
 from scipy.sparse.linalg import expm, expm_multiply
 from scipy.stats import norm
 
+from .. import execute_command
 from ..io.filename import get_filename
 from .mesh import Mesh
 
@@ -736,8 +737,5 @@ def mris_fwhm(file_in, file_out, sub, fwhm):
     command += f" --i {file_in}"
     command += f" --o {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

@@ -4,7 +4,6 @@
 import datetime
 import os
 import shutil as sh
-import subprocess
 import sys
 from pathlib import Path
 
@@ -19,6 +18,7 @@ from nibabel.freesurfer.io import (
 from nibabel.freesurfer.mghformat import MGHHeader
 from scipy.spatial import Delaunay
 
+from .. import execute_command
 from .filename import get_filename
 
 __all__ = [
@@ -345,11 +345,8 @@ def label_as_patch(file_ref, file_label, file_out, cleanup=True):
     command += " " + str(file_label)
     command += " " + str(file_out)
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # delete temporary files
     if cleanup:

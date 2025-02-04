@@ -2,12 +2,12 @@
 """Different image manipulation tools."""
 
 import os
-import subprocess
 import sys
 
 import nibabel as nb
 import numpy as np
 
+from .. import execute_command
 from ..io.filename import get_filename
 from ..segmentation.vol import remove_bias_ants
 
@@ -327,11 +327,8 @@ def mean_image(file_in, file_out):
     command += " -Tmean"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def create_series(file_in, path_out, name_output):

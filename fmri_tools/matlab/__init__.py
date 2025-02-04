@@ -2,7 +2,8 @@
 """Various matlab functions for high-resolution fMRI data."""
 
 import os
-import subprocess
+
+from .. import execute_command
 
 
 class MatlabCommand:
@@ -50,11 +51,8 @@ class MatlabCommand:
         command += cmd_args[:-1]
         command += '); exit;"'
 
-        print("Execute: " + command)
-        try:
-            subprocess.run([command], shell=True, check=False)
-        except subprocess.CalledProcessError:
-            print("Execuation failed!")
+        # run
+        execute_command(command)
         os.chdir(path_current)
 
     def _check_exists(self):

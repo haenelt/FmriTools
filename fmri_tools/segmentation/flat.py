@@ -5,7 +5,6 @@ import datetime
 import math
 import os
 import shutil as sh
-import subprocess
 
 import matplotlib.pyplot as plt
 import nibabel as nb
@@ -21,6 +20,7 @@ from shapely.geometry import mapping
 from shapely.ops import cascaded_union, polygonize
 from skimage.draw import polygon
 
+from .. import execute_command
 from ..io.surf import label_as_patch, read_patch
 
 __all__ = [
@@ -333,11 +333,8 @@ def label_flattening(file_ref, file_label, path_output, cleanup=True):
     command += f" {file_patch}"
     command += f" {hemi}{name_patch}.patch.flat"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # copy output
     sh.copy2(
@@ -417,11 +414,8 @@ def surface_flattening(file_ref, file_patch, path_output, cleanup=True):
     command += f" {hemi}{name_patch}.patch.3d"
     command += f" {hemi}{name_patch}.patch.flat"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # copy output
     sh.copy2(

@@ -2,7 +2,6 @@
 """Time-series manipulation."""
 
 import os
-import subprocess
 from math import prod
 
 import nibabel as nb
@@ -13,6 +12,7 @@ from scipy.interpolate import InterpolatedUnivariateSpline as Interp
 from scipy.ndimage import gaussian_filter
 
 from ..io.filename import get_filename
+from .. import execute_command
 
 __all__ = [
     "ScaleTimeseries",
@@ -531,7 +531,7 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
                     sequence[z, 1] * ta + (nt + 1) * tr_old,
                     tr_old,
                 )
-                t = t[:nt+2]  # ensure same size of arrays
+                t = t[: nt + 2]  # ensure same size of arrays
                 cubic_interper = Interp(t, arr[x, y, int(sequence[z, 0]), :], k=3)
                 arr_corrected[x, y, int(sequence[z, 0]), :] = cubic_interper(t_new)
 
@@ -620,8 +620,5 @@ def bandpass_afni(file_in, file_out, TR, lp_freq, hp_freq):
     command += f" {hp_freq:.6f} {lp_freq:.6f}"
     command += f" {file_in}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

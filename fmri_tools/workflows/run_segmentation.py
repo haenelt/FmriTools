@@ -69,10 +69,10 @@ HOWTO: defining a patch for surface flattening
 
 import datetime
 import os
-import subprocess
 from argparse import SUPPRESS, ArgumentParser
 
 import fmri_tools
+from fmri_tools import execute_command
 from nibabel.freesurfer.io import read_geometry
 
 from ..io.filename import get_filename
@@ -264,11 +264,8 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
-        print("Execute: " + command)
-        try:
-            subprocess.run([command], shell=True, check=False)
-        except subprocess.CalledProcessError:
-            print("Execuation failed!")
+        # run
+        execute_command(command)
 
         # skullstrip anatomy
         if inv2:
@@ -311,11 +308,8 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
-        print("Execute: " + command)
-        try:
-            subprocess.run([command], shell=True, check=False)
-        except subprocess.CalledProcessError:
-            print("Execuation failed!")
+        # run
+        execute_command(command)
 
         # write log
         file_id = open(
@@ -338,11 +332,8 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
-        print("Execute: " + command)
-        try:
-            subprocess.run([command], shell=True, check=False)
-        except subprocess.CalledProcessError:
-            print("Execuation failed!")
+        # run
+        execute_command(command)
 
     elif part == 3:
         # Convert manual corrections in pial_edit.mgz to brain.finalsurfs.manedit.mgz
@@ -360,11 +351,8 @@ def segmentation_workflow(uni, part, inv1, inv2, flair, name_patch, n_layer):
         if flair:
             command += f" -FLAIR {flair} -FLAIRpial"
 
-        print("Execute: " + command)
-        try:
-            subprocess.run([command], shell=True, check=False)
-        except subprocess.CalledProcessError:
-            print("Execuation failed!")
+        # run
+        execute_command(command)
 
     elif part == 4:
         # output folder (freesurfer trash folder)

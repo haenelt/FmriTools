@@ -5,7 +5,6 @@ import datetime
 import functools
 import itertools
 import os
-import subprocess
 from shutil import copyfile
 
 import nibabel as nb
@@ -19,6 +18,7 @@ from nibabel.freesurfer.io import (
 from numpy.linalg import norm
 from scipy.sparse import csr_matrix, dia_matrix, triu
 
+from .. import execute_command
 from ..io.affine import apply_affine_chunked, read_vox2ras_tkr
 from ..io.filename import get_filename
 from ..io.surf import read_mgh, write_mgh
@@ -966,11 +966,8 @@ def make_sphere(file_in, file_out, n_inflate=100, radius=None):
     command += f" {file_tmp}"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # change radius
     if radius:

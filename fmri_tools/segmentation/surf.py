@@ -4,11 +4,11 @@
 import datetime
 import os
 import shutil
-import subprocess
 import sys
 
 import numpy as np
 
+from .. import execute_command
 from ..io.filename import get_filename
 
 __all__ = [
@@ -60,11 +60,8 @@ def mris_thickness(path, sub):
         command += f" {_h}"
         command += f" {_h}.thickness"
 
-        print("Execute: " + command)
-        try:
-            subprocess.run([command], shell=True, check=False)
-        except subprocess.CalledProcessError:
-            print("Execuation failed!")
+        # run
+        execute_command(command)
 
 
 def mris_curvature(file_in, path_output, a=10, dist=(10, 10), thresh=0.999):
@@ -99,11 +96,8 @@ def mris_curvature(file_in, path_output, a=10, dist=(10, 10), thresh=0.999):
     command += f" -thresh {thresh}"
     command += f" {file_in}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # rename mean curvature to curv
     os.rename(file_in + ".H", os.path.join(path_output, hemi + ".curv"))
@@ -135,11 +129,8 @@ def inflate_surf_mesh(file_in, file_out, n_iter):
     command += f" -no-save-sulc"
     command += f" {file_in} {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def match_vertex_number(vtx_white, vtx_pial, fac, ind_white, ind_pial):
@@ -268,11 +259,8 @@ def upsample_surf_mesh(file_in, file_out, n_iter, method):
     command += f" --method {method}"
     command += f" --iter {n_iter}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def mris_expand(file_in, file_out, shift=-0.5):
@@ -299,11 +287,8 @@ def mris_expand(file_in, file_out, shift=-0.5):
     command += f" {shift}"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def mris_inflate(file_in, file_out, n_inflate=20):
@@ -329,11 +314,8 @@ def mris_inflate(file_in, file_out, n_inflate=20):
     command += f" {file_in}"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def shift_white(path, sub, w_shift=-0.5):
@@ -436,8 +418,5 @@ def extract_main_component(file_in, file_out):
     command += f" {file_in}"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

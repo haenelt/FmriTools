@@ -4,7 +4,6 @@
 import datetime
 import os
 import shutil as sh
-import subprocess
 from shutil import copyfile
 
 import nibabel as nb
@@ -12,6 +11,7 @@ import numpy as np
 import numpy.linalg as npl
 from sh import gunzip
 
+from .. import execute_command
 from ..io.affine import apply_affine_chunked
 from ..io.filename import get_filename
 from ..utils.interpolation import linear_interpolation3d, nn_interpolation3d
@@ -248,11 +248,8 @@ def apply_header(file_source, file_target, file_out, interp_method="nearest"):
     command += f" --targ {file_target}"
     command += f" --o {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def _set_min(arr, min_val):
@@ -309,11 +306,8 @@ def resample_volume(file_in, file_out, dxyz=(0.4, 0.4, 0.4), rmode="Cu"):
     command += f" -inset {file_tmp}"
     command += f" -prefix {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # remove temporary copy
     os.remove(file_tmp)

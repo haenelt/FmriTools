@@ -4,7 +4,6 @@
 import math
 import os
 import shutil as sh
-import subprocess
 from glob import glob
 from os.path import exists, join
 
@@ -13,7 +12,7 @@ import numpy as np
 from nibabel.freesurfer.io import write_geometry
 from scipy.io import loadmat, savemat
 
-from .. import check_installation
+from .. import check_installation, execute_command
 from ..io.affine import apply_affine_chunked, read_vox2ras_tkr
 from ..io.filename import get_filename
 from ..io.vol import load_volume, save_volume
@@ -348,11 +347,7 @@ def embedded_antsreg(
         reg += " --shrink-factors 1"
 
     # run the ANTs command directly
-    print(reg)
-    try:
-        subprocess.run([reg], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    execute_command(reg)
 
     # output file names
     results = sorted(glob(os.path.join(output_dir, f"{output_name}*")))
@@ -389,11 +384,8 @@ def embedded_antsreg(
             at += f" --transform [{transform}, 0]"
         at += f" --output {transformed_source_file}"
 
-    print(at)
-    try:
-        subprocess.run([at], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(at)
 
     # Create coordinate mappings
     src_at = "antsApplyTransforms --dimensionality 3 --input-image-type 3"
@@ -407,11 +399,8 @@ def embedded_antsreg(
             src_at += f" --transform [{transform}, 0]"
     src_at += f" --output {mapping_file}"
 
-    print(src_at)
-    try:
-        subprocess.run([src_at], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(arc_at)
 
     trg_at = "antsApplyTransforms --dimensionality 3 --input-image-type 3"
     trg_at += f" --input {trg_map.get_filename()}"
@@ -424,11 +413,8 @@ def embedded_antsreg(
             trg_at += f" --transform [{transform}, 0]"
     trg_at += f" --output {inverse_mapping_file}"
 
-    print(trg_at)
-    try:
-        subprocess.run([trg_at], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(trg_at)
 
     # clean-up intermediate files
     if os.path.exists(file_out):

@@ -2,8 +2,8 @@
 """Surface smoothing."""
 
 import os
-import subprocess
 
+from .. import execute_command
 from ..io.filename import get_filename
 
 __all__ = ["prepare_fieldmap_fsl", "fugue_fsl"]
@@ -34,11 +34,8 @@ def prepare_fieldmap_fsl(file_magn, file_phase, file_out, delta_te):
     command += f" {file_out}"
     command += f" {delta_te:.6f}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def fugue_fsl(file_in, file_fmap, file_shift, dwell_time, gaussian_sigma, udir):
@@ -77,8 +74,5 @@ def fugue_fsl(file_in, file_fmap, file_shift, dwell_time, gaussian_sigma, udir):
     command += f" --unwarpdir={udir}"
     command += f" --unwarp={name_in}_unwarped{ext_in}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

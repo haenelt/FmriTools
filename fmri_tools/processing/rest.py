@@ -2,11 +2,11 @@
 """Resting-state utilities."""
 
 import os
-import subprocess
 
 import nibabel as nb
 from scipy.stats import zscore
 
+from .. import execute_command
 from ..io.filename import get_filename
 from ..preprocessing.timeseries import bandpass_afni
 
@@ -110,11 +110,8 @@ def _divide_afni(file_in1, file_in2, file_out):
     command += " -float"
     command += f" -prefix {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
 
 def _std_afni(file_in, file_out):
@@ -132,8 +129,5 @@ def _std_afni(file_in, file_out):
     command += f" -prefix {file_out}"
     command += f" {file_in}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)

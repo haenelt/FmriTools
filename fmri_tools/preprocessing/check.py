@@ -3,13 +3,13 @@
 
 import os
 import shutil as sh
-import subprocess
 
 import matplotlib.pyplot as plt
 import nibabel as nb
 import numpy as np
 from scipy.stats import pearsonr, shapiro
 
+from .. import execute_command
 from ..io.filename import get_filename
 from ..segmentation.mask import clean_ana, mask_ana, mask_epi
 from ..utils.metrics import calc_mean
@@ -340,11 +340,8 @@ def check_preprocessing_afni(
     command += f" {file_epi}"
     command += f" > {os.path.join(path_output, 'outlier_afni.txt')}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
 
     # make plot
     log_data = np.loadtxt(os.path.join(path_output, "outlier_afni.txt"))

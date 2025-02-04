@@ -2,8 +2,8 @@
 """Surface smoothing."""
 
 import os
-import subprocess
 
+from .. import execute_command
 from ..io.filename import get_filename
 
 __all__ = ["mris_smooth"]
@@ -31,8 +31,5 @@ def mris_smooth(file_in, file_out, n_iter):
     command += f" {file_in}"
     command += f" {file_out}"
 
-    print("Execute: " + command)
-    try:
-        subprocess.run([command], shell=True, check=False)
-    except subprocess.CalledProcessError:
-        print("Execuation failed!")
+    # run
+    execute_command(command)
