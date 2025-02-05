@@ -400,7 +400,7 @@ def embedded_antsreg(
     src_at += f" --output {mapping_file}"
 
     # run
-    execute_command(arc_at)
+    execute_command(src_at)
 
     trg_at = "antsApplyTransforms --dimensionality 3 --input-image-type 3"
     trg_at += f" --input {trg_map.get_filename()}"
