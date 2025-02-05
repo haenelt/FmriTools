@@ -116,7 +116,9 @@ def clean_coordinate_mapping(
 
     # write output
     if overwrite_file:
-        nb.save(results["cmap"], cmap_target)
+        cmap_tmp = os.path.join(path_file, "tmp.nii")
+        nb.save(results["cmap"], cmap_tmp)
+        os.rename(cmap_tmp, cmap_target)
 
     if save_mask:
         nb.save(results["mask"], os.path.join(path_file, "cmap_mask.nii"))
@@ -146,7 +148,7 @@ def crop_coordinate_mapping(file_in, pad=0, overwrite_file=True, path_output="")
             os.makedirs(path_output)
 
     # get input path and file name
-    _, file, ext = get_filename(file_in)
+    path, fname, ext = get_filename(file_in)
 
     # load data
     data_img = nb.load(file_in)
@@ -168,10 +170,11 @@ def crop_coordinate_mapping(file_in, pad=0, overwrite_file=True, path_output="")
 
     # write coordinate mapping for each time point
     if overwrite_file is True:
-        os.remove(file_in)
-        nb.save(output, file_in)
+        file_tmp = os.path.join(path, "tmp" + ext)
+        nb.save(output, file_tmp)
+        os.rename(file_tmp, file_in)
     else:
-        file_out = os.path.join(path_output, file + "_crop" + ext)
+        file_out = os.path.join(path_output, fname + "_crop" + ext)
         nb.save(output, file_out)
 
 
@@ -402,7 +405,9 @@ def expand_coordinate_mapping(
 
     # write output
     if write_output:
-        nb.save(output, os.path.join(path_output, name_output + ext_cmap))
+        f_tmp = os.path.join(path_output, "tmp" + ext_cmap)
+        nb.save(output, f_tmp)
+        os.rename(f_tmp, os.path.join(path_output, name_output + ext_cmap))
 
     return output
 
