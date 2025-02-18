@@ -159,6 +159,7 @@ def boundary_based_registration(
     wm_bright=False,
     init_reg="header",
     nmax=1000,
+    dof=12,
     cleanup=False,
 ):
     """The script calls the freesurfer bbr method. Inputs are not checked if they are
@@ -186,6 +187,8 @@ def boundary_based_registration(
         Initialize registration, by default "header".
     nmax : int, optional
         Maximum number of iterations, by default 1000.
+    dof : int, optional
+        Degrees of freedom (6, 9, or 12), by default 12.
     cleanup : bool, optional
         Delete intermediate files, by default False.
     """
@@ -271,7 +274,7 @@ def boundary_based_registration(
     command += f" --nmax {nmax}"
     command += f" --o {str(dir_bbr / 'registered.nii')}"
     command += f" --lta {str(dir_bbr / 'transformation.lta')}"
-    command += f" --no-cortex-label --6 {bbr_var}"
+    command += f" --no-cortex-label --{dof} {bbr_var}"
     command += f" --nocleanup --tmp {dir_bbr}"
 
     # run
