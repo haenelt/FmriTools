@@ -156,6 +156,7 @@ def boundary_based_registration(
     lh_white,
     rh_white,
     path_output,
+    file_mask="",
     wm_bright=False,
     init_reg="header",
     nmax=1000,
@@ -181,6 +182,9 @@ def boundary_based_registration(
         File name of right white surface.
     path_output : str
         Path where output is saved.
+    file_mask : str, optional
+        File name of mask image in target space. Necessary if init_reg is not "header".
+        By default "".
     wm_bright : bool
         WM brighter than GM.
     init_reg : str, optional
@@ -228,6 +232,14 @@ def boundary_based_registration(
         sh.copy(file_target, _file_target)
     else:
         raise ValueError("Invalid file extensions. *.nii or *.mgz file expected!")
+
+    _file_mask = str(dir_mri / "brainmask.mgz")
+    if file_mask != "" and file_mask.endswith(".mgz"):
+        sh.copy(file_mask, _file_mask)
+    elif file_mask != "" and file_mask.endswith(".nii"):
+        mri_convert(file_mask, _file_mask)
+    else:
+        print("No mask detectected. Check inputs if a mask is necessary!")
 
     sh.copy(file_source, str(dir_bbr / "source.nii"))
 
