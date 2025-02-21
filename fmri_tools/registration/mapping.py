@@ -195,8 +195,16 @@ def map2surface(
     # filename of sampled data
     file_sampled = os.path.join(path_surf, hemi + "." + "sampled.mgh")
 
-    # mri_vol2surf
-    mri_vol2surf(input_vol, file_sampled, sub, interp_method=interp_method)
+    # volume to surface mapping
+    mri_vol2surf(
+        input_vol,
+        file_sampled,
+        subjects_dir=path_output,
+        sub=sub,
+        hemi=hemi,
+        surf="source",
+        interp_method=interp_method,
+    )
 
     # load data
     arr_sampled, affine_sampled, header_sampled = read_mgh(file_sampled)
@@ -733,8 +741,16 @@ def deform_surface(
         temp_img = nb.Nifti1Image(temp_array, cmap_img.affine, cmap_img.header)
         nb.save(temp_img, file_temp)
 
-        # mri_vol2surf
-        mri_vol2surf(file_temp, file_sampled, sub, interp_method=interp_method)
+        # volume to surface mapping
+        mri_vol2surf(
+            file_temp,
+            file_sampled,
+            subjects_dir=path_output,
+            sub=sub,
+            hemi=hemi,
+            surf="source",
+            interp_method=interp_method,
+        )
 
         data_img = nb.load(file_sampled)
         vtx_new[:, i] = np.squeeze(data_img.get_fdata())
@@ -742,8 +758,16 @@ def deform_surface(
     if input_mask:
         file_background = os.path.join(path_surf, hemi + ".background.mgh")
 
-        # mri_vol2surf (background)
-        mri_vol2surf(input_mask, file_background, sub, interp_method="nearest")
+        # volume to surface mapping (background)
+        mri_vol2surf(
+            input_mask,
+            file_background,
+            subjects_dir=path_output,
+            sub=sub,
+            hemi=hemi,
+            surf="source",
+            interp_method="nearest",
+        )
 
         # get new indices
         background_list = nb.load(file_background).get_fdata()
