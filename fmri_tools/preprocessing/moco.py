@@ -106,13 +106,13 @@ class MotionCorrection:
 
     def path_moco(self, run):
         """Path to moco folder of single runs."""
-        _path = self.dir_out / self.NAME_MOCO / f"Run_{run + 1:02d}"
+        _path = Path(self.dir_out) / self.NAME_MOCO / f"Run_{run + 1:02d}"
         _path.mkdir(exist_ok=True, parents=True)
         return _path
 
     def path_summary(self):
         """Path to folder containing information about realignment procedure."""
-        _path = self.dir_out / self.NAME_MOCO / "summary"
+        _path = Path(self.dir_out) / self.NAME_MOCO / "summary"
         _path.mkdir(exist_ok=True, parents=True)
         return _path
 
