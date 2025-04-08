@@ -252,7 +252,7 @@ def boco_vaso_regrid(
 
 
 def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_remove=0):
-    """This function interpolates the time series onto a new time grid using cubic
+    """This function interpolates the time series onto a new time grid using linear
     interpolation. Only for writing the new TR in the header of the output time series,
     AFNI has to be included in the search path.
 
@@ -313,8 +313,8 @@ def regrid_time_series(file_in, path_output, tr_old, tr_new, t_start=0, nvol_rem
     for x in range(nx):
         for y in range(ny):
             for z in range(nz):
-                cubic_interper = Interp(t_old, data_array[x, y, z, :], k=3)
-                data_array_regrid[x, y, z, :] = cubic_interper(t_new)
+                linear_interper = Interp(t_old, data_array[x, y, z, :], k=1)
+                data_array_regrid[x, y, z, :] = linear_interper(t_new)
 
     # delete appended volumes
     vols_keep1 = t_new >= 0

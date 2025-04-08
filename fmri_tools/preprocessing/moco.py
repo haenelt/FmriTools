@@ -4,6 +4,7 @@ different echoes in ME-fMRI projects."""
 
 import shutil
 from pathlib import Path
+from joblib import Parallel, delayed
 import numpy as np
 import nibabel as nb
 import matplotlib.pyplot as plt
@@ -47,6 +48,9 @@ class MotionCorrection:
     # folder names for motion estimates and for realigned time series
     NAME_MOCO_SINGLE = "moco"
     NAME_MOCO = "moco"
+
+    # number of cores for parallel application of motion parameters
+    N_CORE = 4
 
     def __init__(self, fnames, dir_out=None):
         self.fnames = fnames
@@ -137,8 +141,9 @@ class MotionCorrection:
     def apply_other(self, run, fnames):
         """Apply estimated motion parameters to different datasets listed in fnames.
         These could be different echoes in a multi-echo fMRI acquisition."""
-        for fname in fnames:
-            self._apply_transform(run, fname)
+        Parallel(n_jobs=self.N_CORE)(
+            delayed(self._apply_transform)(run, fname) for fname in fnames
+        )
 
     def _apply_transform(self, run, filename):
         """Apply estimated motion parameters from a specific run to one file. The same
