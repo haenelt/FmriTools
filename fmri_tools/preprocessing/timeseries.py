@@ -385,7 +385,7 @@ def slice_timing_correction(
 ):
     """This function performs slice timing correction of a nifti time series. For
     interleaved slice ordering, interleaved ascending is assumed. The correction is done
-    by temporal interpolation of single voxel time series using cubic interpolation. To
+    by temporal interpolation of single voxel time series using linear interpolation. To
     omit extrapolation errors at the edges, the first and last volumes of the time
     series are appended at the beginning and at the end, respectively. These time points
     are removed again after the interpolation step. The interpolated time series is
@@ -478,7 +478,7 @@ def slice_timing_correction(
 
 
 def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
-    """This function performs temporal interpolation of voxel time courses using cubic
+    """This function performs temporal interpolation of voxel time courses using linear
     interpolation and samples data with a new repetition time.
 
     Parameters
@@ -501,7 +501,7 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
         in slice timinings in 2D acqisitions. If not set, it is assumed that all slices
         were acquired at the same time. The default is "None".
     """
-    # load data and temporarilly add volumes at the beginning and add for cubic
+    # load data and temporarilly add volumes at the beginning and add for linear
     # interpolation
     data = nb.load(file_in)
     nx, ny, nz, nt = data.header["dim"][1:5]
@@ -521,7 +521,7 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
     tr_append = np.floor(tr_old / tr_new).astype(int) * tr_new  # number of appended TRs
     t_new = np.arange(-tr_append, tt + tr_append, tr_new)  # grid points of output array
 
-    # loop over voxels and apply cubic interpolation
+    # loop over voxels and apply linear interpolation
     arr_corrected = np.zeros((nx, ny, nz, len(t_new)))
     for z in range(nz):
         for x in range(nx):
@@ -532,8 +532,8 @@ def interpolate(file_in, file_out, tr_old, tr_new, ta=None, sequence=None):
                     tr_old,
                 )
                 t = t[: nt + 2]  # ensure same size of arrays
-                cubic_interper = Interp(t, arr[x, y, int(sequence[z, 0]), :], k=3)
-                arr_corrected[x, y, int(sequence[z, 0]), :] = cubic_interper(t_new)
+                linear_interper = Interp(t, arr[x, y, int(sequence[z, 0]), :], k=1)
+                arr_corrected[x, y, int(sequence[z, 0]), :] = linear_interper(t_new)
 
     # delete appended volumes
     vols_keep1 = t_new >= 0
