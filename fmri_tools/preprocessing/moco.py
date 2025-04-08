@@ -2,6 +2,7 @@
 """Motion correction of fMRI time series using afni and optional application to
 different echoes in ME-fMRI projects."""
 
+import uuid
 import shutil
 from pathlib import Path
 from joblib import Parallel, delayed
@@ -148,7 +149,7 @@ class MotionCorrection:
     def _apply_transform(self, run, filename):
         """Apply estimated motion parameters from a specific run to one file. The same
         preprocessing is done as for the motion estimation."""
-        file_in = self.path_out(run) / "tmp.nii"
+        file_in = self.path_out(run) / f"tmp_{uuid.uuid4()}.nii"
         file_out = self.path_out(run) / f"u{Path(filename).name}"
         shutil.copyfile(filename, file_in)
         prepare_header(file_in)
