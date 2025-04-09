@@ -17,7 +17,7 @@ from scipy.interpolate import griddata
 from scipy.spatial.qhull import Delaunay
 from scipy.stats import sem
 from shapely.geometry import mapping
-from shapely.ops import cascaded_union, polygonize
+from shapely.ops import unary_union, polygonize
 from skimage.draw import polygon
 
 from .. import execute_command
@@ -219,7 +219,7 @@ def alpha_shape(points, alpha):
 
     Returns
     -------
-    cascaded_union(triangles) : poly
+    unary_union(triangles) : poly
         Concave hull coordinates.
     edge_points : list
         Start and end points of all edges.
@@ -272,7 +272,7 @@ def alpha_shape(points, alpha):
     m = geometry.MultiLineString(edge_points)
     triangles = list(polygonize(m))
 
-    return cascaded_union(triangles), edge_points
+    return unary_union(triangles), edge_points
 
 
 def label_flattening(file_ref, file_label, path_output, cleanup=True):
