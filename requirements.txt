@@ -12,3 +12,4 @@ nilearn
 pydicom
 pycortex
 joblib
+dipy

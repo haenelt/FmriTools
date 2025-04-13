@@ -14,7 +14,13 @@ from ..registration.transform import apply_header
 from ..segmentation.vol import remove_bias_ants
 from ..utils.roi import dilate_fsl, erode_fsl
 
-__all__ = ["skullstrip_flash", "skullstrip_epi", "skullstrip_refined", "skullstrip_bet"]
+__all__ = [
+    "skullstrip_flash",
+    "skullstrip_epi",
+    "skullstrip_refined",
+    "skullstrip_bet",
+    "mri_synthstrip",
+]
 
 
 def skullstrip_flash(
@@ -294,7 +300,7 @@ def skullstrip_bet(file_in, file_out):
     Parameters
     ----------
     file_in : str
-        File name of
+        File name of input file.
     file_out : str
         File name of skull strip mask.
     """
@@ -313,3 +319,25 @@ def skullstrip_bet(file_in, file_out):
     execute_command(command)
 
     os.rename(os.path.join(path_out, f"{name_out}_mask{ext_out}"), file_out)
+
+
+def mri_synthstrip(file_in, file_out, file_mask=None):
+    """Simple wrapper to call mri_synthreg for skullstrip removal.
+
+    Parameters
+    ----------
+    file_in: str
+        File name of input file.
+    file_out: str
+        File name of output file.
+    file_mask: str, optional
+        File name of input mask.
+    """
+    command = "mri_synthstrip"
+    command += f" -i {file_in}"
+    command += f" -o {file_out}"
+    if file_mask is not None:
+        command += f" -m {file_mask}"
+
+    # run
+    execute_command(command)

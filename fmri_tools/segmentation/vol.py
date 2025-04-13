@@ -5,6 +5,7 @@ import os
 
 import nibabel as nb
 import numpy as np
+from scipy.ndimage import distance_transform_edt
 
 from .. import execute_command
 from ..io.filename import get_filename
@@ -14,10 +15,11 @@ __all__ = [
     "robust_combination",
     "include_pial_correction",
     "estimate_pv",
+    "VDM",
 ]
 
 
-def remove_bias_ants(file_in, file_out, save_bias=True):
+def remove_bias_ants(file_in, file_out, save_bias=True, file_mask=None, strict=False):
     """Apply the ANTS N4 bias field correction.
 
     Parameters
@@ -28,14 +30,22 @@ def remove_bias_ants(file_in, file_out, save_bias=True):
         File name of output image.
     save_bias : bool, optional
         Save bias field to disk.
+    file_mask : str, optional
+        File name of input mask.
+    strict : bool, optional
+        Strict mode.
     """
     # file name of saved bias field
     path, _, _ = get_filename(file_out)
     file_out_bias = os.path.join(path, "n4bias.nii")
 
     command = "N4BiasFieldCorrection"
-    command += " -d 3"
+    command += " -v 1 -d 3 -s 2 -r 0" if strict else " -d 3"
     command += f" --input-image {file_in}"
+    if file_mask is not None:
+        command += f" -x {file_mask}"
+    if strict:
+        command += " -c [50x50x50x50,0.0000001] -b [200]"
     if save_bias:
         command += f" --output [ {file_out}, {file_out_bias}]"
     else:
@@ -236,3 +246,54 @@ def estimate_pv(dir_out, subjects_dir, sub):
 
     # run
     execute_command(command)
+
+
+class VDM:
+    """Vascular distance mapping (VDM) computes the euclidean distance of each voxel to
+    its closest vessel. This approach has the advantage that a continuous metric can be
+    used to analyze brain vasculature instead of a binary mask. The idea is taken from
+    Bause et al. 2020, Mattern et al. (2020, 2021a, 2021b), Garcia-Garcia et al. (2023).
+
+    Args:
+        image: Nibabel image object containing the array of the binary vessel mask.
+
+    References:
+        - Bause, J., et al. Impact of prospective motion correction, distortion
+          correction methods and large vein bias on the spatial accuracy of cortical
+          laminar fMRI at 9.4 Tesla. NeuroImage (2020).
+        - Mattern, H., et al. Vessel distance mapping. ESMRMB (2020).
+        - Mattern, H., Vessel distance mapping of the aging subcortical venous
+          vasculature. ESMRMB (2021a).
+        - Mattern, H., et al. Vessel distance mapping for deep gray matter structures.
+          ISMRM (2021b).
+        - Garcia-Garcia, B., et al. Vessel distance mapping: A novel methodology for
+          assessing vascular-induced cognitive resilience. NeuroImage (2023).
+
+    """
+
+    def __init__(self, image: nb.nifti1.Nifti1Image) -> None:
+        self.arr = image.get_fdata()
+        self.header = image.header
+        self.affine = image.affine
+        self.dim = image.header.get_zooms()
+        self.distance_volume = None
+
+    @property
+    def transform(self):
+        """Apply the distance transform."""
+        self.distance_volume = distance_transform_edt(self.arr == 0, sampling=self.dim)
+        return self.distance_volume
+
+    def save(self, file_out: str) -> None:
+        """Save VDM image to disk."""
+        if self.distance_volume is None:
+            print("Transform...")
+            self.transform
+        output = nb.Nifti1Image(self.distance_volume, self.affine, self.header)
+        nb.save(output, file_out)
+
+    @classmethod
+    def from_file(cls, file_mask: str) -> "VDM":
+        """Construct VDM object from file name."""
+        image = nb.load(file_mask)
+        return cls(image)
