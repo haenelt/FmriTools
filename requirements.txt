@@ -3,6 +3,7 @@ nibabel
 scipy
 matplotlib
 scikit-image
+scikit-learn
 imageio
 shapely
 descartes
