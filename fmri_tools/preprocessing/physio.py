@@ -402,6 +402,7 @@ def get_wm_mask(file_aseg):
     aseg = nb.load(file_aseg)
     arr_aseg = aseg.get_fdata()
     arr_wm = np.isin(arr_aseg, [2, 41]).astype(np.uint8)
+    arr_wm[arr_wm != 0] = 1
     wm_img = nb.Nifti1Image(arr_wm, affine=aseg.affine)
     return wm_img
 
@@ -411,5 +412,6 @@ def get_csf_mask(file_aseg):
     aseg = nb.load(file_aseg)
     arr_aseg = aseg.get_fdata()
     arr_csf = np.isin(arr_aseg, [4, 14, 15, 43]).astype(np.uint8)
+    arr_csf[arr_csf != 0] = 1
     csf_img = nb.Nifti1Image(arr_csf, affine=aseg.affine)
     return csf_img
