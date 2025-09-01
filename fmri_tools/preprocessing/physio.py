@@ -121,11 +121,12 @@ class CleanTimeseries:
         )
 
     def add_scrubbing(
-        self, motion, fd_threshold=0.5, rot_to_mm=50, rotations_in_degrees=True
+        self, motion, fd_threshold=0.5, rot_to_mm=50, rotations_in_degrees=True, max_gap=5
     ):
         """Add one-hot scrubbing regressors based on FD power estimates. Binary
         scrubbing regressors are computed by tresholding FD power traces with
-        `fd_threshold` (in mm).
+        `fd_threshold` (in mm). If two outliers are separated by <= `max_gap` frames,
+        the in-between time points are also flagged as outliers.
 
         Parameters
         ----------
@@ -133,14 +134,33 @@ class CleanTimeseries:
 
         """
         fd = fd_power(motion, rot_to_mm, rotations_in_degrees)
-        scrub = np.zeros((len(fd), np.sum(fd > fd_threshold)))
-        col = 0
-        for i, val in enumerate(fd):
-            if val > fd_threshold:
-                scrub[i, col] = 1
-                col += 1
-        if scrub.shape[1] > 0:
-            self.confounds = np.hstack((self.confounds, scrub))
+        n_tp = len(fd)
+
+        # Initial outlier indices
+        bad_idx = np.where(fd > fd_threshold)[0]
+        if len(bad_idx) == 0:
+            return
+        
+        # Expand to include time points between close outliers
+        expanded_idx = set()
+        prev = bad_idx[0]
+        expanded_idx.add(prev)
+
+        for idx in bad_idx[1:]:
+            if idx - prev <= max_gap:
+                # include all intermediate points
+                expanded_idx.update(range(prev, idx + 1))
+            expanded_idx.add(idx)
+            prev = idx
+
+        expanded_idx = sorted(expanded_idx)
+
+        # One-hot regressors
+        scrub = np.zeros((n_tp, len(expanded_idx)), dtype=int)
+        scrub[expanded_idx, np.arange(len(expanded_idx))] = 1
+
+        # Append to confounds
+        self.confounds = np.hstack((self.confounds, scrub))
 
     def add_global(self):
         """Add global signal regressors to the list of confounds."""
