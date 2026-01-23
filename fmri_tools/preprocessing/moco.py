@@ -15,8 +15,7 @@ __all__ = ["MotionCorrection"]
 
 
 class MotionCorrection:
-    """Apply motion correction to a multi-run session. All data are assumed to be in
-    uncompressed nifti format.
+    """Apply motion correction to a multi-run session.
 
     Parameters
     ----------
@@ -57,6 +56,8 @@ class MotionCorrection:
         self.fnames = fnames
         self.dir_out = dir_out if dir_out else str(Path(self.fnames[0]).parent.parent)
         self.nrun = len(self.fnames)
+        # Get extension from first file name
+        self.ext = "".join(Path(self.fnames[0]).suffixes)
 
     def __call__(self):
         """Run the full motion correction pipeline."""
@@ -71,9 +72,9 @@ class MotionCorrection:
         """Get reference volume from first run. Equivalent to other time series, the
         data is deobliqued before extraction, which is applied to a copied temporary
         file to not change the original data file."""
-        _file_ref = self.path_moco(0) / "ref.nii"
+        _file_ref = self.path_moco(0) / f"ref{self.ext}"
         if not _file_ref.exists():
-            file_tmp = self.path_moco(0) / "tmp.nii"
+            file_tmp = self.path_moco(0) / f"tmp{self.ext}"
             shutil.copyfile(self.fnames[0], file_tmp)
             prepare_header(file_tmp)
             extract_ref(file_tmp, _file_ref)
@@ -87,7 +88,7 @@ class MotionCorrection:
 
     def file_res(self, run):
         """File name of volreg output time series."""
-        return self.path_moco(run) / "res.nii"
+        return self.path_moco(run) / f"res{self.ext}"
 
     def file_moco(self, run):
         """File name of afni realignment matrix needed to apply motion estimates."""
@@ -126,10 +127,10 @@ class MotionCorrection:
         series. All data sets are deobliqued before motion correction, which is applied
         to a temporay file to not change the original file."""
         for i, fname in enumerate(self.fnames):
-            file_in = self.path_moco(i) / "in.nii"
+            file_in = self.path_moco(i) / f"in{self.ext}"
             shutil.copyfile(fname, file_in)
             prepare_header(file_in)
-            file_out = self.path_moco(i) / "out.nii"
+            file_out = self.path_moco(i) / f"out{self.ext}"
             volreg(file_in, file_out, self.file_ref)
             allineate(file_in, self.file_res(i), self.file_ref, self.file_moco(i))
 
@@ -149,7 +150,7 @@ class MotionCorrection:
     def _apply_transform(self, run, filename):
         """Apply estimated motion parameters from a specific run to one file. The same
         preprocessing is done as for the motion estimation."""
-        file_in = self.path_out(run) / f"tmp_{uuid.uuid4()}.nii"
+        file_in = self.path_out(run) / f"tmp_{uuid.uuid4()}{self.ext}"
         file_out = self.path_out(run) / f"u{Path(filename).name}"
         shutil.copyfile(filename, file_in)
         prepare_header(file_in)
@@ -192,7 +193,7 @@ class MotionCorrection:
         _mean /= self.nrun
         _data0 = nb.load(self.file_res(0))
         output = nb.Nifti1Image(_mean, _data0.affine, _data0.header)
-        nb.save(output, self.path_summary() / "mean.nii")
+        nb.save(output, self.path_summary() / f"mean{self.ext}")
 
     def make_vol1(self):
         """Make time series of first volumes of each run."""
@@ -203,4 +204,4 @@ class MotionCorrection:
             _vol1[:, :, :, i] = _data.get_fdata()[:, :, :, 0]
         _data0 = nb.load(self.file_res(0))
         output = nb.Nifti1Image(_vol1, _data0.affine, _data0.header)
-        nb.save(output, self.path_summary() / "vol1.nii")
+        nb.save(output, self.path_summary() / f"vol1{self.ext}")
