@@ -241,11 +241,12 @@ def boundary_based_registration(
     else:
         print("No mask detectected. Check inputs if a mask is necessary!")
 
-    sh.copy(file_source, str(dir_bbr / "source.nii"))
+    ext = "".join(Path(file_source).suffixes)
+    sh.copy(file_source, str(dir_bbr / f"source{ext}"))
 
     # remove nans
     remove_nans(_file_target, str(dir_mri / "orig.nii"))
-    remove_nans(str(dir_bbr / "source.nii"), str(dir_bbr / "source.nii"))
+    remove_nans(str(dir_bbr / f"source{ext}"), str(dir_bbr / f"source{ext}"))
 
     # scale anatomy
     _orig = nb.load(dir_mri / "orig.nii")
@@ -281,7 +282,7 @@ def boundary_based_registration(
     os.chdir(dir_bbr)
     command = "bbregister"
     command += f" --s {sub}"
-    command += f" --mov {dir_bbr / 'source.nii'}"
+    command += f" --mov {dir_bbr / f'source{ext}'}"
     command += f" {contrast} --reg regheader --gm-proj-abs 1 --wm-proj-abs 1"
     command += f" --nmax {nmax}"
     command += f" --o {str(dir_bbr / 'registered.nii')}"
