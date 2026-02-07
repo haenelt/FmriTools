@@ -3,6 +3,7 @@
 
 from pathlib import Path
 from fmri_tools import execute_command
+from fmri_tools.io.vol import gzip_nii, gunzip_nii
 
 __all__ = ["volreg", "allineate", "prepare_header", "extract_ref"]
 
@@ -12,11 +13,20 @@ def prepare_header(file_in):
     correction between across datasets, e.g. run, if not handled beforehand. Be aware
     that this function overwrites the input dataset!!!
 
+    Since nifti_tool cannot process compressed datasets, compressed input files are
+    temporarily uncompressed before processing.
+
     Parameters
     ----------
     file_in : str
         File name of input time series.
     """
+    ext = "".join(Path(file_in).suffixes)
+    uncompress = False
+    if ".gz" in ext:
+        uncompress = True
+        file_in = gunzip_nii(file_in, overwrite=True, remove_original=True)
+
     # overwrite dataset as afni saves data
     command = "3dcalc"
     command += f" -a {file_in}"
@@ -43,6 +53,9 @@ def prepare_header(file_in):
 
     # run
     execute_command(command)
+
+    if uncompress:
+        gzip_nii(file_in, overwrite=True, remove_original=True)
 
 
 def extract_ref(file_in, file_out, t=4):

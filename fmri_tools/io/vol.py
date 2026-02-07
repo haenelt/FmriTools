@@ -2,6 +2,9 @@
 """Input/Output Nifti volume utilities."""
 
 import os
+from pathlib import Path
+import shutil
+import gzip
 
 import nibabel as nb
 import numpy as np
@@ -9,7 +12,15 @@ import numpy as np
 from .. import execute_command
 from .filename import get_filename
 
-__all__ = ["load_volume", "save_volume", "mri_convert", "copy_header", "surface_voxel"]
+__all__ = [
+    "load_volume",
+    "save_volume",
+    "mri_convert",
+    "copy_header",
+    "surface_voxel",
+    "gunzip_nii",
+    "gzip_nii",
+]
 
 
 def load_volume(volume):
@@ -234,3 +245,79 @@ def surface_voxel(file_in, path_output):
     # write output image
     newimg = nb.Nifti1Image(img_res, img.affine, img.header)
     nb.save(newimg, os.path.join(path_output, "surface_voxel.nii"))
+
+
+def gunzip_nii(
+    file_in: str | Path, overwrite: bool = False, remove_original: bool = False
+) -> Path:
+    """Gunzip file and optionally remove original file.
+
+    Parameters
+    ----------
+    file_in : str
+        Input image.
+    overwrite: bool
+        Overwrite already existing unzipped file (default is False).
+    remove_original: bool
+        Remove compressed file after uncompression (default is False).
+
+    Returns
+    ----------
+    Path: file name of uncompressed output image.
+
+    """
+    src = Path(file_in)
+    dst = src.with_suffix("")
+
+    # do nothing if already uncompressed
+    if src.suffix != ".gz":
+        return src
+
+    if dst.exists() and not overwrite:
+        raise FileExistsError(dst)
+
+    with gzip.open(src, "rb") as f_in, open(dst, "wb") as f_out:
+        shutil.copyfileobj(f_in, f_out)
+
+    if remove_original:
+        src.unlink()
+
+    return dst
+
+
+def gzip_nii(
+    file_in: str | Path, overwrite: bool = False, remove_original: bool = False
+) -> Path:
+    """Gzip file and optionally remove original file.
+
+    Parameters
+    ----------
+    file_in : str
+        Input image.
+    overwrite: bool
+        Overwrite already existing unzipped file (default is False).
+    remove_original: bool
+        Remove compressed file after uncompression (default is False).
+
+    Returns
+    ----------
+    Path: File name of compressed output image.
+
+    """
+    src = Path(file_in)
+    dst = src.with_suffix(src.suffix + ".gz")
+
+    # do nothing if already compressed
+    if src.suffix == ".gz":
+        return src
+
+    if dst.exists() and not overwrite:
+        raise FileExistsError(dst)
+
+    with open(src, "rb") as f_in, gzip.open(dst, "wb") as f_out:
+        shutil.copyfileobj(f_in, f_out)
+
+    if remove_original:
+        src.unlink()
+
+    return dst
