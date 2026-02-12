@@ -58,7 +58,7 @@ def prepare_header(file_in):
         gzip_nii(file_in, overwrite=True, remove_original=True)
 
 
-def extract_ref(file_in, file_out, t=4):
+def extract_ref(file_in, file_out, t=0):
     """Extract a volume from an fMRI time series, which can be used as reference volume
     in motion correction usign afni.
 
@@ -67,8 +67,8 @@ def extract_ref(file_in, file_out, t=4):
     file_out : str
         File name of reference volume.
     t : int
-        Which time point in the time series to extract. Per default, not the first
-        volume is selected to be sure that steady-state magnetization is reached.
+        Which time point in the time series to extract. Per default, the first volume
+        is selected.
     """
     dir_out = Path(file_out).parent
     dir_out.mkdir(exist_ok=True, parents=True)
