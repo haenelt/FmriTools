@@ -154,6 +154,7 @@ def apply_fieldmap(
     pe_dir = _bids_to_cardinal(pe_dir)
     axis = _pe_axis_from_cardinal(pe_dir)
     voxel_size = nb.load(file_in).header.get_zooms()[axis]
+    print(f"Voxel size scale applied to shift map: {voxel_size}")
 
     # overwrite dataset as afni saves data
     command = "3dcopy"
