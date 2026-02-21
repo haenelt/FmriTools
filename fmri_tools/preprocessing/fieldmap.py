@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Surface smoothing."""
+"""Field map utilities."""
 
 import os
 import uuid
