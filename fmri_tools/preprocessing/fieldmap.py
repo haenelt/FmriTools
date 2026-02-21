@@ -116,7 +116,7 @@ def apply_fieldmap(
     file_out: str,
     file_shift: str,
     pe_dir: str,
-    file_moco: str,
+    file_moco: str | None = None,
     deoblique: bool = True,
 ):
     """Applies a computed shift map from fugue to a data set. The main purpose of this
@@ -176,10 +176,14 @@ def apply_fieldmap(
     output = nb.Nifti1Image(arr_shift, shift.affine, shift.header)
     nb.save(output, file_shift_temp)
 
+    warp_cmd = f"{pe_dir}:{file_shift_temp}"
+    if file_moco:
+        warp_cmd += f" {file_moco}"
+
     command = "3dNwarpApply"
     command += f" -source {file_in}"
     command += f" -master {file_in}"
-    command += f" -nwarp {pe_dir}:{file_shift_temp} {file_moco}"
+    command += f" -nwarp {warp_cmd}"
     command += " -interp wsinc5"
     command += f" -prefix {file_out}"
     command += " -verb"
