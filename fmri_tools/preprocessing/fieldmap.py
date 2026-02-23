@@ -17,12 +17,12 @@ def _bids_to_cardinal(pe_dir: str) -> str:
     pe = pe_dir.strip().lower()
 
     mapping = {
-        "i": "RL",
-        "i-": "LR",
-        "j": "AP",
-        "j-": "PA",
-        "k": "SI",
-        "k-": "IS",
+        "i": "LR",
+        "i-": "RL",
+        "j": "PA",
+        "j-": "AP",
+        "k": "IS",
+        "k-": "SI",
     }
 
     # np-style: use dict lookup with fallback to upper()
