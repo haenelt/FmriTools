@@ -35,7 +35,7 @@ def flirt(
     file_out : str
         File name of transformed output image.
     file_out_matrix : str
-        File name of text file (*.txt) containing the estimated transformation matrix.
+        File name of text file (*.mat) containing the estimated transformation matrix.
     cost_func : str, optional
         Cost function for regiration ('mutualinfo', 'corratio', 'normcorr', 'normmi',
         'leastsq', 'labeldiff' or 'bbr')), by default "mutualinfo"
@@ -45,7 +45,7 @@ def flirt(
     Raises
     ------
     ValueError
-        If file_out_matrix does not have an *.txt extension.
+        If file_out_matrix does not have an *.mat extension.
     """
     # make output folder
     path_out, _, _ = get_filename(file_out)
@@ -54,8 +54,8 @@ def flirt(
 
     # check matrix is txt
     _, _, ext_matrix = get_filename(file_out_matrix)
-    if ext_matrix != ".txt":
-        raise ValueError("file_out_matrix must have a text file (*.txt) extension!")
+    if ext_matrix != ".mat":
+        raise ValueError("file_out_matrix must have a text file (*.mat) extension!")
 
     command = "flirt"
     command += f" -in {file_in}"
