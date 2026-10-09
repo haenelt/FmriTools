@@ -32,3 +32,4 @@
 - remove gbb dependency
 - remove natsort dependency
 - use subprocess.run instead of os.system
+- replace np.in1d by np.isin

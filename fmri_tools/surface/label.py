@@ -102,7 +102,7 @@ def label_erosion(arr_label, vtx, fac, n):
     """
     for _ in range(n):
         border = label_border(arr_label, vtx, fac)
-        tmp = np.in1d(arr_label, border)
+        tmp = np.isin(arr_label, border)
         arr_label = arr_label[tmp != 1]
     return arr_label
 

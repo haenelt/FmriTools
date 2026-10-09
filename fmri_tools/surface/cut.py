@@ -501,9 +501,9 @@ def _remove_face(face, index_keep, index_remove):
     """
     # remove faces
     face_keep = np.zeros(len(face[:, 0]))
-    face_keep += np.in1d(face[:, 0], index_keep)
-    face_keep += np.in1d(face[:, 1], index_keep)
-    face_keep += np.in1d(face[:, 2], index_keep)
+    face_keep += np.isin(face[:, 0], index_keep)
+    face_keep += np.isin(face[:, 1], index_keep)
+    face_keep += np.isin(face[:, 2], index_keep)
     face_new = face[face_keep == 3, :]
 
     # reindex faces

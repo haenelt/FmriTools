@@ -493,9 +493,9 @@ class Mesh:
 
         # get new faces
         fac_keep = np.zeros(len(self.faces))
-        fac_keep += np.in1d(self.faces[:, 0], ind_keep)
-        fac_keep += np.in1d(self.faces[:, 1], ind_keep)
-        fac_keep += np.in1d(self.faces[:, 2], ind_keep)
+        fac_keep += np.isin(self.faces[:, 0], ind_keep)
+        fac_keep += np.isin(self.faces[:, 1], ind_keep)
+        fac_keep += np.isin(self.faces[:, 2], ind_keep)
         fac = self.faces[fac_keep == 3, :]
 
         # reindex faces
@@ -894,9 +894,9 @@ def clip_surface(verts, faces, ind_keep):
 
     # get new faces
     faces_keep = np.zeros(len(faces))
-    faces_keep += np.in1d(faces[:, 0], ind_keep)
-    faces_keep += np.in1d(faces[:, 1], ind_keep)
-    faces_keep += np.in1d(faces[:, 2], ind_keep)
+    faces_keep += np.isin(faces[:, 0], ind_keep)
+    faces_keep += np.isin(faces[:, 1], ind_keep)
+    faces_keep += np.isin(faces[:, 2], ind_keep)
     faces = faces[faces_keep == 3, :]
 
     # reindex faces
